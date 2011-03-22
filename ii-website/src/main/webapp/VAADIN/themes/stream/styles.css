@@ -1,0 +1,98 @@
+@import "../reindeer/styles.css";
+@import "css/ii_tag.css";
+@import "css/ii_page.css";
+@import "css/tag_token_field.css";
+
+.pallete_color1 {
+    background-color: #E2C6A1 /* do something */
+}
+
+.pallete_color2 {
+    background-color: #B93C36 /* red ink */
+}
+
+.pallete_color3 {
+    background-color: #415055 /* perfect pencil */
+}
+
+.pallete_color4 {
+    background-color: #DBAF32 /* pale gold */
+}
+
+.pallete_color5 {
+    background-color: #518E49 /* best friend green */
+}
+
+.v-app {
+/*background-color: white;*/
+}
+
+.v-splitpanel-hsplitter-locked {
+/*background-image: none;*/
+}
+
+.ii-label-error {
+    color: #B93C36;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.ii-search-page {
+    text-align: center;
+    padding: 20px 50px 20px 50px;
+}
+
+.ii-search-button.v-button-link,
+.ii-search-button.v-button-link:focus {
+    text-align: center;
+    margin: 30px;
+    width: 100%;
+}
+
+.ii-search-button.v-button-link .v-button-caption {
+    background-color: #518E49;
+    padding: 10px;
+
+    -webkit-border-radius: 7px;
+    -moz-border-radius: 7px;
+    border-radius: 7px;
+
+    text-decoration: none;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.ii-search-results {
+    padding-right: 50px;
+    padding-left: 30px;
+}
+
+.ii-search-results .ii-tag {
+    width: 100%;
+}
+
+/****** For the PageTemplate classes of Navigator7 addon. */
+/****** I've been forced to require you to copy/paste stuff from this CSS file, because Vaadin 6.3 API prevents us to provide a value for the style attbitute of tags. */
+
+.PageTemplate-mainLayout {
+    width: 100%
+}
+
+/* Full window width */
+.FixedPageTemplate-bandOuterLayout {
+    width: 100%
+}
+
+/* Fixed width inside bandOuterLayout */
+.FixedPageTemplate-bandInnerLayout {
+    margin: 0 auto; /* Centered inside outer div */
+}
+
+/* Layout containing your pages (probably between a header and a footer) */
+.FixedPageTemplate-layoutPage {
+    padding-top: 15px; /* Not too close from the header */
+    padding-bottom: 20px; /* Not too close from the footer */
+}
+
+/****** End of Navigator7 addon */

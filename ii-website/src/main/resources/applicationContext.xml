@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd 
+            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd 
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+    <!-- Turn on AspectJ @Configurable support -->
+    <context:spring-configured />
+    <context:component-scan base-package="com.manymonkeys" />
+
+    <!-- Turn on @Autowired, @PostConstruct etc support -->
+    <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
+    <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor" />
+
+    <!-- ============== -->
+    <!-- Database beans -->
+    <!-- ============== -->
+    <bean id="graphDbService" class="org.neo4j.kernel.EmbeddedGraphDatabase"
+        init-method="enableRemoteShell" destroy-method="shutdown" scope="singleton">
+        <constructor-arg index="0" value="../runtime/neo4j-db" />
+    </bean>
+    <bean id="indexService" class="org.neo4j.index.lucene.LuceneFulltextQueryIndexService"
+        destroy-method="shutdown" scope="singleton">
+        <constructor-arg index="0" ref="graphDbService" />
+    </bean>
+
+    <!-- Transactions -->
+    <tx:annotation-driven />
+    <bean id="transactionManager"
+        class="org.springframework.transaction.jta.JtaTransactionManager">
+        <property name="transactionManager" ref="neo4jTransactionManagerService" />
+        <property name="userTransaction" ref="neo4jUserTransactionService" />
+    </bean>
+    <bean id="neo4jTransactionManagerService" class="org.neo4j.kernel.impl.transaction.SpringTransactionManager" />
+    <bean id="neo4jUserTransactionService" class="org.neo4j.kernel.impl.transaction.UserTransactionImpl">
+        <constructor-arg index="0" ref="graphDbService" />
+    </bean>
+
+    <!-- ======== -->
+    <!-- ii beans -->
+    <!-- ======== -->
+    <bean id="iiService" class="com.manymonkeys.service.cinema.TagService">
+        <property name="graphDb" ref="graphDbService"/>
+        <property name="indexService" ref="indexService"/>
+    </bean>
+
+    <bean id="iiRecommender" class="com.manymonkeys.core.algo.impl.RecommenderPlainImpl">
+    </bean>
+
+    <bean id="movieService" class="com.manymonkeys.service.cinema.MovieService">
+        <property name="graphDb" ref="graphDbService"/>
+        <property name="indexService" ref="indexService"/>
+    </bean>
+
+    <bean id="tagService" class="com.manymonkeys.service.cinema.TagService">
+        <property name="graphDb" ref="graphDbService"/>
+        <property name="indexService" ref="indexService"/>
+    </bean>
+
+    <bean id="userService" class="com.manymonkeys.service.auth.UserService">
+        <property name="graphDb" ref="graphDbService"/>
+        <property name="indexService" ref="indexService"/>
+    </bean>
+</beans>

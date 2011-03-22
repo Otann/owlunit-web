@@ -1,0 +1,76 @@
+.ii-token-box .v-csslayout {
+    -webkit-border-radius: 7px;
+    -moz-border-radius: 7px;
+    border-radius: 7px;
+
+    background: #e3e3e3;
+    padding: 10px;
+}
+
+.ii-token-box .v-button-link,
+.ii-token-box .v-button-link:focus {
+    border-left: 5px solid #B93C36;
+    background-color: white;
+    height: 23px;
+    padding: 5px 10px;
+    margin-right: 15px;
+}
+
+.ii-token-box .v-button-link:hover {
+    background-color: #B93C36;
+}
+
+.ii-token-box .v-button-emphasize, .ii-token-box .v-button-emphasize:focus {
+    background-color: #518E49;
+}
+
+.ii-token-box .v-button-link:focus .v-button-caption,
+.ii-token-box .v-button-link .v-button-caption {
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.ii-token-box .v-button-link:hover .v-button-caption {
+    color: white;
+}
+
+/* input */
+.ii-tokentextfield .v-filterselect {
+    margin-left: 5px;
+    margin-bottom: 1px;
+    background: white none;
+
+    border-left: 5px solid #B93C36;
+    padding-right: 10px;
+    padding-left: 5px;
+    height: 27px;
+}
+
+.ii-tokentextfield  .v-filterselect .v-filterselect-input {
+    background: transparent none;
+    color: #AAAAAA;
+    font-weight: bold;
+    font-size: 15px;
+    font-style: italic;
+    height: 20px;
+}
+
+.ii-tokentextfield  .v-filterselect .v-filterselect-button {
+    display: none;
+}
+
+/* CssLayout special treatment */
+
+.ii-token-box .v-csslayout div {
+    float: left;
+}
+
+.ii-token-box .v-csslayout .v-button-link {
+    margin: 0 1px 1px 10px;
+}
+
+.ii-token-box .v-csslayout .v-button-link {
+    height: 27px;
+}

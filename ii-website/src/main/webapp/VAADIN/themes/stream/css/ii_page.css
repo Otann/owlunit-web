@@ -1,0 +1,90 @@
+.ii-page-left {
+    float: left;
+    width: 70%;
+}
+
+.ii-page-right {
+    width: 30%;
+    float: right;
+}
+
+.ii-page-stream {
+    margin: 20px;
+}
+
+.ii-page-meta,
+.ii-page-components {
+    margin: 20px 0 0 20px;
+    float: left;
+    clear: left;
+}
+
+.ii-error-message {
+    background-color: #B93C36;
+    color: white;
+    font-size: 40px;
+    line-height: 50px;
+    text-align: center;
+}
+
+.ii-controls .ii-trash {
+    width: 64px;
+    height: 64px;
+    overflow: hidden;
+    background-image: url("../img/icons/trash_empty.png");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.v-ddwrapper-over-middle .ii-trash {
+    background-repeat: no-repeat;
+    background-position: 8px 1px;
+    background-image: url("../img/icons/trash_full.png");
+}
+
+.ii-controls .ii-basket {
+    width: 64px;
+    height: 64px;
+    overflow: hidden;
+    background-image: url("../img/icons/basket_blue_64.png");
+    background-repeat: no-repeat;
+    background-position: 0 8px;
+}
+
+.ii-stream .ii-tag {
+}
+
+.ii-page-meta .v-label {
+    margin-left: 10px;
+}
+
+.ii-page-meta .ii-name {
+    font-size: 45px;
+    line-height: 50px;
+    background-color: #518E49;
+    color: white;
+
+    padding: 3px 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+
+    display: inline-block;
+    margin-bottom: 10px;
+
+    white-space: normal;
+}
+
+.ii-tag-components {
+}
+
+.ii-page-components .v-iitag {
+    float: left;
+    display: inline-block;
+}
+
+.ii-tag-components .ii-tag .ii-subcomponents {
+/*display: none;*/
+}

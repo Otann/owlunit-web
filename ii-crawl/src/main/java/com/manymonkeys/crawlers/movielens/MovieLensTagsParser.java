@@ -1,6 +1,6 @@
 package com.manymonkeys.crawlers.movielens;
 
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.impl.neo4j.InformationItem;
 import com.manymonkeys.service.cinema.MovieService;
 import com.manymonkeys.service.cinema.TagService;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -81,9 +81,9 @@ public class MovieLensTagsParser {
                     if (tag == null) {
                         tag = movieService.createTag(tagName);
                         weight = DEFAULT_WEIGHT;
-                    }else if (movie.getComponentWeight(tag) > 0) {
+                    } else if (movie.getComponentWeight(tag) > 0) {
                         weight = movie.getComponentWeight(tag) + 1;
-                    }else {
+                    } else {
                         weight = DEFAULT_WEIGHT;
                     }
                     movieService.setComponentWeight(movie, tag, weight);

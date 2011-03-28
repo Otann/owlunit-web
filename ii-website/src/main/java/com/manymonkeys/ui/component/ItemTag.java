@@ -1,7 +1,7 @@
 package com.manymonkeys.ui.component;
 
 import com.manymonkeys.app.page.ItemPage;
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.impl.neo4j.InformationItem;
 import com.manymonkeys.service.cinema.TagService;
 import com.manymonkeys.ui.widgetset.client.ui.VItemTag;
 import com.vaadin.terminal.PaintException;

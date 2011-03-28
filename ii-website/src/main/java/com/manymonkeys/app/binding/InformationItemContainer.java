@@ -6,10 +6,7 @@ import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Many Monkeys
@@ -19,18 +16,18 @@ import java.util.Map;
 public class InformationItemContainer implements Container {
 
     private TagService service;
-    private Map<String, Long> items;
+    private Map<String, UUID> items;
 
     public InformationItemContainer(TagService service) {
         this.service = service;
-        items = new HashMap<String, Long>();
+        items = new HashMap<String, UUID>();
 
         // TODO: Loading *all* tags is extremely heavy, but due to http://notepad.cc/xescide36 there is no other option right now
         // TODO: Create separate index service for name-id pairs and don't load all iis
         for (InformationItem item : service.getAll()) {
             String name = item.getMeta(TagService.NAME);
             if (name != null) {
-                items.put(item.getMeta(TagService.NAME), item.getId());
+                items.put(item.getMeta(TagService.NAME), item.getUUID());
             }
         }
     }
@@ -48,11 +45,11 @@ public class InformationItemContainer implements Container {
             return null;
         }
 
-        Long id = items.get(itemId.toString());
+        UUID id = items.get(itemId.toString());
         if (id == null) {
             return null;
         }
-        InformationItem ii = service.getById(id);
+        InformationItem ii = service.getByUUID(id);
         return new InformationItemItem(ii);
     }
 

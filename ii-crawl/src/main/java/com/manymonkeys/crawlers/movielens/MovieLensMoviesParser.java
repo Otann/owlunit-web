@@ -1,6 +1,6 @@
 package com.manymonkeys.crawlers.movielens;
 
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.impl.neo4j.InformationItem;
 import com.manymonkeys.service.cinema.MovieService;
 import com.manymonkeys.service.cinema.TagService;
 import org.neo4j.graphdb.GraphDatabaseService;

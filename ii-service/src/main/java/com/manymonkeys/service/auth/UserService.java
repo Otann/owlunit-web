@@ -1,8 +1,8 @@
 package com.manymonkeys.service.auth;
 
 import com.manymonkeys.core.ii.InformationItem;
-import com.manymonkeys.core.ii.impl.neo4j.Neo4jInformationItemDaoImpl;
-import org.neo4j.graphdb.Transaction;
+import com.manymonkeys.core.ii.impl.cassandra.CassandraInformationItemDaoImpl;
+import me.prettyprint.hector.api.Keyspace;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -14,7 +14,7 @@ import java.util.NoSuchElementException;
  *
  * @author Anton Chebotaev
  */
-public class UserService extends Neo4jInformationItemDaoImpl {
+public class UserService extends CassandraInformationItemDaoImpl {
 
     public static final String LOGIN = UserService.class.getName() + ".LOGIN";
     public static final String PASSWORD = UserService.class.getName() + ".PASSWORD";
@@ -23,26 +23,21 @@ public class UserService extends Neo4jInformationItemDaoImpl {
 
     private static final String SALT = "Humpty Dumpty sat on a wall, Humpty Dumpty had a great fall";
 
+    public UserService(Keyspace keyspace) {
+        super(keyspace);
+    }
+
     public InformationItem createUser(String login, String password) {
         //TODO: validate login name to be alphanumeric
-        Transaction tx = beginTransaction();
-        try {
-
-            InformationItem user = createInformationItem();
-            setItemClass(user, USER_CLASS_NAME);
-            setMeta(user, LOGIN, login);
-            setMeta(user, PASSWORD, getPasswordHash(password));
-
-            tx.success();
-            return user;
-        } finally {
-            tx.finish();
-        }
+        InformationItem user = createInformationItem();
+        setMeta(user, LOGIN, login);
+        setMeta(user, PASSWORD, getPasswordHash(password));
+        return user;
     }
 
     public InformationItem getUser(String login) {
         try {
-            return getByMeta(LOGIN, login).iterator().next();
+            return multigetByMeta(LOGIN, login).iterator().next();
         } catch (NoSuchElementException e) {
             return null;
         }

@@ -1,6 +1,6 @@
 package com.manymonkeys.app.button.common;
 
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.impl.neo4j.InformationItem;
 import com.manymonkeys.service.cinema.TagService;
 import com.manymonkeys.ui.component.ItemTag;
 import com.vaadin.data.Validator;

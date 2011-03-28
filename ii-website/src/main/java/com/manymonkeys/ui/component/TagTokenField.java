@@ -2,7 +2,7 @@ package com.manymonkeys.ui.component;
 
 import com.manymonkeys.app.binding.InformationItemContainer;
 import com.manymonkeys.app.binding.InformationItemItem;
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.impl.neo4j.InformationItem;
 import com.manymonkeys.service.cinema.TagService;
 import com.manymonkeys.ui.theme.Stream;
 import com.vaadin.ui.Button;

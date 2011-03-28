@@ -38,7 +38,7 @@ public class IlyaSquare implements Formula {
             b_overall += k;
         }
 
-        double min = 0;
+        double intersection = 0;
 
         for (InformationItem item : union) {
             double a_w = a.get(item) == null ? 0 : a.get(item);
@@ -47,10 +47,10 @@ public class IlyaSquare implements Formula {
             a_w = a_w * 100 / a_overall;
             b_w = b_w * 100 / b_overall;
 
-            min += Math.min(a_w, b_w);
+            intersection += Math.min(a_w, b_w);
         }
 
-        return min;
+        return intersection;
     }
 }
 

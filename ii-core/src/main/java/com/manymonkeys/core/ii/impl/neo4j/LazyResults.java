@@ -1,4 +1,4 @@
-package com.manymonkeys.core.ii;
+package com.manymonkeys.core.ii.impl.neo4j;
 
 import java.util.Iterator;
 
@@ -10,6 +10,7 @@ import java.util.Iterator;
 public interface LazyResults<T> extends Iterable<T>, Iterator<T> {
 
     int size();
+
     void close();
 
 }

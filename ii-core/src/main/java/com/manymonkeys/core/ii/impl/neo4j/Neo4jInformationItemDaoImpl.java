@@ -1,8 +1,5 @@
 package com.manymonkeys.core.ii.impl.neo4j;
 
-import com.manymonkeys.core.ii.InformationItem;
-import com.manymonkeys.core.ii.LazyResults;
-import com.manymonkeys.core.ii.InformationItemDao;
 import org.neo4j.graphdb.*;
 import org.neo4j.index.IndexService;
 
@@ -202,14 +199,14 @@ public class Neo4jInformationItemDaoImpl implements InformationItemDao {
         }
     }
 
-	/**
-	 * Performs search by matching key-value metadata pair with Lucene query
-	 *
-	 * @param metaKey metadata key
-	 * @param metaValue metadata value
-	 * @return collection of matched items
-	 */
-	public LazyResults<InformationItem> getByMeta(String metaKey, String metaValue) {
+    /**
+     * Performs search by matching key-value metadata pair with Lucene query
+     *
+     * @param metaKey   metadata key
+     * @param metaValue metadata value
+     * @return collection of matched items
+     */
+    public LazyResults<InformationItem> getByMeta(String metaKey, String metaValue) {
         Transaction tx = graphDb.beginTx();
         try {
             LazyResults<InformationItem> result = new LazyResultsIndexImpl(indexService.getNodes(metaKey, metaValue));

@@ -1,47 +1,45 @@
 package com.manymonkeys.service.cinema;
 
 import com.manymonkeys.core.ii.InformationItem;
-import com.manymonkeys.core.ii.impl.neo4j.Neo4jInformationItemDaoImpl;
-import org.neo4j.graphdb.Transaction;
+import com.manymonkeys.core.ii.impl.cassandra.CassandraInformationItemDaoImpl;
+import me.prettyprint.hector.api.Keyspace;
 
+import java.util.Collection;
 import java.util.NoSuchElementException;
 
 /**
  * Many Monkeys
- * 
+ *
  * @author Anton Chebotaev
  */
-public class TagService extends Neo4jInformationItemDaoImpl {
+public class TagService extends CassandraInformationItemDaoImpl {
+
+    public static final String CLASS_MARK_KEY = TagService.class.getName();
+    public static final String CLASS_MARK_VALUE = "created by";
 
     public static final String NAME = TagService.class.getName() + ".NAME";
 
-    public static final String TAG_CLASS_NAME = TagService.class.getName() + ".TAG_CLASS";
-
-    public InformationItem createTag(String name) {
-        Transaction tx = beginTransaction();
-        try {
-
-            InformationItem item = createInformationItem();
-            setItemClass(item, TAG_CLASS_NAME);
-            setMeta(item, NAME, name);
-
-            tx.success();
-            return item;
-        } finally {
-            tx.finish();
-        }
+    public TagService(Keyspace keyspace) {
+        super(keyspace);
     }
 
-    public void setName(InformationItem item, String name) {
+    public InformationItem createTag(String name) {
+        InformationItem item = createInformationItem();
         setMeta(item, NAME, name);
+        setMeta(item, CLASS_MARK_KEY, CLASS_MARK_VALUE);
+        return item;
     }
 
     public InformationItem getTag(String name) {
         try {
-            return getByMeta(NAME, String.format("\"%s\"", name)).iterator().next();
+            return multigetByMeta(NAME, name).iterator().next();
         } catch (NoSuchElementException e) {
             return null;
         }
+    }
+
+    public Collection<InformationItem> getAll() {
+        return multigetByMeta(CLASS_MARK_KEY, CLASS_MARK_VALUE);
     }
 
 }

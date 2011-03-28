@@ -1,7 +1,5 @@
 package com.manymonkeys.core.ii.impl.neo4j;
 
-import com.manymonkeys.core.ii.InformationItem;
-import com.manymonkeys.core.ii.LazyResults;
 import org.neo4j.graphdb.Relationship;
 
 import java.util.Iterator;

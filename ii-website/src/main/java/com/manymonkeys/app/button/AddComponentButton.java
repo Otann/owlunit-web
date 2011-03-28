@@ -2,7 +2,7 @@ package com.manymonkeys.app.button;
 
 import com.manymonkeys.app.button.common.FilterTagButton;
 import com.manymonkeys.app.page.ItemPage;
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.impl.neo4j.InformationItem;
 import com.vaadin.ui.Window;
 
 /**

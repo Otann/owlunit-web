@@ -1,7 +1,7 @@
 package com.manymonkeys.app.page;
 
 import com.manymonkeys.core.algo.Recommender;
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.impl.neo4j.InformationItem;
 import com.manymonkeys.service.cinema.TagService;
 import com.manymonkeys.spring.SpringContextHelper;
 import com.manymonkeys.ui.component.ItemTag;

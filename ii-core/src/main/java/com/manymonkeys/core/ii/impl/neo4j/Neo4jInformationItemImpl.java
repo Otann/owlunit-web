@@ -1,10 +1,9 @@
 package com.manymonkeys.core.ii.impl.neo4j;
 
-import com.manymonkeys.core.ii.InformationItem;
-import com.manymonkeys.core.ii.LazyResults;
 import org.neo4j.graphdb.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Rocket Science Software
@@ -123,19 +122,19 @@ public class Neo4jInformationItemImpl implements InformationItem {
         return new LazyResultsTraversalImpl(nodes);
     }
 
-	/**
-	 * Returns all components that contains this item as a component.
-	 *
-	 * @return collection of components
-	 */
-	public LazyResults<InformationItem> getItemsContainingThis() {
+    /**
+     * Returns all components that contains this item as a component.
+     *
+     * @return collection of components
+     */
+    public LazyResults<InformationItem> getItemsContainingThis() {
         Traverser nodes = node.traverse(Traverser.Order.BREADTH_FIRST,
                 StopEvaluator.DEPTH_ONE,
                 ReturnableEvaluator.ALL_BUT_START_NODE,
                 Neo4jInformationItemImpl.Relations.COMPONENT,
                 Direction.INCOMING);
         return new LazyResultsTraversalImpl(nodes);
-	}
+    }
 
 
     /**

@@ -1,7 +1,7 @@
 package com.manymonkeys.service.cinema;
 
 import com.manymonkeys.core.ii.InformationItem;
-import org.neo4j.graphdb.Transaction;
+import me.prettyprint.hector.api.Keyspace;
 
 /**
  * Rocket Science Software
@@ -16,19 +16,14 @@ public class MovieService extends TagService {
 
     public static final String MOVIE_CLASS_NAME = MovieService.class.getName() + ".MOVIE_CLASS";
 
-    public InformationItem createMovie(String name, long year) {
-        Transaction tx = beginTransaction();
-        try {
-            InformationItem movie = createTag(name);
-            setItemClass(movie, MOVIE_CLASS_NAME);
-            setMeta(movie, YEAR, Long.toString(year));
-            tx.success();
-            return movie;
-        } finally {
-            tx.finish();
-        }
+    public MovieService(Keyspace keyspace) {
+        super(keyspace);
     }
 
-
+    public InformationItem createMovie(String name, long year) {
+        InformationItem movie = createTag(name);
+        setMeta(movie, YEAR, Long.toString(year));
+        return movie;
+    }
 
 }

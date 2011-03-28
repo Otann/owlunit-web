@@ -1,7 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-  http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.manymonkeys</groupId>
@@ -13,6 +12,19 @@
     <packaging>jar</packaging>
     <version>1.0</version>
     <name>Information Items Core</name>
+
+    <repositories>
+
+        <!-- Cassandra adapter repository -->
+
+        <repository>
+            <id>riptano</id>
+            <name>riptano</name>
+            <url>http://mvn.riptano.com/content/repositories/public</url>
+        </repository>
+
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -31,6 +43,16 @@
             <artifactId>commons-logging</artifactId>
             <version>1.1</version>
         </dependency>
+
+        <!-- Google collections is here -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>r08</version>
+        </dependency>
+
+        <!-- Neo4j -->
+
         <dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j</artifactId>
@@ -41,5 +63,14 @@
             <artifactId>neo4j-index</artifactId>
             <version>1.2-1.2</version>
         </dependency>
+
+        <!-- Cassandra adapter -->
+
+        <dependency>
+            <groupId>me.prettyprint</groupId>
+            <artifactId>hector</artifactId>
+            <version>0.7.0-20</version>
+        </dependency>
+
     </dependencies>
 </project>

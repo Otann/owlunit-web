@@ -1,7 +1,7 @@
 package com.manymonkeys.app.page;
 
 import com.manymonkeys.core.algo.Recommender;
-import com.manymonkeys.core.ii.impl.neo4j.InformationItem;
+import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.service.cinema.TagService;
 import com.manymonkeys.spring.SpringContextHelper;
 import com.manymonkeys.ui.component.ItemTag;
@@ -86,7 +86,7 @@ public class SearchPage extends VerDashLayout implements Button.ClickListener {
             query.put(item, 1D);
 
             // add all components
-            for (Map.Entry<InformationItem, Double> component : item.getComponentsWeights()) {
+            for (Map.Entry<InformationItem, Double> component : item.getComponents().entrySet()) {
                 Double componentWeight = query.get(component.getKey());
                 if (componentWeight == null) {
                     componentWeight = 0D;
@@ -95,7 +95,7 @@ public class SearchPage extends VerDashLayout implements Button.ClickListener {
                 query.put(component.getKey(), componentWeight);
             }
         }
-        Map<InformationItem, Double> result = recommender.getMostLike(query);
+        Map<InformationItem, Double> result = recommender.getMostLike(query, service);
         for (InformationItem item : items) {
             String name = item.getMeta(TagService.NAME);
             result.remove(item);

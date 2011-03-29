@@ -2,7 +2,7 @@ package com.manymonkeys.app.button;
 
 import com.manymonkeys.app.button.common.FilterTagButton;
 import com.manymonkeys.app.page.ItemPage;
-import com.manymonkeys.core.ii.impl.neo4j.InformationItem;
+import com.manymonkeys.core.ii.InformationItem;
 import com.vaadin.ui.Window;
 
 /**
@@ -23,7 +23,7 @@ public class AddComponentButton extends FilterTagButton {
     public void processItem(InformationItem item) {
         InformationItem pageItem = page.getItem();
         if (pageItem != null) {
-            double initialWeight = page.getRecommender().calculateInitialWeight(pageItem, item);
+            double initialWeight = 1;
             page.getService().setComponentWeight(pageItem, item, initialWeight);
             page.refillComponents();
             page.refillStream();

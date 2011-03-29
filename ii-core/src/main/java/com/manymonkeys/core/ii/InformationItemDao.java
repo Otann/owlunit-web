@@ -11,11 +11,18 @@ import java.util.UUID;
 public interface InformationItemDao {
 
     /**
-     * Creates new InformationItem object with valid unique id/uuid
+     * Creates new InformationItem object with valid unique uuid
      *
      * @return InformationItem
      */
     InformationItem createInformationItem();
+
+    /**
+     * Deletes InformationItem and all links to/from it
+     *
+     * @param item to delete
+     */
+    void deleteInformationItem(InformationItem item);
 
     /**
      * Performs quick load of components map for set of items.
@@ -45,6 +52,7 @@ public interface InformationItemDao {
 
     /**
      * Multiget version of {@see getByUUID(UUID uuid)}
+     * Faster than sequential getByUUID
      *
      * @param uuids set of uuids of items
      * @return Set of Items
@@ -54,18 +62,46 @@ public interface InformationItemDao {
     /**
      * Loads items that has mey-value pair in metadata
      *
-     * @param key   for metadata
+     * @param key   of metadata
      * @param value of metadata
      * @return collection of items
      */
     Collection<InformationItem> multigetByMeta(String key, String value);
 
+    /**
+     * Sets weight of relation between components.
+     * Tf there was no connection, creates one
+     *
+     * @param item      - parent ii
+     * @param component - child ii
+     * @param weight    of connection
+     */
     void setComponentWeight(InformationItem item, InformationItem component, Double weight);
 
+    /**
+     * Removes relation between items
+     *
+     * @param item      parent ii
+     * @param component child ii
+     */
     void removeComponent(InformationItem item, InformationItem component);
 
+    /**
+     * Updates or creates metadata of InformationItem
+     *
+     * @param item  to update
+     * @param key   of metadata
+     * @param value of metadata
+     */
     void setMeta(InformationItem item, String key, String value);
 
+    /**
+     * Removes metadata from item
+     *
+     * @param item to operate
+     * @param key  of metadata
+     */
     void removeMeta(InformationItem item, String key);
+
 
 }

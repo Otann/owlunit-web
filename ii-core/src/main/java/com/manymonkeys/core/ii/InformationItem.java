@@ -48,7 +48,7 @@ public interface InformationItem {
     Double getComponentWeight(InformationItem component);
 
     /**
-     * As each item contains links to another items, it contains also link to
+     * As each item contains links it's , it contains also link to
      * items that contain this item
      *
      * @return immutable map of items that contain this item as a component

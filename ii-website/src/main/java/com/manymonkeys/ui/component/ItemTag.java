@@ -1,7 +1,7 @@
 package com.manymonkeys.ui.component;
 
 import com.manymonkeys.app.page.ItemPage;
-import com.manymonkeys.core.ii.impl.neo4j.InformationItem;
+import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.service.cinema.TagService;
 import com.manymonkeys.ui.widgetset.client.ui.VItemTag;
 import com.vaadin.terminal.PaintException;
@@ -83,7 +83,7 @@ public class ItemTag extends AbstractComponent {
     public void paintContent(PaintTarget target) throws PaintException {
         super.paintContent(target);
 
-        PageLink link = new ParamPageLink(item.getMeta(TagService.NAME), ItemPage.class, item.getId());
+        PageLink link = new ParamPageLink(item.getMeta(TagService.NAME), ItemPage.class, item.getUUID().toString());
         link.paint(target);
 
         Label valueLabel = new Label(String.format("%.0f", value == null ? 0D : value));
@@ -91,14 +91,14 @@ public class ItemTag extends AbstractComponent {
         valueLabel.paint(target);
 
         if (componentsLimit > 0) {
-            Iterator<InformationItem> iterator = item.getComponents();
+            Iterator<InformationItem> iterator = item.getComponents().keySet().iterator();
             if (iterator.hasNext()) {
 
                 int limit = this.componentsLimit;
                 while (iterator.hasNext() && limit > 0) {
                     limit--;
                     InformationItem component = iterator.next();
-                    Link cmp = new ParamPageLink(component.getMeta(TagService.NAME), ItemPage.class, component.getId());
+                    Link cmp = new ParamPageLink(component.getMeta(TagService.NAME), ItemPage.class, component.getUUID().toString());
                     cmp.paint(target);
                 }
 
@@ -109,7 +109,7 @@ public class ItemTag extends AbstractComponent {
     @Override
     public String toString() {
         String name = item.getMeta(TagService.NAME);
-        String out = name != null ? name : "InformationItem#%d" + item.getId();
+        String out = name != null ? name : "InformationItem#%d" + item.getUUID().toString();
         if (value == null) {
             return out;
         } else {

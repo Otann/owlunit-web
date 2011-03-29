@@ -1,9 +1,7 @@
 package com.manymonkeys.app.page;
 
 import com.manymonkeys.core.algo.Recommender;
-import com.manymonkeys.core.ii.impl.neo4j.InformationItem;
-import com.manymonkeys.core.ii.impl.neo4j.Neo4jInformationItemImpl;
-import com.manymonkeys.service.cinema.MovieService;
+import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.service.cinema.TagService;
 import com.manymonkeys.spring.SpringContextHelper;
 import com.manymonkeys.ui.component.ItemTag;
@@ -15,6 +13,7 @@ import org.vaadin.navigator7.uri.Param;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Many Monkeys
@@ -33,7 +32,7 @@ public class ItemPage extends CustomLayout {
     private Recommender recommender;
 
     @Param(pos = 0)
-    Long id;
+    String uuid;
 
     private InformationItem item;
 
@@ -92,14 +91,15 @@ public class ItemPage extends CustomLayout {
         service = (TagService) helper.getBean("iiService");
         recommender = (Recommender) helper.getBean("iiRecommender");
 
-        setItemId(id);
+        setItemId(uuid);
     }
 
-    public void setItemId(Long id) {
+    public void setItemId(String id) {
         if (id == null) {
             setItem(null);
         } else {
-            setItem(service.getById(id));
+            UUID uuid = UUID.fromString(id);
+            setItem(service.getByUUID(uuid));
         }
     }
 
@@ -133,8 +133,6 @@ public class ItemPage extends CustomLayout {
         name.addStyleName(Stream.ITEM_PAGE_NAME);
         meta.addComponent(name);
 
-        String itemType = item.getMeta(Neo4jInformationItemImpl.ITEM_CLASS_NAME);
-
         Label techCaption = new Label("Tech Info");
         techCaption.setStyleName(Stream.LABEL_H2);
         techCaption.setSizeUndefined();
@@ -144,15 +142,9 @@ public class ItemPage extends CustomLayout {
         techLabel.setSizeUndefined();
         meta.addComponent(techLabel);
         StringBuffer sb = new StringBuffer();
-        sb.append(String.format("Type of current item: %s<br>", itemType));
-        sb.append(String.format("Type of item creator: %s<br>", item.getMeta(Neo4jInformationItemImpl.DAO_CLASS_NAME)));
-
-        if (MovieService.MOVIE_CLASS_NAME.equals(itemType)) {
-            sb.append("<br>Add some description here, links to IMDB/Wikipedia and cover image.<br>");
-            sb.append("Alternative title. Grabbed IMDB/RottenTomatoes rating.<br>");
-            sb.append("Friends that have this item too.");
+        for (Map.Entry<String, String> entry : item.getMetaMap().entrySet()) {
+            sb.append(String.format("%s : %s<br>", entry.getKey(), entry.getValue()));
         }
-
         techLabel.setValue(sb.toString());
         techLabel.setContentMode(Label.CONTENT_XHTML);
     }
@@ -165,7 +157,7 @@ public class ItemPage extends CustomLayout {
         components.removeAllComponents();
 
         int limit = 1000;
-        Iterator<Map.Entry<InformationItem, Double>> iterator = item.getComponentsWeights();
+        Iterator<Map.Entry<InformationItem, Double>> iterator = item.getComponents().entrySet().iterator();
         while (iterator.hasNext() && limit > 0) {
             limit--;
             Map.Entry<InformationItem, Double> componentEntry = iterator.next();
@@ -187,7 +179,7 @@ public class ItemPage extends CustomLayout {
         long startTime = System.currentTimeMillis();
 
         long limit = STREAM_SIZE_LIMIT;
-        Iterator<Map.Entry<InformationItem, Double>> iterator = recommender.getMostLike(item).entrySet().iterator();
+        Iterator<Map.Entry<InformationItem, Double>> iterator = recommender.getMostLike(item, service).entrySet().iterator();
         while (iterator.hasNext() && limit > 0) {
             limit--;
             Map.Entry<InformationItem, Double> recommendation = iterator.next();

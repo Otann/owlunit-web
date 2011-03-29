@@ -1,6 +1,6 @@
 package com.manymonkeys.app.button.common;
 
-import com.manymonkeys.core.ii.impl.neo4j.InformationItem;
+import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.service.cinema.TagService;
 import com.manymonkeys.ui.component.ItemTag;
 import com.vaadin.data.Validator;
@@ -97,7 +97,7 @@ public abstract class FilterTagButton extends OpenDialogButton {
                 button.tagSelect.removeAllItems();
 
                 int limit = SEARCH_LIMIT;
-                Iterator<InformationItem> iterator = button.service.getByMeta(TagService.NAME, String.format("%s*", text.trim()));
+                Iterator<InformationItem> iterator = button.service.multigetByMeta(TagService.NAME, String.format("%s", text.trim())).iterator();
                 while (iterator.hasNext() && limit > 0) {
                     --limit;
                     button.tagSelect.addItem(new ItemTag(iterator.next(), null));

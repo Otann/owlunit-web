@@ -13,7 +13,7 @@
     <modules>
         <module>ii-core</module>
         <module>ii-service</module>
-        <module>ii-crawl</module>
+        <!--<module>ii-crawl</module>-->
         <module>ii-impex</module>
         <module>ii-website</module>
     </modules>

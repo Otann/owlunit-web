@@ -8,11 +8,13 @@ import me.prettyprint.cassandra.serializers.StringSerializer;
 import me.prettyprint.cassandra.serializers.UUIDSerializer;
 import me.prettyprint.hector.api.Keyspace;
 import me.prettyprint.hector.api.beans.*;
+import me.prettyprint.hector.api.exceptions.HInvalidRequestException;
 import me.prettyprint.hector.api.factory.HFactory;
 import me.prettyprint.hector.api.mutation.Mutator;
 import me.prettyprint.hector.api.query.MultigetSliceQuery;
 import me.prettyprint.hector.api.query.QueryResult;
 import me.prettyprint.hector.api.query.SliceQuery;
+import org.safehaus.uuid.UUIDGenerator;
 
 import java.util.*;
 
@@ -40,8 +42,25 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
 
     @Override
     public CassandraInformationItemImpl createInformationItem() {
-        UUID uuid = UUID.randomUUID();
+        UUID uuid = UUID.fromString(UUIDGenerator.getInstance().generateTimeBasedUUID().toString());
         return createInformationItem(uuid);
+    }
+
+    @Override
+    public void deleteInformationItem(InformationItem item) {
+        if (item instanceof CassandraInformationItemImpl) {
+            CassandraInformationItemImpl localItem = (CassandraInformationItemImpl) item;
+
+            Mutator<UUID> mutator = HFactory.createMutator(keyspace, UUIDSerializer.get());
+            for (InformationItem parent : item.getParents().keySet()) {
+                mutator.addDeletion(parent.getUUID(), CF_COMPONENTS, item.getUUID(), UUIDSerializer.get());
+            }
+            for (InformationItem component : item.getComponents().keySet()) {
+                mutator.addDeletion(component.getUUID(), CF_PARENTS, item.getUUID(), UUIDSerializer.get());
+            }
+            mutator.addDeletion(item.getUUID(), CF_META, null, StringSerializer.get());
+            mutator.execute();
+        }
     }
 
     CassandraInformationItemImpl createInformationItem(UUID uuid) {
@@ -260,15 +279,23 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         query.setColumnFamily(CF_META);
         query.addEqualsExpression(key, value);
         query.setReturnKeysOnly();
-        QueryResult<OrderedRows<UUID, String, String>> queryResult = query.execute();
+
+        QueryResult<OrderedRows<UUID, String, String>> queryResult;
+        try {
+            queryResult = query.execute();
+        } catch (HInvalidRequestException e) {
+            return Collections.emptySet();
+        }
+
         Rows<UUID, String, String> rows = queryResult.get();
 
-        List<InformationItem> result = new LinkedList<InformationItem>();
+        Collection<InformationItem> result = new LinkedList<InformationItem>();
         for (Row<UUID, String, String> row : rows) {
             CassandraInformationItemImpl item = createInformationItem(row.getKey());
             for (HColumn<String, String> column : row.getColumnSlice().getColumns()) {
                 item.meta.put(column.getName(), column.getValue());
             }
+            result.add(item);
         }
 
         return result;

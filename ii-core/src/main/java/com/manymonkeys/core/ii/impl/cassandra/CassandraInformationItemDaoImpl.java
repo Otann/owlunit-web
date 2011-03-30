@@ -25,6 +25,16 @@ import java.util.*;
  */
 public class CassandraInformationItemDaoImpl implements InformationItemDao {
 
+    /**
+     * Miltiget queries in Cassandra requires to set either query sizelimit or returnKeysOnly flag.
+     * So when we need actual data from rows we have to determine limit of the query.
+     * This affects querying metadata, components and parents
+     */
+    public static final int MULTIGET_COUNT = 10000;
+
+    /**
+     * Keyspace in Cassandra to store data
+     */
     private Keyspace keyspace;
 
     // Column families constants
@@ -82,6 +92,8 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         MultigetSliceQuery<UUID, UUID, Double> componentsIdQuery = HFactory.createMultigetSliceQuery(keyspace, us, us, ds);
         componentsIdQuery.setColumnFamily(CF_COMPONENTS);
         componentsIdQuery.setKeys(itemsMap.keySet());
+        componentsIdQuery.setRange(null, null, false, MULTIGET_COUNT);
+
         QueryResult<Rows<UUID, UUID, Double>> queryResult = componentsIdQuery.execute();
         Rows<UUID, UUID, Double> rows = queryResult.get();
 
@@ -132,6 +144,7 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         MultigetSliceQuery<UUID, UUID, Double> parentsIdQuery = HFactory.createMultigetSliceQuery(keyspace, us, us, ds);
         parentsIdQuery.setColumnFamily(CF_PARENTS);
         parentsIdQuery.setKeys(itemsMap.keySet());
+        parentsIdQuery.setRange(null, null, false, MULTIGET_COUNT);
         QueryResult<Rows<UUID, UUID, Double>> queryResult = parentsIdQuery.execute();
         Rows<UUID, UUID, Double> rows = queryResult.get();
 
@@ -194,6 +207,7 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
 
         MultigetSliceQuery<UUID, String, String> multigetSliceQuery = HFactory.createMultigetSliceQuery(keyspace, us, ss, ss);
         multigetSliceQuery.setColumnFamily(CF_META);
+        multigetSliceQuery.setRange(null, null, false, MULTIGET_COUNT);
         multigetSliceQuery.setKeys(uuids);
 
         QueryResult<Rows<UUID, String, String>> queryResult = multigetSliceQuery.execute();

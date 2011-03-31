@@ -3,6 +3,7 @@ package com.manymonkeys.core.ii.impl.cassandra;
 import com.google.common.collect.ImmutableMap;
 import com.manymonkeys.core.ii.InformationItem;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -27,6 +28,7 @@ public class CassandraInformationItemImpl implements InformationItem, Comparable
         // hide construction to package-level
         this.uuid = uuid;
         this.dao = dao;
+        this.meta = new HashMap<String, String>();
     }
 
     @Override
@@ -47,7 +49,7 @@ public class CassandraInformationItemImpl implements InformationItem, Comparable
     @Override
     public Map<InformationItem, Double> getComponents() {
         if (components == null) {
-            dao.loadComponents(this); //TODO: review
+            dao.reloadComponents(this); //TODO: review
         }
         return ImmutableMap.copyOf(components);
     }
@@ -55,7 +57,7 @@ public class CassandraInformationItemImpl implements InformationItem, Comparable
     @Override
     public Double getComponentWeight(InformationItem component) {
         if (components == null) {
-            dao.loadComponents(this); //TODO: review
+            dao.reloadComponents(this); //TODO: review
         }
         return components.get(component);
     }
@@ -63,7 +65,7 @@ public class CassandraInformationItemImpl implements InformationItem, Comparable
     @Override
     public Map<InformationItem, Double> getParents() {
         if (parents == null) {
-            dao.loadParents(this); //TODO: review
+            dao.reloadParents(this); //TODO: review
         }
         return null;
     }
@@ -71,7 +73,7 @@ public class CassandraInformationItemImpl implements InformationItem, Comparable
     @Override
     public Double getParentWeight(InformationItem parent) {
         if (parents == null) {
-            dao.loadParents(this); //TODO: review
+            dao.reloadParents(this); //TODO: review
         }
         return parents.get(parent);
     }

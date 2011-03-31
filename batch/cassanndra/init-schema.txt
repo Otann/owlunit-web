@@ -1,0 +1,13 @@
+create keyspace InformationItems;
+use InformationItems;
+
+create column family META with comparator = UTF8Type;
+create column family COMPONENTS with comparator = TimeUUIDType;
+create column family PARENTS with comparator = TimeUUIDType;
+
+update column family META with
+    column_metadata = [
+        {column_name: first, validation_class: UTF8Type},
+        {column_name: last, validation_class: UTF8Type},
+        {column_name: age, validation_class: UTF8Type, index_type: KEYS}
+    ];

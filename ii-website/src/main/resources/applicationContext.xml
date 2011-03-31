@@ -33,28 +33,6 @@
         <constructor-arg ref="cluster"/>
     </bean>
 
-    <!-- Neo4j -->
-
-    <bean id="graphDbService" class="org.neo4j.kernel.EmbeddedGraphDatabase"
-          init-method="enableRemoteShell" destroy-method="shutdown" scope="singleton">
-        <constructor-arg index="0" value="../runtime/neo4j-db"/>
-    </bean>
-    <bean id="indexService" class="org.neo4j.index.lucene.LuceneFulltextQueryIndexService"
-          destroy-method="shutdown" scope="singleton">
-        <constructor-arg index="0" ref="graphDbService"/>
-    </bean>
-
-    <!-- Transactions -->
-    <tx:annotation-driven/>
-    <bean id="transactionManager"
-          class="org.springframework.transaction.jta.JtaTransactionManager">
-        <property name="transactionManager" ref="neo4jTransactionManagerService"/>
-        <property name="userTransaction" ref="neo4jUserTransactionService"/>
-    </bean>
-    <bean id="neo4jTransactionManagerService" class="org.neo4j.kernel.impl.transaction.SpringTransactionManager"/>
-    <bean id="neo4jUserTransactionService" class="org.neo4j.kernel.impl.transaction.UserTransactionImpl">
-        <constructor-arg index="0" ref="graphDbService"/>
-    </bean>
 
     <!-- ======== -->
     <!-- ii beans -->

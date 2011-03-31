@@ -1,6 +1,0 @@
-create keyspace InformationItems;
-use InformationItems;
-
-create column family META with comparator = UTF8Type;
-create column family COMPONENTS with comparator = TimeUUIDType;
-create column family PARENTS with comparator = TimeUUIDType;

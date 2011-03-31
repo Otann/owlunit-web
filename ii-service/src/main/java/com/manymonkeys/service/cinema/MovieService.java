@@ -14,8 +14,6 @@ public class MovieService extends TagService {
     public static final String MOVIE_LENS_ID = MovieService.class.getName() + ".MOVIE_LENS_ID";
     public static final String AKA_NAME = MovieService.class.getName() + ".AKA_NAME";
 
-    public static final String MOVIE_CLASS_NAME = MovieService.class.getName() + ".MOVIE_CLASS";
-
     public MovieService(Keyspace keyspace) {
         super(keyspace);
     }

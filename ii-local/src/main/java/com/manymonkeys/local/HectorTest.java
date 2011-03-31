@@ -29,6 +29,7 @@ import java.util.UUID;
 public class HectorTest {
 
     public static void main(String args[]) {
+
         Cluster cluster = HFactory.getOrCreateCluster("LocalCluster", "localhost:9160");
         Keyspace keyspace = HFactory.createKeyspace("InformationItems", cluster);
 

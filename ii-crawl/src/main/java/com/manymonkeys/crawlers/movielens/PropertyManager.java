@@ -13,6 +13,11 @@ public class PropertyManager {
 
     public static enum Property {
         NEO4J_DB("neo4j.db"),
+
+        CASSANDRA_CLUSTER("cassandra.cluster"),
+        CASSANDRA_HOST("cassandra.address"),
+        CASSANDRA_KEYSPACE("InformationItems"),
+
         MOVIES_DATA_FILE("movies.data.file"),
         TAGS_DATA_FILE("tags.data.file");
 

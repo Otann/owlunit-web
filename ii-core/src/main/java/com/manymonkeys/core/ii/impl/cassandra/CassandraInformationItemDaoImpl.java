@@ -56,6 +56,10 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         return createInformationItem(uuid);
     }
 
+    CassandraInformationItemImpl createInformationItem(UUID uuid) {
+        return new CassandraInformationItemImpl(uuid, this);
+    }
+
     @Override
     public void deleteInformationItem(InformationItem item) {
         if (item instanceof CassandraInformationItemImpl) {
@@ -69,12 +73,39 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
                 mutator.addDeletion(component.getUUID(), CF_PARENTS, item.getUUID(), UUIDSerializer.get());
             }
             mutator.addDeletion(item.getUUID(), CF_META, null, StringSerializer.get());
+            mutator.addDeletion(item.getUUID(), CF_COMPONENTS, null, StringSerializer.get());
+            mutator.addDeletion(item.getUUID(), CF_PARENTS, null, StringSerializer.get());
             mutator.execute();
         }
     }
 
-    CassandraInformationItemImpl createInformationItem(UUID uuid) {
-        return new CassandraInformationItemImpl(uuid, this);
+    public void reloadComponents(CassandraInformationItemImpl item) {
+        if (item.components == null) {
+            item.components = new HashMap<InformationItem, Double>();
+        } else {
+            item.components.clear();
+        }
+
+        UUIDSerializer us = UUIDSerializer.get();
+        DoubleSerializer ds = DoubleSerializer.get();
+
+        SliceQuery<UUID, UUID, Double> sliceQuery = HFactory.createSliceQuery(keyspace, us, us, ds);
+        sliceQuery.setColumnFamily(CF_COMPONENTS);
+        sliceQuery.setKey(item.uuid);
+        sliceQuery.setRange(null, null, false, MULTIGET_COUNT);
+
+        QueryResult<ColumnSlice<UUID, Double>> queryResult = sliceQuery.execute();
+        List<HColumn<UUID, Double>> columns = queryResult.get().getColumns();
+
+        Map<UUID, Double> componentsMap = new HashMap<UUID, Double>();
+        for (HColumn<UUID, Double> column : columns) {
+            componentsMap.put(column.getName(), column.getValue());
+        }
+
+        Collection<InformationItem> components = multigetByUUID(componentsMap.keySet());
+        for (InformationItem component : components) {
+            item.components.put(component, componentsMap.get(component.getUUID()));
+        }
     }
 
     @Override
@@ -115,7 +146,13 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         // Attach components back to items
         for (Row<UUID, UUID, Double> row : rows) {
             CassandraInformationItemImpl item = itemsMap.get(row.getKey());
-            item.components.clear();
+
+            if (item.components == null) {
+                item.components = new HashMap<InformationItem, Double>();
+            } else {
+                item.components.clear();
+            }
+
             for (HColumn<UUID, Double> column : row.getColumnSlice().getColumns()) {
                 UUID link = column.getName();
                 Double value = column.getValue();
@@ -128,7 +165,34 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         return components;
     }
 
-    //TODO: merge with previous method
+    public void reloadParents(CassandraInformationItemImpl item) {
+        if (item.parents == null) {
+            item.parents = new HashMap<InformationItem, Double>();
+        } else {
+            item.parents.clear();
+        }
+
+        UUIDSerializer us = UUIDSerializer.get();
+        DoubleSerializer ds = DoubleSerializer.get();
+
+        SliceQuery<UUID, UUID, Double> sliceQuery = HFactory.createSliceQuery(keyspace, us, us, ds);
+        sliceQuery.setColumnFamily(CF_PARENTS);
+        sliceQuery.setKey(item.uuid);
+        sliceQuery.setRange(null, null, false, MULTIGET_COUNT);
+        QueryResult<ColumnSlice<UUID, Double>> queryResult = sliceQuery.execute();
+        List<HColumn<UUID, Double>> columns = queryResult.get().getColumns();
+
+        Map<UUID, Double> parentsMap = new HashMap<UUID, Double>();
+        for (HColumn<UUID, Double> column : columns) {
+            parentsMap.put(column.getName(), column.getValue());
+        }
+
+        Collection<InformationItem> parents = multigetByUUID(parentsMap.keySet());
+        for (InformationItem parent : parents) {
+            item.parents.put(parent, parentsMap.get(parent.getUUID()));
+        }
+    }
+
     @Override
     public Collection<InformationItem> multigetParents(Collection<InformationItem> items) {
 
@@ -167,7 +231,13 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         // Attach parents back to items
         for (Row<UUID, UUID, Double> row : rows) {
             CassandraInformationItemImpl item = itemsMap.get(row.getKey());
-            item.parents.clear();
+
+            if (item.parents == null) {
+                item.parents = new HashMap<InformationItem, Double>();
+            } else {
+                item.parents.clear();
+            }
+
             for (HColumn<UUID, Double> column : row.getColumnSlice().getColumns()) {
                 UUID link = column.getName();
                 Double value = column.getValue();
@@ -188,6 +258,7 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         SliceQuery<UUID, String, String> sliceQuery = HFactory.createSliceQuery(keyspace, us, ss, ss);
         sliceQuery.setColumnFamily(CF_META);
         sliceQuery.setKey(uuid);
+        sliceQuery.setRange(null, null, false, MULTIGET_COUNT);
 
         QueryResult<ColumnSlice<String, String>> queryResult = sliceQuery.execute();
         ColumnSlice<String, String> results = queryResult.get();
@@ -207,8 +278,8 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
 
         MultigetSliceQuery<UUID, String, String> multigetSliceQuery = HFactory.createMultigetSliceQuery(keyspace, us, ss, ss);
         multigetSliceQuery.setColumnFamily(CF_META);
-        multigetSliceQuery.setRange(null, null, false, MULTIGET_COUNT);
         multigetSliceQuery.setKeys(uuids);
+        multigetSliceQuery.setRange(null, null, false, MULTIGET_COUNT);
 
         QueryResult<Rows<UUID, String, String>> queryResult = multigetSliceQuery.execute();
         Rows<UUID, String, String> rows = queryResult.get();
@@ -219,6 +290,7 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
             for (HColumn<String, String> column : row.getColumnSlice().getColumns()) {
                 item.meta.put(column.getName(), column.getValue());
             }
+            result.add(item);
         }
 
         return result;
@@ -230,8 +302,12 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
             CassandraInformationItemImpl localItem = (CassandraInformationItemImpl) item;
             CassandraInformationItemImpl localComponent = (CassandraInformationItemImpl) component;
 
-            localItem.components.put(component, weight);
-            localComponent.parents.put(item, weight);
+            if (localItem.components != null) {
+                localItem.components.put(component, weight);
+            }
+            if (localComponent.parents != null) {
+                localComponent.parents.put(item, weight);
+            }
 
             UUIDSerializer us = UUIDSerializer.get();
             DoubleSerializer ds = DoubleSerializer.get();
@@ -251,8 +327,12 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
             CassandraInformationItemImpl localItem = (CassandraInformationItemImpl) item;
             CassandraInformationItemImpl localComponent = (CassandraInformationItemImpl) component;
 
-            localItem.components.remove(component);
-            localComponent.parents.remove(item);
+            if (localItem.components != null) {
+                localItem.components.remove(component);
+            }
+            if (localComponent.parents != null) {
+                localComponent.parents.remove(item);
+            }
 
             Mutator<UUID> mutator = HFactory.createMutator(keyspace, UUIDSerializer.get());
             mutator.addDeletion(item.getUUID(), CF_COMPONENTS, component.getUUID(), UUIDSerializer.get());
@@ -267,6 +347,7 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         if (item instanceof CassandraInformationItemImpl) {
             Mutator<UUID> mutator = HFactory.createMutator(keyspace, UUIDSerializer.get());
             mutator.insert(item.getUUID(), CF_META, HFactory.createStringColumn(key, value));
+            ((CassandraInformationItemImpl) item).meta.put(key, value);
         }
     }
 
@@ -292,7 +373,7 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         IndexedSlicesQuery<UUID, String, String> query = HFactory.createIndexedSlicesQuery(keyspace, us, ss, ss);
         query.setColumnFamily(CF_META);
         query.addEqualsExpression(key, value);
-        query.setReturnKeysOnly();
+        query.setRange(null, null, false, MULTIGET_COUNT);
 
         QueryResult<OrderedRows<UUID, String, String>> queryResult;
         try {
@@ -315,51 +396,6 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         return result;
     }
 
-    public void loadComponents(CassandraInformationItemImpl item) {
-        UUIDSerializer us = UUIDSerializer.get();
-        DoubleSerializer ds = DoubleSerializer.get();
-
-        SliceQuery<UUID, UUID, Double> sliceQuery = HFactory.createSliceQuery(keyspace, us, us, ds);
-        sliceQuery.setColumnFamily(CF_COMPONENTS);
-        sliceQuery.setKey(item.uuid);
-
-        QueryResult<ColumnSlice<UUID, Double>> queryResult = sliceQuery.execute();
-        List<HColumn<UUID, Double>> columns = queryResult.get().getColumns();
-
-        Map<UUID, Double> componentsMap = new HashMap<UUID, Double>();
-        for (HColumn<UUID, Double> column : columns) {
-            componentsMap.put(column.getName(), column.getValue());
-        }
-
-        Collection<InformationItem> components = multigetByUUID(componentsMap.keySet());
-        for (InformationItem component : components) {
-            item.components.put(component, componentsMap.get(component.getUUID()));
-        }
-    }
-
-
-    public void loadParents(CassandraInformationItemImpl item) {
-        UUIDSerializer us = UUIDSerializer.get();
-        DoubleSerializer ds = DoubleSerializer.get();
-
-        SliceQuery<UUID, UUID, Double> sliceQuery = HFactory.createSliceQuery(keyspace, us, us, ds);
-        sliceQuery.setColumnFamily(CF_PARENTS);
-        sliceQuery.setKey(item.uuid);
-
-        QueryResult<ColumnSlice<UUID, Double>> queryResult = sliceQuery.execute();
-        List<HColumn<UUID, Double>> columns = queryResult.get().getColumns();
-
-        Map<UUID, Double> parentsMap = new HashMap<UUID, Double>();
-        for (HColumn<UUID, Double> column : columns) {
-            parentsMap.put(column.getName(), column.getValue());
-        }
-
-        Collection<InformationItem> parents = multigetByUUID(parentsMap.keySet());
-        for (InformationItem parent : parents) {
-            item.parents.put(parent, parentsMap.get(parent.getUUID()));
-        }
-    }
-
     private Map<UUID, CassandraInformationItemImpl> collectionToUUIDMap(Collection<InformationItem> items) {
         Map<UUID, CassandraInformationItemImpl> result = new HashMap<UUID, CassandraInformationItemImpl>();
         for (InformationItem item : items) {
@@ -368,4 +404,5 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         }
         return result;
     }
+
 }

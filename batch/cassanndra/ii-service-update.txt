@@ -1,0 +1,11 @@
+use InformationItems;
+
+update column family META with
+    column_metadata = [
+        {column_name: 'com.manymonkeys.service.cinema.TagService', validation_class: UTF8Type, index_type: KEYS},
+        {column_name: 'com.manymonkeys.service.cinema.TagService.NAME', validation_class: UTF8Type, index_type: KEYS},
+
+        {column_name: 'com.manymonkeys.service.cinema.MovieService.YEAR', validation_class: UTF8Type, index_type: KEYS},
+        {column_name: 'com.manymonkeys.service.cinema.MovieService.MOVIE_LENS_ID', validation_class: UTF8Type, index_type: KEYS},
+        {column_name: 'com.manymonkeys.service.cinema.MovieService.AKA_NAME', validation_class: UTF8Type, index_type: KEYS}
+    ];

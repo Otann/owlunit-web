@@ -1,16 +1,13 @@
 package com.manymonkeys.crawlers.movielens;
 
-import com.manymonkeys.core.ii.impl.neo4j.InformationItem;
+import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.service.cinema.MovieService;
 import com.manymonkeys.service.cinema.TagService;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Node;
-import org.neo4j.index.IndexService;
-import org.neo4j.index.lucene.LuceneFulltextQueryIndexService;
-import org.neo4j.kernel.EmbeddedGraphDatabase;
+import me.prettyprint.hector.api.Cluster;
+import me.prettyprint.hector.api.Keyspace;
+import me.prettyprint.hector.api.factory.HFactory;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -26,20 +23,15 @@ public class MovieLensTagsParser {
     private static long DEFAULT_WEIGHT = 1;
 
     public static void main(String[] args) throws IOException {
-        File dbFile = new File(PropertyManager.get(PropertyManager.Property.NEO4J_DB));
-        System.out.println("Database: " + dbFile.getAbsolutePath());
+        Cluster cluster = HFactory.getOrCreateCluster(
+                PropertyManager.get(PropertyManager.Property.CASSANDRA_CLUSTER),
+                PropertyManager.get(PropertyManager.Property.CASSANDRA_HOST));
+        Keyspace keyspace = HFactory.createKeyspace(PropertyManager.get(PropertyManager.Property.CASSANDRA_CLUSTER), cluster);
 
-        GraphDatabaseService graphDb = new EmbeddedGraphDatabase(dbFile.getAbsolutePath());
-        IndexService indexService = new LuceneFulltextQueryIndexService(graphDb);
         try {
 
-            MovieService movieService = new MovieService();
-            movieService.setGraphDb(graphDb);
-            movieService.setIndexService(indexService);
-
-            TagService tagService = new TagService();
-            tagService.setGraphDb(graphDb);
-            tagService.setIndexService(indexService);
+            MovieService movieService = new MovieService(keyspace);
+            TagService tagService = new TagService(keyspace);
 
             String filePath = PropertyManager.get(PropertyManager.Property.TAGS_DATA_FILE);
 
@@ -64,7 +56,7 @@ public class MovieLensTagsParser {
 
                     InformationItem movie;
                     try {
-                        movie = movieService.getByMeta(MovieLensMoviesParser.EXTERNAL_ID, externalId).next();
+                        movie = movieService.multigetByMeta(MovieLensMoviesParser.EXTERNAL_ID, externalId).iterator().next();
                     } catch (Exception e) {
                         System.out.println("Failed to find movie with external Id = " + externalId +
                                 "; " + e.getMessage());
@@ -97,15 +89,10 @@ public class MovieLensTagsParser {
                 }
 
             }
-            int count = 0;
 
-            for (Node n : graphDb.getAllNodes()) {
-                count++;
-            }
-            System.out.println("All-in-all " + count + " nodes");
+            System.out.println("All done");
         } finally {
-            graphDb.shutdown();
-            indexService.shutdown();
+            cluster.getConnectionManager().shutdown();
         }
     }
 

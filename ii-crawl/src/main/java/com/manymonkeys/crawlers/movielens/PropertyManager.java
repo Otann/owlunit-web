@@ -16,7 +16,7 @@ public class PropertyManager {
 
         CASSANDRA_CLUSTER("cassandra.cluster"),
         CASSANDRA_HOST("cassandra.address"),
-        CASSANDRA_KEYSPACE("InformationItems"),
+        CASSANDRA_KEYSPACE("cassandra.keyspace"),
 
         MOVIES_DATA_FILE("movies.data.file"),
         TAGS_DATA_FILE("tags.data.file");

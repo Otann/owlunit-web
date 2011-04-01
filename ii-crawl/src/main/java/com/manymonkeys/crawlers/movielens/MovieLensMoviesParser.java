@@ -26,7 +26,7 @@ public class MovieLensMoviesParser {
         Cluster cluster = HFactory.getOrCreateCluster(
                 PropertyManager.get(PropertyManager.Property.CASSANDRA_CLUSTER),
                 PropertyManager.get(PropertyManager.Property.CASSANDRA_HOST));
-        Keyspace keyspace = HFactory.createKeyspace(PropertyManager.get(PropertyManager.Property.CASSANDRA_CLUSTER), cluster);
+        Keyspace keyspace = HFactory.createKeyspace(PropertyManager.get(PropertyManager.Property.CASSANDRA_KEYSPACE), cluster);
 
         try {
             MovieService movieService = new MovieService(keyspace);

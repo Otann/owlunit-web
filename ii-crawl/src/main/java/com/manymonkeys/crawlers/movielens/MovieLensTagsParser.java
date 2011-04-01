@@ -26,7 +26,7 @@ public class MovieLensTagsParser {
         Cluster cluster = HFactory.getOrCreateCluster(
                 PropertyManager.get(PropertyManager.Property.CASSANDRA_CLUSTER),
                 PropertyManager.get(PropertyManager.Property.CASSANDRA_HOST));
-        Keyspace keyspace = HFactory.createKeyspace(PropertyManager.get(PropertyManager.Property.CASSANDRA_CLUSTER), cluster);
+        Keyspace keyspace = HFactory.createKeyspace(PropertyManager.get(PropertyManager.Property.CASSANDRA_KEYSPACE), cluster);
 
         try {
 
@@ -68,7 +68,7 @@ public class MovieLensTagsParser {
                         System.out.println(String.format("Created %d tags", done));
                     }
 
-                    InformationItem tag = tagService.getTag("\"" + tagName + "\"");
+                    InformationItem tag = tagService.getTag(tagName);
                     double weight = 0;
                     if (tag == null) {
                         tag = movieService.createTag(tagName);

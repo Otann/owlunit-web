@@ -82,9 +82,8 @@
                 <executions>
                     <execution>
                         <goals>
-                            <!-- TODO -->
-                            <!--<goal>resources</goal>-->
-                            <!--<goal>compile</goal>-->
+                            <goal>resources</goal>
+                            <goal>compile</goal>
                         </goals>
                     </execution>
                 </executions>

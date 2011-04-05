@@ -1,7 +1,7 @@
 package com.manymonkeys.local.formula;
 
 import com.manymonkeys.local.Formula;
-import com.manymonkeys.local.InformationItem;
+import com.manymonkeys.local.mock.InformationItem;
 
 import java.util.HashSet;
 import java.util.Map;

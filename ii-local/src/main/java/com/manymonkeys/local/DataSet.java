@@ -1,5 +1,7 @@
 package com.manymonkeys.local;
 
+import com.manymonkeys.local.mock.InformationItem;
+
 import java.util.Map;
 
 /**

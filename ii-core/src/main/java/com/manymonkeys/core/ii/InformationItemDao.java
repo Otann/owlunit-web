@@ -1,6 +1,7 @@
 package com.manymonkeys.core.ii;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -67,6 +68,16 @@ public interface InformationItemDao {
      * @return collection of items
      */
     Collection<InformationItem> multigetByMeta(String key, String value);
+
+    /**
+     * Searches for items that meta's contain word that starts with prefix
+     * Note that meta value is split by spaces
+     *
+     * @param key    of meta
+     * @param prefix that word should start from
+     * @return map of uuids and full meta values
+     */
+    Map<UUID, String> searchByMetaPrefix(String key, String prefix);
 
     /**
      * Sets weight of relation between components.

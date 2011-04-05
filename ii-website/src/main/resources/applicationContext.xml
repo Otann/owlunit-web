@@ -38,6 +38,8 @@
     <!-- ii beans -->
     <!-- ======== -->
     <bean id="iiRecommender" class="com.manymonkeys.core.algo.impl.RecommenderPlainImpl">
+        <property name="componentsLimit" value="20"/>
+        <property name="parentsLimit" value="20"/>
     </bean>
 
     <bean id="tagService" class="com.manymonkeys.service.cinema.TagService">

@@ -4,6 +4,7 @@ import com.manymonkeys.local.dataset.*;
 import com.manymonkeys.local.formula.AntonOriginal;
 import com.manymonkeys.local.formula.AntonRMSE;
 import com.manymonkeys.local.formula.IlyaSquare;
+import com.manymonkeys.local.mock.InformationItem;
 
 import java.util.LinkedList;
 import java.util.List;

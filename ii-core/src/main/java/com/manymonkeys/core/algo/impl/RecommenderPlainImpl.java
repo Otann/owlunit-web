@@ -13,6 +13,25 @@ import java.util.*;
  */
 public class RecommenderPlainImpl implements Recommender {
 
+    private Integer componentsLimit = 20;
+    private Integer parentsLimit = 20;
+
+    public Integer getComponentsLimit() {
+        return componentsLimit;
+    }
+
+    public void setComponentsLimit(Integer componentsLimit) {
+        this.componentsLimit = componentsLimit;
+    }
+
+    public Integer getParentsLimit() {
+        return parentsLimit;
+    }
+
+    public void setParentsLimit(Integer parentsLimit) {
+        this.parentsLimit = parentsLimit;
+    }
+
     @Override
     public void diffuse(InformationItem item, InformationItem component, InformationItemDao dao) {
         //To change body of implemented methods use File | Settings | File Templates.
@@ -54,13 +73,13 @@ public class RecommenderPlainImpl implements Recommender {
             double a_w = a.get(item) == null ? 0 : a.get(item);
             double b_w = b.get(item) == null ? 0 : b.get(item);
 
-            a_w = a_w * 100 / a_overall;
-            b_w = b_w * 100 / b_overall;
+            a_w = a_w / a_overall;
+            b_w = b_w / b_overall;
 
             min += Math.min(a_w, b_w);
         }
 
-        return min;
+        return min * 100;
     }
 
     @Override
@@ -74,6 +93,15 @@ public class RecommenderPlainImpl implements Recommender {
     public Map<InformationItem, Double> getMostLike(Map<InformationItem, Double> items, InformationItemDao dao) {
         Map<InformationItem, Double> result = new HashMap<InformationItem, Double>();
 
+        // Get most heavy components
+        int limit = componentsLimit;
+        Set<InformationItem> componentsFiltered = new HashSet<InformationItem>();
+        Iterator<InformationItem> iterator = sortByValue(items, true).keySet().iterator();
+        while (limit > 0 && iterator.hasNext()) {
+            limit--;
+            componentsFiltered.add(iterator.next());
+        }
+
         // Fast load parents
         Collection<InformationItem> parents = dao.multigetParents(items.keySet());
 
@@ -84,14 +112,16 @@ public class RecommenderPlainImpl implements Recommender {
             result.put(parent, compareItemsMaps(items, parent.getComponents()));
         }
 
-        return invertedSortByValue(result);
+        return sortByValue(result, true);
     }
 
-    private static <K, V extends Comparable<V>> Map<K, V> invertedSortByValue(Map<K, V> map) {
+    private static <K, V extends Comparable<V>> Map<K, V> sortByValue(Map<K, V> map, final boolean invertedSort) {
         List<Map.Entry<K, V>> list = new LinkedList<Map.Entry<K, V>>(map.entrySet());
         Collections.sort(list, new Comparator<Map.Entry<K, V>>() {
             public int compare(Map.Entry<K, V> o1, Map.Entry<K, V> o2) {
-                return o2.getValue().compareTo((o1).getValue());
+                return invertedSort
+                        ? o2.getValue().compareTo((o1).getValue())
+                        : o1.getValue().compareTo((o2).getValue());
             }
         });
 
@@ -101,5 +131,6 @@ public class RecommenderPlainImpl implements Recommender {
         }
         return result;
     }
+
 
 }

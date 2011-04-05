@@ -1,4 +1,4 @@
-package com.manymonkeys.local;
+package com.manymonkeys.local.mock;
 
 import java.util.UUID;
 

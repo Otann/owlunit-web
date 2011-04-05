@@ -175,7 +175,9 @@ public class ItemPage extends CustomLayout {
         long startTime = System.currentTimeMillis();
 
         long limit = STREAM_SIZE_LIMIT;
-        Iterator<Map.Entry<InformationItem, Double>> iterator = recommender.getMostLike(item, service).entrySet().iterator();
+        Map<InformationItem, Double> recommendations = recommender.getMostLike(item, service);
+        service.multigetComponents(recommendations.keySet());
+        Iterator<Map.Entry<InformationItem, Double>> iterator = recommendations.entrySet().iterator();
         while (iterator.hasNext() && limit > 0) {
             limit--;
             Map.Entry<InformationItem, Double> recommendation = iterator.next();
@@ -185,8 +187,6 @@ public class ItemPage extends CustomLayout {
             stream.addComponent(tag);
         }
 
-        long stopTime = System.currentTimeMillis();
-//        VConsole.log("Similar items generation took time: " + (stopTime - startTime));
     }
 
     /*

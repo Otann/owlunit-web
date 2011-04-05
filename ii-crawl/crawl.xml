@@ -19,7 +19,6 @@
             now crawling tags from movielens
         </echo>
 
-
         <java classname="com.manymonkeys.crawlers.movielens.MovieLensTagsParser" fork="true" failonerror="true"
               maxmemory="512m">
             <classpath>

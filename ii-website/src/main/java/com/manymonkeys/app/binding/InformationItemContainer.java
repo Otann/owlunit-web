@@ -13,14 +13,16 @@ import java.util.*;
  *
  * @author Anton Chebotaev
  */
-public class InformationItemContainer implements Container {
+public class InformationItemContainer implements Container, Container.Filterable {
 
     private TagService service;
     private Map<String, UUID> items;
+    private Set<String> filters;
 
     public InformationItemContainer(TagService service) {
         this.service = service;
-        items = new HashMap<String, UUID>();
+        this.items = new HashMap<String, UUID>();
+        this.filters = new HashSet<String>();
 
         // TODO: Loading *all* tags is extremely heavy, but due to http://notepad.cc/xescide36 there is no other option right now
         // TODO: Create separate index service for name-id pairs and don't load all iis
@@ -28,6 +30,19 @@ public class InformationItemContainer implements Container {
             String name = item.getMeta(TagService.NAME);
             if (name != null) {
                 items.put(item.getMeta(TagService.NAME), item.getUUID());
+            }
+        }
+    }
+
+    private void reloadItemsFromService() {
+        if (filters.isEmpty()) {
+            items = Collections.emptyMap();
+        } else {
+            for (String filter : filters) {
+                Map<UUID, String> result = service.searchByMetaPrefix(TagService.NAME, filter);
+                for (Map.Entry<UUID, String> entry : result.entrySet()) {
+                    items.put(entry.getValue(), entry.getKey());
+                }
             }
         }
     }
@@ -44,7 +59,6 @@ public class InformationItemContainer implements Container {
         if (service == null) {
             return null;
         }
-
         UUID id = items.get(itemId.toString());
         if (id == null) {
             return null;
@@ -119,13 +133,46 @@ public class InformationItemContainer implements Container {
         return items.containsKey(itemId.toString());
     }
 
+    /**
+     * Add a filter for given property.
+     * <p/>
+     * Only items where given property for which toString() contains or
+     * starts with given filterString are visible in the container.
+     *
+     * @param propertyId      Property for which the filter is applied to.
+     * @param filterString    String that must match contents of the property
+     * @param ignoreCase      Determine if the casing can be ignored when comparing
+     *                        strings.
+     * @param onlyMatchPrefix Only match prefixes; no other matches are included.
+     */
+    public void addContainerFilter(Object propertyId, String filterString, boolean ignoreCase, boolean onlyMatchPrefix) {
+        //TODO: should check for InformationItemItem.SINGLE_PROPERTY_ID
+        this.filters.add(filterString);
+        reloadItemsFromService();
+    }
+
+    /**
+     * Remove all filters from all properties.
+     */
+    public void removeAllContainerFilters() {
+        this.filters.clear();
+        reloadItemsFromService();
+    }
+
+    /**
+     * Remove all filters from given property.
+     */
+    public void removeContainerFilters(Object propertyId) {
+        this.filters.clear();
+        reloadItemsFromService();
+    }
 
     /*
 
-     All methods below are not read-only and so unsupported
-     Each method just throws UnsupportedOperationException
+   All methods below are not read-only and so unsupported
+   Each method just throws UnsupportedOperationException
 
-      */
+    */
 
     /**
      * Creates a new Item with the given ID into the Container.

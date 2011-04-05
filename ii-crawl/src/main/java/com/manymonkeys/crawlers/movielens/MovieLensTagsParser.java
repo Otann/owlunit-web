@@ -52,14 +52,13 @@ public class MovieLensTagsParser {
                     m.find();
                     String str = m.group(1);
                     String externalId = str.substring(0, str.indexOf(':'));
-                    String tagName = str.substring(str.lastIndexOf(':') + 1, str.length());
+                    String tagName = str.substring(str.lastIndexOf(':') + 1, str.length()).toLowerCase();
 
                     InformationItem movie;
                     try {
                         movie = movieService.multigetByMeta(MovieLensMoviesParser.EXTERNAL_ID, externalId).iterator().next();
                     } catch (Exception e) {
-                        System.out.println("Failed to find movie with external Id = " + externalId +
-                                "; " + e.getMessage());
+                        System.out.println("Failed to find movie with external Id = " + externalId + "; " + e.getMessage());
                         continue;
                     }
 
@@ -73,7 +72,7 @@ public class MovieLensTagsParser {
                     if (tag == null) {
                         tag = movieService.createTag(tagName);
                         weight = DEFAULT_WEIGHT;
-                    } else if (movie.getComponentWeight(tag) > 0) {
+                    } else if (movie.getComponentWeight(tag) != null) {
                         weight = movie.getComponentWeight(tag) + 1;
                     } else {
                         weight = DEFAULT_WEIGHT;
@@ -83,6 +82,7 @@ public class MovieLensTagsParser {
                     System.out.print(".");
                 } catch (Exception e) {
                     System.out.println("Failed to add tag; reason: " + e.getMessage());
+                    e.printStackTrace();
                     continue;
                 } finally {
                     line = fileReader.readLine();

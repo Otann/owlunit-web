@@ -1,7 +1,7 @@
 package com.manymonkeys.local.dataset;
 
 import com.manymonkeys.local.DataSet;
-import com.manymonkeys.local.InformationItem;
+import com.manymonkeys.local.mock.InformationItem;
 
 import java.util.*;
 

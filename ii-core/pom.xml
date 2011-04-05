@@ -76,5 +76,14 @@
             <classifier>lgpl</classifier>
         </dependency>
 
+        <!-- Spring tests -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>2.5.5</version>
+            <scope>test</scope>
+        </dependency>
+
+
     </dependencies>
 </project>

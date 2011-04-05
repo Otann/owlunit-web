@@ -5,15 +5,14 @@ import me.prettyprint.cassandra.serializers.StringSerializer;
 import me.prettyprint.cassandra.serializers.UUIDSerializer;
 import me.prettyprint.hector.api.Cluster;
 import me.prettyprint.hector.api.Keyspace;
-import me.prettyprint.hector.api.beans.HColumn;
+import me.prettyprint.hector.api.beans.ColumnSlice;
 import me.prettyprint.hector.api.beans.Row;
 import me.prettyprint.hector.api.beans.Rows;
 import me.prettyprint.hector.api.exceptions.HectorException;
 import me.prettyprint.hector.api.factory.HFactory;
 import me.prettyprint.hector.api.mutation.Mutator;
-import me.prettyprint.hector.api.query.ColumnQuery;
 import me.prettyprint.hector.api.query.MultigetSliceQuery;
-import me.prettyprint.hector.api.query.QueryResult;
+import me.prettyprint.hector.api.query.SliceQuery;
 import org.safehaus.uuid.UUIDGenerator;
 
 import java.util.Collection;
@@ -31,7 +30,7 @@ public class HectorTest {
     public static void main(String args[]) {
 
         Cluster cluster = HFactory.getOrCreateCluster("LocalCluster", "localhost:9160");
-        Keyspace keyspace = HFactory.createKeyspace("InformationItems", cluster);
+        Keyspace keyspace = HFactory.createKeyspace("Temp", cluster);
 
         UUIDSerializer us = UUIDSerializer.get();
         StringSerializer ss = StringSerializer.get();
@@ -55,14 +54,14 @@ public class HectorTest {
             UUID uuid = UUID.fromString(UUIDGenerator.getInstance().generateTimeBasedUUID().toString());
             Mutator<UUID> mutator = HFactory.createMutator(keyspace, us);
             mutator.insert(uuid, "META", HFactory.createStringColumn("first", "John"));
-            mutator.insert(uuid, "META", HFactory.createStringColumn("second", "Mark"));
+            mutator.insert(uuid, "META", HFactory.createStringColumn("second", "Doe"));
             mutator.insert(uuid, "META", HFactory.createStringColumn("created", (new Date()).toString()));
 
-            ColumnQuery<UUID, String, String> columnQuery = HFactory.createColumnQuery(keyspace, us, ss, ss);
-            columnQuery.setColumnFamily("META").setKey(uuid).setName("first");
-            QueryResult<HColumn<String, String>> result = columnQuery.execute();
+            SliceQuery<UUID, String, String> columnQuery = HFactory.createSliceQuery(keyspace, us, ss, ss);
+            columnQuery.setColumnFamily("META").setKey(uuid).setRange(null, null, false, 100);
+            ColumnSlice<String, String> result = columnQuery.execute().get();
 
-            System.out.println("Read HColumn from cassandra: " + result.get());
+            System.out.println("Read HColumn from cassandra: " + result);
             System.out.println(String.format("Verify on CLI with:  get META['%s']; ", uuid.toString()));
 
             IndexedSlicesQuery<UUID, String, String> query = HFactory.createIndexedSlicesQuery(keyspace, us, ss, ss);

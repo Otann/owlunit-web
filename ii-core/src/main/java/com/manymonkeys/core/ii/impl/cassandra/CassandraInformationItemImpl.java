@@ -67,7 +67,7 @@ public class CassandraInformationItemImpl implements InformationItem, Comparable
         if (parents == null) {
             dao.reloadParents(this); //TODO: review
         }
-        return null;
+        return parents;
     }
 
     @Override

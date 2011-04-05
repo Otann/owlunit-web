@@ -2,14 +2,14 @@ package com.manymonkeys.app.button.common;
 
 import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.service.cinema.TagService;
-import com.manymonkeys.ui.component.ItemTag;
 import com.vaadin.data.Validator;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.event.FieldEvents;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 
-import java.util.Iterator;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Many Monkeys
@@ -48,6 +48,7 @@ public abstract class FilterTagButton extends OpenDialogButton {
         searchField.setWidth("100%");
         searchField.setInputPrompt("Start typing to begin search");
         searchField.addListener(new FilterChangeListener(this));
+        searchField.setTextChangeTimeout(500);
         searchFieldValidator = new RegexpValidator("[\\p{Alnum}\\p{Space}]+", "Only alphanumeric allowed");
         layout.addComponent(searchField);
 
@@ -66,11 +67,26 @@ public abstract class FilterTagButton extends OpenDialogButton {
 
     @Override
     public void onSubmit() {
-        ItemTag selected = (ItemTag) tagSelect.getValue();
+        MetaPair selected = (MetaPair) tagSelect.getValue();
         if (selected == null) {
             topWindow.showNotification("Select tag to load", Window.Notification.TYPE_ERROR_MESSAGE);
         } else {
-            processItem(selected.getItem());
+            processItem(service.getByUUID(selected.id));
+        }
+    }
+
+    private static class MetaPair {
+        UUID id;
+        String name;
+
+        private MetaPair(UUID id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return name;
         }
     }
 
@@ -96,15 +112,14 @@ public abstract class FilterTagButton extends OpenDialogButton {
                 button.submitButton.setEnabled(true);
                 button.tagSelect.removeAllItems();
 
-                int limit = SEARCH_LIMIT;
-                Iterator<InformationItem> iterator = button.service.multigetByMeta(TagService.NAME, String.format("%s", text.trim())).iterator();
-                while (iterator.hasNext() && limit > 0) {
-                    --limit;
-                    button.tagSelect.addItem(new ItemTag(iterator.next(), null));
+                Map<UUID, String> map = button.service.searchByMetaPrefix(TagService.NAME, text.trim());
+                for (Map.Entry<UUID, String> entry : map.entrySet()) {
+                    button.tagSelect.addItem(new MetaPair(entry.getKey(), entry.getValue()));
                 }
             } else {
                 button.searchFieldErrorMessage.setVisible(true);
             }
         }
     }
+
 }

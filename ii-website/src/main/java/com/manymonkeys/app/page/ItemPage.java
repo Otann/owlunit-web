@@ -8,6 +8,7 @@ import com.manymonkeys.ui.component.ItemTag;
 import com.manymonkeys.ui.theme.Stream;
 import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.vaadin.navigator7.Page;
 import org.vaadin.navigator7.uri.Param;
 
@@ -21,6 +22,7 @@ import java.util.UUID;
  * @author Anton Chebotaev
  */
 @Page
+@Configurable(preConstruction = true)
 public class ItemPage extends CustomLayout {
 
     public static final int STREAM_SIZE_LIMIT = 20;
@@ -87,9 +89,9 @@ public class ItemPage extends CustomLayout {
         super.attach();
 
         //TODO: fix this after @Autowired gets fixed
-        SpringContextHelper helper = new SpringContextHelper(getApplication());
-        service = (TagService) helper.getBean("iiService");
-        recommender = (Recommender) helper.getBean("iiRecommender");
+//        SpringContextHelper helper = new SpringContextHelper(getApplication());
+//        service = (TagService) helper.getBean("iiService");
+//        recommender = (Recommender) helper.getBean("iiRecommender");
 
         setItemId(uuid);
     }

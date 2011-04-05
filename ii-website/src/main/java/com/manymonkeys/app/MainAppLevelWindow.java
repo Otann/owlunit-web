@@ -16,6 +16,7 @@ import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.MenuBar;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.vaadin.navigator7.window.NavigableAppLevelWindow;
 
 /**
@@ -23,6 +24,7 @@ import org.vaadin.navigator7.window.NavigableAppLevelWindow;
  *
  * @author Anton Chebotaev
  */
+@Configurable(preConstruction = true)
 public class MainAppLevelWindow extends NavigableAppLevelWindow {
 
     @Autowired
@@ -42,9 +44,9 @@ public class MainAppLevelWindow extends NavigableAppLevelWindow {
     @Override
     protected ComponentContainer createComponents() {
         //TODO: fix this after @Autowired gets fixed
-        SpringContextHelper helper = new SpringContextHelper(getApplication());
-        service = (TagService) helper.getBean("iiService");
-        recommender = (Recommender) helper.getBean("iiRecommender");
+//        SpringContextHelper helper = new SpringContextHelper(getApplication());
+//        service = (TagService) helper.getBean("iiService");
+//        recommender = (Recommender) helper.getBean("iiRecommender");
 
         menu = new MenuBar();
         this.addComponent(menu);

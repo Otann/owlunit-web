@@ -12,6 +12,8 @@ import com.vaadin.incubator.dashlayout.ui.VerDashLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Layout;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.vaadin.navigator7.Page;
 
 import java.util.Collection;
@@ -25,11 +27,15 @@ import java.util.Map;
  * @author Anton Chebotaev
  */
 @Page
+@Configurable(preConstruction = true)
 public class SearchPage extends VerDashLayout implements Button.ClickListener {
 
     private static final long SEARCH_RESULTS_LIMIT = 200;
 
+    @Autowired
     TagService service;
+
+    @Autowired
     Recommender recommender;
 
     TagTokenField searchTokens;
@@ -41,9 +47,9 @@ public class SearchPage extends VerDashLayout implements Button.ClickListener {
         super.attach();
 
         //TODO: fix this after @Autowired gets fixed
-        SpringContextHelper helper = new SpringContextHelper(getApplication());
-        service = (TagService) helper.getBean("iiService");
-        recommender = (Recommender) helper.getBean("iiRecommender");
+//        SpringContextHelper helper = new SpringContextHelper(getApplication());
+//        service = (TagService) helper.getBean("iiService");
+//        recommender = (Recommender) helper.getBean("iiRecommender");
 
         setStyleName("ii-search-page");
 

@@ -20,7 +20,7 @@ import java.io.IOException;
 public class MovieLensMoviesParser {
 
     public static final String EXTERNAL_ID = MovieLensMoviesParser.class.getName() + ".EXTERNAL_ID";
-    public static final String ALTERNATE_NAME = MovieLensMoviesParser.class.getName() + ".AKA_NAME";
+    private static final String A_K_A = "a.k.a.";
 
     public static void main(String[] args) throws IOException {
         Cluster cluster = HFactory.getOrCreateCluster(
@@ -46,12 +46,28 @@ public class MovieLensMoviesParser {
                 int fistSemicolon = line.indexOf(':');
                 String id = line.substring(0, fistSemicolon);
                 int lastSemicolon = line.lastIndexOf(':');
-                String name = line.substring(fistSemicolon + 2, lastSemicolon - 2 - 6);
+                String name = line.substring(fistSemicolon + 2, lastSemicolon - 2 - 6).trim();
+                String nameTranslate = null;
+                String aka = null;
+                if (name.charAt(name.length() - 1) == ')'){
+                    nameTranslate = name.substring(name.indexOf("(") + 1, name.length() - 1);
+                    name = name.substring(0, name.indexOf("(")).trim();
+                    if (nameTranslate.startsWith(A_K_A)){
+                        aka = nameTranslate.substring(A_K_A.length(), nameTranslate.length()).trim();
+                        nameTranslate = null;
+                    }
+                }
                 String year = line.substring(lastSemicolon - 6, lastSemicolon - 2);
                 String[] genres = line.substring(lastSemicolon + 1, line.length()).split("\\|");
 
                 InformationItem movie = movieService.createMovie(name, Long.parseLong(year));
                 movieService.setMeta(movie, EXTERNAL_ID, id);
+                if (aka != null) {
+                    movieService.setMeta(movie, MovieService.AKA_NAME, aka);
+                }
+                if (nameTranslate != null) {
+                    movieService.setMeta(movie, MovieService.TRANSLATE_NAME, nameTranslate);
+                }
 
                 done++;
                 if (done % 25 == 0) {

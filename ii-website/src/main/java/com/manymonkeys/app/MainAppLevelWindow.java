@@ -9,7 +9,6 @@ import com.manymonkeys.app.page.MonitoringPage;
 import com.manymonkeys.app.page.SearchPage;
 import com.manymonkeys.core.algo.Recommender;
 import com.manymonkeys.service.cinema.TagService;
-import com.manymonkeys.spring.SpringContextHelper;
 import com.vaadin.incubator.dashlayout.ui.VerDashLayout;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.ComponentContainer;
@@ -43,10 +42,6 @@ public class MainAppLevelWindow extends NavigableAppLevelWindow {
 
     @Override
     protected ComponentContainer createComponents() {
-        //TODO: fix this after @Autowired gets fixed
-//        SpringContextHelper helper = new SpringContextHelper(getApplication());
-//        service = (TagService) helper.getBean("iiService");
-//        recommender = (Recommender) helper.getBean("iiRecommender");
 
         menu = new MenuBar();
         this.addComponent(menu);

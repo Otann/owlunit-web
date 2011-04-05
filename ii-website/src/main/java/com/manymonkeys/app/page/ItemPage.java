@@ -3,7 +3,6 @@ package com.manymonkeys.app.page;
 import com.manymonkeys.core.algo.Recommender;
 import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.service.cinema.TagService;
-import com.manymonkeys.spring.SpringContextHelper;
 import com.manymonkeys.ui.component.ItemTag;
 import com.manymonkeys.ui.theme.Stream;
 import com.vaadin.ui.*;
@@ -87,11 +86,6 @@ public class ItemPage extends CustomLayout {
     @Override
     public void attach() {
         super.attach();
-
-        //TODO: fix this after @Autowired gets fixed
-//        SpringContextHelper helper = new SpringContextHelper(getApplication());
-//        service = (TagService) helper.getBean("iiService");
-//        recommender = (Recommender) helper.getBean("iiRecommender");
 
         setItemId(uuid);
     }

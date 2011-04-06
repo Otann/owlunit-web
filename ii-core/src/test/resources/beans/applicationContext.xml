@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <!-- Database -->
+
+    <bean id="cassandraHostConfigurator" class="me.prettyprint.cassandra.service.CassandraHostConfigurator">
+        <constructor-arg value="localhost:9160"/>
+    </bean>
+    <bean id="cluster" class="me.prettyprint.cassandra.service.ThriftCluster">
+        <constructor-arg value="LocalCluster"/>
+        <constructor-arg ref="cassandraHostConfigurator"/>
+    </bean>
+    <bean id="keyspace" class="me.prettyprint.hector.api.factory.HFactory" factory-method="createKeyspace">
+        <constructor-arg value="InformationItems"/>
+        <constructor-arg ref="cluster"/>
+    </bean>
+
+    <bean id="iiRecommender" class="com.manymonkeys.core.algo.impl.RecommenderPlainImpl">
+        <property name="componentsLimit" value="20"/>
+        <property name="parentsLimit" value="20"/>
+    </bean>
+
+</beans>

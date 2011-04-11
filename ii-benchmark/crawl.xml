@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ii-crawl" default="crawl-movielens" basedir=".">
+
+    <target name="crawl-movielens">
+        <echo>
+            Crawling movies from MovieLens' file movies.dat
+        </echo>
+
+        <java classname="com.manymonkeys.benchmark.movielens.MoviesParser" fork="true" failonerror="true"
+              maxmemory="512m">
+            <classpath>
+                <fileset dir="./target">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </java>
+
+        <echo>
+            Crawling tags from MovieLens' file tags.dat
+        </echo>
+        <java classname="com.manymonkeys.benchmark.movielens.TagsParser" fork="true" failonerror="true"
+              maxmemory="512m">
+            <classpath>
+                <fileset dir="./target">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </java>
+
+        <echo>
+            Fuck yeah!
+        </echo>
+    </target>
+
+</project>

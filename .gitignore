@@ -1,10 +1,12 @@
-# Compiled source #
-# Compiled source #
-###################
+# IDEA files #
+##############
 *.ipr
 *.iml
+.idea/
+target/
 
 
+# Compiled source #
 ###################
 *.com
 *.class

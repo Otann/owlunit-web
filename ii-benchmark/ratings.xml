@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ii-crawl" default="crawl-movielens" basedir=".">
+
+    <target name="crawl-movielens">
+
+        <echo>
+            Crawling ratings from MovieLens' r1.train/r1.test file pair
+        </echo>
+        <java classname="com.manymonkeys.benchmark.movielens.RatingsParser" fork="true" failonerror="true"
+              maxmemory="512m">
+            <classpath>
+                <fileset dir="./target">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+            <arg file="../runtime/movielens/r1.test"/>
+        </java>
+
+        <echo>
+            Fuck yeah!
+        </echo>
+    </target>
+
+</project>

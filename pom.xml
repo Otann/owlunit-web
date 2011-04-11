@@ -16,6 +16,8 @@
         <module>ii-crawl</module>
         <module>ii-impex</module>
         <module>ii-website</module>
+        <module>ii-local</module>
+        <module>ii-benchmark</module>
     </modules>
 
     <build>

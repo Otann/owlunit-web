@@ -30,7 +30,7 @@ public class UserService extends CassandraInformationItemDaoImpl {
     public InformationItem createUser(String login, String password) {
         //TODO: validate login name to be alphanumeric
         InformationItem user = createInformationItem();
-        setMeta(user, LOGIN, login);
+        setMeta(user, LOGIN, login, true);
         setMeta(user, PASSWORD, getPasswordHash(password));
         return user;
     }

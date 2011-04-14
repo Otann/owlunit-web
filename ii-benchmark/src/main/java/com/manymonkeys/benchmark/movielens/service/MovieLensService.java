@@ -12,40 +12,25 @@ import java.util.Map;
  *
  * @author Anton Chebotaev
  */
-public class MovieLensService extends MovieService {
+public class MovieLensService extends InMemoryDao {
 
-    public static final String USER_ID = MovieLensService.class.getName() + ".USER_ID";
+    public static final String USER_ID = "USER_ID";
+    public static final String MOVIE_ID = "MOVIE_ID";
 
     public static final double INITIAL_TAG_WEIGHT = 1D;
-    public static final double ADDITIONAL_TAG_WEIGHT = 1D;
+    public static final double ADDITIONAL_TAG_WEIGHT = 0.1D;
 
-    public static final double INITIAL_FULL_MOVIE_WEIGHT = 1D;
-
-    public static final double MAX_RATING = 5;
-    public static final double MIN_RATING = 0;
-    public static final double RATING_RANGE = MAX_RATING - MIN_RATING;
-
-    public MovieLensService(Keyspace keyspace) {
-        super(keyspace);
-    }
+    public static final String ITEM_NAME = "name";
 
     public InformationItem loadOrCreateUser(long id) {
-        Collection<InformationItem> users = super.multigetByMeta(USER_ID, Long.toString(id));
-        if (users.isEmpty()) {
-            InformationItem user = super.createInformationItem();
+        InformationItem user = super.getByMeta(USER_ID, Long.toString(id));
+        if (user == null) {
+            user = super.createInformationItem();
             super.setMeta(user, USER_ID, Long.toString(id));
             return user;
         } else {
-            return users.iterator().next();
+            return user;
         }
-    }
-
-    public boolean isUser(InformationItem item) {
-        return item.getMeta(USER_ID) != null;
-    }
-
-    public boolean isMovie(InformationItem item) {
-        return item.getMeta(MovieService.MOVIE_LENS_ID) != null;
     }
 
     public InformationItem scoreTag(InformationItem item, InformationItem tag) {
@@ -53,7 +38,7 @@ public class MovieLensService extends MovieService {
         if (weight == null) {
             super.setComponentWeight(item, tag, INITIAL_TAG_WEIGHT);
         } else {
-            super.setComponentWeight(item, tag, weight + ADDITIONAL_TAG_WEIGHT);
+            super.addComponentWeight(item, tag, weight + ADDITIONAL_TAG_WEIGHT);
         }
 
         return tag;
@@ -61,24 +46,37 @@ public class MovieLensService extends MovieService {
 
     public void scoreMovieForUser(InformationItem user, InformationItem movie, double rating) throws NoSuchMovieException {
 
-        if (rating > MAX_RATING) {
-            rating = MAX_RATING;
-        }
-        if (rating < MIN_RATING) {
-            rating = MIN_RATING;
-        }
-        double relativeRating = rating / RATING_RANGE;
-
-        // Score movie
-        super.setComponentWeight(user, movie, relativeRating * INITIAL_FULL_MOVIE_WEIGHT);
-
         // Diffuse
         for (Map.Entry<InformationItem, Double> entry : movie.getComponents().entrySet()) {
             InformationItem item = entry.getKey();
             Double weight = entry.getValue();
-            super.setComponentWeight(user, item, relativeRating * weight);
+            super.addComponentWeight(user, item, weight * rating * 0.1);
         }
 
+    }
+
+
+    /*
+     *
+     * ALMOST OVERLOADED
+     *
+     */
+
+    public InformationItem createMovie(String name, long year) {
+        InformationItem item = createInformationItem();
+        this.setMeta(item, ITEM_NAME, name);
+        this.setMeta(item, "year", Long.toString(year));
+        return item;
+    }
+
+    public InformationItem getTag(String name) {
+        return this.getByMeta(ITEM_NAME, name);
+    }
+
+    public InformationItem createTag(String name) {
+        InformationItem item = this.createInformationItem();
+        this.setMeta(item, ITEM_NAME, name);
+        return item;
     }
 
 

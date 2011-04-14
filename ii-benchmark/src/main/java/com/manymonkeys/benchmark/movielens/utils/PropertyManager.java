@@ -1,4 +1,4 @@
-package com.manymonkeys.benchmark;
+package com.manymonkeys.benchmark.movielens.utils;
 
 import java.util.Locale;
 import java.util.Properties;

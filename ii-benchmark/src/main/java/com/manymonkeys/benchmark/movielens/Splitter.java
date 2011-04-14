@@ -1,6 +1,6 @@
 package com.manymonkeys.benchmark.movielens;
 
-import com.manymonkeys.benchmark.TimeWatch;
+import com.manymonkeys.benchmark.movielens.utils.TimeWatch;
 
 import java.io.*;
 

@@ -1,12 +1,11 @@
-package com.manymonkeys.app.button;
+package com.manymonkeys.app.tag;
 
 
 import com.manymonkeys.app.MainApplication;
-import com.manymonkeys.app.button.common.FilterTagButton;
+import com.manymonkeys.app.tag.common.FilterTagButton;
 import com.manymonkeys.app.page.ItemPage;
 import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.service.cinema.TagService;
-import com.vaadin.ui.Window;
 import org.vaadin.navigator7.Navigator;
 
 /**
@@ -16,8 +15,8 @@ import org.vaadin.navigator7.Navigator;
  */
 public class LoadTagButton extends FilterTagButton {
 
-    public LoadTagButton(Window topWindow, TagService service) {
-        super(topWindow, "Load Tag", "Select Tag To Load", "Load", service);
+    public LoadTagButton(TagService service) {
+        super("Load Tag", "Select Tag To Load", "Load", service);
     }
 
     @Override

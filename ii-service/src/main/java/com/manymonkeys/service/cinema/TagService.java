@@ -25,7 +25,7 @@ public class TagService extends CassandraInformationItemDaoImpl {
 
     public InformationItem createTag(String name) {
         InformationItem item = createInformationItem();
-        setMeta(item, NAME, name);
+        setMeta(item, NAME, name, true);
         setMeta(item, CLASS_MARK_KEY, CLASS_MARK_VALUE);
         return item;
     }

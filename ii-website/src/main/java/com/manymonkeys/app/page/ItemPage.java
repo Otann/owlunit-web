@@ -5,7 +5,10 @@ import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.service.cinema.TagService;
 import com.manymonkeys.ui.component.ItemTag;
 import com.manymonkeys.ui.theme.Stream;
-import com.vaadin.ui.*;
+import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.CustomLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Layout;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.vaadin.navigator7.Page;
@@ -183,23 +186,10 @@ public class ItemPage extends CustomLayout {
             Map.Entry<InformationItem, Double> recommendation = iterator.next();
             InformationItem item = recommendation.getKey();
             Double value = recommendation.getValue();
-            ItemTag tag = new ItemTag(item, value, ItemTag.COMPONENTS_LIMIT);
+            ItemTag tag = new ItemTag(item, value, ItemTag.DEFAULT_COMPONENTS_LIMIT);
             stream.addComponent(tag);
         }
 
     }
 
-    /*
-    Safety Overrides
-     */
-
-    @Override
-    public void addComponent(Component c, String location) {
-        throw new UnsupportedOperationException("You do not add to PageLayout");
-    }
-
-    @Override
-    public void addComponent(Component c) {
-        throw new UnsupportedOperationException("You do not add to PageLayout");
-    }
 }

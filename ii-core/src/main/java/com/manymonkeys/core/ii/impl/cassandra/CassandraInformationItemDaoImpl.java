@@ -44,6 +44,13 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
     private static final String META_FORMAT = "%s#%s";
 
     /**
+     * Each item has mark of it's creator
+     * THis is done because each item has to have at leas some meta information
+     * Otherwise we can not distinct non-existent item from item with no meta
+     */
+    private static final String META_KEY_CREATOR = "CREATED BY";
+
+    /**
      * Keyspace in Cassandra to store data
      */
     private Keyspace keyspace;
@@ -66,7 +73,9 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
     @Override
     public CassandraInformationItemImpl createInformationItem() {
         UUID uuid = UUID.fromString(UUIDGenerator.getInstance().generateTimeBasedUUID().toString());
-        return createInformationItem(uuid);
+        CassandraInformationItemImpl item = createInformationItem(uuid);
+        setMeta(item, META_KEY_CREATOR, this.getClass().getName());
+        return item;
     }
 
     CassandraInformationItemImpl createInformationItem(UUID uuid) {
@@ -290,10 +299,14 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         sliceQuery.setRange(null, null, false, MULTIGET_COUNT);
 
         QueryResult<ColumnSlice<String, String>> queryResult = sliceQuery.execute();
-        ColumnSlice<String, String> results = queryResult.get();
+        List<HColumn<String, String>> columns = queryResult.get().getColumns();
+
+        if (columns.isEmpty()) {
+            return null; //TODO: means meta can't be loaded without uuid; discuss
+        }
 
         CassandraInformationItemImpl item = createInformationItem(uuid);
-        for (HColumn<String, String> column : results.getColumns()) {
+        for (HColumn<String, String> column : columns) {
             item.meta.put(column.getName(), column.getValue());
         }
 
@@ -374,6 +387,11 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
 
     @Override
     public void setMeta(InformationItem item, String key, String value) {
+        setMeta(item, key, value, false);
+    }
+
+    @Override
+    public void setMeta(InformationItem item, String key, String value, boolean indexed) {
         if (item instanceof CassandraInformationItemImpl) {
             CassandraInformationItemImpl localItem = ((CassandraInformationItemImpl) item);
 
@@ -404,14 +422,17 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
             }
 
             // Add index for new value
-            String[] words = value.toLowerCase().split("\\s");
-            String indexKey = String.format(META_FORMAT, key, value);
-            mutator.addInsertion(indexKey, CF_META_INDEX, HFactory.createColumn(item.getUUID(), 1D, us, ds));
 
-            for (String word : words) {
-                for (int i = 1; i <= word.length(); i++) {
-                    String rowName = String.format(META_FORMAT, key, word.substring(0, i));
-                    mutator.addInsertion(rowName, CF_META_PREFIX, HFactory.createColumn(item.getUUID(), value, us, ss));
+            if (indexed) {
+                String[] words = value.toLowerCase().split("\\s");
+                String indexKey = String.format(META_FORMAT, key, value);
+                mutator.addInsertion(indexKey, CF_META_INDEX, HFactory.createColumn(item.getUUID(), 1D, us, ds));
+
+                for (String word : words) {
+                    for (int i = 1; i <= word.length(); i++) {
+                        String rowName = String.format(META_FORMAT, key, word.substring(0, i));
+                        mutator.addInsertion(rowName, CF_META_PREFIX, HFactory.createColumn(item.getUUID(), value, us, ss));
+                    }
                 }
             }
 

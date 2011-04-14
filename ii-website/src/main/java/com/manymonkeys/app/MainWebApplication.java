@@ -1,9 +1,6 @@
 package com.manymonkeys.app;
 
-import com.manymonkeys.app.page.ItemPage;
-import com.manymonkeys.app.page.MonitoringPage;
-import com.manymonkeys.app.page.PerformanceTestPage;
-import com.manymonkeys.app.page.SearchPage;
+import com.manymonkeys.app.page.*;
 import org.vaadin.navigator7.WebApplication;
 
 /**
@@ -13,13 +10,18 @@ import org.vaadin.navigator7.WebApplication;
  */
 public class MainWebApplication extends WebApplication {
 
+    public static Class homePage() {
+        return SearchPage.class;
+    }
+
     public MainWebApplication() {
 //        registerPages("com.manymonkeys.app.page");
         registerPages(new Class[]{
                 PerformanceTestPage.class,
                 SearchPage.class,
                 ItemPage.class,
-                MonitoringPage.class
+                MonitoringPage.class,
+                ProfilePage.class
         });
     }
 

@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
 public class UserService extends CassandraInformationItemDaoImpl {
 
     public static final String LOGIN = UserService.class.getName() + ".LOGIN";
-    public static final String PASSWORD = UserService.class.getName() + ".PASSWORD";
+    private static final String PASSWORD = UserService.class.getName() + ".PASSWORD";
 
     public static final String USER_CLASS_NAME = UserService.class.getName() + ".USER";
 

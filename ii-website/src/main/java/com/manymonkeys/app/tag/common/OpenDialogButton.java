@@ -1,5 +1,6 @@
-package com.manymonkeys.app.button.common;
+package com.manymonkeys.app.tag.common;
 
+import com.manymonkeys.app.MainApplication;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.ui.*;
 
@@ -10,7 +11,6 @@ import com.vaadin.ui.*;
  */
 public abstract class OpenDialogButton extends Button implements MenuBar.Command {
 
-    protected Window topWindow;
     protected Window subWindow;
 
     private String subWindowName;
@@ -18,10 +18,9 @@ public abstract class OpenDialogButton extends Button implements MenuBar.Command
 
     protected Button submitButton;
 
-    protected OpenDialogButton(final Window topWindow, String buttonName, String subWindowName, String applyButtonTitle) {
+    protected OpenDialogButton(String buttonName, String subWindowName, String applyButtonTitle) {
         super(buttonName);
 
-        this.topWindow = topWindow;
         this.subWindowName = subWindowName;
         this.applyButtonTitle = applyButtonTitle;
 
@@ -70,11 +69,11 @@ public abstract class OpenDialogButton extends Button implements MenuBar.Command
         submitButton.addListener(new ClickListener() {
             public void buttonClick(ClickEvent clickEvent) {
                 onSubmit();
-                topWindow.removeWindow(subWindow);
+                MainApplication.getCurrentNavigableAppLevelWindow().removeWindow(subWindow);
             }
         });
 
-        topWindow.addWindow(subWindow);
+        MainApplication.getCurrentNavigableAppLevelWindow().addWindow(subWindow);
     }
 
 }

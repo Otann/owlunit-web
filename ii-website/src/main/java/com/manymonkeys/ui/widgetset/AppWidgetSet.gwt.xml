@@ -4,11 +4,8 @@
         "http://google-web-toolkit.googlecode.com/svn/tags/1.7.0/distro-source/core/src/gwt-module.dtd">
 <module>
     <inherits name="com.vaadin.terminal.gwt.DefaultWidgetSet"/>
-
     <inherits name="org.vaadin.tokenfield.TokenfieldWidgetset"/>
-
-
     <inherits name="com.vaadin.incubator.dashlayout.DashLayoutWidgetSet"/>
-
     <inherits name="com.vaadin.incubator.fastlayouts.ws.FastLayoutsWidgetSet"/>
+    <inherits name="org.vaadin.browsercookies.widgetset.BrowserCookiesApplicationWidgetset"/>
 </module>

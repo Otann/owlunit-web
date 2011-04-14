@@ -24,21 +24,21 @@ import java.util.Iterator;
 @ClientWidget(VItemTag.class)
 public class ItemTag extends AbstractComponent {
 
-    public static final int COMPONENTS_LIMIT = 10;
+    public static final int DEFAULT_COMPONENTS_LIMIT = 10;
 
     private InformationItem item;
     private Double value;
     private boolean showComponents;
-    private int componentsLimit = COMPONENTS_LIMIT;
+    private int componentsLimit = DEFAULT_COMPONENTS_LIMIT;
 
     public ItemTag(InformationItem item, Double value) {
         this(item, value, 0);
     }
 
     public ItemTag(InformationItem item, Double value, int componentsLimit) {
-        this.setItem(item);
-        this.setValue(value);
-        this.setComponentsLimit(componentsLimit);
+        this.item = item;
+        this.value = value;
+        this.componentsLimit = componentsLimit;
         requestRepaintRequests();
     }
 

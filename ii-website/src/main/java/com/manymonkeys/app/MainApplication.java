@@ -1,5 +1,6 @@
 package com.manymonkeys.app;
 
+import com.manymonkeys.app.page.SearchPage;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.vaadin.navigator7.NavigableApplication;
 import org.vaadin.navigator7.window.NavigableAppLevelWindow;
@@ -20,6 +21,10 @@ public class MainApplication extends NavigableApplication {
     public void init() {
         setTheme("stream");
         setMainWindow(createNewNavigableAppLevelWindow());
+    }
+
+    public static void navigateHome() {
+        getCurrentNavigableAppLevelWindow().getNavigator().navigateTo(SearchPage.class);
     }
 
 

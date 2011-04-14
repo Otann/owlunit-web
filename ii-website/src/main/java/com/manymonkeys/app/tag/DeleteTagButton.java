@@ -1,12 +1,11 @@
-package com.manymonkeys.app.button;
+package com.manymonkeys.app.tag;
 
-import com.manymonkeys.app.button.common.OpenDialogButton;
+import com.manymonkeys.app.tag.common.OpenDialogButton;
 import com.manymonkeys.app.page.ItemPage;
 import com.manymonkeys.core.ii.InformationItem;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
-import com.vaadin.ui.Window;
 
 /**
  * Many Monkeys
@@ -17,8 +16,8 @@ public class DeleteTagButton extends OpenDialogButton {
 
     private ItemPage page;
 
-    public DeleteTagButton(Window topWindow, ItemPage page) {
-        super(topWindow, "Delete Tag", "Confirmation", "Delete");
+    public DeleteTagButton(ItemPage page) {
+        super("Delete Tag", "Confirmation", "Delete");
         this.page = page;
     }
 

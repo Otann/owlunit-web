@@ -106,7 +106,7 @@ public class SearchPage extends VerDashLayout implements Button.ClickListener {
             --limit;
             Map.Entry<InformationItem, Double> item = it.next();
 
-            ItemTag tag = new ItemTag(item.getKey(), item.getValue(), ItemTag.COMPONENTS_LIMIT);
+            ItemTag tag = new ItemTag(item.getKey(), item.getValue(), ItemTag.DEFAULT_COMPONENTS_LIMIT);
             searchResults.addComponent(tag);
         }
 

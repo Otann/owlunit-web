@@ -100,6 +100,11 @@ public class InMemoryDao implements InformationItemDao{
     }
 
     @Override
+    public void setMeta(InformationItem item, String key, String value, boolean indexed) {
+        setMeta(item, key, value);
+    }
+
+    @Override
     public void setMeta(InformationItem item, String key, String value) {
         if (item instanceof InMemoryItem) {
             ((InMemoryItem) item).meta.put(key, value);

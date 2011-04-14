@@ -1,9 +1,8 @@
-package com.manymonkeys.app.button;
+package com.manymonkeys.app.tag;
 
-import com.manymonkeys.app.button.common.FilterTagButton;
+import com.manymonkeys.app.tag.common.FilterTagButton;
 import com.manymonkeys.app.page.ItemPage;
 import com.manymonkeys.core.ii.InformationItem;
-import com.vaadin.ui.Window;
 
 /**
  * Many Monkeys
@@ -14,8 +13,8 @@ public class AddComponentButton extends FilterTagButton {
 
     private ItemPage page;
 
-    public AddComponentButton(Window topWindow, ItemPage page) {
-        super(topWindow, "Add Component", "Add Custom Component", "Add", page.getService());
+    public AddComponentButton(ItemPage page) {
+        super("Add Component", "Add Custom Component", "Add", page.getService());
         this.page = page;
     }
 

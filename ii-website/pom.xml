@@ -207,6 +207,7 @@
             <artifactId>vaadin</artifactId>
             <version>6.5.1</version>
         </dependency>
+
         <dependency>
             <groupId>org.vaadin.addons</groupId>
             <artifactId>tokenfield</artifactId>
@@ -224,6 +225,11 @@
         </dependency>
         <dependency>
             <groupId>org.vaadin.addons</groupId>
+            <artifactId>browsercookies</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.vaadin.addons</groupId>
             <artifactId>fastlayouts</artifactId>
             <version>1.0</version>
         </dependency>
@@ -231,6 +237,11 @@
             <groupId>org.vaadin.addons</groupId>
             <artifactId>dashlayout</artifactId>
             <version>0.1.5-beta</version>
+        </dependency>
+        <dependency>
+            <groupId>org.vaadin.addons</groupId>
+            <artifactId>gravatarresource</artifactId>
+            <version>0.1</version>
         </dependency>
 
         <!-- ========= -->

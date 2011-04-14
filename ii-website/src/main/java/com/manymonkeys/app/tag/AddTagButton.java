@@ -1,7 +1,8 @@
-package com.manymonkeys.app.button;
+package com.manymonkeys.app.tag;
 
 
-import com.manymonkeys.app.button.common.OpenDialogButton;
+import com.manymonkeys.app.MainApplication;
+import com.manymonkeys.app.tag.common.OpenDialogButton;
 import com.manymonkeys.service.cinema.TagService;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Layout;
@@ -18,8 +19,8 @@ public class AddTagButton extends OpenDialogButton {
     private TagService service;
     private TextField tagName;
 
-    public AddTagButton(Window topWindow, TagService service) {
-        super(topWindow, "Create Tag", "Create Custom Tag With Name", "Create");
+    public AddTagButton(TagService service) {
+        super("Create Tag", "Create Custom Tag With Name", "Create");
         this.service = service;
         tagName = new TextField();
     }
@@ -37,9 +38,9 @@ public class AddTagButton extends OpenDialogButton {
         String name = (String) tagName.getValue();
         if (name != null && service.getTag(name) == null) {
             service.createTag(name);
-            topWindow.removeWindow(subWindow);
+            MainApplication.getCurrentNavigableAppLevelWindow().removeWindow(subWindow);
         } else {
-            topWindow.showNotification("Can't add empty or existing tag", Window.Notification.TYPE_WARNING_MESSAGE);
+            MainApplication.getCurrentNavigableAppLevelWindow().showNotification("Can't add empty or existing tag", Window.Notification.TYPE_WARNING_MESSAGE);
         }
     }
 

@@ -99,12 +99,24 @@ public interface InformationItemDao {
 
     /**
      * Updates or creates metadata of InformationItem
+     * Does not create index for this pair
      *
      * @param item  to update
      * @param key   of metadata
      * @param value of metadata
      */
     void setMeta(InformationItem item, String key, String value);
+
+    /**
+     * Updates or creates metadata of InformationItem
+     * Allows to index this key for this item
+     *
+     * @param item   to update
+     * @param key    of metadata
+     * @param value  of metadata
+     * @param indexed allows to index this meta
+     */
+    void setMeta(InformationItem item, String key, String value, boolean indexed);
 
     /**
      * Removes metadata from item

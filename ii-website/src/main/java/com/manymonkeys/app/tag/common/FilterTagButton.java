@@ -1,5 +1,6 @@
-package com.manymonkeys.app.button.common;
+package com.manymonkeys.app.tag.common;
 
+import com.manymonkeys.app.MainApplication;
 import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.service.cinema.TagService;
 import com.vaadin.data.Validator;
@@ -25,8 +26,8 @@ public abstract class FilterTagButton extends OpenDialogButton {
     private Label searchFieldErrorMessage;
     private ListSelect tagSelect;
 
-    protected FilterTagButton(Window topWindow, String buttonName, String windowName, String applyTitle, TagService service) {
-        super(topWindow, buttonName, windowName, applyTitle);
+    protected FilterTagButton(String buttonName, String windowName, String applyTitle, TagService service) {
+        super(buttonName, windowName, applyTitle);
         this.service = service;
     }
 
@@ -69,7 +70,7 @@ public abstract class FilterTagButton extends OpenDialogButton {
     public void onSubmit() {
         MetaPair selected = (MetaPair) tagSelect.getValue();
         if (selected == null) {
-            topWindow.showNotification("Select tag to load", Window.Notification.TYPE_ERROR_MESSAGE);
+            MainApplication.getCurrentNavigableAppLevelWindow().showNotification("Select tag to load", Window.Notification.TYPE_ERROR_MESSAGE);
         } else {
             processItem(service.getByUUID(selected.id));
         }

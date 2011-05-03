@@ -1,6 +1,7 @@
 package com.manymonkeys.crawlers.movielens;
 
 import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.crawlers.common.PropertyManager;
 import com.manymonkeys.service.cinema.MovieService;
 import com.manymonkeys.service.cinema.TagService;
 import me.prettyprint.hector.api.Cluster;

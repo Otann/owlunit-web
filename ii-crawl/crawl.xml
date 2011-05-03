@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="ii-crawl" default="crawl-movielens" basedir=".">
+<project name="ii-crawl" basedir="."> <!-- default="crawl-movielens" -->
 
     <target name="crawl-movielens">
         <echo>
@@ -20,6 +20,25 @@
         </echo>
 
         <java classname="com.manymonkeys.crawlers.movielens.MovieLensTagsParser" fork="true" failonerror="true"
+              maxmemory="512m">
+            <classpath>
+                <fileset dir="./target">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </java>
+
+        <echo>
+            Fuck yeah!
+        </echo>
+    </target>
+
+    <target name="crawl-imdb-actors">
+        <echo>
+            crawling actors from imdb
+        </echo>
+
+        <java classname="com.manymonkeys.crawlers.imdb.ImdbActorsParser" fork="true" failonerror="true"
               maxmemory="512m">
             <classpath>
                 <fileset dir="./target">

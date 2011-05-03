@@ -1,4 +1,4 @@
-package com.manymonkeys.crawlers.movielens;
+package com.manymonkeys.crawlers.common;
 
 import java.util.Locale;
 import java.util.Properties;
@@ -19,7 +19,8 @@ public class PropertyManager {
         CASSANDRA_KEYSPACE("cassandra.keyspace"),
 
         MOVIES_DATA_FILE("movies.data.file"),
-        TAGS_DATA_FILE("tags.data.file");
+        TAGS_DATA_FILE("tags.data.file"),
+        IMDB_ACTORS_FILE("imdb.actors.file");
 
         String value;
 

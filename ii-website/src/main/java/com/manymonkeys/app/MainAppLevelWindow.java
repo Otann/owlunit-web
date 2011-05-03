@@ -1,5 +1,6 @@
 package com.manymonkeys.app;
 
+import com.manymonkeys.app.auth.AuthManager;
 import com.vaadin.incubator.dashlayout.ui.VerDashLayout;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.ComponentContainer;

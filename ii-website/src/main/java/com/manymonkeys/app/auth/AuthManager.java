@@ -1,5 +1,6 @@
-package com.manymonkeys.app;
+package com.manymonkeys.app.auth;
 
+import com.manymonkeys.app.MainAppLevelWindow;
 import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.service.auth.UserService;
 import com.vaadin.ui.Component;

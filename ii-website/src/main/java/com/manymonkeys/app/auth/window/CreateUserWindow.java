@@ -1,6 +1,6 @@
 package com.manymonkeys.app.auth.window;
 
-import com.manymonkeys.app.AuthManager;
+import com.manymonkeys.app.auth.AuthManager;
 import com.manymonkeys.app.MainApplication;
 import com.manymonkeys.app.auth.PasswordValidator;
 import com.manymonkeys.core.ii.InformationItem;

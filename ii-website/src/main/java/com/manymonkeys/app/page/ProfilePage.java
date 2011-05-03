@@ -1,16 +1,11 @@
 package com.manymonkeys.app.page;
 
-import com.manymonkeys.app.AuthManager;
-import com.manymonkeys.app.auth.CreateUserButton;
-import com.manymonkeys.app.auth.LoginButton;
-import com.manymonkeys.app.auth.LogoutButton;
+import com.manymonkeys.app.auth.AuthManager;
 import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.service.auth.UserService;
-import com.manymonkeys.service.cinema.TagService;
 import com.manymonkeys.ui.component.ItemTag;
 import com.manymonkeys.ui.theme.Stream;
 import com.vaadin.incubator.dashlayout.ui.VerDashLayout;
-import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.vaadin.gravatar.GravatarResource;

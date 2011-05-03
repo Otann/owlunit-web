@@ -20,7 +20,8 @@ import java.util.regex.Pattern;
  */
 public class MovieLensTagsParser {
 
-    private static long DEFAULT_WEIGHT = 1;
+    private static double DEFAULT_WEIGHT = 1;
+    private static double ADDITIONAL_WEIGHT = 0.2;
 
     public static void main(String[] args) throws IOException {
         Cluster cluster = HFactory.getOrCreateCluster(
@@ -31,7 +32,6 @@ public class MovieLensTagsParser {
         try {
 
             MovieService movieService = new MovieService(keyspace);
-            TagService tagService = new TagService(keyspace);
 
             String filePath = PropertyManager.get(PropertyManager.Property.TAGS_DATA_FILE);
 
@@ -67,13 +67,13 @@ public class MovieLensTagsParser {
                         System.out.println(String.format("Created %d tags", done));
                     }
 
-                    InformationItem tag = tagService.getTag(tagName);
+                    InformationItem tag = movieService.getTag(tagName);
                     double weight = 0;
                     if (tag == null) {
                         tag = movieService.createTag(tagName);
                         weight = DEFAULT_WEIGHT;
                     } else if (movie.getComponentWeight(tag) != null) {
-                        weight = movie.getComponentWeight(tag) + 1;
+                        weight = movie.getComponentWeight(tag) + ADDITIONAL_WEIGHT;
                     } else {
                         weight = DEFAULT_WEIGHT;
                     }

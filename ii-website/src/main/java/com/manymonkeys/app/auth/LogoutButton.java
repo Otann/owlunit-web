@@ -1,6 +1,5 @@
 package com.manymonkeys.app.auth;
 
-import com.manymonkeys.app.AuthManager;
 import com.manymonkeys.app.MainApplication;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.MenuBar;

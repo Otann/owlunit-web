@@ -61,12 +61,12 @@ public class MovieLensMoviesParser {
                 String[] genres = line.substring(lastSemicolon + 1, line.length()).split("\\|");
 
                 InformationItem movie = movieService.createMovie(name, Long.parseLong(year));
-                movieService.setMeta(movie, EXTERNAL_ID, id);
+                movieService.setMeta(movie, EXTERNAL_ID, id, true);
                 if (aka != null) {
-                    movieService.setMeta(movie, MovieService.AKA_NAME, aka);
+                    movieService.setMeta(movie, MovieService.AKA_NAME, aka, true);
                 }
                 if (nameTranslate != null) {
-                    movieService.setMeta(movie, MovieService.TRANSLATE_NAME, nameTranslate);
+                    movieService.setMeta(movie, MovieService.TRANSLATE_NAME, nameTranslate, true);
                 }
 
                 done++;

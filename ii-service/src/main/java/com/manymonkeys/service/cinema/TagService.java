@@ -15,7 +15,7 @@ import java.util.NoSuchElementException;
 public class TagService extends CassandraInformationItemDaoImpl {
 
     public static final String CLASS_MARK_KEY = TagService.class.getName();
-    public static final String CLASS_MARK_VALUE = "created by";
+    public static final String CLASS_MARK_VALUE = "this indicates that item was created through TagService class"; // not indexed, fine to be long
 
     public static final String NAME = TagService.class.getName() + ".NAME";
 
@@ -23,6 +23,7 @@ public class TagService extends CassandraInformationItemDaoImpl {
         super(keyspace);
     }
 
+    // TODO: think about checking duplicates
     public InformationItem createTag(String name) {
         InformationItem item = createInformationItem();
         setMeta(item, NAME, name, true);

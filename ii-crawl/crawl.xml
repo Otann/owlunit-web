@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="ii-crawl" basedir="."> <!-- default="crawl-movielens" -->
 
-    <target name="crawl-movielens">
+    <target name="crawl-movielens-movies">
         <echo>
             crawling movies from movielens
         </echo>
@@ -15,6 +15,12 @@
             </classpath>
         </java>
 
+        <echo>
+            Fuck yeah!
+        </echo>
+    </target>
+
+    <target name="crawl-movielens-tags">
         <echo>
             now crawling tags from movielens
         </echo>

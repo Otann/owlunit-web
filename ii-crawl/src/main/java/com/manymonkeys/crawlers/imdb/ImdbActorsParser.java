@@ -36,6 +36,7 @@ public class ImdbActorsParser extends CassandraCrawler {
         String line = fileReader.readLine();
         Pattern actorMovieCharacterPattern = Pattern.compile("^([a-zA-Z0-9\\s]+),\\s([a-zA-Z0-9\\s]+)\\s\\s(.+)\\((\\d+)\\).*\\[(.+)\\].*$");
         Pattern actorMoviePattern = Pattern.compile("^([a-zA-Z0-9\\s]+),\\s([a-zA-Z0-9\\s]+)\\s\\s(.+)\\((\\d+)\\).*(\\[(.+)\\])?+$");
+        Pattern movieCharacterPattern = Pattern.compile("^\\s\\s\\s(.+)\\((\\d+)\\).*(\\[(.+)\\]).*$");
         Pattern moviePattern = Pattern.compile("^\\s\\s\\s(.+)\\((\\d+)\\).*(\\[(.+)\\])?+$");
 
         String name = null;
@@ -52,6 +53,7 @@ public class ImdbActorsParser extends CassandraCrawler {
 
                 Matcher actorMovieCharacterMatcher;
                 Matcher actorMovieMatcher;
+                Matcher movieCharacterMatcher;
                 Matcher movieMatcher;
                 if ((actorMovieCharacterMatcher = actorMovieCharacterPattern.matcher(line)).matches()) {
                     surname = actorMovieCharacterMatcher.group(1).trim();
@@ -66,10 +68,15 @@ public class ImdbActorsParser extends CassandraCrawler {
                     movie = cropMovieName(actorMovieMatcher.group(3));
                     year = actorMovieMatcher.group(4).trim();
 //                    System.out.println(name + " " + surname + " played in " + movie + " " + year);
+                } else if ((movieCharacterMatcher = movieCharacterPattern.matcher(line)).matches()) {
+                    movie = cropMovieName(movieCharacterMatcher.group(1)).trim();
+                    year = movieCharacterMatcher.group(2).trim();
+                    character = movieCharacterMatcher.group(4).trim();
+//                    System.out.println(name + " " + surname + " played in " + movie + " " + year + " character " + character);
                 } else if ((movieMatcher = moviePattern.matcher(line)).matches()) {
                     movie = cropMovieName(movieMatcher.group(1)).trim();
                     year = movieMatcher.group(2).trim();
-//                    System.out.println(name + " " + surname + " played in " + movie + " " + year);
+// System.out.println(name + " " + surname + " played in " + movie + " " + year);
                 }
                 /* No match was found */
 //                System.out.println(line);

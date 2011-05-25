@@ -70,7 +70,9 @@ public class ImdbActorsParser extends CassandraCrawler {
                 if (lineNumber % 5000 == 0) {
                     long passed = watch.time();
                     watch.reset();
-                    System.out.println(String.format("Processed %d lines. Going at speed %.3f lines per second", lineNumber, 5000d * 1000 / passed));
+                    System.out.println(String.format("Processed %d lines. Going at speed %.3f lines per second. Found %d actors",
+                            lineNumber, 5000d * 1000 / passed,
+                            actorsCount));
                 }
 
                 needUpdateActor = false;
@@ -115,7 +117,7 @@ public class ImdbActorsParser extends CassandraCrawler {
                 try {
 
                     InformationItem movieItem = movieService.getTag(movie); //TODO: names may differ, need to make this thing smarter
-                    if (movie == null) {
+                    if (movieItem == null) {
                         movieItem = movieService.getByNameSimplified(movie);
                     }
 //                    Collection<InformationItem> movieItems = movieService.multigetByMeta(MovieService.NAME, movie);
@@ -130,7 +132,7 @@ public class ImdbActorsParser extends CassandraCrawler {
 //                    }
 
                     if (movieItem != null) {
-                        System.out.println("Found one match for " + name + " " + surname + " in " + movie);
+//                        System.out.println("Found one match for " + name + " " + surname + " in " + movie);
 
                         if (needUpdateActor) {
                             actorItem = personService.createPerson(name, surname);

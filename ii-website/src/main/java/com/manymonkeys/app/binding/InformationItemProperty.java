@@ -15,8 +15,7 @@ public class InformationItemProperty extends ObjectProperty<InformationItem> {
         super(item, InformationItem.class, true);
     }
 
-    public void setReadOnly(boolean newStatus) {
-    }
+    public void setReadOnly(boolean newStatus) { }
 
     @Override
     public String toString() {

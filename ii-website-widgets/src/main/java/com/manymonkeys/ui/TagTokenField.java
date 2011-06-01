@@ -1,10 +1,8 @@
-package com.manymonkeys.ui.component;
+package com.manymonkeys.ui;
 
-import com.manymonkeys.app.binding.InformationItemContainer;
-import com.manymonkeys.app.binding.InformationItemItem;
 import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.service.cinema.TagService;
-import com.manymonkeys.ui.theme.Stream;
+import com.vaadin.data.Container;
 import com.vaadin.ui.Button;
 import org.vaadin.tokenfield.TokenField;
 
@@ -20,16 +18,14 @@ import java.util.Set;
 public class TagTokenField extends TokenField {
 
     private Set<InformationItem> items;
+    private Object properyId;
 
-    public TagTokenField(TagService service) {
-        items = new HashSet<InformationItem>();
-
-        setStyleName(Stream.TOKEN_BOX);
-        addStyleName(Stream.TOKEN_BOX_TEXTFIELD);
-
+    public TagTokenField(TagService service, Container container, Object propertyId) {
+        this.items = new HashSet<InformationItem>();
+        this.properyId = properyId;
 
         super.setTokenInsertPosition(InsertPosition.BEFORE);
-        super.setContainerDataSource(new InformationItemContainer(service));
+        super.setContainerDataSource(container);
     }
 
     public Collection<InformationItem> getInformationItems() {
@@ -37,8 +33,7 @@ public class TagTokenField extends TokenField {
     }
 
     private InformationItem extractInformationItem(Object tokenId) {
-        return (InformationItem) getContainerDataSource().getItem(tokenId)
-                .getItemProperty(InformationItemItem.SINGLE_PROPERTY_ID).getValue();
+        return (InformationItem) getContainerDataSource().getItem(tokenId).getItemProperty(properyId).getValue();
     }
 
     @Override

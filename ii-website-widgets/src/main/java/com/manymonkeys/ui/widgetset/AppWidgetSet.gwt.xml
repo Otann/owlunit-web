@@ -3,9 +3,16 @@
         "-//Google Inc.//DTD Google Web Toolkit 1.7.0//EN"
         "http://google-web-toolkit.googlecode.com/svn/tags/1.7.0/distro-source/core/src/gwt-module.dtd">
 <module>
+
+    <!-- Inherit the default widget set -->
     <inherits name="com.vaadin.terminal.gwt.DefaultWidgetSet"/>
     <inherits name="org.vaadin.tokenfield.TokenfieldWidgetset"/>
     <inherits name="com.vaadin.incubator.dashlayout.DashLayoutWidgetSet"/>
     <inherits name="com.vaadin.incubator.fastlayouts.ws.FastLayoutsWidgetSet"/>
     <inherits name="org.vaadin.browsercookies.widgetset.BrowserCookiesApplicationWidgetset"/>
+
+    <!-- The default theme of this widget set -->
+    <stylesheet src="colorpicker/itemtag.css"/>
+    
+    
 </module>

@@ -1,6 +1,5 @@
-package com.manymonkeys.ui.component;
+package com.manymonkeys.ui;
 
-import com.manymonkeys.app.page.ItemPage;
 import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.service.cinema.TagService;
 import com.manymonkeys.ui.widgetset.client.ui.VItemTag;
@@ -31,14 +30,17 @@ public class ItemTag extends AbstractComponent {
     private boolean showComponents;
     private int componentsLimit = DEFAULT_COMPONENTS_LIMIT;
 
-    public ItemTag(InformationItem item, Double value) {
-        this(item, value, 0);
+    private Class pageClass;
+
+    public ItemTag(InformationItem item, Double value, Class pageClass) {
+        this(item, value, 0, pageClass);
     }
 
-    public ItemTag(InformationItem item, Double value, int componentsLimit) {
+    public ItemTag(InformationItem item, Double value, int componentsLimit, Class pageClass) {
         this.item = item;
         this.value = value;
         this.componentsLimit = componentsLimit;
+        this.pageClass = pageClass;
         requestRepaintRequests();
     }
 
@@ -83,7 +85,7 @@ public class ItemTag extends AbstractComponent {
     public void paintContent(PaintTarget target) throws PaintException {
         super.paintContent(target);
 
-        PageLink link = new ParamPageLink(item.getMeta(TagService.NAME), ItemPage.class, item.getUUID().toString());
+        PageLink link = new ParamPageLink(item.getMeta(TagService.NAME), pageClass, item.getUUID().toString());
         link.paint(target);
 
         Label valueLabel = new Label(String.format("%.0f", value == null ? 0D : value));
@@ -98,7 +100,7 @@ public class ItemTag extends AbstractComponent {
                 while (iterator.hasNext() && limit > 0) {
                     limit--;
                     InformationItem component = iterator.next();
-                    Link cmp = new ParamPageLink(component.getMeta(TagService.NAME), ItemPage.class, component.getUUID().toString());
+                    Link cmp = new ParamPageLink(component.getMeta(TagService.NAME), pageClass, component.getUUID().toString());
                     cmp.paint(target);
                 }
 

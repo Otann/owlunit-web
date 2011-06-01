@@ -3,7 +3,7 @@ package com.manymonkeys.app.page;
 import com.manymonkeys.app.auth.AuthManager;
 import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.service.auth.UserService;
-import com.manymonkeys.ui.component.ItemTag;
+import com.manymonkeys.ui.ItemTag;
 import com.manymonkeys.ui.theme.Stream;
 import com.vaadin.incubator.dashlayout.ui.VerDashLayout;
 import com.vaadin.ui.*;
@@ -83,7 +83,7 @@ public class ProfilePage extends VerDashLayout {
             Panel components = new Panel("User's components");
             this.addComponent(components);
             for (Map.Entry<InformationItem, Double> entry : user.getComponents().entrySet()) {
-                components.addComponent(new ItemTag(entry.getKey(), entry.getValue(), 0));
+                components.addComponent(new ItemTag(entry.getKey(), entry.getValue(), 0, ItemPage.class));
             }
 
             Panel basket = new Panel("User's basket");

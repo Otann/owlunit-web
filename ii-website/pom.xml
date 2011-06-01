@@ -16,18 +16,12 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
     </properties>
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
-                </configuration>
-            </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
@@ -64,41 +58,31 @@
                 </configuration>
             </plugin>
 
-            <!-- Compile custom GWT components or widget dependencies with the GWT compiler -->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>gwt-maven-plugin</artifactId>
-                <version>2.1.0-1</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.1.1</version>
                 <configuration>
-                    <webappDirectory>${project.build.directory}/${project.build.finalName}/VAADIN/widgetsets
-                    </webappDirectory>
-                    <extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
-                    <runTarget>ii-website</runTarget>
-                    <hostedWebapp>${project.build.directory}/${project.build.finalName}</hostedWebapp>
-                    <noServer>true</noServer>
-                    <port>8080</port>
-                    <soyc>false</soyc>
+                    <webappDirectory>${webappDirectory}</webappDirectory>
+                    <webxml>WEB-INF/web.xml</webxml>
                 </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>resources</goal>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
+
             <plugin>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-maven-plugin</artifactId>
-                <version>1.0.1</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.1</version>
                 <executions>
                     <execution>
-                        <configuration>
-                        </configuration>
+                        <phase>generate-resources</phase>
                         <goals>
-                            <goal>update-widgetset</goal>
+                            <goal>unpack-dependencies</goal>
                         </goals>
+                        <configuration>
+                            <outputDirectory>${webappDirectory}</outputDirectory>
+                            <includeArtifactIds>ii-website-widgets</includeArtifactIds>
+                            <includes>VAADIN/**/*</includes>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -123,31 +107,11 @@
                         <baseResource implementation="org.mortbay.resource.ResourceCollection">
                             <!-- Workaround for Maven/Jetty issue http://jira.codehaus.org/browse/JETTY-680 -->
                             <!-- <resources>src/main/webapp,${project.build.directory}/${project.build.finalName}</resources> -->
-                            <resourcesAsCSV>src/main/webapp,${project.build.directory}/${project.build.finalName}
-                            </resourcesAsCSV>
+                            <resourcesAsCSV>src/main/webapp,${project.build.directory}/${project.build.finalName}</resourcesAsCSV>
                         </baseResource>
                     </webAppConfig>
                 </configuration>
             </plugin>
-
-            <!--<plugin>-->
-            <!--<groupId>net.kindleit</groupId>-->
-            <!--<artifactId>maven-gae-plugin</artifactId>-->
-            <!--<version>0.8.2</version>-->
-            <!--<configuration>-->
-            <!--<serverId>appengine.google.com</serverId>-->
-            <!--<sdkDir>${appengine.sdk.root}</sdkDir>-->
-            <!--<appDir>${basedir}/war</appDir>-->
-            <!--</configuration>-->
-            <!--<dependencies>-->
-            <!--<dependency>-->
-            <!--<groupId>net.kindleit</groupId>-->
-            <!--<artifactId>gae-runtime</artifactId>-->
-            <!--<version>1.4.2</version>-->
-            <!--<type>pom</type>-->
-            <!--</dependency>-->
-            <!--</dependencies>-->
-            <!--</plugin>-->
 
         </plugins>
     </build>
@@ -172,31 +136,6 @@
 
     </repositories>
 
-    <!--
-         <pluginRepositories>
-           <pluginRepository>
-             <id>codehaus-snapshots</id>
-             <url>http://nexus.codehaus.org/snapshots</url>
-             <snapshots>
-               <enabled>true</enabled>
-             </snapshots>
-             <releases>
-               <enabled>false</enabled>
-             </releases>
-           </pluginRepository>
-           <pluginRepository>
-             <id>vaadin-snapshots</id>
-             <url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
-             <snapshots>
-               <enabled>true</enabled>
-             </snapshots>
-             <releases>
-               <enabled>false</enabled>
-             </releases>
-           </pluginRepository>
-         </pluginRepositories>
-         -->
-
     <dependencies>
 
         <!-- ====== -->
@@ -210,33 +149,8 @@
 
         <dependency>
             <groupId>org.vaadin.addons</groupId>
-            <artifactId>tokenfield</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.vaadin.addons</groupId>
-            <artifactId>navigator7</artifactId>
-            <version>7.49</version>
-        </dependency>
-        <dependency>
-            <groupId>org.vaadin.addons</groupId>
             <artifactId>appfoundation</artifactId>
             <version>1.3.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.vaadin.addons</groupId>
-            <artifactId>browsercookies</artifactId>
-            <version>1.0.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.vaadin.addons</groupId>
-            <artifactId>fastlayouts</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.vaadin.addons</groupId>
-            <artifactId>dashlayout</artifactId>
-            <version>0.1.5-beta</version>
         </dependency>
         <dependency>
             <groupId>org.vaadin.addons</groupId>
@@ -255,6 +169,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>ii-crawl</artifactId>
+            <version>[${project.version},]</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>ii-website-widgets</artifactId>
             <version>[${project.version},]</version>
         </dependency>
 

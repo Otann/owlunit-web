@@ -1,10 +1,12 @@
 package com.manymonkeys.app.page;
 
+import com.manymonkeys.app.binding.InformationItemContainer;
+import com.manymonkeys.app.binding.InformationItemItem;
 import com.manymonkeys.core.algo.Recommender;
 import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.service.cinema.TagService;
-import com.manymonkeys.ui.component.ItemTag;
-import com.manymonkeys.ui.component.TagTokenField;
+import com.manymonkeys.ui.ItemTag;
+import com.manymonkeys.ui.TagTokenField;
 import com.manymonkeys.ui.theme.Stream;
 import com.vaadin.data.Property;
 import com.vaadin.incubator.dashlayout.ui.VerDashLayout;
@@ -49,7 +51,10 @@ public class SearchPage extends VerDashLayout implements Button.ClickListener {
 
         CssLayout suggestions = new CssLayout();
         suggestions.setWidth("100%");
-        searchTokens = new TagTokenField(service);
+
+        searchTokens = new TagTokenField(service, new InformationItemContainer(service), InformationItemItem.SINGLE_PROPERTY_ID);
+        searchTokens.setStyleName(Stream.TOKEN_BOX);
+        searchTokens.addStyleName(Stream.TOKEN_BOX_TEXTFIELD);
         searchTokens.setInputPrompt("Add Search Keywords");
         searchTokens.setNewTokensAllowed(false);
         searchTokens.addListener(new Property.ValueChangeListener() {
@@ -106,7 +111,7 @@ public class SearchPage extends VerDashLayout implements Button.ClickListener {
             --limit;
             Map.Entry<InformationItem, Double> item = it.next();
 
-            ItemTag tag = new ItemTag(item.getKey(), item.getValue(), ItemTag.DEFAULT_COMPONENTS_LIMIT);
+            ItemTag tag = new ItemTag(item.getKey(), item.getValue(), ItemTag.DEFAULT_COMPONENTS_LIMIT, ItemPage.class);
             searchResults.addComponent(tag);
         }
 

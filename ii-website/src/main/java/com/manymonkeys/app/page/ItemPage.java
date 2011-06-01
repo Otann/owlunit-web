@@ -3,7 +3,7 @@ package com.manymonkeys.app.page;
 import com.manymonkeys.core.algo.Recommender;
 import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.service.cinema.TagService;
-import com.manymonkeys.ui.component.ItemTag;
+import com.manymonkeys.ui.ItemTag;
 import com.manymonkeys.ui.theme.Stream;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomLayout;
@@ -89,7 +89,6 @@ public class ItemPage extends CustomLayout {
     @Override
     public void attach() {
         super.attach();
-
         setItemId(uuid);
     }
 
@@ -161,7 +160,7 @@ public class ItemPage extends CustomLayout {
             limit--;
             Map.Entry<InformationItem, Double> componentEntry = iterator.next();
             if (componentEntry.getValue() > 0) {
-                ItemTag tag = new ItemTag(componentEntry.getKey(), componentEntry.getValue());
+                ItemTag tag = new ItemTag(componentEntry.getKey(), componentEntry.getValue(), ItemPage.class);
                 tag.setWidth(null);
                 components.addComponent(tag);
             }
@@ -186,7 +185,7 @@ public class ItemPage extends CustomLayout {
             Map.Entry<InformationItem, Double> recommendation = iterator.next();
             InformationItem item = recommendation.getKey();
             Double value = recommendation.getValue();
-            ItemTag tag = new ItemTag(item, value, ItemTag.DEFAULT_COMPONENTS_LIMIT);
+            ItemTag tag = new ItemTag(item, value, ItemTag.DEFAULT_COMPONENTS_LIMIT, ItemPage.class);
             stream.addComponent(tag);
         }
 

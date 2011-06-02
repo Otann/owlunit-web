@@ -70,6 +70,10 @@
     display: inline-block;
     float: left;
 }
+.v-iitag .v-iitag-component-common,
+.v-iitag .v-iitag-component-common:focus {
+    background-color: #009933;
+}
 
 .v-iitag .v-iitag-component a:link span,
 .v-iitag .v-iitag-component a:visited span,

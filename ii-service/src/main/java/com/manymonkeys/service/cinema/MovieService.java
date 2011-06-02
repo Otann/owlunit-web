@@ -31,7 +31,7 @@ public class MovieService extends TagService {
 
     public InformationItem getByNameSimplified(String name) {
         try {
-            return multigetByMeta(SIMPLE_NAME, simplifyName(name)).iterator().next();
+            return loadByMeta(SIMPLE_NAME, simplifyName(name)).iterator().next();
         } catch (NoSuchElementException e) {
             return null;
         }
@@ -39,9 +39,14 @@ public class MovieService extends TagService {
 
     private String simplifyName(String name) {
         return name.trim().toLowerCase()
+                .replace("a ", "")
+                .replace("the ", "")
+                .replace(", a", "")
+                .replace(", the", "")
                 .replace(",", "")
                 .replace(".", "")
                 .replace(" ", "")
+                .replace("'", "")
                 .replace("'", "")
                 .replace("\"", "");
     }

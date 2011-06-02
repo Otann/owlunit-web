@@ -32,7 +32,7 @@ public class DeleteTagButton extends OpenDialogButton {
     public void onSubmit() {
         InformationItem item = page.getItem();
         if (item != null) {
-            page.setItem(null);
+            page.setItemId(null);
             page.getService().deleteInformationItem(item);
         }
     }

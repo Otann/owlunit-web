@@ -19,7 +19,7 @@ public class RecommenderPlainImpl implements Recommender {
     private double weightThreshold = 1.5;
 
     @Override
-    public void diffuse(InformationItem item, InformationItem component, InformationItemDao dao) {
+    public void diffuse(InformationItem item, InformationItem component, Double rating, InformationItemDao dao) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -79,11 +79,8 @@ public class RecommenderPlainImpl implements Recommender {
     public Map<InformationItem, Double> getMostLike(Map<InformationItem, Double> items, InformationItemDao dao) {
         Map<InformationItem, Double> result = new HashMap<InformationItem, Double>();
 
-        // Fast load parents
-        Collection<InformationItem> parents = dao.multigetParents(getValuableComponents(items).keySet());
-
-        // Fast load components for parents
-        dao.multigetComponents(parents);
+        Collection<InformationItem> parents = dao.reloadParents(getValuableComponents(items).keySet());
+        dao.reloadComponents(parents);
 
         for (InformationItem parent : parents) {
             result.put(parent, compareItemsMaps(items, parent.getComponents()));

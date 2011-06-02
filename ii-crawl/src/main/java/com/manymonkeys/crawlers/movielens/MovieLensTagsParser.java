@@ -56,7 +56,7 @@ public class MovieLensTagsParser {
 
                     InformationItem movie;
                     try {
-                        movie = movieService.multigetByMeta(MovieLensMoviesParser.EXTERNAL_ID, externalId).iterator().next();
+                        movie = movieService.loadByMeta(MovieLensMoviesParser.EXTERNAL_ID, externalId).iterator().next();
                     } catch (Exception e) {
                         System.out.println("Failed to find movie with external Id = " + externalId + "; " + e.getMessage());
                         continue;

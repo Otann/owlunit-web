@@ -15,11 +15,12 @@ public interface Recommender {
     /**
      * Performs item diffusion. Items exchanges information about their components.
      *
-     * @param item      which component added to
+     * @param item which component added to
      * @param component that was added
-     * @param dao       to perform add operations
+     * @param rating level of attraction described as number belonging to [-1, 1]
+     * @param dao to perform add operations
      */
-    void diffuse(InformationItem item, InformationItem component, InformationItemDao dao);
+    void diffuse(InformationItem item, InformationItem component, Double rating, InformationItemDao dao);
 
     /**
      * Compares two items based on a secret metric

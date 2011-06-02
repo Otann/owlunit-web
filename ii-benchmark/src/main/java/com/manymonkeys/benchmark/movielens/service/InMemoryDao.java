@@ -46,12 +46,12 @@ public class InMemoryDao implements InformationItemDao{
     }
 
     @Override
-    public InformationItem getByUUID(UUID uuid) {
+    public InformationItem loadByUUID(UUID uuid) {
         return items.get(uuid);
     }
 
     @Override
-    public Collection<InformationItem> multigetByUUID(Collection<UUID> uuids) {
+    public Collection<InformationItem> loadByUUIDs(Collection<UUID> uuids) {
         Collection<InformationItem> result = new LinkedList<InformationItem>();
         for (UUID uuid : uuids) {
             result.add(items.get(uuid));
@@ -60,7 +60,7 @@ public class InMemoryDao implements InformationItemDao{
     }
 
     @Override
-    public Collection<InformationItem> multigetByMeta(String key, String value) {
+    public Collection<InformationItem> loadByMeta(String key, String value) {
         throw new UnsupportedOperationException();
     }
 

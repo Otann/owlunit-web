@@ -157,7 +157,7 @@ public class ImdbActorsParser extends CassandraCrawler {
                         InformationItem characterItem = null;
 
                         if (localCharactersCache.containsKey(character)) {
-                            characterItem = personService.getByUUID(localCharactersCache.get(character));
+                            characterItem = personService.loadByUUID(localCharactersCache.get(character));
                             double oldWeight = actorItem.getComponentWeight(characterItem);
                             movieService.setComponentWeight(actorItem, characterItem, oldWeight + ADDITIONAL_CHARACTER_WEIGHT);
                         } else {

@@ -92,12 +92,17 @@
     background-color: #006699;
 }
 
-.ii-page-components .ii-useless-tag-counter {
+.ii-page-components .v-button-link,
+.ii-page-components .v-button-link:focus {
     background-color: #ffff99;
     float: left;
     display: inline-block;
-    margin: 7px;
-    padding: 5px;
+    margin: 9px;
+    padding: 6px;
+}
+.ii-page-components .v-button-link .v-button-caption{
+    text-decoration: none;
+    color: #000;
     font-size: 14px;
     font-weight: bold;
 }

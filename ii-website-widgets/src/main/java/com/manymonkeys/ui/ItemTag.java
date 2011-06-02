@@ -23,11 +23,15 @@ import java.util.*;
 @ClientWidget(VItemTag.class)
 public class ItemTag extends AbstractComponent {
 
-    public static final int DEFAULT_COMPONENTS_LIMIT = 10;
+    public static final int DEFAULT_COMPONENTS_LIMIT = 20;
+
+    public static final String CLASSNAME_COMMON_COMPONENT = "common";
 
     private InformationItem item;
     private Double value;
     private int componentsLimit = DEFAULT_COMPONENTS_LIMIT;
+
+    private Collection<InformationItem> commonItems;
 
     private Class pageClass;
 
@@ -40,7 +44,16 @@ public class ItemTag extends AbstractComponent {
         this.value = value;
         this.componentsLimit = componentsLimit;
         this.pageClass = pageClass;
+        this.commonItems = null;
         requestRepaintRequests();
+    }
+
+    public Collection<InformationItem> getCommonItems() {
+        return commonItems;
+    }
+
+    public void setCommonItems(Collection<InformationItem> commonItems) {
+        this.commonItems = commonItems;
     }
 
     public int getComponentsLimit() {
@@ -95,15 +108,11 @@ public class ItemTag extends AbstractComponent {
         valueLabel.setSizeUndefined();
         valueLabel.paint(target);
 
-        if (componentsLimit > 0) {
-            int limit = componentsLimit;
-            for (InformationItem component : sortByValue(item.getComponents(), false).keySet()) {
-                if (limit-- <= 0)
-                    break;
-
-                Link cmp = new ParamPageLink(component.getMeta(TagService.NAME), pageClass, component.getUUID().toString());
-                cmp.paint(target);
-            }
+        for (InformationItem componentItem : getDisplayedComponents()) {
+            Link componentLink = new ParamPageLink(componentItem.getMeta(TagService.NAME), pageClass, componentItem.getUUID().toString());
+            if (commonItems != null && commonItems.contains(componentItem))
+                componentLink.addStyleName(CLASSNAME_COMMON_COMPONENT);
+            componentLink.paint(target);
         }
     }
 
@@ -116,6 +125,20 @@ public class ItemTag extends AbstractComponent {
         } else {
             return String.format("%s [%.0f]", out, value);
         }
+    }
+
+    public Collection<InformationItem> getDisplayedComponents() {
+        if (componentsLimit <= 0)
+            return Collections.emptySet();
+
+        int limit = componentsLimit;
+        List<InformationItem> result = new LinkedList<InformationItem>();
+        for (InformationItem component : sortByValue(item.getComponents(), false).keySet()) {
+            if (limit-- <= 0)
+                break;
+            result.add(component);
+        }
+        return result;
     }
 
     private static<K, V extends Comparable<V>> Map<K, V> sortByValue(Map<K, V> map, final boolean straight) {

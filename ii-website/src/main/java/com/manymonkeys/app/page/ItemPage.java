@@ -56,7 +56,7 @@ public class ItemPage extends CustomLayout {
         return recommender;
     }
 
-    private void addComponents() {
+    private void reloadPageLayout() {
         removeAllComponents();
         if (item == null) {
 
@@ -89,23 +89,18 @@ public class ItemPage extends CustomLayout {
     }
 
     public void setItemId(String id) {
-        if (id == null) {
-            setItem(null);
-        } else {
-            UUID uuid = UUID.fromString(id);
-            setItem(service.getByUUID(uuid));
+        try {
+            item = service.loadByUUID(UUID.fromString(id));
+        } catch (Exception e) {
+            item = null;
         }
-    }
 
-    public void setItem(InformationItem item) {
-        if (this.item != item) {
-            this.item = item;
+        reloadPageLayout();
 
-            addComponents();
-
-            if (item != null) {
-                refillAll();
-            }
+        if (item != null) {
+            service.reloadParents(Collections.singleton(item));
+            service.reloadComponents(Collections.singleton(item));
+            refillAll();
         }
     }
 
@@ -136,10 +131,14 @@ public class ItemPage extends CustomLayout {
         techLabel.setSizeUndefined();
         meta.addComponent(techLabel);
         StringBuffer sb = new StringBuffer();
+
+        sb.append(String.format("<b>%d</b> has this item as a component</br>", item.getParents().size()));
+        sb.append(String.format("This item's id is <b>%s</b></br>", item.getUUID().toString()));
+
         for (Map.Entry<String, String> entry : item.getMetaMap().entrySet()) {
             sb.append(String.format("%s : %s<br>", entry.getKey(), entry.getValue()));
         }
-        sb.append(String.format("<b>%d</b> has this item as a component", item.getParents().size()));
+
         techLabel.setValue(sb.toString());
         techLabel.setContentMode(Label.CONTENT_XHTML);
     }
@@ -151,18 +150,38 @@ public class ItemPage extends CustomLayout {
 
         components.removeAllComponents();
 
-        int uselessCount = 0;
+        final Map<InformationItem, Double> uselessComponents = new HashMap<InformationItem, Double>();
         Map<InformationItem, Double> componentsMap = new HashMap<InformationItem, Double>();
 
         for (Map.Entry<InformationItem, Double> componentEntry : item.getComponents().entrySet()) {
             if ((componentEntry.getValue() > 0) && (componentEntry.getValue() < 1.99)) {
-                ++uselessCount;
+                uselessComponents.put(componentEntry.getKey(), componentEntry.getValue());
             } else {
                 componentsMap.put(componentEntry.getKey(), componentEntry.getValue());
             }
         }
 
-        for (Map.Entry<InformationItem, Double> componentEntry : sortByValue(componentsMap, false).entrySet()) {
+
+        addItemsToComponents(componentsMap);
+
+        if (uselessComponents.size() > 0) {
+            final Button loadButton = new Button(String.format("load other %d tags with low weight", uselessComponents.size()));
+            loadButton.setWidth(null);
+            loadButton.setStyleName(Stream.BUTTON_LINK);
+            loadButton.addListener(new Button.ClickListener(){
+                @Override
+                public void buttonClick(Button.ClickEvent event) {
+                    components.removeComponent(loadButton);
+                    addItemsToComponents(uselessComponents);
+                }
+            });
+            components.addComponent(loadButton);
+        }
+    }
+
+    private void addItemsToComponents(Map<InformationItem, Double> items) {
+        service.reloadMetadata(items.keySet());
+        for (Map.Entry<InformationItem, Double> componentEntry : sortByValue(items, false).entrySet()) {
             InformationItem item = componentEntry.getKey();
             ItemTag tag = new ItemTag(item, componentEntry.getValue(), ItemPage.class);
             tag.setWidth(null);
@@ -173,15 +192,6 @@ public class ItemPage extends CustomLayout {
 
             components.addComponent(tag);
         }
-
-        if (uselessCount > 0) {
-            Label uselessCountLabel = new Label(String.format("and %d other tags with low weight", uselessCount));
-            uselessCountLabel.addStyleName("ii-useless-tag-counter");
-            uselessCountLabel.setWidth(null);
-            components.addComponent(uselessCountLabel);
-        }
-
-
     }
 
     public void refillStream() {
@@ -194,29 +204,40 @@ public class ItemPage extends CustomLayout {
         Button loader = new Button("Load Recommendations");
         loader.setWidth("100%");
         stream.addComponent(loader);
-        loader.addListener(new Button.ClickListener(){
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                stream.removeAllComponents();
 
-                long startTime = System.currentTimeMillis();
+        loader.addListener(Button.ClickEvent.class, this,"loadRecommendations");
+    }
 
-                long limit = STREAM_SIZE_LIMIT;
-                Map<InformationItem, Double> recommendations = recommender.getMostLike(item, service);
-                service.multigetComponents(recommendations.keySet());
+    public void loadRecommendations (Button.ClickEvent event) {
+        stream.removeAllComponents();
 
-                for (Map.Entry<InformationItem, Double> recommendation : recommendations.entrySet()) {
-                    if (limit-- < 0)
-                        break;
+        long startTime = System.currentTimeMillis();
 
-                    InformationItem item = recommendation.getKey();
-                    Double value = recommendation.getValue();
-                    ItemTag tag = new ItemTag(item, value, ItemTag.DEFAULT_COMPONENTS_LIMIT, ItemPage.class);
-                    stream.addComponent(tag);
-                }
-            }
-        });
+        long limit = STREAM_SIZE_LIMIT;
+        Map<InformationItem, Double> recommendations = recommender.getMostLike(item, service);
 
+        List<InformationItem> itemsToReload = new LinkedList<InformationItem>();
+        List<ItemTag> tagsToAdd = new LinkedList<ItemTag>();
+
+        for (Map.Entry<InformationItem, Double> entry : recommendations.entrySet()) {
+            if (limit-- < 0)
+                break;
+
+            InformationItem recommendedItem = entry.getKey();
+            Double value = entry.getValue();
+            ItemTag tag = new ItemTag(recommendedItem, value, ItemTag.DEFAULT_COMPONENTS_LIMIT, ItemPage.class);
+            tag.setCommonItems(item.getComponents().keySet());
+            tagsToAdd.add(tag);
+
+            itemsToReload.add(recommendedItem);
+            itemsToReload.addAll(tag.getDisplayedComponents());
+        }
+
+        service.reloadMetadata(itemsToReload);
+        for(ItemTag tag : tagsToAdd)
+            stream.addComponent(tag);
+
+        getApplication().getMainWindow().showNotification(String.format("Recommendation search took %d seconds", (System.currentTimeMillis() - startTime) / 1000));
     }
 
     private static<K, V extends Comparable<V>> Map<K, V> sortByValue(Map<K, V> map, final boolean straight) {

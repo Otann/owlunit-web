@@ -14,20 +14,13 @@ import java.util.UUID;
  */
 public class CassandraInformationItemImpl implements InformationItem, Comparable<InformationItem> {
 
-    // Tech
-    CassandraInformationItemDaoImpl dao;
-
-    // Raw
     UUID uuid;
-    Map<String, String> meta;   // always fetched from db
+    Map<String, String> meta;
+    Map<InformationItem, Double> components;
+    Map<InformationItem, Double> parents;
 
-    Map<InformationItem, Double> components; // lazy or with multiget
-    Map<InformationItem, Double> parents;    // lazy or with multiget
-
-    CassandraInformationItemImpl(UUID uuid, CassandraInformationItemDaoImpl dao) {
-        // hide construction to package-level
+    CassandraInformationItemImpl(UUID uuid) {
         this.uuid = uuid;
-        this.dao = dao;
         this.meta = new HashMap<String, String>();
     }
 
@@ -48,33 +41,21 @@ public class CassandraInformationItemImpl implements InformationItem, Comparable
 
     @Override
     public Map<InformationItem, Double> getComponents() {
-        if (components == null) {
-            dao.reloadComponents(this); //TODO: review
-        }
-        return ImmutableMap.copyOf(components);
+        return components;
     }
 
     @Override
     public Double getComponentWeight(InformationItem component) {
-        if (components == null) {
-            dao.reloadComponents(this); //TODO: review
-        }
         return components.get(component);
     }
 
     @Override
     public Map<InformationItem, Double> getParents() {
-        if (parents == null) {
-            dao.reloadParents(this); //TODO: review
-        }
         return parents;
     }
 
     @Override
     public Double getParentWeight(InformationItem parent) {
-        if (parents == null) {
-            dao.reloadParents(this); //TODO: review
-        }
         return parents.get(parent);
     }
 
@@ -97,5 +78,10 @@ public class CassandraInformationItemImpl implements InformationItem, Comparable
     @Override
     public int compareTo(InformationItem item) {
         return uuid.compareTo(item.getUUID());
+    }
+
+    @Override
+    public String toString() {
+        return uuid.toString();
     }
 }

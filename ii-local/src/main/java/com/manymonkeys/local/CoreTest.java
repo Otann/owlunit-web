@@ -37,7 +37,7 @@ public class CoreTest {
             dao.setMeta(item, "key", "value" + i);
         }
 
-        Collection<InformationItem> itemsByMultiget = dao.multigetByMeta("key", "value1");
+        Collection<InformationItem> itemsByMultiget = dao.loadByMeta("key", "value1");
         Map<UUID, String> itemsBySearch = dao.searchByMetaPrefix("key", "value");
 
         logger.info(String.format("Items found by multiget: %s", itemsByMultiget));

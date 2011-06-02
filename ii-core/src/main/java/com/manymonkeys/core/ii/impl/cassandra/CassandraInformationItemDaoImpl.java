@@ -62,6 +62,11 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
     private static final String CF_COMPONENTS = "COMPONENTS";
     private static final String CF_PARENTS = "PARENTS";
 
+    private static final UUIDSerializer us = UUIDSerializer.get();
+    private static final DoubleSerializer ds = DoubleSerializer.get();
+    private static final StringSerializer ss = StringSerializer.get();
+
+
     // Currently not used
 //    private static final String CF_SIMILAR = "SIMILAR";
 //    private static final String CF_RECALCULATE = "RECALCULATE";
@@ -79,219 +84,121 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
     }
 
     CassandraInformationItemImpl createInformationItem(UUID uuid) {
-        return new CassandraInformationItemImpl(uuid, this);
+        return new CassandraInformationItemImpl(uuid);
     }
 
     @Override
     public void deleteInformationItem(InformationItem item) {
-        if (item instanceof CassandraInformationItemImpl) {
-            CassandraInformationItemImpl localItem = (CassandraInformationItemImpl) item;
+        if (!(item instanceof CassandraInformationItemImpl))
+            throw generateWrongDaoException();
+        CassandraInformationItemImpl localItem = (CassandraInformationItemImpl) item;
 
-            Mutator<UUID> uuidMutator = HFactory.createMutator(keyspace, UUIDSerializer.get());
-            for (InformationItem parent : item.getParents().keySet()) {
-                uuidMutator.addDeletion(parent.getUUID(), CF_COMPONENTS, localItem.uuid, UUIDSerializer.get());
-            }
-            for (InformationItem component : item.getComponents().keySet()) {
-                uuidMutator.addDeletion(component.getUUID(), CF_PARENTS, localItem.uuid, UUIDSerializer.get());
-            }
-            uuidMutator.addDeletion(localItem.uuid, CF_META, null, StringSerializer.get());
-            uuidMutator.addDeletion(localItem.uuid, CF_COMPONENTS, null, StringSerializer.get());
-            uuidMutator.addDeletion(localItem.uuid, CF_PARENTS, null, StringSerializer.get());
-            uuidMutator.execute();
+        Mutator<UUID> uuidMutator = HFactory.createMutator(keyspace, us);
+        for (InformationItem parent : item.getParents().keySet())
+            uuidMutator.addDeletion(parent.getUUID(), CF_COMPONENTS, localItem.uuid, us);
+        for (InformationItem component : item.getComponents().keySet())
+            uuidMutator.addDeletion(component.getUUID(), CF_PARENTS, localItem.uuid, us);
+        uuidMutator.addDeletion(localItem.uuid, CF_META, null, ss);
+        uuidMutator.addDeletion(localItem.uuid, CF_COMPONENTS, null, ss);
+        uuidMutator.addDeletion(localItem.uuid, CF_PARENTS, null, ss);
+        uuidMutator.execute();
 
-            Mutator<String> stringMutator = HFactory.createMutator(keyspace, StringSerializer.get());
-            for (String key : localItem.meta.keySet()) {
-                String oldValue = localItem.meta.get(key);
-                String oldIndexKey = String.format(META_FORMAT, key, oldValue);
-                stringMutator.addDeletion(oldIndexKey, CF_META_INDEX, localItem.uuid, UUIDSerializer.get());
-
-                String[] oldWords = oldValue.toLowerCase().split("\\s");
-                for (String word : oldWords) {
-                    for (int i = 1; i <= word.length(); i++) {
-                        String rowName = String.format(META_FORMAT, key, word.substring(0, i));
-                        stringMutator.addDeletion(rowName, CF_META_PREFIX, localItem.uuid, UUIDSerializer.get());
-                    }
-                }
-            }
-            stringMutator.execute();
+        Mutator<String> stringMutator = HFactory.createMutator(keyspace, ss);
+        for (String key : localItem.meta.keySet()) {
+            String oldValue = localItem.meta.get(key);
+            removeMetaIndex(localItem, key, oldValue, stringMutator);
         }
+        stringMutator.execute();
     }
 
-    public void reloadComponents(CassandraInformationItemImpl item) {
-        if (item.components == null) {
-            item.components = new HashMap<InformationItem, Double>();
-        } else {
-            item.components.clear();
-        }
+    @Override
+    public void reloadMetadata(Collection<InformationItem> items) {
+        if (items.isEmpty())
+            return;
 
-        UUIDSerializer us = UUIDSerializer.get();
-        DoubleSerializer ds = DoubleSerializer.get();
+        Collection<UUID> ids = getUniqueIds(items);
 
-        SliceQuery<UUID, UUID, Double> sliceQuery = HFactory.createSliceQuery(keyspace, us, us, ds);
-        sliceQuery.setColumnFamily(CF_COMPONENTS);
-        sliceQuery.setKey(item.uuid);
-        sliceQuery.setRange(null, null, false, MULTIGET_COUNT);
+        MultigetSliceQuery<UUID, String, String> query = HFactory.createMultigetSliceQuery(keyspace, us, ss, ss);
+        query.setColumnFamily(CF_META);
+        query.setKeys(ids);
+        query.setRange(null, null, false, MULTIGET_COUNT);
 
-        QueryResult<ColumnSlice<UUID, Double>> queryResult = sliceQuery.execute();
-        List<HColumn<UUID, Double>> columns = queryResult.get().getColumns();
+        QueryResult<Rows<UUID, String, String>> queryResult = query.execute();
+        Rows<UUID, String, String> rows = queryResult.get();
 
-        Map<UUID, Double> componentsMap = new HashMap<UUID, Double>();
-        for (HColumn<UUID, Double> column : columns) {
-            componentsMap.put(column.getName(), column.getValue());
-        }
-
-        Collection<InformationItem> components = multigetByUUID(componentsMap.keySet());
-        for (InformationItem component : components) {
-            item.components.put(component, componentsMap.get(component.getUUID()));
+        for (InformationItem item : items) {
+            if (!(item instanceof CassandraInformationItemImpl))
+                continue;
+            CassandraInformationItemImpl itemImpl = (CassandraInformationItemImpl) item;
+            itemImpl.meta = new HashMap<String, String>();
+            for (HColumn<String, String> column : rows.getByKey(itemImpl.uuid).getColumnSlice().getColumns()) {
+                itemImpl.meta.put(column.getName(), column.getValue());
+            }
         }
     }
 
     @Override
-    public Collection<InformationItem> multigetComponents(Collection<InformationItem> items) {
-
-        Map<UUID, CassandraInformationItemImpl> itemsMap = collectionToUUIDMap(items);
-        if (itemsMap.isEmpty()) {
+    public Collection<InformationItem> reloadComponents(Collection<InformationItem> items) {
+        if (items.isEmpty())
             return Collections.emptySet();
-        }
 
-        UUIDSerializer us = UUIDSerializer.get();
-        DoubleSerializer ds = DoubleSerializer.get();
+        Collection<UUID> ids = getUniqueIds(items);
 
-        // Get list of ids of components
-        MultigetSliceQuery<UUID, UUID, Double> componentsIdQuery = HFactory.createMultigetSliceQuery(keyspace, us, us, ds);
-        componentsIdQuery.setColumnFamily(CF_COMPONENTS);
-        componentsIdQuery.setKeys(itemsMap.keySet());
-        componentsIdQuery.setRange(null, null, false, MULTIGET_COUNT);
+        MultigetSliceQuery<UUID, UUID, Double> query = HFactory.createMultigetSliceQuery(keyspace, us, us, ds);
+        query.setColumnFamily(CF_COMPONENTS);
+        query.setKeys(ids);
+        query.setRange(null, null, false, MULTIGET_COUNT);
 
-        QueryResult<Rows<UUID, UUID, Double>> queryResult = componentsIdQuery.execute();
+        QueryResult<Rows<UUID, UUID, Double>> queryResult = query.execute();
         Rows<UUID, UUID, Double> rows = queryResult.get();
 
-        // Prepare list for items query
-        Set<UUID> componentsQuerySet = new HashSet<UUID>();
-        for (Row<UUID, UUID, Double> row : rows) {
-            for (HColumn<UUID, Double> column : row.getColumnSlice().getColumns()) {
-                componentsQuerySet.add(column.getName());
+        Set<InformationItem> result = new HashSet<InformationItem>();
+        for (InformationItem item : items) {
+            if (!(item instanceof CassandraInformationItemImpl))
+                continue;
+            CassandraInformationItemImpl itemImpl = (CassandraInformationItemImpl) item;
+            itemImpl.components = new HashMap<InformationItem, Double>();
+            for (HColumn<UUID, Double> column : rows.getByKey(itemImpl.uuid).getColumnSlice().getColumns()) {
+                CassandraInformationItemImpl component = createInformationItem(column.getName());
+                result.add(component);
+                itemImpl.components.put(component, column.getValue());
             }
         }
-
-        // Get all components with meta
-        Collection<InformationItem> components = multigetByUUID(componentsQuerySet);
-        if (components.isEmpty()) {
-            return Collections.emptySet();
-        }
-        Map<UUID, CassandraInformationItemImpl> componentsMap = collectionToUUIDMap(components);
-
-        // Attach components back to items
-        for (Row<UUID, UUID, Double> row : rows) {
-            CassandraInformationItemImpl item = itemsMap.get(row.getKey());
-
-            if (item.components == null) {
-                item.components = new HashMap<InformationItem, Double>();
-            } else {
-                item.components.clear();
-            }
-
-            for (HColumn<UUID, Double> column : row.getColumnSlice().getColumns()) {
-                UUID link = column.getName();
-                Double value = column.getValue();
-
-                InformationItem component = componentsMap.get(link);
-                item.components.put(component, value);
-            }
-        }
-
-        return components;
-    }
-
-    public void reloadParents(CassandraInformationItemImpl item) {
-        if (item.parents == null) {
-            item.parents = new HashMap<InformationItem, Double>();
-        } else {
-            item.parents.clear();
-        }
-
-        UUIDSerializer us = UUIDSerializer.get();
-        DoubleSerializer ds = DoubleSerializer.get();
-
-        SliceQuery<UUID, UUID, Double> sliceQuery = HFactory.createSliceQuery(keyspace, us, us, ds);
-        sliceQuery.setColumnFamily(CF_PARENTS);
-        sliceQuery.setKey(item.uuid);
-        sliceQuery.setRange(null, null, false, MULTIGET_COUNT);
-        QueryResult<ColumnSlice<UUID, Double>> queryResult = sliceQuery.execute();
-        List<HColumn<UUID, Double>> columns = queryResult.get().getColumns();
-
-        Map<UUID, Double> parentsMap = new HashMap<UUID, Double>();
-        for (HColumn<UUID, Double> column : columns) {
-            parentsMap.put(column.getName(), column.getValue());
-        }
-
-        Collection<InformationItem> parents = multigetByUUID(parentsMap.keySet());
-        for (InformationItem parent : parents) {
-            item.parents.put(parent, parentsMap.get(parent.getUUID()));
-        }
+        return result;
     }
 
     @Override
-    public Collection<InformationItem> multigetParents(Collection<InformationItem> items) {
-
-        Map<UUID, CassandraInformationItemImpl> itemsMap = collectionToUUIDMap(items);
-        if (itemsMap.isEmpty()) {
+    public Collection<InformationItem> reloadParents(Collection<InformationItem> items) {
+        if (items.isEmpty())
             return Collections.emptySet();
-        }
 
-        UUIDSerializer us = UUIDSerializer.get();
-        DoubleSerializer ds = DoubleSerializer.get();
+        Collection<UUID> ids = getUniqueIds(items);
 
-        // Get list of ids of parents
-        MultigetSliceQuery<UUID, UUID, Double> parentsIdQuery = HFactory.createMultigetSliceQuery(keyspace, us, us, ds);
-        parentsIdQuery.setColumnFamily(CF_PARENTS);
-        parentsIdQuery.setKeys(itemsMap.keySet());
-        parentsIdQuery.setRange(null, null, false, MULTIGET_COUNT);
-        QueryResult<Rows<UUID, UUID, Double>> queryResult = parentsIdQuery.execute();
+        MultigetSliceQuery<UUID, UUID, Double> query = HFactory.createMultigetSliceQuery(keyspace, us, us, ds);
+        query.setColumnFamily(CF_PARENTS);
+        query.setKeys(ids);
+        query.setRange(null, null, false, MULTIGET_COUNT);
+
+        QueryResult<Rows<UUID, UUID, Double>> queryResult = query.execute();
         Rows<UUID, UUID, Double> rows = queryResult.get();
 
-        // Prepare list for items query
-        Set<UUID> parentsQuerySet = new HashSet<UUID>();
-        for (Row<UUID, UUID, Double> row : rows) {
-            for (HColumn<UUID, Double> column : row.getColumnSlice().getColumns()) {
-                parentsQuerySet.add(column.getName());
+        Set<InformationItem> result = new HashSet<InformationItem>();
+        for (InformationItem item : items) {
+            if (!(item instanceof CassandraInformationItemImpl))
+                continue;
+            CassandraInformationItemImpl itemImpl = (CassandraInformationItemImpl) item;
+            itemImpl.parents = new HashMap<InformationItem, Double>();
+            for (HColumn<UUID, Double> column : rows.getByKey(itemImpl.uuid).getColumnSlice().getColumns()) {
+                CassandraInformationItemImpl component = createInformationItem(column.getName());
+                result.add(component);
+                itemImpl.parents.put(component, column.getValue());
             }
         }
-
-        // Get all parents with meta
-        Collection<InformationItem> parents = multigetByUUID(parentsQuerySet);
-        if (parents.isEmpty()) {
-            return Collections.emptySet();
-        }
-
-        Map<UUID, CassandraInformationItemImpl> parentsMap = collectionToUUIDMap(parents);
-
-        // Attach parents back to items
-        for (Row<UUID, UUID, Double> row : rows) {
-            CassandraInformationItemImpl item = itemsMap.get(row.getKey());
-
-            if (item.parents == null) {
-                item.parents = new HashMap<InformationItem, Double>();
-            } else {
-                item.parents.clear();
-            }
-
-            for (HColumn<UUID, Double> column : row.getColumnSlice().getColumns()) {
-                UUID link = column.getName();
-                Double value = column.getValue();
-
-                InformationItem parent = parentsMap.get(link);
-                item.parents.put(parent, value);
-            }
-        }
-
-        return parents;
+        return result;
     }
 
     @Override
-    public InformationItem getByUUID(UUID uuid) {
-        UUIDSerializer us = UUIDSerializer.get();
-        StringSerializer ss = StringSerializer.get();
+    public InformationItem loadByUUID(UUID uuid) {
 
         SliceQuery<UUID, String, String> sliceQuery = HFactory.createSliceQuery(keyspace, us, ss, ss);
         sliceQuery.setColumnFamily(CF_META);
@@ -301,22 +208,18 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         QueryResult<ColumnSlice<String, String>> queryResult = sliceQuery.execute();
         List<HColumn<String, String>> columns = queryResult.get().getColumns();
 
-        if (columns.isEmpty()) {
-            return null; //TODO: means meta can't be loaded without uuid; discuss
-        }
+        if (columns.isEmpty())
+            return null; //TODO: means meta can't be loaded without meta; discuss
 
         CassandraInformationItemImpl item = createInformationItem(uuid);
-        for (HColumn<String, String> column : columns) {
+        for (HColumn<String, String> column : columns)
             item.meta.put(column.getName(), column.getValue());
-        }
 
         return item;
     }
 
     @Override
-    public Collection<InformationItem> multigetByUUID(Collection<UUID> uuids) {
-        UUIDSerializer us = UUIDSerializer.get();
-        StringSerializer ss = StringSerializer.get();
+    public Collection<InformationItem> loadByUUIDs(Collection<UUID> uuids) {
 
         MultigetSliceQuery<UUID, String, String> multigetSliceQuery = HFactory.createMultigetSliceQuery(keyspace, us, ss, ss);
         multigetSliceQuery.setColumnFamily(CF_META);
@@ -328,10 +231,14 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
 
         List<InformationItem> result = new LinkedList<InformationItem>();
         for (Row<UUID, String, String> row : rows) {
+            List<HColumn<String, String>> columns = row.getColumnSlice().getColumns();
+            if (columns.isEmpty())
+                continue;  //TODO: means meta can't be loaded without meta; discuss
+
             CassandraInformationItemImpl item = createInformationItem(row.getKey());
-            for (HColumn<String, String> column : row.getColumnSlice().getColumns()) {
+            for (HColumn<String, String> column : columns)
                 item.meta.put(column.getName(), column.getValue());
-            }
+
             result.add(item);
         }
 
@@ -341,48 +248,41 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
 
     @Override
     public void setComponentWeight(InformationItem item, InformationItem component, Double weight) {
-        if (item instanceof CassandraInformationItemImpl) {
-            CassandraInformationItemImpl localItem = (CassandraInformationItemImpl) item;
-            CassandraInformationItemImpl localComponent = (CassandraInformationItemImpl) component;
+        if (!(item instanceof CassandraInformationItemImpl))
+            throw generateWrongDaoException();
+        CassandraInformationItemImpl localItem = (CassandraInformationItemImpl) item;
+        CassandraInformationItemImpl localComponent = (CassandraInformationItemImpl) component;
 
-            if (localItem.components != null) {
-                localItem.components.put(component, weight);
-            }
-            if (localComponent.parents != null) {
-                localComponent.parents.put(item, weight);
-            }
+        if (localItem.components != null)
+            localItem.components.put(component, weight);
+        if (localComponent.parents != null)
+            localComponent.parents.put(item, weight);
 
-            UUIDSerializer us = UUIDSerializer.get();
-            DoubleSerializer ds = DoubleSerializer.get();
+        Mutator<UUID> mutator = HFactory.createMutator(keyspace, us);
+        mutator.addInsertion(item.getUUID(), CF_COMPONENTS, HFactory.createColumn(component.getUUID(), weight, us, ds));
+        mutator.addInsertion(component.getUUID(), CF_PARENTS, HFactory.createColumn(item.getUUID(), weight, us, ds));
+        mutator.execute();
 
-            Mutator<UUID> mutator = HFactory.createMutator(keyspace, UUIDSerializer.get());
-            mutator.addInsertion(item.getUUID(), CF_COMPONENTS, HFactory.createColumn(component.getUUID(), weight, us, ds));
-            mutator.addInsertion(component.getUUID(), CF_PARENTS, HFactory.createColumn(item.getUUID(), weight, us, ds));
-            mutator.execute();
-
-            //TODO: in case of precalculated recommendations add all parents of component to recalculate queue
-        }
+        //TODO: in case of precalculated recommendations add all parents of component to recalculate queue
     }
 
     @Override
     public void removeComponent(InformationItem item, InformationItem component) {
-        if (item instanceof CassandraInformationItemImpl && component instanceof CassandraInformationItemImpl) {
-            CassandraInformationItemImpl localItem = (CassandraInformationItemImpl) item;
-            CassandraInformationItemImpl localComponent = (CassandraInformationItemImpl) component;
+        if (!(item instanceof CassandraInformationItemImpl && component instanceof CassandraInformationItemImpl))
+            throw generateWrongDaoException();
+        CassandraInformationItemImpl localItem = (CassandraInformationItemImpl) item;
+        CassandraInformationItemImpl localComponent = (CassandraInformationItemImpl) component;
 
-            if (localItem.components != null) {
-                localItem.components.remove(component);
-            }
-            if (localComponent.parents != null) {
-                localComponent.parents.remove(item);
-            }
+        if (localItem.components != null)
+            localItem.components.remove(component);
+        if (localComponent.parents != null)
+            localComponent.parents.remove(item);
 
-            Mutator<UUID> mutator = HFactory.createMutator(keyspace, UUIDSerializer.get());
-            mutator.addDeletion(item.getUUID(), CF_COMPONENTS, component.getUUID(), UUIDSerializer.get());
-            mutator.addDeletion(component.getUUID(), CF_PARENTS, item.getUUID(), UUIDSerializer.get());
-            mutator.execute();
+        Mutator<UUID> mutator = HFactory.createMutator(keyspace, us);
+        mutator.addDeletion(item.getUUID(), CF_COMPONENTS, component.getUUID(), us);
+        mutator.addDeletion(component.getUUID(), CF_PARENTS, item.getUUID(), us);
+        mutator.execute();
 
-        }
     }
 
     @Override
@@ -391,93 +291,48 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
     }
 
     @Override
-    public void setMeta(InformationItem item, String key, String value, boolean indexed) {
-        if (item instanceof CassandraInformationItemImpl) {
-            CassandraInformationItemImpl localItem = ((CassandraInformationItemImpl) item);
+    public void setMeta(InformationItem item, String key, String value, boolean isIndexed) {
+        if (!(item instanceof CassandraInformationItemImpl))
+            throw generateWrongDaoException();
+        CassandraInformationItemImpl localItem = ((CassandraInformationItemImpl) item);
 
-            // Update data
-            HFactory.createMutator(keyspace, UUIDSerializer.get())
-                    .insert(item.getUUID(), CF_META, HFactory.createStringColumn(key, value));
+        // Update data
+        HFactory.createMutator(keyspace, us).insert(item.getUUID(), CF_META, HFactory.createStringColumn(key, value));
 
-            // Update index
+        // Update index
+        String oldValue = localItem.meta.get(key);
+        Mutator<String> mutator = HFactory.createMutator(keyspace, ss);
+        removeMetaIndex(localItem, key, oldValue, mutator);
+        addMetaIndex(localItem, key, value, mutator, isIndexed);
+        mutator.execute();
 
-            UUIDSerializer us = UUIDSerializer.get();
-            DoubleSerializer ds = DoubleSerializer.get();
-            StringSerializer ss = StringSerializer.get();
-            Mutator<String> mutator = HFactory.createMutator(keyspace, ss);
-
-            // If there was value, delete index for it
-            if (localItem.meta.containsKey(key)) {
-                String oldValue = localItem.meta.get(key);
-                String oldIndexKey = String.format(META_FORMAT, key, oldValue);
-                mutator.addDeletion(oldIndexKey, CF_META_INDEX, localItem.uuid, us);
-
-                String[] oldWords = oldValue.toLowerCase().split("\\s");
-                for (String word : oldWords) {
-                    for (int i = 1; i <= word.length(); i++) {
-                        String rowName = String.format(META_FORMAT, key, word.substring(0, i));
-                        mutator.addDeletion(rowName, CF_META_PREFIX, localItem.uuid, us);
-                    }
-                }
-            }
-
-            // Add index for new value
-
-            String indexKey = String.format(META_FORMAT, key, value);
-            mutator.addInsertion(indexKey, CF_META_INDEX, HFactory.createColumn(item.getUUID(), 1D, us, ds));
-            if (indexed) {
-                String[] words = value.toLowerCase().split("\\s");
-                for (String word : words) {
-                    for (int i = 1; i <= word.length(); i++) {
-                        String rowName = String.format(META_FORMAT, key, word.substring(0, i));
-                        mutator.addInsertion(rowName, CF_META_PREFIX, HFactory.createColumn(item.getUUID(), value, us, ss));
-                    }
-                }
-            }
-
-            mutator.execute();
-
-            // Update model
-            localItem.meta.put(key, value);
-        }
+        // Update model
+        localItem.meta.put(key, value);
     }
 
     @Override
     public void removeMeta(InformationItem item, String key) {
-        if (item instanceof CassandraInformationItemImpl) {
-            CassandraInformationItemImpl localItem = (CassandraInformationItemImpl) item;
+        if (!(item instanceof CassandraInformationItemImpl))
+            throw generateWrongDaoException();
+        CassandraInformationItemImpl localItem = (CassandraInformationItemImpl) item;
 
-            localItem.meta.remove(key);
+        // Update data
+        HFactory.createMutator(keyspace, us).delete(item.getUUID(), CF_META, key, ss);
 
-            Mutator<UUID> uuidMutator = HFactory.createMutator(keyspace, UUIDSerializer.get());
-            uuidMutator.addDeletion(item.getUUID(), CF_META, key, StringSerializer.get());
-            uuidMutator.execute();
+        // Update index
+        String oldValue = localItem.meta.get(key);
+        Mutator<String> stringMutator = HFactory.createMutator(keyspace, ss);
+        removeMetaIndex(localItem, key, oldValue, stringMutator);
+        stringMutator.execute();
 
-            Mutator<String> stringMutator = HFactory.createMutator(keyspace, StringSerializer.get());
-            String oldValue = localItem.meta.get(key);
-            String oldIndexKey = String.format(META_FORMAT, key, oldValue);
-            stringMutator.addDeletion(oldIndexKey, CF_META_INDEX, localItem.uuid, UUIDSerializer.get());
-
-            String[] oldWords = oldValue.toLowerCase().split("\\s");
-            for (String word : oldWords) {
-                for (int i = 1; i <= word.length(); i++) {
-                    String rowName = String.format(META_FORMAT, key, word.substring(0, i));
-                    stringMutator.addDeletion(rowName, CF_META_PREFIX, localItem.uuid, UUIDSerializer.get());
-                }
-            }
-            stringMutator.execute();
-        }
+        // Update model
+        localItem.meta.remove(key);
     }
 
     @Override
-    public Collection<InformationItem> multigetByMeta(String key, String value) {
+    public Collection<InformationItem> loadByMeta(String key, String value) {
 
-        UUIDSerializer us = UUIDSerializer.get();
-        StringSerializer ss = StringSerializer.get();
-        DoubleSerializer ds = DoubleSerializer.get();
-
-        // in form of "key#value"
-        String queryKey = String.format(META_FORMAT, key, value.toLowerCase());
+        String queryKey = String.format(META_FORMAT, key, value);
 
         SliceQuery<String, UUID, Double> query = HFactory.createSliceQuery(keyspace, ss, us, ds)
                 .setColumnFamily(CF_META_INDEX)
@@ -490,15 +345,12 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         for (HColumn<UUID, Double> column : columns.getColumns()) {
             result.add(column.getName());
         }
-        return multigetByUUID(result);
+        return loadByUUIDs(result);
     }
 
     @Override
     public Map<UUID, String> searchByMetaPrefix(String key, String prefix) {
-        UUIDSerializer us = UUIDSerializer.get();
-        StringSerializer ss = StringSerializer.get();
 
-        // in form of "key#value"
         String queryKey = String.format(META_FORMAT, key, prefix.toLowerCase());
 
         SliceQuery<String, UUID, String> query = HFactory.createSliceQuery(keyspace, ss, us, ss)
@@ -515,13 +367,49 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         return result;
     }
 
-    private Map<UUID, CassandraInformationItemImpl> collectionToUUIDMap(Collection<InformationItem> items) {
-        Map<UUID, CassandraInformationItemImpl> result = new HashMap<UUID, CassandraInformationItemImpl>();
+    /*
+                             Private methods
+     */
+
+    private Collection<UUID> getUniqueIds(Collection<InformationItem> items) {
+        Set<UUID> result = new HashSet<UUID>();
         for (InformationItem item : items) {
             CassandraInformationItemImpl local = (CassandraInformationItemImpl) item;
-            result.put(local.uuid, local);
+            result.add(local.uuid);
         }
         return result;
+    }
+
+    private UnsupportedOperationException generateWrongDaoException() {
+        return new UnsupportedOperationException("This dao can't operate with this item");
+    }
+
+    private void addMetaIndex(CassandraInformationItemImpl item, String key, String value, Mutator<String> mutator, boolean isIndexed) {
+        String rowKey = String.format(META_FORMAT, key, value);;
+        mutator.addInsertion(rowKey, CF_META_INDEX, HFactory.createColumn(item.getUUID(), 1D, us, ds));
+        if (isIndexed) {
+            String[] words = value.toLowerCase().split("\\s");
+            for (String word : words) {
+                for (int i = 1; i <= word.length(); i++) {
+                    String rowName = String.format(META_FORMAT, key, word.substring(0, i));
+                    mutator.addInsertion(rowName, CF_META_PREFIX, HFactory.createColumn(item.getUUID(), value, us, ss));
+                }
+            }
+        }
+    }
+
+    private void removeMetaIndex(CassandraInformationItemImpl item, String key, String oldValue, Mutator<String> mutator) {
+        if (oldValue == null || key == null)
+            return;
+        String rowKey = String.format(META_FORMAT, key, oldValue);
+        mutator.addDeletion(rowKey, CF_META_INDEX, item.getUUID(), us);
+        String[] words = oldValue.toLowerCase().split("\\s");
+        for (String word : words) {
+            for (int i = 1; i <= word.length(); i++) {
+                String rowName = String.format(META_FORMAT, key, word.substring(0, i));
+                mutator.addDeletion(rowName, CF_META_PREFIX, item.getUUID(), us);
+            }
+        }
     }
 
 }

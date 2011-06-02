@@ -87,7 +87,7 @@ public class MovieLensMoviesParser {
 //                movieService.setComponentWeight(movie, yearItem, INITIAL_YEAR_WEIGHT);
 
                 done++;
-                if (done % 25 == 0) {
+                if (done % 50 == 0) {
                     System.out.println(String.format("Created %d movies", done));
                 }
 

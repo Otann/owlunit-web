@@ -72,7 +72,7 @@ public abstract class FilterTagButton extends OpenDialogButton {
         if (selected == null) {
             MainApplication.getCurrentNavigableAppLevelWindow().showNotification("Select tag to load", Window.Notification.TYPE_ERROR_MESSAGE);
         } else {
-            processItem(service.getByUUID(selected.id));
+            processItem(service.loadByUUID(selected.id));
         }
     }
 

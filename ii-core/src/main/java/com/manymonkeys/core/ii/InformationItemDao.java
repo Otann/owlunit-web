@@ -13,65 +13,68 @@ public interface InformationItemDao {
 
     /**
      * Creates new InformationItem object with valid unique uuid
-     *
      * @return InformationItem
      */
     InformationItem createInformationItem();
 
     /**
      * Deletes InformationItem and all links to/from it
-     *
      * @param item to delete
      */
     void deleteInformationItem(InformationItem item);
 
     /**
-     * Performs quick load of components map for set of items.
-     * Also reloads components for each item
+     * Loads InformationItem from datastore with metadata only.
      *
-     * @param items to load components
-     * @return collection of components
+     * @param uuid of InformationItem
+     * @return loaded InformationItem with metadata only
      */
-    Collection<InformationItem> multigetComponents(Collection<InformationItem> items);
+    InformationItem loadByUUID(UUID uuid);
 
     /**
-     * Performs quick load of parents map for set of items.
-     * Also reloads components for each item
-     *
-     * @param items to load components
-     * @return collection of parents
-     */
-    Collection<InformationItem> multigetParents(Collection<InformationItem> items);
-
-    /**
-     * Loads InformationItem from datastore.
-     *
-     * @param uuid - set of InformationItem
-     * @return loaded InformationItem
-     */
-    InformationItem getByUUID(UUID uuid);
-
-    /**
-     * Multiget version of {@see getByUUID(UUID uuid)}
-     * Faster than sequential getByUUID
-     *
+     * Multiget version of {@link #loadByUUIDs(java.util.Collection) loadByUUIDs} method.
+     * Queries performed in parallel
      * @param uuids set of uuids of items
-     * @return Set of Items
+     * @return collection of items with metadata only
      */
-    Collection<InformationItem> multigetByUUID(Collection<UUID> uuids);
+    Collection<InformationItem> loadByUUIDs(Collection<UUID> uuids);
 
     /**
-     * Loads items that has mey-value pair in metadata
-     *
+     * Reloads all metadata for collection of items from datastore.
+     * Supposed to be used with following methods:
+     * - {@link #reloadComponents(java.util.Collection) reloadComponents}
+     * - {@link #reloadParents(java.util.Collection) reloadParents}
+     * @param items
+     */
+    void reloadMetadata(Collection<InformationItem> items);
+
+    /**
+     * Loads components for set of items as objects with id only and nothing else.
+     * You can use {@link #reloadMetadata(java.util.Collection) reloadMetadata} method to load metadata for components.
+     * @param items to reload components
+     * @return collection of "plain" items with id only that are components of provided items
+     */
+    Collection<InformationItem> reloadComponents(Collection<InformationItem> items);
+
+    /**
+     * Loads parents for set of items as objects with id only and nothing else.
+     * You can use {@link #reloadMetadata(java.util.Collection) reloadMetadata} method to load metadata for parents.
+     * @param items to reload parents
+     * @return collection of "plain" items with id only that are parents of provided items
+     */
+    Collection<InformationItem> reloadParents(Collection<InformationItem> items);
+
+    /**
+     * Loads items that has provided key-value pair in metadata.
      * @param key   of metadata
      * @param value of metadata
-     * @return collection of items
+     * @return collection of items with metadata
      */
-    Collection<InformationItem> multigetByMeta(String key, String value);
+    Collection<InformationItem> loadByMeta(String key, String value);
 
     /**
      * Searches for items that meta's contain word that starts with prefix
-     * Note that meta value is split by spaces
+     * Items are loaded with metadata only
      *
      * @param key    of meta
      * @param prefix that word should start from
@@ -125,6 +128,5 @@ public interface InformationItemDao {
      * @param key  of metadata
      */
     void removeMeta(InformationItem item, String key);
-
 
 }

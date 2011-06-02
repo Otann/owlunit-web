@@ -19,8 +19,6 @@ public class UserService extends CassandraInformationItemDaoImpl {
     public static final String LOGIN = UserService.class.getName() + ".LOGIN";
     private static final String PASSWORD = UserService.class.getName() + ".PASSWORD";
 
-    public static final String USER_CLASS_NAME = UserService.class.getName() + ".USER";
-
     private static final String SALT = "Humpty Dumpty sat on a wall, Humpty Dumpty had a great fall";
 
     public UserService(Keyspace keyspace) {
@@ -37,7 +35,7 @@ public class UserService extends CassandraInformationItemDaoImpl {
 
     public InformationItem getUser(String login) {
         try {
-            return multigetByMeta(LOGIN, login).iterator().next();
+            return loadByMeta(LOGIN, login).iterator().next();
         } catch (NoSuchElementException e) {
             return null;
         }

@@ -9,6 +9,7 @@ import com.vaadin.terminal.gwt.client.ui.VLabel;
 import com.vaadin.terminal.gwt.client.ui.VLink;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -42,8 +43,13 @@ public class VItemTag extends Composite implements Paintable {
 
         final Iterator<Object> iterator = uidl.getChildIterator();
 
-        if(uidl.hasAttribute("style")) {
+        if (uidl.hasAttribute("style")) {
             root.addStyleName(uidl.getStringAttribute("style"));
+        }
+
+        Object[] commonItemsIds = null;
+        if (uidl.hasAttribute("common")) {
+            commonItemsIds = uidl.getStringArrayAttribute("common");
         }
 
         UIDL r = (UIDL) iterator.next();

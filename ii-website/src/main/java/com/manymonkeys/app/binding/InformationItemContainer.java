@@ -63,7 +63,7 @@ public class InformationItemContainer implements Container, Container.Filterable
         if (id == null) {
             return null;
         }
-        InformationItem ii = service.getByUUID(id);
+        InformationItem ii = service.loadByUUID(id);
         return new InformationItemItem(ii);
     }
 

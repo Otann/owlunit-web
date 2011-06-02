@@ -32,14 +32,14 @@ public class TagService extends CassandraInformationItemDaoImpl {
 
     public InformationItem getTag(String name) {
         try {
-            return multigetByMeta(NAME, name).iterator().next();
+            return loadByMeta(NAME, name).iterator().next();
         } catch (NoSuchElementException e) {
             return null;
         }
     }
 
     public Collection<InformationItem> getAll() {
-        return multigetByMeta(CLASS_MARK_KEY, CLASS_MARK_VALUE);
+        return loadByMeta(CLASS_MARK_KEY, CLASS_MARK_VALUE);
     }
 
 }

@@ -13,24 +13,10 @@ import java.util.*;
  */
 public class RecommenderPlainImpl implements Recommender {
 
-    private Integer componentsLimit = 20;
-    private Integer parentsLimit = 20;
+    private int componentsLimit = 20;
+    private int parentsLimit = 20;
 
-    public Integer getComponentsLimit() {
-        return componentsLimit;
-    }
-
-    public void setComponentsLimit(Integer componentsLimit) {
-        this.componentsLimit = componentsLimit;
-    }
-
-    public Integer getParentsLimit() {
-        return parentsLimit;
-    }
-
-    public void setParentsLimit(Integer parentsLimit) {
-        this.parentsLimit = parentsLimit;
-    }
+    private double weightThreshold = 1.5;
 
     @Override
     public void diffuse(InformationItem item, InformationItem component, InformationItemDao dao) {
@@ -93,17 +79,8 @@ public class RecommenderPlainImpl implements Recommender {
     public Map<InformationItem, Double> getMostLike(Map<InformationItem, Double> items, InformationItemDao dao) {
         Map<InformationItem, Double> result = new HashMap<InformationItem, Double>();
 
-        // Get most heavy components
-        int limit = componentsLimit;
-        Set<InformationItem> componentsFiltered = new HashSet<InformationItem>();
-        Iterator<InformationItem> iterator = sortByValue(items, true).keySet().iterator();
-        while (limit > 0 && iterator.hasNext()) {
-            limit--;
-            componentsFiltered.add(iterator.next());
-        }
-
         // Fast load parents
-        Collection<InformationItem> parents = dao.multigetParents(items.keySet());
+        Collection<InformationItem> parents = dao.multigetParents(getValuableComponents(items).keySet());
 
         // Fast load components for parents
         dao.multigetComponents(parents);
@@ -113,6 +90,45 @@ public class RecommenderPlainImpl implements Recommender {
         }
 
         return sortByValue(result, true);
+    }
+
+    public int getComponentsLimit() {
+        return componentsLimit;
+    }
+
+    public void setComponentsLimit(int componentsLimit) {
+        this.componentsLimit = componentsLimit;
+    }
+
+    public int getParentsLimit() {
+        return parentsLimit;
+    }
+
+    public void setParentsLimit(int parentsLimit) {
+        this.parentsLimit = parentsLimit;
+    }
+
+    public double getWeightThreshold() {
+        return weightThreshold;
+    }
+
+    public void setWeightThreshold(double weightThreshold) {
+        this.weightThreshold = weightThreshold;
+    }
+
+    private Map<InformationItem, Double> getValuableComponents(Map<InformationItem, Double> items) {
+        Map<InformationItem, Double> result = new HashMap<InformationItem, Double>();
+
+        int limit = componentsLimit;
+        for(Map.Entry<InformationItem, Double> componentEntry : items.entrySet()) {
+            if (limit-- <= 0)
+                break;
+
+            if (componentEntry.getValue() > weightThreshold)
+                result.put(componentEntry.getKey(), componentEntry.getValue());
+        }
+
+        return result;
     }
 
     private static <K, V extends Comparable<V>> Map<K, V> sortByValue(Map<K, V> map, final boolean invertedSort) {
@@ -131,6 +147,5 @@ public class RecommenderPlainImpl implements Recommender {
         }
         return result;
     }
-
 
 }

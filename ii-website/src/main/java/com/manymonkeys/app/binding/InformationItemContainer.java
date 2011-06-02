@@ -17,12 +17,12 @@ public class InformationItemContainer implements Container, Container.Filterable
 
     private TagService service;
     private Map<String, UUID> items;
-    private Set<String> filters;
+//    private Set<String> filters;
 
     public InformationItemContainer(TagService service) {
         this.service = service;
         this.items = new HashMap<String, UUID>();
-        this.filters = new HashSet<String>();
+//        this.filters = new HashSet<String>();
 
         // TODO: Loading *all* tags is extremely heavy, but due to http://notepad.cc/xescide36 there is no other option right now
         // TODO: Create separate index service for name-id pairs and don't load all iis
@@ -34,18 +34,18 @@ public class InformationItemContainer implements Container, Container.Filterable
         }
     }
 
-    private void reloadItemsFromService() {
-        if (filters.isEmpty()) {
-            items = Collections.emptyMap();
-        } else {
-            for (String filter : filters) {
-                Map<UUID, String> result = service.searchByMetaPrefix(TagService.NAME, filter);
-                for (Map.Entry<UUID, String> entry : result.entrySet()) {
-                    items.put(entry.getValue(), entry.getKey());
-                }
-            }
-        }
-    }
+//    private void reloadItemsFromService() {
+//        if (filters.isEmpty()) {
+//            items = Collections.emptyMap();
+//        } else {
+//            for (String filter : filters) {
+//                Map<UUID, String> result = service.searchByMetaPrefix(TagService.NAME, filter);
+//                for (Map.Entry<UUID, String> entry : result.entrySet()) {
+//                    items.put(entry.getValue(), entry.getKey());
+//                }
+//            }
+//        }
+//    }
 
     /**
      * Gets the Item with the given Item ID from the Container. If the Container
@@ -147,24 +147,24 @@ public class InformationItemContainer implements Container, Container.Filterable
      */
     public void addContainerFilter(Object propertyId, String filterString, boolean ignoreCase, boolean onlyMatchPrefix) {
         //TODO: should check for InformationItemItem.SINGLE_PROPERTY_ID
-        this.filters.add(filterString);
-        reloadItemsFromService();
+//        this.filters.add(filterString);
+//        reloadItemsFromService();
     }
 
     /**
      * Remove all filters from all properties.
      */
     public void removeAllContainerFilters() {
-        this.filters.clear();
-        reloadItemsFromService();
+//        this.filters.clear();
+//        reloadItemsFromService();
     }
 
     /**
      * Remove all filters from given property.
      */
     public void removeContainerFilters(Object propertyId) {
-        this.filters.clear();
-        reloadItemsFromService();
+//        this.filters.clear();
+//        reloadItemsFromService();
     }
 
     /*

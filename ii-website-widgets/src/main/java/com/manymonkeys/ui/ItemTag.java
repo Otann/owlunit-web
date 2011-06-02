@@ -12,7 +12,7 @@ import com.vaadin.ui.Link;
 import org.vaadin.navigator7.PageLink;
 import org.vaadin.navigator7.ParamPageLink;
 
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Many Monkeys
@@ -27,7 +27,6 @@ public class ItemTag extends AbstractComponent {
 
     private InformationItem item;
     private Double value;
-    private boolean showComponents;
     private int componentsLimit = DEFAULT_COMPONENTS_LIMIT;
 
     private Class pageClass;
@@ -85,6 +84,10 @@ public class ItemTag extends AbstractComponent {
     public void paintContent(PaintTarget target) throws PaintException {
         super.paintContent(target);
 
+        if (!"".equals(getStyleName())) {
+            target.addAttribute("style", getStyleName());
+        }
+
         PageLink link = new ParamPageLink(item.getMeta(TagService.NAME), pageClass, item.getUUID().toString());
         link.paint(target);
 
@@ -93,17 +96,13 @@ public class ItemTag extends AbstractComponent {
         valueLabel.paint(target);
 
         if (componentsLimit > 0) {
-            Iterator<InformationItem> iterator = item.getComponents().keySet().iterator();
-            if (iterator.hasNext()) {
+            int limit = componentsLimit;
+            for (InformationItem component : sortByValue(item.getComponents(), false).keySet()) {
+                if (limit-- <= 0)
+                    break;
 
-                int limit = this.componentsLimit;
-                while (iterator.hasNext() && limit > 0) {
-                    limit--;
-                    InformationItem component = iterator.next();
-                    Link cmp = new ParamPageLink(component.getMeta(TagService.NAME), pageClass, component.getUUID().toString());
-                    cmp.paint(target);
-                }
-
+                Link cmp = new ParamPageLink(component.getMeta(TagService.NAME), pageClass, component.getUUID().toString());
+                cmp.paint(target);
             }
         }
     }
@@ -118,4 +117,22 @@ public class ItemTag extends AbstractComponent {
             return String.format("%s [%.0f]", out, value);
         }
     }
+
+    private static<K, V extends Comparable<V>> Map<K, V> sortByValue(Map<K, V> map, final boolean straight) {
+        List<Map.Entry<K, V>> list = new LinkedList<Map.Entry<K, V>>(map.entrySet());
+        Collections.sort(list, new Comparator<Map.Entry<K, V>>() {
+            public int compare(Map.Entry<K, V> o1, Map.Entry<K, V> o2) {
+                return straight ?
+                        o1.getValue().compareTo(o2.getValue()) :
+                        o2.getValue().compareTo(o1.getValue());
+            }
+        });
+
+        Map<K, V> result = new LinkedHashMap<K, V>();
+        for (Map.Entry<K, V> entry : list) {
+            result.put(entry.getKey(), entry.getValue());
+        }
+        return result;
+    }
+
 }

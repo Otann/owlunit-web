@@ -114,7 +114,7 @@ public interface InformationItemDao {
      * @param item   to update
      * @param key    of metadata
      * @param value  of metadata
-     * @param indexed allows to index this meta
+     * @param indexed enables meta for searchByPrefix
      */
     void setMeta(InformationItem item, String key, String value, boolean indexed);
 

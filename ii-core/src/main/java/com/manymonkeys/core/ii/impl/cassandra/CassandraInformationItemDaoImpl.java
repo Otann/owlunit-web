@@ -423,11 +423,10 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
 
             // Add index for new value
 
+            String indexKey = String.format(META_FORMAT, key, value);
+            mutator.addInsertion(indexKey, CF_META_INDEX, HFactory.createColumn(item.getUUID(), 1D, us, ds));
             if (indexed) {
                 String[] words = value.toLowerCase().split("\\s");
-                String indexKey = String.format(META_FORMAT, key, value);
-                mutator.addInsertion(indexKey, CF_META_INDEX, HFactory.createColumn(item.getUUID(), 1D, us, ds));
-
                 for (String word : words) {
                     for (int i = 1; i <= word.length(); i++) {
                         String rowName = String.format(META_FORMAT, key, word.substring(0, i));

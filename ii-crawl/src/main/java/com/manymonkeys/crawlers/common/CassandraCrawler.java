@@ -26,7 +26,7 @@ public abstract class CassandraCrawler {
 
             System.out.println("All done");
         } catch (Exception e) {
-            System.out.println("Shit happend: " + e.getMessage());
+            System.out.println("Shit happened: " + e.getMessage());
         } finally {
             cluster.getConnectionManager().shutdown();
         }

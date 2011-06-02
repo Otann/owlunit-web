@@ -42,6 +42,10 @@ public class VItemTag extends Composite implements Paintable {
 
         final Iterator<Object> iterator = uidl.getChildIterator();
 
+        if(uidl.hasAttribute("style")) {
+            root.addStyleName(uidl.getStringAttribute("style"));
+        }
+
         UIDL r = (UIDL) iterator.next();
         name = (VLink) client.getPaintable(r);
         name.updateFromUIDL(r, client);

@@ -11,6 +11,8 @@ import me.prettyprint.hector.api.factory.HFactory;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Many Monkeys
@@ -22,6 +24,11 @@ public class MovieLensMoviesParser {
 
     public static final String EXTERNAL_ID = MovieLensMoviesParser.class.getName() + ".EXTERNAL_ID";
     private static final String A_K_A = "a.k.a.";
+
+    public static final double INITIAL_YEAR_WEIGHT = 2d;
+    public static final double INITIAL_GENRE_WEIGHT = 10d;  //TODO: Discuss Weight
+
+    private static Map<String, InformationItem> localYearsCache = new HashMap<String, InformationItem>();
 
     public static void main(String[] args) throws IOException {
         Cluster cluster = HFactory.getOrCreateCluster(
@@ -70,6 +77,15 @@ public class MovieLensMoviesParser {
                     movieService.setMeta(movie, MovieService.TRANSLATE_NAME, nameTranslate, true);
                 }
 
+//                InformationItem yearItem;
+//                if (localYearsCache.containsKey(year)) {
+//                    yearItem = localYearsCache.get(year);
+//                } else {
+//                    yearItem = tagService.createTag(year);
+//                    localYearsCache.put(year, yearItem);
+//                }
+//                movieService.setComponentWeight(movie, yearItem, INITIAL_YEAR_WEIGHT);
+
                 done++;
                 if (done % 25 == 0) {
                     System.out.println(String.format("Created %d movies", done));
@@ -80,7 +96,7 @@ public class MovieLensMoviesParser {
                     if (tag == null) {
                         tag = movieService.createTag(genre);
                     }
-                    movieService.setComponentWeight(movie, tag, 1D); //TODO: Discuss Weight
+                    movieService.setComponentWeight(movie, tag, INITIAL_GENRE_WEIGHT);
                 }
 
                 line = fileReader.readLine();

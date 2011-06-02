@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="ii-crawl" basedir="."> <!-- default="crawl-movielens" -->
+<project name="ii-crawl" basedir="." default="all"> <!-- default="crawl-movielens" -->
+
+    <target name="all">
+        <antcall target="crawl-movielens-movies"/>
+        <antcall target="crawl-movielens-tags"/>
+        <antcall target="crawl-imdb-actors"/>
+    </target>
 
     <target name="crawl-movielens-movies">
         <echo>

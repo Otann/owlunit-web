@@ -16,7 +16,7 @@ public class MovieService extends TagService {
     public static final String TRANSLATE_NAME = MovieService.class.getName() + ".TRANSLATE_NAME";
     public static final String AKA_NAME = MovieService.class.getName() + ".AKA_NAME";
 
-    public static final String SIMPLE_NAME = MovieService.class.getName() + "SIMPLE_NAME";
+    public static final String SIMPLE_NAME = MovieService.class.getName() + ".SIMPLE_NAME";
 
     public MovieService(Keyspace keyspace) {
         super(keyspace);

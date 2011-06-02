@@ -85,6 +85,23 @@
     display: inline-block;
 }
 
+.ii-page-components .v-iitag.ii-actor {
+    border-left: 5px solid #006699;
+}
+.ii-page-components .v-iitag:hover.ii-actor {
+    background-color: #006699;
+}
+
+.ii-page-components .ii-useless-tag-counter {
+    background-color: #ffff99;
+    float: left;
+    display: inline-block;
+    margin: 7px;
+    padding: 5px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
 .ii-tag-components .ii-tag .ii-subcomponents {
 /*display: none;*/
 }

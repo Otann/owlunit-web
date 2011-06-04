@@ -51,8 +51,22 @@
     background-position: 0 8px;
 }
 
-.ii-stream .ii-tag {
+.ii-page-stream .v-iitag:hover {
+    background-color: #f5e6e6;
 }
+.ii-page-stream .v-iitag .v-iitag-name {
+    padding-bottom: 10px;
+}
+.ii-page-stream .v-iitag .v-iitag-name a span {
+    font-size: 18px;
+}
+.ii-page-stream .v-iitag:hover .v-iitag-name a span {
+    color: black;
+}
+.ii-page-stream .v-iitag .v-iitag-value {
+    color: #666666;
+}
+
 
 .ii-page-meta .v-label {
     margin-left: 10px;

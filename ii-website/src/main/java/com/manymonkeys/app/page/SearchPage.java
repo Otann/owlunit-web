@@ -17,10 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.vaadin.navigator7.Page;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Many Monkeys
@@ -79,44 +76,54 @@ public class SearchPage extends VerDashLayout implements Button.ClickListener {
     public void buttonClick(Button.ClickEvent event) {
         long startTime = System.currentTimeMillis();
 
-        Map<InformationItem, Double> query = new HashMap<InformationItem, Double>();
-        Collection<InformationItem> items = searchTokens.getInformationItems();
-        for (InformationItem item : items) {
+        Map<InformationItem, Double> queryMap = new HashMap<InformationItem, Double>();
+        Collection<InformationItem> queryItems = searchTokens.getInformationItems();
+
+        service.reloadComponents(queryItems);
+        for (InformationItem queryItem : queryItems) {
             // Add Item itself
-            Double weight = query.get(item);
+            Double weight = queryMap.get(queryItem);
             if (weight == null) {
                 weight = 0D;
             }
             weight += 1;
-            query.put(item, 1D);
+            queryMap.put(queryItem, 1D);
 
             // add all components
-            for (Map.Entry<InformationItem, Double> component : item.getComponents().entrySet()) {
-                Double componentWeight = query.get(component.getKey());
+            for (Map.Entry<InformationItem, Double> component : queryItem.getComponents().entrySet()) {
+                Double componentWeight = queryMap.get(component.getKey());
                 if (componentWeight == null) {
                     componentWeight = 0D;
                 }
                 componentWeight += component.getValue();
-                query.put(component.getKey(), componentWeight);
+                queryMap.put(component.getKey(), componentWeight);
             }
         }
-        Map<InformationItem, Double> result = recommender.getMostLike(query, service);
-        for (InformationItem item : items) {
-            String name = item.getMeta(TagService.NAME);
+
+        Map<InformationItem, Double> result = recommender.getMostLike(queryMap, service);
+        for (InformationItem item : queryItems) {
             result.remove(item);
         }
-        long limit = SEARCH_RESULTS_LIMIT;
-        Iterator<Map.Entry<InformationItem, Double>> it = result.entrySet().iterator();
-        while (it.hasNext() && limit > 0) {
-            --limit;
-            Map.Entry<InformationItem, Double> item = it.next();
 
-            ItemTag tag = new ItemTag(item.getKey(), item.getValue(), ItemTag.DEFAULT_COMPONENTS_LIMIT, ItemPage.class);
-            searchResults.addComponent(tag);
+        long limit = SEARCH_RESULTS_LIMIT;
+        List<InformationItem> reloadList = new LinkedList<InformationItem>();
+        List<ItemTag> displayTags = new LinkedList<ItemTag>();
+
+        for (Map.Entry<InformationItem, Double> entry : result.entrySet()) {
+            if (limit-- <= 0)
+                break;
+
+            ItemTag tag = new ItemTag(entry.getKey(), entry.getValue(), ItemTag.DEFAULT_COMPONENTS_LIMIT, ItemPage.class);
+            reloadList.add(entry.getKey());
+            reloadList.addAll(tag.getDisplayedComponents());
+            displayTags.add(tag);
         }
 
-        long stopTime = System.currentTimeMillis();
-//        VConsole.log("Search results generated in time: " + (stopTime - startTime));
+        service.reloadMetadata(reloadList);
+        for(ItemTag tag : displayTags)
+            searchResults.addComponent(tag);
+
+        getApplication().getMainWindow().showNotification(String.format("Search took %d seconds", (System.currentTimeMillis() - startTime) / 1000));
 
     }
 }

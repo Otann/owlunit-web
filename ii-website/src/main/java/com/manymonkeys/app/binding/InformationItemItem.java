@@ -22,11 +22,7 @@ public class InformationItemItem implements Item {
     }
 
     public Property getItemProperty(Object id) {
-        if (SINGLE_PROPERTY_ID.equals(id)) {
             return property;
-        } else {
-            return null;
-        }
     }
 
     public Collection<?> getItemPropertyIds() {

@@ -4,6 +4,8 @@ import com.manymonkeys.core.ii.InformationItem;
 import me.prettyprint.hector.api.Keyspace;
 
 import java.util.NoSuchElementException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Rocket Science Software
@@ -17,6 +19,8 @@ public class MovieService extends TagService {
     public static final String AKA_NAME = MovieService.class.getName() + ".AKA_NAME";
 
     public static final String SIMPLE_NAME = MovieService.class.getName() + ".SIMPLE_NAME";
+
+    private final Pattern simplifyPatter = Pattern.compile("(a |the |, a|, the|,|\\.|\\s|'|\"|:|-|!|#|)");
 
     public MovieService(Keyspace keyspace) {
         super(keyspace);
@@ -38,17 +42,28 @@ public class MovieService extends TagService {
     }
 
     private String simplifyName(String name) {
-        return name.trim().toLowerCase()
-                .replace("a ", "")
-                .replace("the ", "")
-                .replace(", a", "")
-                .replace(", the", "")
-                .replace(",", "")
-                .replace(".", "")
-                .replace(" ", "")
-                .replace("'", "")
-                .replace("'", "")
-                .replace("\"", "");
+
+        String unromanized = name
+                .replace(" I",    " 1")
+                .replace(" II",   " 2")
+                .replace(" III",  " 3")
+                .replace(" IV",   " 4")
+                .replace(" V",    " 5")
+                .replace(" VI",   " 6")
+                .replace(" VII",  " 7")
+                .replace(" VIII", " 8")
+                .replace(" IX",   " 9");
+
+        // delete unnecessary sequences
+        Matcher matcher = simplifyPatter.matcher(unromanized);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find())
+            matcher.appendReplacement(sb, "");
+        matcher.appendTail(sb);
+
+        // replace roman characters
+        return sb.toString();
+
     }
 
 }

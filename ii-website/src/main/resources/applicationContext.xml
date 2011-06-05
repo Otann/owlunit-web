@@ -38,9 +38,9 @@
     <!-- ii beans -->
     <!-- ======== -->
     <bean id="iiRecommender" class="com.manymonkeys.core.algo.impl.RecommenderPlainImpl">
-        <property name="componentsLimit" value="100"/>
+        <property name="componentsLimit" value="75"/>
         <property name="parentsLimit" value="100"/>
-        <property name="weightThreshold" value="1.5"/>
+        <property name="weightThreshold" value="2.1"/>
     </bean>
 
     <bean id="tagService" class="com.manymonkeys.service.cinema.TagService">

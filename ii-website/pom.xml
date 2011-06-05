@@ -17,6 +17,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
+        <catalina.home>C:/Program Files/Java/apache-tomcat-7.0.14-windows-x64/apache-tomcat-7.0.14/</catalina.home>
     </properties>
 
     <build>
@@ -111,6 +112,36 @@
                         </baseResource>
                     </webAppConfig>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven2-plugin</artifactId>
+
+                <configuration>
+                    <wait>true</wait>
+                    <container>
+                        <containerId>tomcat7x</containerId>
+                        <type>installed</type>
+                        <home>${catalina.home}</home>
+                    </container>
+                    <configuration>
+                        <type>existing</type>
+                        <home>${catalina.home}</home>
+                    </configuration>
+                    <deployer>
+                        <type>installed</type>
+                        <deployables>
+                            <deployable>
+                                <groupId>com.manymonkeys</groupId>
+                                <artifactId>ii-website</artifactId>
+                                <type>war</type>
+                            </deployable>
+                        </deployables>
+                    </deployer>
+
+                </configuration>
+
             </plugin>
 
         </plugins>

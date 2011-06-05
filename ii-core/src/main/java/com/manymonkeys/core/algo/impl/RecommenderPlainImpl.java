@@ -3,6 +3,8 @@ package com.manymonkeys.core.algo.impl;
 import com.manymonkeys.core.algo.Recommender;
 import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.core.ii.InformationItemDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -12,6 +14,8 @@ import java.util.*;
  * @author Anton Chebotaev
  */
 public class RecommenderPlainImpl implements Recommender {
+
+    final Logger logger = LoggerFactory.getLogger(RecommenderPlainImpl.class);
 
     private int componentsLimit = 20;
     private int parentsLimit = 20;

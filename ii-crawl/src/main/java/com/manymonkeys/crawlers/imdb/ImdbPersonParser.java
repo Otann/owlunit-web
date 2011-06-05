@@ -7,10 +7,10 @@ import com.manymonkeys.crawlers.common.TimeWatch;
 import com.manymonkeys.service.cinema.MovieService;
 import com.manymonkeys.service.cinema.PersonService;
 import me.prettyprint.hector.api.Keyspace;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,6 +21,8 @@ import java.util.regex.Pattern;
  * @author Anton Chebotaev
  */
 public class ImdbPersonParser extends CassandraCrawler {
+
+    final Logger logger = LoggerFactory.getLogger(ImdbPersonParser.class);
 
     private final String filePath;
     private final String role;
@@ -67,7 +69,7 @@ public class ImdbPersonParser extends CassandraCrawler {
 
         while (line != null) {
             try {
-                timer.tick(10000, String.format("Found %d persons in file %s.", actorsCount, filePath), "lines");
+                timer.tick(logger, 10000, String.format("Found %d persons in file %s.", actorsCount, filePath), "lines");
 
                 if ("".equals(line)) continue;
 
@@ -106,13 +108,15 @@ public class ImdbPersonParser extends CassandraCrawler {
                 processMovie(movieItem, personItem);
 
             } catch (Exception e) {
-                System.out.printf("Failed perform match for line %s; reason: %s%n", line, e.getMessage());
-                e.printStackTrace();
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                e.printStackTrace(pw);
+                logger.error(String.format("Unable to parse line %s. Exception: %s", line, sw.toString()));
             } finally {
                 line = fileReader.readLine();
             }
         }
-        System.out.println(String.format("Processed %d persons all-in-all", actorsCount));
+        logger.info(String.format("Processed %d persons all-in-all", actorsCount));
     }
 
     InformationItem processPerson(String name) {

@@ -7,6 +7,8 @@ import com.manymonkeys.service.cinema.MovieService;
 import me.prettyprint.hector.api.Cluster;
 import me.prettyprint.hector.api.Keyspace;
 import me.prettyprint.hector.api.factory.HFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.HashMap;
@@ -20,6 +22,8 @@ import java.util.regex.Pattern;
  * @author Ilya Pimenov
  */
 public class MovieLensTagsParser {
+
+    final Logger logger = LoggerFactory.getLogger(MovieLensTagsParser.class);
 
     public final double INITIAL_WEIGHT = Double.parseDouble(PropertyManager.get(PropertyManager.Property.MOVIELENS_TAG_WEIGHT_INITIAL));
     public final double ADDITIONAL_WEIGHT = Double.parseDouble(PropertyManager.get(PropertyManager.Property.MOVIELENS_TAG_WEIGHT_ADDITIONAL));
@@ -65,7 +69,7 @@ public class MovieLensTagsParser {
                         moviesCache.put(externalId, movieItem);
                     }
 
-                    watch.tick(50, "Processing movielens tags", "tags");
+                    watch.tick(logger, 500, "Processing movielens.", "tags");
 
                     InformationItem tagItem = tagCache.get(tagName);
                     if (tagItem == null) {
@@ -81,15 +85,17 @@ public class MovieLensTagsParser {
                     }
 
                 } catch (Exception e) {
-                    System.out.printf("Failed to parse line %s; reason: %s%n", line, e.getMessage());
-                    e.printStackTrace();
+                    StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    e.printStackTrace(pw);
+                    logger.error(String.format("Unable to parse line %s. Exception: %s", line, sw.toString()));
                 } finally {
                     line = fileReader.readLine();
                 }
 
             }
 
-            System.out.println("All done");
+            logger.info("All done");
         } finally {
             cluster.getConnectionManager().shutdown();
         }

@@ -3,11 +3,14 @@ package com.manymonkeys.crawlers.movielens;
 import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.crawlers.common.PropertyManager;
 import com.manymonkeys.crawlers.common.PropertyManager.Property;
+import com.manymonkeys.crawlers.common.TimeWatch;
 import com.manymonkeys.service.cinema.MovieService;
 import com.manymonkeys.service.cinema.TagService;
 import me.prettyprint.hector.api.Cluster;
 import me.prettyprint.hector.api.Keyspace;
 import me.prettyprint.hector.api.factory.HFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.HashMap;
@@ -20,6 +23,8 @@ import java.util.Map;
  * @author Ilya Pimenov
  */
 public class MovieLensMoviesParser {
+
+    final Logger logger = LoggerFactory.getLogger(MovieLensMoviesParser.class);
 
     public static final String EXTERNAL_ID = MovieLensMoviesParser.class.getName() + ".EXTERNAL_ID";
     private static final String A_K_A = "a.k.a.";
@@ -46,7 +51,9 @@ public class MovieLensMoviesParser {
             BufferedReader fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF8"));
 
             String line = fileReader.readLine();
-            long done = 0;
+
+            TimeWatch watch = TimeWatch.start();
+
             while (line != null) {
 
                 if ("".equals(line)) {
@@ -88,10 +95,7 @@ public class MovieLensMoviesParser {
 //                }
 //                movieService.setComponentWeight(movie, yearItem, INITIAL_YEAR_WEIGHT);
 
-                done++;
-                if (done % 50 == 0) {
-                    System.out.println(String.format("Created %d movies", done));
-                }
+                watch.tick(logger, 100, "Crawling movielens.", "movies");
 
                 for (String genre : genres) {
                     InformationItem tag = tagService.getTag(genre);

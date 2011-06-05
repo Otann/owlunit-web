@@ -1,5 +1,7 @@
 package com.manymonkeys.crawlers.common;
 
+import org.slf4j.Logger;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,7 +37,7 @@ public class TimeWatch {
         return unit.convert(time(), TimeUnit.MILLISECONDS);
     }
 
-    public void tick(long limit, String message, String items) {
+    public void tick(Logger logger, long limit, String message, String items) {
         counter++;
         if (counter % limit == 0) {
             double speed = ((double) limit) * 1000 / time();

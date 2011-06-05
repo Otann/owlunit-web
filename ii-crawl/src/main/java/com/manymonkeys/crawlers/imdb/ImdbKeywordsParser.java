@@ -6,6 +6,8 @@ import com.manymonkeys.crawlers.common.PropertyManager;
 import com.manymonkeys.crawlers.common.TimeWatch;
 import com.manymonkeys.service.cinema.MovieService;
 import me.prettyprint.hector.api.Keyspace;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.HashMap;
@@ -21,15 +23,18 @@ import java.util.regex.Pattern;
  */
 public class ImdbKeywordsParser extends CassandraCrawler {
 
+    final Logger logger = LoggerFactory.getLogger(ImdbKeywordsParser.class);
+
     static final Pattern keywordCounter = Pattern.compile("([^\\s]+ \\(\\d+\\))");
     static final Pattern keywordLine    = Pattern.compile("^([^\\t]+) \\(\\d+\\)\\s+([^\\s]+)$");
 
 
-    public final double MIN_WEIGHT = Double.parseDouble(PropertyManager.get(PropertyManager.Property.IMDB_WEIGHT_KEYWORD_MIN));
-    public final double MAX_WEIGHT = Double.parseDouble(PropertyManager.get(PropertyManager.Property.IMDB_WEIGHT_KEYWORD_MAX));
-    public final double WEIGHT_RANGE = MAX_WEIGHT - MIN_WEIGHT;
+    final double MIN_WEIGHT = Double.parseDouble(PropertyManager.get(PropertyManager.Property.IMDB_WEIGHT_KEYWORD_MIN));
+    final double MAX_WEIGHT = Double.parseDouble(PropertyManager.get(PropertyManager.Property.IMDB_WEIGHT_KEYWORD_MAX));
+    final double WEIGHT_RANGE = MAX_WEIGHT - MIN_WEIGHT;
 
-    static final int MAX_COUNT = Integer.parseInt(PropertyManager.get(PropertyManager.Property.IMDB_KEYWORD_COUNT_MAX));
+    final int MAX_COUNT = Integer.parseInt(PropertyManager.get(PropertyManager.Property.IMDB_KEYWORD_COUNT_MAX));
+    final int COUNT_THRESHOLD = Integer.parseInt(PropertyManager.get(PropertyManager.Property.IMDB_KEYWORD_COUNT_THRESHOLD));
 
     String filePath;
 
@@ -48,7 +53,7 @@ public class ImdbKeywordsParser extends CassandraCrawler {
         BufferedReader fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "windows-1250"));
 
         Map<String, Integer> keywordsCounts = parseCounts(fileReader);
-        System.out.printf("Found %d keywords in file %s all-in-all, now parsing movies%n", keywordsCounts.size(), filePath);
+        logger.info(String.format("Found %d keywords in file %s all-in-all, now parsing movies", keywordsCounts.size(), filePath));
 
         parseMovies(keywordsCounts, fileReader, service);
 
@@ -73,12 +78,16 @@ public class ImdbKeywordsParser extends CassandraCrawler {
                     String match = matcher.group();
                     String name = match.substring(0, match.indexOf(' '));
                     int value = Integer.parseInt(match.substring(match.lastIndexOf('(') + 1, match.lastIndexOf(')')));
+                    if (value < COUNT_THRESHOLD)
+                        continue;
                     result.put(name, value);
                 }
 
             } catch (Exception e) {
-                System.out.printf("Unable to parse line %s. Exception: %s%n", line, e.getMessage());
-                e.printStackTrace();
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                e.printStackTrace(pw);
+                logger.error(String.format("Unable to parse line %s. Exception: %s", line, sw.toString()));
             } finally {
                 line = reader.readLine();
             }
@@ -104,7 +113,7 @@ public class ImdbKeywordsParser extends CassandraCrawler {
         while (line != null) {
             try {
 
-                watch.tick(100000, "Processing movies", "lines");
+                watch.tick(logger, 100000, "Processing movies", "lines");
 
                 Matcher matcher = keywordLine.matcher(line);
                 if(!matcher.matches())
@@ -133,15 +142,17 @@ public class ImdbKeywordsParser extends CassandraCrawler {
                 }
 
                 Integer count = keywordsCounts.get(keywordName);
-                double weight = count > MAX_COUNT ?
-                        MAX_WEIGHT :
-                        MIN_WEIGHT + (((double) count) / MAX_COUNT) * WEIGHT_RANGE;
+                double weight = count >= MAX_COUNT ?
+                        MIN_WEIGHT :
+                        MAX_WEIGHT - (1d * count / MAX_COUNT) * WEIGHT_RANGE;
 
                 service.setComponentWeight(movieItem, keywordItem, weight);
 
             } catch (Exception e) {
-                System.out.printf("Unable to parse line %s. Exception: %s%n", line, e.getMessage());
-                e.printStackTrace();
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                e.printStackTrace(pw);
+                logger.error(String.format("Unable to parse line %s. Exception: %s", line, sw.toString()));
             } finally {
                 line = reader.readLine();
             }

@@ -24,6 +24,7 @@ import java.util.*;
 public class ItemPage extends CustomLayout {
 
     public static final int STREAM_SIZE_LIMIT = 20;
+    public static final double COMPONENT_THRESHOLD = 2.1;
 
     @Autowired
     private TagService service;
@@ -154,7 +155,7 @@ public class ItemPage extends CustomLayout {
         Map<InformationItem, Double> componentsMap = new HashMap<InformationItem, Double>();
 
         for (Map.Entry<InformationItem, Double> componentEntry : item.getComponents().entrySet()) {
-            if ((componentEntry.getValue() > 0) && (componentEntry.getValue() < 1.99)) {
+            if ((componentEntry.getValue() > 0) && (componentEntry.getValue() < COMPONENT_THRESHOLD)) {
                 uselessComponents.put(componentEntry.getKey(), componentEntry.getValue());
             } else {
                 componentsMap.put(componentEntry.getKey(), componentEntry.getValue());

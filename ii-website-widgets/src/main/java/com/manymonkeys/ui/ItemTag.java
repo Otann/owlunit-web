@@ -33,17 +33,17 @@ public class ItemTag extends AbstractComponent {
 
     private Collection<InformationItem> commonItems;
 
-    private Class pageClass;
+    private Class linkPageClass;
 
-    public ItemTag(InformationItem item, Double value, Class pageClass) {
-        this(item, value, 0, pageClass);
+    public ItemTag(InformationItem item, Double value, Class linkPageClass) {
+        this(item, value, 0, linkPageClass);
     }
 
-    public ItemTag(InformationItem item, Double value, int componentsLimit, Class pageClass) {
+    public ItemTag(InformationItem item, Double value, int componentsLimit, Class linkPageClass) {
         this.item = item;
         this.value = value;
         this.componentsLimit = componentsLimit;
-        this.pageClass = pageClass;
+        this.linkPageClass = linkPageClass;
         this.commonItems = null;
         requestRepaintRequests();
     }
@@ -101,15 +101,15 @@ public class ItemTag extends AbstractComponent {
             target.addAttribute("style", getStyleName());
         }
 
-        PageLink link = new ParamPageLink(item.getMeta(TagService.NAME), pageClass, item.getUUID().toString());
+        PageLink link = new ParamPageLink(item.getMeta(TagService.NAME), linkPageClass, item.getUUID().toString());
         link.paint(target);
 
-        Label valueLabel = new Label(String.format("%.0f", value == null ? 0D : value));
+        Label valueLabel = new Label(String.format("%.1f", value == null ? 0D : value));
         valueLabel.setSizeUndefined();
         valueLabel.paint(target);
 
         for (InformationItem componentItem : getDisplayedComponents()) {
-            Link componentLink = new ParamPageLink(componentItem.getMeta(TagService.NAME), pageClass, componentItem.getUUID().toString());
+            Link componentLink = new ParamPageLink(componentItem.getMeta(TagService.NAME), linkPageClass, componentItem.getUUID().toString());
             if (commonItems != null && commonItems.contains(componentItem))
                 componentLink.addStyleName(CLASSNAME_COMMON_COMPONENT);
             componentLink.paint(target);
@@ -133,11 +133,35 @@ public class ItemTag extends AbstractComponent {
 
         int limit = componentsLimit;
         List<InformationItem> result = new LinkedList<InformationItem>();
-        for (InformationItem component : sortByValue(item.getComponents(), false).keySet()) {
+
+        // Sort components by weight value
+        if (item.getComponents().isEmpty())
+            return Collections.emptySet();
+        Map<InformationItem, Double> sorted = sortByValue(item.getComponents(), false);
+
+        // If there is common items, add them first
+        if (commonItems != null && !commonItems.isEmpty()) {
+            Iterator<Map.Entry<InformationItem, Double>> iterator = sorted.entrySet().iterator();
+            while (iterator.hasNext()) {
+                if (limit <= 0)
+                    return result;
+
+                InformationItem component = iterator.next().getKey();
+                if (commonItems.contains(component)) {
+                    result.add(component);
+                    iterator.remove();
+                    --limit;
+                }
+            }
+        }
+
+        // If limit is not exceeded with common items, add rest
+        for (InformationItem component : sorted.keySet()) {
             if (limit-- <= 0)
-                break;
+                return result;
             result.add(component);
         }
+
         return result;
     }
 

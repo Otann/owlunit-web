@@ -6,11 +6,10 @@ import com.manymonkeys.crawlers.common.PropertyManager;
 import com.manymonkeys.crawlers.common.TimeWatch;
 import com.manymonkeys.service.cinema.MovieService;
 import me.prettyprint.hector.api.Keyspace;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -23,6 +22,8 @@ import java.util.regex.Pattern;
  * @author Anton Chebotaev
  */
 public class ImdbTaglinesParser extends CassandraCrawler {
+
+    final Logger logger = LoggerFactory.getLogger(ImdbTaglinesParser.class);
 
     static final Pattern movieName = Pattern.compile("^# (.+) \\(\\d+\\)$");
     static final Pattern tagline   = Pattern.compile("^\t(.+)$");
@@ -63,7 +64,7 @@ public class ImdbTaglinesParser extends CassandraCrawler {
         while (line != null) {
             try {
 
-                watch.tick(100000, "Processing taglines", "lines");
+                watch.tick(logger, 100000, "Processing taglines", "lines");
 
                 Matcher matcher;
                 if ((matcher = movieName.matcher(line)).matches()) {
@@ -83,8 +84,10 @@ public class ImdbTaglinesParser extends CassandraCrawler {
                 }
 
             } catch (Exception e) {
-                System.out.printf("Unable to parse line %s. Exception: %s%n", line, e.getMessage());
-                e.printStackTrace();
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                e.printStackTrace(pw);
+                logger.error(String.format("Unable to parse line %s. Exception: %s", line, sw.toString()));
             } finally {
                 line = reader.readLine();
             }

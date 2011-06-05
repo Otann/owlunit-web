@@ -2,15 +2,14 @@ package com.manymonkeys.crawlers.movielens;
 
 import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.crawlers.common.PropertyManager;
+import com.manymonkeys.crawlers.common.PropertyManager.Property;
 import com.manymonkeys.service.cinema.MovieService;
 import com.manymonkeys.service.cinema.TagService;
 import me.prettyprint.hector.api.Cluster;
 import me.prettyprint.hector.api.Keyspace;
 import me.prettyprint.hector.api.factory.HFactory;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,23 +24,26 @@ public class MovieLensMoviesParser {
     public static final String EXTERNAL_ID = MovieLensMoviesParser.class.getName() + ".EXTERNAL_ID";
     private static final String A_K_A = "a.k.a.";
 
-    public static final double INITIAL_YEAR_WEIGHT = 2d;
-    public static final double INITIAL_GENRE_WEIGHT = 10d;  //TODO: Discuss Weight
+    public final double INITIAL_GENRE_WEIGHT = Double.parseDouble(PropertyManager.get(Property.MOVIELENS_GENRE_WEIGHT_INITIAL));
 
     private static Map<String, InformationItem> localYearsCache = new HashMap<String, InformationItem>();
 
     public static void main(String[] args) throws IOException {
+        new MovieLensMoviesParser().run(args[0]);
+    }
+
+    public void run(String filePath) throws IOException, UnsupportedEncodingException {
+
         Cluster cluster = HFactory.getOrCreateCluster(
-                PropertyManager.get(PropertyManager.Property.CASSANDRA_CLUSTER),
-                PropertyManager.get(PropertyManager.Property.CASSANDRA_HOST));
+                PropertyManager.get(Property.CASSANDRA_CLUSTER),
+                PropertyManager.get(Property.CASSANDRA_HOST));
         Keyspace keyspace = HFactory.createKeyspace(PropertyManager.get(PropertyManager.Property.CASSANDRA_KEYSPACE), cluster);
 
         try {
             MovieService movieService = new MovieService(keyspace);
             TagService tagService = new TagService(keyspace);
 
-            String filePath = PropertyManager.get(PropertyManager.Property.MOVIES_DATA_FILE);
-            BufferedReader fileReader = new BufferedReader(new FileReader(filePath));
+            BufferedReader fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF8"));
 
             String line = fileReader.readLine();
             long done = 0;

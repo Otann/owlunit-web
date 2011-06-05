@@ -15,6 +15,8 @@ import java.util.regex.Pattern;
 public class MovieService extends TagService {
 
     public static final String YEAR = MovieService.class.getName() + ".YEAR";
+    public static final String TAGLINES = MovieService.class.getName() + ".TAGLINES";
+
     public static final String TRANSLATE_NAME = MovieService.class.getName() + ".TRANSLATE_NAME";
     public static final String AKA_NAME = MovieService.class.getName() + ".AKA_NAME";
 
@@ -55,7 +57,7 @@ public class MovieService extends TagService {
                 .replace(" IX",   " 9");
 
         // delete unnecessary sequences
-        Matcher matcher = simplifyPatter.matcher(unromanized);
+        Matcher matcher = simplifyPatter.matcher(unromanized.toLowerCase());
         StringBuffer sb = new StringBuffer();
         while (matcher.find())
             matcher.appendReplacement(sb, "");

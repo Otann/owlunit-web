@@ -15,13 +15,12 @@ import java.util.UUID;
 public class CassandraInformationItemImpl implements InformationItem, Comparable<InformationItem> {
 
     UUID uuid;
-    Map<String, String> meta;
-    Map<InformationItem, Double> components;
-    Map<InformationItem, Double> parents;
+    Map<String, String> meta = new HashMap<String, String>();
+    Map<InformationItem, Double> components = new HashMap<InformationItem, Double>();
+    Map<InformationItem, Double> parents = new HashMap<InformationItem, Double>();
 
     CassandraInformationItemImpl(UUID uuid) {
         this.uuid = uuid;
-        this.meta = new HashMap<String, String>();
     }
 
     @Override

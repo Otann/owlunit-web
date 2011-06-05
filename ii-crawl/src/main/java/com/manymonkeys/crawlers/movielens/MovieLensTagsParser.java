@@ -2,14 +2,15 @@ package com.manymonkeys.crawlers.movielens;
 
 import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.crawlers.common.PropertyManager;
+import com.manymonkeys.crawlers.common.TimeWatch;
 import com.manymonkeys.service.cinema.MovieService;
 import me.prettyprint.hector.api.Cluster;
 import me.prettyprint.hector.api.Keyspace;
 import me.prettyprint.hector.api.factory.HFactory;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,10 +21,15 @@ import java.util.regex.Pattern;
  */
 public class MovieLensTagsParser {
 
-    private static double DEFAULT_WEIGHT = 1;
-    private static double ADDITIONAL_WEIGHT = 0.2;
+    public final double INITIAL_WEIGHT = Double.parseDouble(PropertyManager.get(PropertyManager.Property.MOVIELENS_TAG_WEIGHT_INITIAL));
+    public final double ADDITIONAL_WEIGHT = Double.parseDouble(PropertyManager.get(PropertyManager.Property.MOVIELENS_TAG_WEIGHT_ADDITIONAL));
 
     public static void main(String[] args) throws IOException {
+        new MovieLensTagsParser().run(args[0]);
+    }
+
+    public void run(String filePath) throws IOException {
+
         Cluster cluster = HFactory.getOrCreateCluster(
                 PropertyManager.get(PropertyManager.Property.CASSANDRA_CLUSTER),
                 PropertyManager.get(PropertyManager.Property.CASSANDRA_HOST));
@@ -33,57 +39,50 @@ public class MovieLensTagsParser {
 
             MovieService movieService = new MovieService(keyspace);
 
-            String filePath = PropertyManager.get(PropertyManager.Property.TAGS_DATA_FILE);
+            BufferedReader fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF8"));
 
-            BufferedReader fileReader = new BufferedReader(new FileReader(filePath));
+            Map<String, InformationItem> tagCache = new HashMap<String, InformationItem>();
+            Map<String, InformationItem> moviesCache = new HashMap<String, InformationItem>();
+
+            TimeWatch watch = TimeWatch.start();
 
             String line = fileReader.readLine();
-            long done = 0;
             Pattern p = Pattern.compile("\\:\\:(.*)\\:\\:");
             while (line != null) {
-
-
-                if ("".equals(line)) {
+                if ("".equals(line))
                     continue;
-                }
 
                 try {
-                    Matcher m = p.matcher(line);
-                    m.find();
-                    String str = m.group(1);
+                    Matcher matcher = p.matcher(line);
+                    matcher.find();
+                    String str = matcher.group(1);
                     String externalId = str.substring(0, str.indexOf(':'));
                     String tagName = str.substring(str.lastIndexOf(':') + 1, str.length()).toLowerCase();
 
-                    InformationItem movie;
-                    try {
-                        movie = movieService.loadByMeta(MovieLensMoviesParser.EXTERNAL_ID, externalId).iterator().next();
-                    } catch (Exception e) {
-                        System.out.println("Failed to find movie with external Id = " + externalId + "; " + e.getMessage());
-                        continue;
+                    InformationItem movieItem = moviesCache.get(externalId);
+                    if (movieItem == null) {
+                        movieItem = movieService.loadByMeta(MovieLensMoviesParser.EXTERNAL_ID, externalId).iterator().next();
+                        moviesCache.put(externalId, movieItem);
                     }
 
-                    done++;
-                    if (done % 25 == 0) {
-                        System.out.println(String.format("Created %d tags", done));
+                    watch.tick(50, "Processing movielens tags", "tags");
+
+                    InformationItem tagItem = tagCache.get(tagName);
+                    if (tagItem == null) {
+                        tagItem = movieService.createTag(tagName);
+                        tagCache.put(tagName, tagItem);
                     }
 
-                    InformationItem tag = movieService.getTag(tagName);
-                    double weight = 0;
-                    if (tag == null) {
-                        tag = movieService.createTag(tagName);
-                        weight = DEFAULT_WEIGHT;
-                    } else if (movie.getComponentWeight(tag) != null) {
-                        weight = movie.getComponentWeight(tag) + ADDITIONAL_WEIGHT;
+                    Double weight = movieItem.getComponentWeight(tagItem);
+                    if (weight == null) {
+                        movieService.setComponentWeight(movieItem, tagItem, INITIAL_WEIGHT);
                     } else {
-                        weight = DEFAULT_WEIGHT;
+                        movieService.setComponentWeight(movieItem, tagItem, weight + ADDITIONAL_WEIGHT);
                     }
-                    movieService.setComponentWeight(movie, tag, weight);
 
-                    System.out.print(".");
                 } catch (Exception e) {
-                    System.out.println("Failed to add tag; reason: " + e.getMessage());
+                    System.out.printf("Failed to parse line %s; reason: %s%n", line, e.getMessage());
                     e.printStackTrace();
-                    continue;
                 } finally {
                     line = fileReader.readLine();
                 }

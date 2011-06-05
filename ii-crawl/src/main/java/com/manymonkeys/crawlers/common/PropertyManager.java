@@ -12,15 +12,19 @@ import java.util.ResourceBundle;
 public class PropertyManager {
 
     public static enum Property {
-        NEO4J_DB("neo4j.db"),
-
         CASSANDRA_CLUSTER("cassandra.cluster"),
         CASSANDRA_HOST("cassandra.address"),
         CASSANDRA_KEYSPACE("cassandra.keyspace"),
 
-        MOVIES_DATA_FILE("movies.data.file"),
-        TAGS_DATA_FILE("tags.data.file"),
-        IMDB_ACTORS_FILE("imdb.actors.file");
+        MOVIELENS_GENRE_WEIGHT_INITIAL("movielens.weight.genre.initial"),
+        MOVIELENS_TAG_WEIGHT_INITIAL("movielens.weight.tag.initial"),
+        MOVIELENS_TAG_WEIGHT_ADDITIONAL("movielens.weight.tag.additional"),
+
+        IMDB_WEIGHT_KEYWORD_MIN("imdb.weight.keyword.min"),
+        IMDB_WEIGHT_KEYWORD_MAX("imdb.weight.keyword.max"),
+        IMDB_KEYWORD_COUNT_MAX("imdb.keyword.count.max")
+        ;
+
 
         String value;
 

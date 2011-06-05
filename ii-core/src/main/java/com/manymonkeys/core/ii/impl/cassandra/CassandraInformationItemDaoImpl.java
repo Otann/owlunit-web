@@ -144,6 +144,9 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
 
         Collection<UUID> ids = getUniqueIds(items);
 
+        System.out.printf("reloadParents called on query of size %d %n", ids.size());
+        long startTime = System.currentTimeMillis();
+
         MultigetSliceQuery<UUID, UUID, Double> query = HFactory.createMultigetSliceQuery(keyspace, us, us, ds);
         query.setColumnFamily(CF_COMPONENTS);
         query.setKeys(ids);
@@ -164,6 +167,9 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
                 itemImpl.components.put(component, column.getValue());
             }
         }
+
+        System.out.printf("reloadComponents(%d) got result in %d seconds. Result size is %d%n", ids.size(), (System.currentTimeMillis() - startTime) / 1000, result.size());
+
         return result;
     }
 
@@ -173,6 +179,9 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
             return Collections.emptySet();
 
         Collection<UUID> ids = getUniqueIds(items);
+
+        System.out.printf("reloadParents(%d) called %n", ids.size());
+        long startTime = System.currentTimeMillis();
 
         MultigetSliceQuery<UUID, UUID, Double> query = HFactory.createMultigetSliceQuery(keyspace, us, us, ds);
         query.setColumnFamily(CF_PARENTS);
@@ -194,6 +203,9 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
                 itemImpl.parents.put(component, column.getValue());
             }
         }
+
+        System.out.printf("reloadParents(%d) got result in %d seconds. Result size is %d%n", ids.size(), (System.currentTimeMillis() - startTime) / 1000, result.size());
+
         return result;
     }
 
@@ -221,6 +233,9 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
     @Override
     public Collection<InformationItem> loadByUUIDs(Collection<UUID> uuids) {
 
+        System.out.printf("loadByUUIDs(%d) called%n", uuids.size());
+        long startTime = System.currentTimeMillis();
+
         MultigetSliceQuery<UUID, String, String> multigetSliceQuery = HFactory.createMultigetSliceQuery(keyspace, us, ss, ss);
         multigetSliceQuery.setColumnFamily(CF_META);
         multigetSliceQuery.setKeys(uuids);
@@ -241,6 +256,8 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
 
             result.add(item);
         }
+
+        System.out.printf("loadByUUIDs(%s) got result in %d seconds. Result size is %d%n", uuids.size(), (System.currentTimeMillis() - startTime) / 1000, result.size());
 
         return result;
     }

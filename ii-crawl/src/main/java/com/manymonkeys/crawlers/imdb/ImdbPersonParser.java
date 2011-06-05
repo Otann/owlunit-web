@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 public class ImdbPersonParser extends CassandraCrawler {
 
     private final String filePath;
+    private final String role;
     private final double INITIAL_PERSON_WEIGHT;
 
     MovieService movieService;
@@ -31,14 +32,15 @@ public class ImdbPersonParser extends CassandraCrawler {
     Pattern personMoviePattern = Pattern.compile("^([^\\t]+)\\t+(.+)\\((\\d+)\\).*$");
     Pattern moviePattern =       Pattern.compile("^\\t\\t\\t(.+)\\((\\d+)\\).*$");
 
-    public ImdbPersonParser(String filePath, double initialWeight) {
+    public ImdbPersonParser(String filePath, double initialWeight, String role) {
         this.filePath = filePath;
+        this.role = role;
         this.INITIAL_PERSON_WEIGHT = initialWeight;
     }
 
 
     public static void main(String[] args) {
-        new ImdbPersonParser(args[0], Double.parseDouble(args[1])).crawl();
+        new ImdbPersonParser(args[0], Double.parseDouble(args[1]), args[2]).crawl();
     }
 
     public void run(Keyspace keyspace) throws Exception {
@@ -110,7 +112,7 @@ public class ImdbPersonParser extends CassandraCrawler {
                 line = fileReader.readLine();
             }
         }
-        System.out.println(String.format("Processed %d actors all-in-all", actorsCount));
+        System.out.println(String.format("Processed %d persons all-in-all", actorsCount));
     }
 
     InformationItem processPerson(String name) {
@@ -125,11 +127,11 @@ public class ImdbPersonParser extends CassandraCrawler {
             lastName = name;
         }
         InformationItem person = personService.getPerson(firstName, lastName);
-        if (person != null) {
-            return person;
-        } else {
-            return personService.createPerson(firstName, lastName);
+        if (person == null) {
+            person = personService.createPerson(firstName, lastName);
+            personService.addRole(person, role);
         }
+        return person;
     }
 
     void processMovie(InformationItem movie, InformationItem person) {

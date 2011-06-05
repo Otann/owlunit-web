@@ -47,6 +47,7 @@
             <param name="parse.classname" value="com.manymonkeys.crawlers.imdb.ImdbPersonParser"/>
             <param name="parse.filename"  value="${imdb.file.actors}" />
             <param name="parse.weight"    value="${imdb.weight.actor}"/>
+            <param name="parse.role"      value="${imdb.role.actor}"/>
         </antcall>
     </target>
 
@@ -56,6 +57,7 @@
             <param name="parse.classname" value="com.manymonkeys.crawlers.imdb.ImdbPersonParser"/>
             <param name="parse.filename"  value="${imdb.file.actress}" />
             <param name="parse.weight"    value="${imdb.weight.actress}"/>
+            <param name="parse.role"      value="${imdb.role.actress}"/>
         </antcall>
     </target>
 
@@ -65,6 +67,7 @@
             <param name="parse.classname" value="com.manymonkeys.crawlers.imdb.ImdbPersonParser"/>
             <param name="parse.filename"  value="${imdb.file.producers}" />
             <param name="parse.weight"    value="${imdb.weight.producer}"/>
+            <param name="parse.role"      value="${imdb.role.producer}"/>
         </antcall>
     </target>
 
@@ -74,6 +77,7 @@
             <param name="parse.classname" value="com.manymonkeys.crawlers.imdb.ImdbPersonParser"/>
             <param name="parse.filename"  value="${imdb.file.directors}" />
             <param name="parse.weight"    value="${imdb.weight.producer}"/>
+            <param name="parse.role"      value="${imdb.role.director}"/>
         </antcall>
     </target>
 
@@ -108,6 +112,7 @@
 
             <arg value="${parse.filename}" />
             <arg value="${parse.weight}" />
+            <arg value="${parse.role}" />
         </java>
 
         <echo>Fuck yeah!</echo>

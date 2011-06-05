@@ -15,12 +15,11 @@ public class RecommenderPlainImpl implements Recommender {
 
     private int componentsLimit = 20;
     private int parentsLimit = 20;
-
     private double weightThreshold = 1.5;
 
     @Override
     public void diffuse(InformationItem item, InformationItem component, Double rating, InformationItemDao dao) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        // TODO: implement
     }
 
     /**
@@ -89,24 +88,12 @@ public class RecommenderPlainImpl implements Recommender {
         return sortByValue(result, true);
     }
 
-    public int getComponentsLimit() {
-        return componentsLimit;
-    }
-
     public void setComponentsLimit(int componentsLimit) {
         this.componentsLimit = componentsLimit;
     }
 
-    public int getParentsLimit() {
-        return parentsLimit;
-    }
-
     public void setParentsLimit(int parentsLimit) {
         this.parentsLimit = parentsLimit;
-    }
-
-    public double getWeightThreshold() {
-        return weightThreshold;
     }
 
     public void setWeightThreshold(double weightThreshold) {
@@ -117,12 +104,14 @@ public class RecommenderPlainImpl implements Recommender {
         Map<InformationItem, Double> result = new HashMap<InformationItem, Double>();
 
         int limit = componentsLimit;
-        for(Map.Entry<InformationItem, Double> componentEntry : items.entrySet()) {
+        for(Map.Entry<InformationItem, Double> componentEntry : sortByValue(items, true).entrySet()) {
             if (limit-- <= 0)
                 break;
 
-            if (componentEntry.getValue() > weightThreshold)
-                result.put(componentEntry.getKey(), componentEntry.getValue());
+            if (componentEntry.getValue() < weightThreshold)
+                break;
+
+            result.put(componentEntry.getKey(), componentEntry.getValue());
         }
 
         return result;

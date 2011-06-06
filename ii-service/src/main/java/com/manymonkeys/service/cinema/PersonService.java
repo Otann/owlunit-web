@@ -65,7 +65,10 @@ public class PersonService extends TagService {
 
     public void addRole(InformationItem person, String role) {
         String rolesRaw = person.getMeta(ROLES_KEY);
-        setMeta(person, ROLES_KEY, String.format("%s###%s", rolesRaw, role));
+        if (rolesRaw == null)
+            setMeta(person, ROLES_KEY, role);
+        else
+            setMeta(person, ROLES_KEY, String.format("%s###%s", rolesRaw, role));
     }
 
 }

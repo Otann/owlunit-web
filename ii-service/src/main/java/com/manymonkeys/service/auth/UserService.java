@@ -2,6 +2,7 @@ package com.manymonkeys.service.auth;
 
 import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.core.ii.impl.cassandra.CassandraInformationItemDaoImpl;
+import com.manymonkeys.service.cinema.TagService;
 import me.prettyprint.hector.api.Keyspace;
 
 import java.math.BigInteger;
@@ -14,7 +15,7 @@ import java.util.NoSuchElementException;
  *
  * @author Anton Chebotaev
  */
-public class UserService extends CassandraInformationItemDaoImpl {
+public class UserService extends TagService {
 
     public static final String LOGIN = UserService.class.getName() + ".LOGIN";
     private static final String PASSWORD = UserService.class.getName() + ".PASSWORD";
@@ -27,7 +28,7 @@ public class UserService extends CassandraInformationItemDaoImpl {
 
     public InformationItem createUser(String login, String password) {
         //TODO: validate login name to be alphanumeric
-        InformationItem user = createInformationItem();
+        InformationItem user = createTag(login);
         setMeta(user, LOGIN, login, true);
         setMeta(user, PASSWORD, getPasswordHash(password));
         return user;

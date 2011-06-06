@@ -1,0 +1,13 @@
+.ii-avatar {
+    float: left;
+    margin: 20px;
+
+    padding: 1px;
+    background-color: black;
+    border: 10px solid white;
+}
+
+.ii-page-meta .ii-name.ii-user {
+    margin-top: 50px;
+    background-color: #ffcc33;
+}

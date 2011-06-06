@@ -43,10 +43,6 @@
         <property name="weightThreshold" value="2.1"/>
     </bean>
 
-    <bean id="tagService" class="com.manymonkeys.service.cinema.TagService">
-        <constructor-arg ref="keyspace"/>
-    </bean>
-
     <bean id="userService" class="com.manymonkeys.service.auth.UserService">
         <constructor-arg ref="keyspace"/>
     </bean>

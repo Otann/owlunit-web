@@ -39,6 +39,8 @@
         <antcall target="crawl-imdb-directors" />
         <antcall target="crawl-imdb-producers" />
         <antcall target="crawl-imdb-keywords" />
+        <antcall target="crawl-imdb-taglines" />
+        <antcall target="crawl-imdb-plot" />
     </target>
 
     <target name="crawl-imdb-actors">
@@ -94,6 +96,14 @@
             <param name="parse.greeting"  value="Crawling IMDB taglines"/>
             <param name="parse.classname" value="com.manymonkeys.crawlers.imdb.ImdbTaglinesParser"/>
             <param name="parse.filename"  value="${imdb.file.taglines}" />
+        </antcall>
+    </target>
+
+    <target name="crawl-imdb-plot">
+        <antcall target="crawl-file">
+            <param name="parse.greeting"  value="Crawling IMDB plots"/>
+            <param name="parse.classname" value="com.manymonkeys.crawlers.imdb.ImdbPlotParser"/>
+            <param name="parse.filename"  value="${imdb.file.plot}" />
         </antcall>
     </target>
 

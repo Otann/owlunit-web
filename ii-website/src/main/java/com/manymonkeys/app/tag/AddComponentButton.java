@@ -22,7 +22,7 @@ public class AddComponentButton extends FilterTagButton {
     public void processItem(InformationItem item) {
         InformationItem pageItem = page.getItem();
         if (pageItem != null) {
-            double initialWeight = 1;
+            double initialWeight = 10;
             page.getService().setComponentWeight(pageItem, item, initialWeight);
             page.refillComponents();
             page.refillStream();

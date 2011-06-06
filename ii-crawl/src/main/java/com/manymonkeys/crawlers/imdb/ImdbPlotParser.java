@@ -17,21 +17,22 @@ import java.util.regex.Pattern;
  *
  * @author Anton Chebotaev
  */
-public class ImdbTaglinesParser extends CassandraCrawler {
+public class ImdbPlotParser extends CassandraCrawler {
 
-    final Logger logger = LoggerFactory.getLogger(ImdbTaglinesParser.class);
+    final Logger logger = LoggerFactory.getLogger(ImdbPlotParser.class);
 
-    static final Pattern movieName = Pattern.compile("^# (.+) \\(\\d+\\)$");
-    static final Pattern tagline   = Pattern.compile("^\t(.+)$");
+    static final Pattern movieName  = Pattern.compile("^MV: (.+) \\(\\d+\\).*$");
+    static final Pattern plotLine   = Pattern.compile("PL: (.+)$");
+    static final Pattern authorLine = Pattern.compile("BY: (.+)$");
 
     String filePath;
 
-    public ImdbTaglinesParser(String filePath) {
+    public ImdbPlotParser(String filePath) {
         this.filePath = filePath;
     }
 
     public static void main(String[] args) {
-        new ImdbTaglinesParser(args[0]).crawl();
+        new ImdbPlotParser(args[0]).crawl();
     }
 
     @Override
@@ -40,16 +41,11 @@ public class ImdbTaglinesParser extends CassandraCrawler {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "windows-1250"));
 
-        String line = reader.readLine();
-        while(line != null && !line.contains("TAG LINES LIST"))
-            line = reader.readLine();
-
-        parse(reader, service);
+        parseMovies(reader, service);
 
     }
 
-    void parse(BufferedReader reader, MovieService service) throws IOException {
-
+    void parseMovies(BufferedReader reader, MovieService service) throws IOException {
 
         TimeWatch watch = TimeWatch.start();
 
@@ -65,18 +61,25 @@ public class ImdbTaglinesParser extends CassandraCrawler {
                 Matcher matcher;
                 if ((matcher = movieName.matcher(line)).matches()) {
                     if (movieItem != null) {
-                        service.setMeta(movieItem, MovieService.TAGLINES, buffer.toString());
+                        service.setMeta(movieItem, MovieService.PLOT, buffer.toString());
                         buffer = new StringBuffer();
                     }
 
                     String movieName = matcher.group(1);
                     movieItem = service.getByNameSimplified(movieName);
-                } else if ((matcher = tagline.matcher(line)).matches()) {
+                } else if ((matcher = plotLine.matcher(line)).matches()) {
                     if (movieItem == null)
                         continue;
 
                     buffer.append(matcher.group(1));
-                    buffer.append("\n");
+                    buffer.append(' ');
+                } else if ((matcher = plotLine.matcher(line)).matches()) {
+                    if (movieItem == null)
+                        continue;
+
+                    buffer.append("author :");
+                    buffer.append(matcher.group(1));
+                    buffer.append('\n');
                 }
 
             } catch (Exception e) {
@@ -90,7 +93,7 @@ public class ImdbTaglinesParser extends CassandraCrawler {
         }
 
         if (movieItem != null) {
-            service.setMeta(movieItem, MovieService.TAGLINES, buffer.toString());
+            service.setMeta(movieItem, MovieService.PLOT, buffer.toString());
         }
 
     }

@@ -77,6 +77,8 @@ public class LoginWindow extends Window {
 
                     try {
                         InformationItem user = authManager.authenticate(login, password);
+                        if (user == null)
+                            getApplication().getMainWindow().showNotification("Authentication failed, User is null");
 
                         if (listener != null) {
                             listener.userLoggedIn(user);

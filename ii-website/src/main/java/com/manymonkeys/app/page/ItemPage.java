@@ -2,6 +2,7 @@ package com.manymonkeys.app.page;
 
 import com.manymonkeys.core.algo.Recommender;
 import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.service.cinema.MovieService;
 import com.manymonkeys.service.cinema.PersonService;
 import com.manymonkeys.service.cinema.TagService;
 import com.manymonkeys.ui.ItemTag;
@@ -27,19 +28,19 @@ public class ItemPage extends CustomLayout {
     public static final double COMPONENT_THRESHOLD = 2.1;
 
     @Autowired
-    private TagService service;
+    TagService service;
 
     @Autowired
-    private Recommender recommender;
+    Recommender recommender;
 
     @Param(pos = 0)
     String uuid;
 
-    private InformationItem item;
+    InformationItem item;
 
-    private Layout meta;
-    private Layout components;
-    private Layout stream;
+    Layout meta;
+    Layout components;
+    Layout stream;
 
     public ItemPage() {
         super("ii_page");
@@ -51,10 +52,6 @@ public class ItemPage extends CustomLayout {
 
     public TagService getService() {
         return service;
-    }
-
-    public Recommender getRecommender() {
-        return recommender;
     }
 
     private void reloadPageLayout() {
@@ -118,30 +115,31 @@ public class ItemPage extends CustomLayout {
 
         meta.removeAllComponents();
 
-        Label name = new Label(item.getMeta(TagService.NAME));
-        name.setWidth(null);
-        name.addStyleName(Stream.ITEM_PAGE_NAME);
-        meta.addComponent(name);
+        Label nameLabel = new Label(item.getMeta(TagService.NAME));
+        nameLabel.setWidth(null);
+        nameLabel.addStyleName(Stream.ITEM_PAGE_NAME);
+        meta.addComponent(nameLabel);
 
-        Label techCaption = new Label("Tech Info");
-        techCaption.setStyleName(Stream.LABEL_H2);
-        techCaption.setSizeUndefined();
-        meta.addComponent(techCaption);
-
-        Label techLabel = new Label();
-        techLabel.setSizeUndefined();
-        meta.addComponent(techLabel);
+        Label infoLabel = new Label();
+        infoLabel.setSizeUndefined();
+        meta.addComponent(infoLabel);
         StringBuffer sb = new StringBuffer();
 
         sb.append(String.format("<b>%d</b> has this item as a component</br>", item.getParents().size()));
         sb.append(String.format("This item's id is <b>%s</b></br>", item.getUUID().toString()));
 
-        for (Map.Entry<String, String> entry : item.getMetaMap().entrySet()) {
-            sb.append(String.format("%s : %s<br>", entry.getKey(), entry.getValue()));
+        if (item.getMeta(MovieService.CLASS_MARK_KEY).equals(MovieService.CLASS_MARK_VALUE)) {
+            String plot = item.getMeta(MovieService.PLOT);
+            if (plot != null)
+                sb.append(plot.replace("\n", "</br>")).append("</br>");
+
+            String taglines = item.getMeta(MovieService.TAGLINES);
+            if (taglines != null)
+                sb.append(taglines.replace("\n", "</br>")).append("</br>");
         }
 
-        techLabel.setValue(sb.toString());
-        techLabel.setContentMode(Label.CONTENT_XHTML);
+        infoLabel.setValue(sb.toString());
+        infoLabel.setContentMode(Label.CONTENT_XHTML);
     }
 
     public void refillComponents() {
@@ -217,6 +215,10 @@ public class ItemPage extends CustomLayout {
         long limit = STREAM_SIZE_LIMIT;
         Map<InformationItem, Double> recommendations = recommender.getMostLike(item, service);
 
+        for (InformationItem component : item.getComponents().keySet()) {
+            recommendations.remove(component);
+        }
+
         List<InformationItem> itemsToReload = new LinkedList<InformationItem>();
         List<ItemTag> tagsToAdd = new LinkedList<ItemTag>();
 
@@ -227,6 +229,7 @@ public class ItemPage extends CustomLayout {
             InformationItem recommendedItem = entry.getKey();
             Double value = entry.getValue();
             ItemTag tag = new ItemTag(recommendedItem, value, ItemTag.DEFAULT_COMPONENTS_LIMIT, ItemPage.class);
+//            tag.setComponentsLimit(50);
             tag.setCommonItems(item.getComponents().keySet());
             tagsToAdd.add(tag);
 

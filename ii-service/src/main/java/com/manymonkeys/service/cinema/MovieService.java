@@ -16,6 +16,7 @@ public class MovieService extends TagService {
 
     public static final String YEAR = MovieService.class.getName() + ".YEAR";
     public static final String TAGLINES = MovieService.class.getName() + ".TAGLINES";
+    public static final String PLOT = MovieService.class.getName() + ".PLOT";
 
     public static final String TRANSLATE_NAME = MovieService.class.getName() + ".TRANSLATE_NAME";
     public static final String AKA_NAME = MovieService.class.getName() + ".AKA_NAME";

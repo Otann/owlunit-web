@@ -3,6 +3,7 @@ package com.manymonkeys.app.page;
 import com.manymonkeys.app.auth.AuthManager;
 import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.service.auth.UserService;
+import com.manymonkeys.service.cinema.TagService;
 import com.manymonkeys.ui.ItemTag;
 import com.manymonkeys.ui.theme.Stream;
 import com.vaadin.incubator.dashlayout.ui.VerDashLayout;
@@ -23,72 +24,43 @@ import java.util.Map;
  */
 @Page
 @Configurable(preConstruction = true)
-public class ProfilePage extends VerDashLayout {
-
-    public ProfilePage() {
-        super.setMargin(true);
-    }
+public class ProfilePage extends ItemPage {
 
     @Override
     public void attach() {
+        try {
+            uuid = AuthManager.getCurrent(this).getCurrentUser().getUUID().toString();
+        } catch (AuthManager.AuthException e) {
+            uuid = "";
+        }
+
         super.attach();
-        reloadCurrentUser();
     }
 
-    public void reloadCurrentUser() {
-        InformationItem user;
+    @Override
+    public void refillMeta() {
+        meta.removeAllComponents();
 
+        Embedded avatar = new Embedded();
+        avatar.setType(Embedded.TYPE_IMAGE);
+        avatar.addStyleName(Stream.ITEM_AVATAR);
+        avatar.setWidth(100, UNITS_PIXELS);
+        avatar.setHeight(100, UNITS_PIXELS);
         try {
-            user = AuthManager.getCurrent(this).getCurrentUser();
-        } catch (AuthManager.AuthException e) {
-            user = null;
+            avatar.setSource(new GravatarResource(item.getMeta("email")));
+        } catch (NoSuchAlgorithmException ignored) {
+        } catch (MalformedURLException ignored) {
         }
+        meta.addComponent(avatar);
 
-        if (user == null) {
-            this.addComponent(new Label("No user currently logged in"));
-        } else {
+        Label name = new Label(item.getMeta(UserService.LOGIN));
+        name.setWidth(null);
+        name.addStyleName(Stream.ITEM_PAGE_NAME);
+        name.addStyleName(Stream.ITEM_USER_NAME);
+        meta.addComponent(name);
 
-            Panel generalInfo = new Panel("General User Info");
-            this.addComponent(generalInfo);
+//        meta.addComponent(new Label(item.getMeta("email")));
 
-            Label login = new Label(user.getMeta(UserService.LOGIN));
-            login.addStyleName(Stream.LABEL_H1);
-            generalInfo.addComponent(login);
-
-            Link uuid = new ParamPageLink(user.getUUID().toString(), ItemPage.class, user.getUUID().toString());
-            uuid.addStyleName(Stream.LABEL_H2);
-            generalInfo.addComponent(uuid);
-
-            Embedded avatar = new Embedded();
-            avatar.setType(Embedded.TYPE_IMAGE);
-            avatar.setWidth(100, UNITS_PIXELS);
-            avatar.setHeight(100, UNITS_PIXELS);
-            try {
-                avatar.setSource(new GravatarResource(user.getMeta("email")));
-            } catch (NoSuchAlgorithmException ignored) {
-            } catch (MalformedURLException ignored) {
-            }
-            generalInfo.addComponent(avatar);
-
-            Label techLabel = new Label();
-            techLabel.setSizeUndefined();
-            StringBuffer sb = new StringBuffer();
-            for (Map.Entry<String, String> entry : user.getMetaMap().entrySet()) {
-                sb.append(String.format("%s : %s<br>", entry.getKey(), entry.getValue()));
-            }
-            techLabel.setValue(sb.toString());
-            techLabel.setContentMode(Label.CONTENT_XHTML);
-            generalInfo.addComponent(techLabel);
-
-            Panel components = new Panel("User's components");
-            this.addComponent(components);
-            for (Map.Entry<InformationItem, Double> entry : user.getComponents().entrySet()) {
-                components.addComponent(new ItemTag(entry.getKey(), entry.getValue(), 0, ItemPage.class));
-            }
-
-            Panel basket = new Panel("User's basket");
-            this.addComponent(basket);
-        }
     }
 
 }

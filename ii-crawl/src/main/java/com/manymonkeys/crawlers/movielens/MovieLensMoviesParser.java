@@ -95,7 +95,7 @@ public class MovieLensMoviesParser {
 //                }
 //                movieService.setComponentWeight(movie, yearItem, INITIAL_YEAR_WEIGHT);
 
-                watch.tick(logger, 100, "Crawling movielens.", "movies");
+                watch.tick(logger, 250, "Crawling movielens.", "movies");
 
                 for (String genre : genres) {
                     InformationItem tag = tagService.getTag(genre);

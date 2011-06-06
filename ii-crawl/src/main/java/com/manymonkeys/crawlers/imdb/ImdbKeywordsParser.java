@@ -142,6 +142,8 @@ public class ImdbKeywordsParser extends CassandraCrawler {
                 }
 
                 Integer count = keywordsCounts.get(keywordName);
+                if (count == null)
+                    continue;
                 double weight = count >= MAX_COUNT ?
                         MIN_WEIGHT :
                         MAX_WEIGHT - (1d * count / MAX_COUNT) * WEIGHT_RANGE;

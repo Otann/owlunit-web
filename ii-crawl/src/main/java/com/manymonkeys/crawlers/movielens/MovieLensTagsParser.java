@@ -69,7 +69,7 @@ public class MovieLensTagsParser {
                         moviesCache.put(externalId, movieItem);
                     }
 
-                    watch.tick(logger, 500, "Processing movielens.", "tags");
+                    watch.tick(logger, 2000, "Processing movielens.", "tags");
 
                     InformationItem tagItem = tagCache.get(tagName);
                     if (tagItem == null) {

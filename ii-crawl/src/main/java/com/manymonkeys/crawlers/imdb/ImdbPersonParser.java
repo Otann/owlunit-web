@@ -133,8 +133,8 @@ public class ImdbPersonParser extends CassandraCrawler {
         InformationItem person = personService.getPerson(firstName, lastName);
         if (person == null) {
             person = personService.createPerson(firstName, lastName);
-            personService.addRole(person, role);
         }
+        personService.addRole(person, role);
         return person;
     }
 

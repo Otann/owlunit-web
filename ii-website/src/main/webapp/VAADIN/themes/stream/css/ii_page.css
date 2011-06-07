@@ -1,10 +1,10 @@
 .ii-page-left {
     float: left;
-    width: 70%;
+    width: 60%;
 }
 
 .ii-page-right {
-    width: 30%;
+    width: 40%;
     float: right;
 }
 
@@ -12,9 +12,13 @@
     margin: 20px;
 }
 
+.ii-page-meta {
+    width: 100%;
+}
 .ii-page-meta,
 .ii-page-components {
     margin: 20px 0 0 20px;
+    padding-right: 40px;
     float: left;
     clear: left;
 }
@@ -51,6 +55,9 @@
     background-position: 0 8px;
 }
 
+.ii-page-stream .v-iitag {
+    border-left-width: 10px;
+}
 .ii-page-stream .v-iitag:hover {
     background-color: #f5e6e6;
 }
@@ -100,7 +107,7 @@
 }
 
 .ii-page-components .v-iitag.ii-actor {
-    border-left: 5px solid #006699;
+    border-left-color: #006699;
 }
 .ii-page-components .v-iitag:hover.ii-actor {
     background-color: #006699;
@@ -115,8 +122,31 @@
     padding: 6px;
 }
 .ii-page-components .v-button-link .v-button-caption{
-    text-decoration: none;
+    text-decoration: underline;
     color: #000;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.ii-page-stream .v-iitag.ii-actor {
+    border-left-color: #006699;
+}
+.ii-page-stream .v-iitag:hover.ii-actor {
+    background-color: #006699;
+}
+.ii-page-stream .v-button-link,
+.ii-page-stream .v-button-link:focus {
+    width: 100%;
+    text-align: center;
+    background-color: #0066cc;
+    float: left;
+    display: inline-block;
+    margin: 9px;
+    padding: 6px;
+}
+.ii-page-stream .v-button-link .v-button-caption{
+    text-decoration: underline;
+    color: #fff;
     font-size: 14px;
     font-weight: bold;
 }

@@ -19,6 +19,9 @@ public class InformationItemProperty extends ObjectProperty<InformationItem> {
 
     @Override
     public String toString() {
-        return getValue().getMeta(TagService.NAME);
+        if (getValue().getMeta(TagService.NAME) != null)
+            return getValue().getMeta(TagService.NAME);
+        else
+            return getValue().getUUID().toString();
     }
 }

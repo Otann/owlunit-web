@@ -1,9 +1,9 @@
 package com.manymonkeys.app.page;
 
 import com.manymonkeys.app.binding.InformationItemContainer;
-import com.manymonkeys.app.binding.InformationItemItem;
 import com.manymonkeys.core.algo.Recommender;
 import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.service.auth.UserService;
 import com.manymonkeys.service.cinema.TagService;
 import com.manymonkeys.ui.ItemTag;
 import com.manymonkeys.ui.TagTokenField;
@@ -28,7 +28,7 @@ import java.util.*;
 @Configurable(preConstruction = true)
 public class SearchPage extends VerDashLayout implements Button.ClickListener {
 
-    private static final long SEARCH_RESULTS_LIMIT = 200;
+    private static final long SEARCH_RESULTS_LIMIT = 20;
 
     @Autowired
     TagService service;
@@ -49,11 +49,11 @@ public class SearchPage extends VerDashLayout implements Button.ClickListener {
         CssLayout suggestions = new CssLayout();
         suggestions.setWidth("100%");
 
-        searchTokens = new TagTokenField(service, new InformationItemContainer(service), InformationItemItem.SINGLE_PROPERTY_ID);
+        searchTokens = new TagTokenField(new InformationItemContainer(service));
         searchTokens.setStyleName(Stream.TOKEN_BOX);
         searchTokens.addStyleName(Stream.TOKEN_BOX_TEXTFIELD);
         searchTokens.setInputPrompt("Add Search Keywords");
-        searchTokens.setNewTokensAllowed(false);
+        searchTokens.setNewTokensAllowed(true);
         searchTokens.addListener(new Property.ValueChangeListener() {
             public void valueChange(Property.ValueChangeEvent event) {
                 searchResults.removeAllComponents();
@@ -77,31 +77,34 @@ public class SearchPage extends VerDashLayout implements Button.ClickListener {
         long startTime = System.currentTimeMillis();
 
         Map<InformationItem, Double> queryMap = new HashMap<InformationItem, Double>();
-        Collection<InformationItem> queryItems = searchTokens.getInformationItems();
+        Collection<InformationItem> queryItems = new HashSet<InformationItem>(searchTokens.getInformationItems());
+        Collection<InformationItem> highlightItems = new HashSet<InformationItem>(searchTokens.getInformationItems());
 
         service.reloadComponents(queryItems);
-        for (InformationItem queryItem : queryItems) {
-            // Add Item itself
-            Double weight = queryMap.get(queryItem);
-            if (weight == null) {
-                weight = 0D;
-            }
-            weight += 1;
-            queryMap.put(queryItem, 1D);
 
-            // add all components
-            for (Map.Entry<InformationItem, Double> component : queryItem.getComponents().entrySet()) {
-                Double componentWeight = queryMap.get(component.getKey());
+        // add items
+        for (InformationItem queryItem : queryItems) {
+            queryMap.put(queryItem, 10D);
+        }
+
+        // add item's components
+        for (InformationItem queryItem : queryItems) {
+            for (Map.Entry<InformationItem, Double> componentEntry : queryItem.getComponents().entrySet()) {
+                Double componentWeight = queryMap.get(componentEntry.getKey());
                 if (componentWeight == null) {
                     componentWeight = 0D;
                 }
-                componentWeight += component.getValue();
-                queryMap.put(component.getKey(), componentWeight);
+                componentWeight += componentEntry.getValue();
+                queryMap.put(componentEntry.getKey(), componentWeight);
+            }
+
+            if (queryItem.getMeta("CREATED BY").equals(UserService.class.getName())) {
+                highlightItems.addAll(queryItem.getComponents().keySet());
             }
         }
 
         Map<InformationItem, Double> result = recommender.getMostLike(queryMap, service);
-        for (InformationItem item : queryItems) {
+        for (InformationItem item : highlightItems) {
             result.remove(item);
         }
 
@@ -114,6 +117,8 @@ public class SearchPage extends VerDashLayout implements Button.ClickListener {
                 break;
 
             ItemTag tag = new ItemTag(entry.getKey(), entry.getValue(), ItemTag.DEFAULT_COMPONENTS_LIMIT, ItemPage.class);
+            tag.setComponentsLimit(30);
+            tag.setCommonItems(highlightItems);
             reloadList.add(entry.getKey());
             reloadList.addAll(tag.getDisplayedComponents());
             displayTags.add(tag);

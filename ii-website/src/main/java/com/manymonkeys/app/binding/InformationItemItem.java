@@ -22,7 +22,7 @@ public class InformationItemItem implements Item {
     }
 
     public Property getItemProperty(Object id) {
-            return property;
+        return property;
     }
 
     public Collection<?> getItemPropertyIds() {
@@ -35,5 +35,10 @@ public class InformationItemItem implements Item {
 
     public boolean removeItemProperty(Object id) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("InformationItemItem is always read-only");
+    }
+
+    @Override
+    public String toString() {
+        return property.toString();
     }
 }

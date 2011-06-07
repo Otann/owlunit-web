@@ -2,6 +2,7 @@ package com.manymonkeys.app.page;
 
 import com.manymonkeys.core.algo.Recommender;
 import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.service.auth.UserService;
 import com.manymonkeys.service.cinema.MovieService;
 import com.manymonkeys.service.cinema.PersonService;
 import com.manymonkeys.service.cinema.TagService;
@@ -121,17 +122,17 @@ public class ItemPage extends CustomLayout {
         meta.addComponent(nameLabel);
 
         Label infoLabel = new Label();
-        infoLabel.setSizeUndefined();
+        infoLabel.setWidth("100%");
         meta.addComponent(infoLabel);
         StringBuffer sb = new StringBuffer();
 
-        sb.append(String.format("<b>%d</b> has this item as a component</br>", item.getParents().size()));
-        sb.append(String.format("This item's id is <b>%s</b></br>", item.getUUID().toString()));
+//        sb.append(String.format("<b>%d</b> has this item as a component</br>", item.getParents().size()));
+//        sb.append(String.format("This item's id is <b>%s</b></br>", item.getUUID().toString()));
 
         if (item.getMeta(MovieService.CLASS_MARK_KEY).equals(MovieService.CLASS_MARK_VALUE)) {
             String plot = item.getMeta(MovieService.PLOT);
-            if (plot != null)
-                sb.append(plot.replace("\n", "</br>")).append("</br>");
+//            if (plot != null)
+//                sb.append(plot.replace("\n", "</br>")).append("</br>");
 
             String taglines = item.getMeta(MovieService.TAGLINES);
             if (taglines != null)
@@ -201,7 +202,9 @@ public class ItemPage extends CustomLayout {
         stream.removeAllComponents();
 
         Button loader = new Button("Load Recommendations");
-        loader.setWidth("100%");
+        loader.setStyleName(Stream.BUTTON_LINK);
+        loader.addStyleName("ii-stream-loader");
+        loader.setSizeUndefined();
         stream.addComponent(loader);
 
         loader.addListener(Button.ClickEvent.class, this,"loadRecommendations");
@@ -230,6 +233,7 @@ public class ItemPage extends CustomLayout {
             Double value = entry.getValue();
             ItemTag tag = new ItemTag(recommendedItem, value, ItemTag.DEFAULT_COMPONENTS_LIMIT, ItemPage.class);
 //            tag.setComponentsLimit(50);
+
             tag.setCommonItems(item.getComponents().keySet());
             tagsToAdd.add(tag);
 
@@ -238,8 +242,11 @@ public class ItemPage extends CustomLayout {
         }
 
         service.reloadMetadata(itemsToReload);
-        for(ItemTag tag : tagsToAdd)
+        for(ItemTag tag : tagsToAdd) {
+            if (tag.getItem().getMeta("CREATED BY").equals(UserService.class.getName()))
+                tag.addStyleName("ii-actor");
             stream.addComponent(tag);
+        }
 
         getApplication().getMainWindow().showNotification(String.format("Recommendation search took %d seconds", (System.currentTimeMillis() - startTime) / 1000));
     }

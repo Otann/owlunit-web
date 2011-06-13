@@ -3,7 +3,6 @@ package com.manymonkeys.benchmark.movielens.parsers;
 import com.manymonkeys.benchmark.movielens.service.FastMinRecommender;
 import com.manymonkeys.benchmark.movielens.utils.TimeWatch;
 import com.manymonkeys.benchmark.movielens.service.MovieLensService;
-import com.manymonkeys.core.algo.Recommender;
 import com.manymonkeys.core.ii.InformationItem;
 
 import java.io.BufferedReader;
@@ -18,55 +17,63 @@ import java.io.IOException;
 public class RatingsParser {
 
     static MovieLensService service;
-    static Recommender recommender = new FastMinRecommender();
+    static FastMinRecommender recommender = new FastMinRecommender();
 
     static long done = 0;
+    public static final double MAGIC_MULTIPLICATOR = 2300d;
 
-    static void processTrainingData(long userId, long movieId, double rating) throws Exception {
-        InformationItem movie = service.getByMeta(MovieLensService.MOVIE_ID, Long.toString(movieId));
-        if (movie == null) {
-            throw new Exception(String.format("Failed to find movie with external Id = %d", movieId));
-        }
-
-        // Do user thing
-        InformationItem user = service.loadOrCreateUser(userId);
-        service.scoreMovieForUser(user, movie, rating);
+    private static interface Processor {
+        void processData(long userId, long movieId, double rating);
+        String getName();
     }
 
-    static void processTestData(long userId, long movieId, double rating, ResultData result) throws Exception {
-        InformationItem movie = service.getByMeta(MovieLensService.MOVIE_ID, Long.toString(movieId));
-        if (movie == null) {
-            throw new Exception(String.format("Failed to find movie with external Id = %d", movieId));
+    private static Processor trainingProcessor = new Processor() {
+        @Override
+        public void processData(long userId, long movieId, double rating) {
+            InformationItem movie = service.loadOrCreateMovie(movieId);
+            InformationItem user = service.loadOrCreateUser(userId);
+            service.scoreMovieForUser(user, movie, rating);
         }
 
-        InformationItem user = service.getByMeta(MovieLensService.USER_ID, Long.toString(userId));
-        if (user == null) {
-            throw new Exception(String.format("Failed to find user with external Id = %d", movieId));
+        @Override
+        public String getName() {
+            return "training processor";
         }
+    };
 
-        double comparationResult = recommender.compareItems(user, movie) * 350;
-        if (comparationResult > 5) {
-            comparationResult = 5;
+    private static ResultData resultData = new ResultData();
+    private static Processor testProcessor = new Processor() {
+        double scaleRating(double rawRating) {
+            return  rawRating * MAGIC_MULTIPLICATOR;
         }
-        result.sum += Math.pow(comparationResult * 5 - rating, 2);
+        @Override
+        public void processData(long userId, long movieId, double rating) {
+            InformationItem movie = service.loadOrCreateMovie(movieId);
+            InformationItem user = service.loadOrCreateUser(userId);
+
+            double comparationResult = scaleRating(recommender.compareItems(user, movie));
+            if (comparationResult > 5) {
+                comparationResult = 5;
+            }
+            resultData.sum += Math.pow(comparationResult - rating, 2);
+            if (resultData.count % 5000 == 0)
+                System.out.printf("Current RMSE = %.3f%n", resultData.getResilt());
 //        result.sum += Math.abs(comparationResult  - rating);
 
-        if (done % 10000 == 0) {
-            System.out.println(String.format("Comparation result %.5f, actual result %.2f", comparationResult, rating));
+            resultData.count++;
         }
+        @Override
+        public String getName() {
+            return "test processor";
+        }
+    };
 
-        result.count++;
 
-    }
-
-    public static void parseFile(String filePath, ResultData testResult) throws IOException {
-
+    public static void parseFile(String filePath, Processor processor) throws IOException {
         BufferedReader fileReader = new BufferedReader(new FileReader(filePath));
-
-        String line = fileReader.readLine();
-        done = 0;
         TimeWatch watch = TimeWatch.start();
-
+        String line = fileReader.readLine();
+        String tickLine = String.format("Processing ratings with %s.", processor.getName());
         while (line != null) {
             done++;
 
@@ -80,50 +87,44 @@ public class RatingsParser {
                 long movieId = Long.parseLong(parts[1]);
                 double rating = Double.parseDouble(parts[2]);
 
-                if (testResult == null) {
-                    processTrainingData(userId, movieId, rating);
-                } else {
-                    processTestData(userId, movieId, rating, testResult);
-                }
+                processor.processData(userId, movieId, rating);
 
-                if (done % 2000 == 0) {
-                    long passed = watch.time();
-                    watch.reset();
-                    System.out.println(String.format("Processed %d ratings. Going at speed %.3f / second", done, 2000d * 1000 / passed));
-                }
+                watch.tick(5000, tickLine, "ratings");
 
             } catch (Exception e) {
                 System.out.printf("Failed to process line %d, reason: %s%n", done, e.getMessage());
-//                e.printStackTrace();
-                //noinspection UnnecessaryContinue
-                continue;
+                e.printStackTrace();
             } finally {
                 line = fileReader.readLine();
             }
-
         }
-
     }
 
     public static void parse(MovieLensService service) throws IOException {
 
         RatingsParser.service = service;
 
-        // Train set
-        parseFile("../runtime/movielens/r1.train", null);
+        System.out.println("Parsing train file...");
+        parseFile("../runtime/movielens/r1.train", trainingProcessor);
 
-        // Test set
-        ResultData resultData = new ResultData();
-        parseFile("../runtime/movielens/r1.test", resultData);
+        System.out.println("Preparing dao for calculation...");
+        recommender.prepareData(service);
 
-        double result = Math.sqrt(resultData.sum / resultData.count);
+        System.out.println("Parsing test file...");
+        parseFile("../runtime/movielens/r1.test", testProcessor);
+
+        double result = resultData.getResilt();
 //        double result = resultData.sum / resultData.count;
-        System.out.println(String.format("All done with ratings, RMS = %.5f", result));
+        System.out.println(String.format("All done with ratings, RMSE = %.5f", result));
     }
 
     public static class ResultData {
         public long count = 0;
         public double sum = 0;
+
+        public double getResilt() {
+            return Math.sqrt(resultData.sum / resultData.count);
+        }
     }
 
 }

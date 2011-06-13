@@ -3,6 +3,7 @@ package com.manymonkeys.benchmark.movielens.service;
 import com.manymonkeys.core.ii.InformationItem;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
@@ -69,18 +70,18 @@ public class InMemoryItem implements InformationItem {
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("Item # ");
+        sb.append("Item#");
         sb.append(this.uuid);
-        sb.append(" with name ");
-        sb.append(this.getMeta(MovieLensService.ITEM_NAME));
-        sb.append(" with components:\n");
-        for (Map.Entry<InformationItem, Double> e : components.entrySet()) {
-            sb.append("\t");
-            sb.append(e.getKey().getMeta(MovieLensService.ITEM_NAME));
-            sb.append(" : ");
-            sb.append(String.format("%.2f", e.getValue()));
-            sb.append("\n");
+        sb.append(" with meta:[");
+        for(Iterator<String> iterator = this.meta.keySet().iterator(); iterator.hasNext();) {
+            String key = iterator.next();
+            sb.append(key);
+            sb.append(" -> ");
+            sb.append(this.meta.get(key));
+            if (iterator.hasNext())
+                sb.append(", ");
         }
+        sb.append("]");
         return sb.toString();
     }
 }

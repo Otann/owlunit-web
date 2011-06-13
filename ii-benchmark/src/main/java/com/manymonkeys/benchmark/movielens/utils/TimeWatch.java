@@ -1,5 +1,7 @@
 package com.manymonkeys.benchmark.movielens.utils;
 
+import org.slf4j.Logger;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -10,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 public class TimeWatch {
 
     long starts;
+    long counter;
 
     public static TimeWatch start() {
         return new TimeWatch();
@@ -17,6 +20,7 @@ public class TimeWatch {
 
     private TimeWatch() {
         reset();
+        counter = 0;
     }
 
     public TimeWatch reset() {
@@ -33,4 +37,13 @@ public class TimeWatch {
         return unit.convert(time(), TimeUnit.MILLISECONDS);
     }
 
+    public void tick(long limit, String message, String items) {
+        counter++;
+        if (counter % limit == 0) {
+            double speed = ((double) limit) * 1000 / time();
+            System.out.println(String.format("%s Processed %d %s at speed %.3f per second.", message, counter, items, speed));
+            reset();
+        }
+
+    }
 }

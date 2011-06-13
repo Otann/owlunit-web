@@ -23,8 +23,8 @@ public class FastFactorRecommender implements Recommender {
     }
 
     @Override
-    public void diffuse(InformationItem item, InformationItem component, InformationItemDao dao) {
-        throw new UnsupportedOperationException();
+    public void diffuse(InformationItem item, InformationItem component, Double rating, InformationItemDao dao) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override

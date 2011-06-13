@@ -20,7 +20,6 @@ public class DatasetRunner {
 
         MoviesParser.parse(service);
         TagsParser.parse(service);
-
         RatingsParser.parse(service);
 
     }

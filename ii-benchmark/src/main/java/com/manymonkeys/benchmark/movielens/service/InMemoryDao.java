@@ -3,6 +3,7 @@ package com.manymonkeys.benchmark.movielens.service;
 import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.core.ii.InformationItemDao;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -10,7 +11,7 @@ import java.util.*;
  *
  * @author Anton Chebotaev
  */
-public class InMemoryDao implements InformationItemDao{
+public class InMemoryDao implements InformationItemDao, Serializable {
 
     public Map<UUID, InformationItem> items = new HashMap<UUID, InformationItem>();
     public Map<String, InformationItem> metaIndex = new HashMap<String, InformationItem>();

@@ -1,8 +1,8 @@
 package com.manymonkeys.benchmark.movielens.parsers;
 
 import com.manymonkeys.benchmark.movielens.service.FastMinRecommender;
+import com.manymonkeys.benchmark.movielens.service.FastService;
 import com.manymonkeys.benchmark.movielens.utils.TimeWatch;
-import com.manymonkeys.benchmark.movielens.service.MovieLensService;
 import com.manymonkeys.core.ii.InformationItem;
 
 import java.io.BufferedReader;
@@ -16,11 +16,13 @@ import java.io.IOException;
  */
 public class RatingsParser {
 
-    static MovieLensService service;
+    static FastService service;
     static FastMinRecommender recommender = new FastMinRecommender();
 
     static long done = 0;
-    public static final double MAGIC_MULTIPLICATOR = 2300d;
+    public static final double MAGIC_MULTIPLICATOR = 500d;
+
+    private static long over_below = 0;
 
     private static interface Processor {
         void processData(long userId, long movieId, double rating);
@@ -30,8 +32,16 @@ public class RatingsParser {
     private static Processor trainingProcessor = new Processor() {
         @Override
         public void processData(long userId, long movieId, double rating) {
-            InformationItem movie = service.loadOrCreateMovie(movieId);
+            InformationItem movie = service.loadMovie(movieId);
             InformationItem user = service.loadOrCreateUser(userId);
+            if (movie == null) {
+//                System.out.printf("Unable to find movie with id = %d%n", movieId);
+                return;
+            }
+            if (user == null) {
+//                System.out.printf("Unable to find user with id = %d%n", userId);
+                return;
+            }
             service.scoreMovieForUser(user, movie, rating);
         }
 
@@ -48,7 +58,7 @@ public class RatingsParser {
         }
         @Override
         public void processData(long userId, long movieId, double rating) {
-            InformationItem movie = service.loadOrCreateMovie(movieId);
+            InformationItem movie = service.loadMovie(movieId);
             InformationItem user = service.loadOrCreateUser(userId);
 
             double comparationResult = scaleRating(recommender.compareItems(user, movie));
@@ -56,8 +66,11 @@ public class RatingsParser {
                 comparationResult = 5;
             }
             resultData.sum += Math.pow(comparationResult - rating, 2);
-            if (resultData.count % 5000 == 0)
-                System.out.printf("Current RMSE = %.3f%n", resultData.getResilt());
+            over_below = comparationResult > rating ? over_below + 1 : over_below - 1;
+            if (resultData.count % 500 == 0) {
+                System.out.printf("Current RMSE = %.3f ", resultData.getResilt());
+                System.out.printf("Current comparation result was %.3f, actual %.0f. Over-below balance is %d.%n", comparationResult, rating, over_below);
+            }
 //        result.sum += Math.abs(comparationResult  - rating);
 
             resultData.count++;
@@ -100,7 +113,7 @@ public class RatingsParser {
         }
     }
 
-    public static void parse(MovieLensService service) throws IOException {
+    public static void parse(FastService service) throws IOException {
 
         RatingsParser.service = service;
 

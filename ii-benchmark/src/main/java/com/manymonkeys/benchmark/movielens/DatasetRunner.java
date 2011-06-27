@@ -3,9 +3,9 @@ package com.manymonkeys.benchmark.movielens;
 import com.manymonkeys.benchmark.movielens.parsers.MoviesParser;
 import com.manymonkeys.benchmark.movielens.parsers.RatingsParser;
 import com.manymonkeys.benchmark.movielens.parsers.TagsParser;
-import com.manymonkeys.benchmark.movielens.service.MovieLensService;
+import com.manymonkeys.benchmark.movielens.service.FastService;
 
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Many Monkeys
@@ -14,13 +14,14 @@ import java.io.IOException;
  */
 public class DatasetRunner {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
 
-        MovieLensService service = new MovieLensService();
+        System.out.println("Reading data about service from file...");
+        ObjectInputStream ois = new ObjectInputStream(new FileInputStream("D:\\service.dat"));
+        FastService readService = (FastService) ois.readObject();
+        System.out.println("Done.");
 
-        MoviesParser.parse(service);
-        TagsParser.parse(service);
-        RatingsParser.parse(service);
+        RatingsParser.parse(readService);
 
     }
 }

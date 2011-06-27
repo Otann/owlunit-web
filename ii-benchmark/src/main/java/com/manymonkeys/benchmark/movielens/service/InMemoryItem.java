@@ -2,6 +2,7 @@ package com.manymonkeys.benchmark.movielens.service;
 
 import com.manymonkeys.core.ii.InformationItem;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -12,7 +13,7 @@ import java.util.UUID;
  *
  * @author Anton Chebotaev
  */
-public class InMemoryItem implements InformationItem {
+public class InMemoryItem implements InformationItem, Serializable {
 
     UUID uuid = UUID.randomUUID();
     Map<String, String> meta = new HashMap<String, String>();

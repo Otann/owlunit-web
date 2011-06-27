@@ -1,6 +1,6 @@
 package com.manymonkeys.benchmark.movielens.parsers;
 
-import com.manymonkeys.benchmark.movielens.service.MovieLensService;
+import com.manymonkeys.benchmark.movielens.service.FastService;
 import com.manymonkeys.benchmark.movielens.utils.TimeWatch;
 import com.manymonkeys.core.ii.InformationItem;
 
@@ -15,7 +15,7 @@ import java.io.IOException;
  */
 public class TagsParser {
 
-    public static void parse(MovieLensService service) throws IOException {
+    public static void parse(FastService service) throws IOException {
         String filePath = "../runtime/movielens/tags.dat";
 
         BufferedReader fileReader = new BufferedReader(new FileReader(filePath));
@@ -37,7 +37,7 @@ public class TagsParser {
 
                 InformationItem tag = service.loadOrCreateTag(tagName);
 
-                InformationItem movie = service.loadOrCreateMovie(movieId);
+                InformationItem movie = service.loadMovie(movieId);
                 service.scoreTagForMovie(movie, tag);
 
                 InformationItem user = service.loadOrCreateUser(userId);

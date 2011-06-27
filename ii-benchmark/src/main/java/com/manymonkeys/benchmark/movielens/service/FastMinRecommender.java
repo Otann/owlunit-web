@@ -58,7 +58,7 @@ public class FastMinRecommender implements Recommender {
         Map<InformationItem, Double> b = item_b.getComponents();
 
         double a_overall = overallWeight(item_a);
-        double b_overall = overallWeight(item_a);
+        double b_overall = overallWeight(item_b);
 
         Set<InformationItem> union = new HashSet<InformationItem>();
         union.addAll(a.keySet());

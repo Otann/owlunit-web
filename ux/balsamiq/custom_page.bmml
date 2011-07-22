@@ -1,4 +1,4 @@
-<mockup version="1.0" skin="sketch" measuredW="1292" measuredH="936" mockupW="1278" mockupH="928">
+<mockup version="1.0" skin="sketch" measuredW="1167" measuredH="936" mockupW="1153" mockupH="928">
   <controls>
     <control controlID="4" controlTypeID="com.balsamiq.mockups::Image" x="87" y="143" w="142" h="192" measuredW="77" measuredH="79" zOrder="1" locked="false" isInGroup="-1">
       <controlProperties>
@@ -275,14 +275,14 @@
         <text>This%20box%20should%20be%20same%20on%20all%20pages</text>
       </controlProperties>
     </control>
-    <control controlID="122" controlTypeID="com.balsamiq.mockups::Arrow" x="1023" y="286" w="171" h="169" measuredW="150" measuredH="100" zOrder="30" locked="false" isInGroup="-1">
+    <control controlID="122" controlTypeID="com.balsamiq.mockups::Arrow" x="1023" y="286" w="71" h="91" measuredW="150" measuredH="100" zOrder="30" locked="false" isInGroup="-1">
       <controlProperties>
         <color>13369344</color>
         <rightArrow>false</rightArrow>
         <text/>
       </controlProperties>
     </control>
-    <control controlID="124" controlTypeID="com.balsamiq.mockups::StickyNote" x="1116" y="447" w="151" h="91" measuredW="109" measuredH="123" zOrder="31" locked="false" isInGroup="-1">
+    <control controlID="124" controlTypeID="com.balsamiq.mockups::StickyNote" x="1011" y="370" w="151" h="91" measuredW="109" measuredH="123" zOrder="31" locked="false" isInGroup="-1">
       <controlProperties>
         <color>16770457</color>
         <size>12</size>
@@ -343,7 +343,7 @@
         <src>../../../../../../../C:/Users/achebotaev/Desktop/assets/symbols.bmml#component</src>
       </controlProperties>
     </control>
-    <control controlID="137" controlTypeID="com.balsamiq.mockups::Arrow" x="1026" y="504" w="183" h="125" measuredW="150" measuredH="100" zOrder="38" locked="false" isInGroup="-1">
+    <control controlID="137" controlTypeID="com.balsamiq.mockups::Arrow" x="1026" y="504" w="22" h="219" measuredW="150" measuredH="100" zOrder="38" locked="false" isInGroup="-1">
       <controlProperties>
         <color>13576743</color>
         <curvature>-1</curvature>
@@ -351,7 +351,7 @@
         <text/>
       </controlProperties>
     </control>
-    <control controlID="138" controlTypeID="com.balsamiq.mockups::StickyNote" x="1141" y="615" w="151" h="62" measuredW="109" measuredH="123" zOrder="39" locked="false" isInGroup="-1">
+    <control controlID="138" controlTypeID="com.balsamiq.mockups::StickyNote" x="976" y="713" w="151" h="62" measuredW="109" measuredH="123" zOrder="39" locked="false" isInGroup="-1">
       <controlProperties>
         <color>16770457</color>
         <size>12</size>

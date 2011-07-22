@@ -1,0 +1,112 @@
+<mockup version="1.0" skin="sketch" measuredW="668" measuredH="345" mockupW="591" mockupH="287">
+  <controls>
+    <control controlID="3" controlTypeID="__group__" x="77" y="58" w="277" h="132" measuredW="277" measuredH="132" zOrder="0" locked="false" isInGroup="-1">
+      <groupChildrenDescriptors>
+        <control controlID="0" controlTypeID="com.balsamiq.mockups::RoundButton" x="0" y="0" w="277" h="132" measuredW="32" measuredH="32" zOrder="0" locked="false" isInGroup="3">
+          <controlProperties>
+            <align>center</align>
+            <borderColor>6710886</borderColor>
+            <color>0</color>
+            <shape>roundRect</shape>
+            <text>Saved</text>
+          </controlProperties>
+        </control>
+        <control controlID="1" controlTypeID="com.balsamiq.mockups::Image" x="15" y="50" w="-1" h="-1" measuredW="32" measuredH="32" zOrder="1" locked="false" isInGroup="3">
+          <controlProperties>
+            <src>./images/jQuery/toast/success.png</src>
+            <text/>
+          </controlProperties>
+        </control>
+        <control controlID="2" controlTypeID="com.balsamiq.mockups::Image" x="242" y="13" w="-1" h="-1" measuredW="22" measuredH="22" zOrder="2" locked="false" isInGroup="3">
+          <controlProperties>
+            <src>./images/jQuery/toast/close.gif</src>
+            <text/>
+          </controlProperties>
+        </control>
+      </groupChildrenDescriptors>
+    </control>
+    <control controlID="4" controlTypeID="__group__" x="81" y="58" w="587" h="287" measuredW="587" measuredH="287" zOrder="1" locked="false" isInGroup="-1">
+      <groupChildrenDescriptors>
+        <control controlID="3" controlTypeID="__group__" x="305" y="0" w="277" h="132" measuredW="277" measuredH="132" zOrder="0" locked="false" isInGroup="4">
+          <groupChildrenDescriptors>
+            <control controlID="0" controlTypeID="com.balsamiq.mockups::RoundButton" x="0" y="0" w="277" h="132" measuredW="32" measuredH="32" zOrder="0" locked="false" isInGroup="3">
+              <controlProperties>
+                <align>center</align>
+                <borderColor>6710886</borderColor>
+                <color>0</color>
+                <shape>roundRect</shape>
+                <text>Warning</text>
+              </controlProperties>
+            </control>
+            <control controlID="1" controlTypeID="com.balsamiq.mockups::Image" x="15" y="50" w="-1" h="-1" measuredW="32" measuredH="32" zOrder="1" locked="false" isInGroup="3">
+              <controlProperties>
+                <src>./images/jQuery/toast/warning.png</src>
+                <text/>
+              </controlProperties>
+            </control>
+            <control controlID="2" controlTypeID="com.balsamiq.mockups::Image" x="242" y="13" w="-1" h="-1" measuredW="22" measuredH="22" zOrder="2" locked="false" isInGroup="3">
+              <controlProperties>
+                <src>./images/jQuery/toast/close.gif</src>
+                <text/>
+              </controlProperties>
+            </control>
+          </groupChildrenDescriptors>
+        </control>
+        <control controlID="5" controlTypeID="__group__" x="0" y="155" w="587" h="132" measuredW="587" measuredH="132" zOrder="1" locked="false" isInGroup="4">
+          <groupChildrenDescriptors>
+            <control controlID="0" controlTypeID="com.balsamiq.mockups::RoundButton" x="0" y="0" w="277" h="132" measuredW="32" measuredH="32" zOrder="0" locked="false" isInGroup="5">
+              <controlProperties>
+                <align>center</align>
+                <borderColor>6710886</borderColor>
+                <color>0</color>
+                <shape>roundRect</shape>
+                <text>Error</text>
+              </controlProperties>
+            </control>
+            <control controlID="1" controlTypeID="com.balsamiq.mockups::Image" x="15" y="50" w="-1" h="-1" measuredW="32" measuredH="32" zOrder="1" locked="false" isInGroup="5">
+              <controlProperties>
+                <src>./images/jQuery/toast/error.png</src>
+                <text/>
+              </controlProperties>
+            </control>
+            <control controlID="2" controlTypeID="com.balsamiq.mockups::Image" x="242" y="13" w="-1" h="-1" measuredW="22" measuredH="22" zOrder="2" locked="false" isInGroup="5">
+              <controlProperties>
+                <src>./images/jQuery/toast/close.gif</src>
+                <text/>
+              </controlProperties>
+            </control>
+            <control controlID="3" controlTypeID="__group__" x="310" y="0" w="277" h="132" measuredW="277" measuredH="132" zOrder="3" locked="false" isInGroup="5">
+              <groupChildrenDescriptors>
+                <control controlID="3" controlTypeID="__group__" x="0" y="0" w="277" h="132" measuredW="277" measuredH="132" zOrder="0" locked="false" isInGroup="3">
+                  <groupChildrenDescriptors>
+                    <control controlID="0" controlTypeID="com.balsamiq.mockups::RoundButton" x="0" y="0" w="277" h="132" measuredW="32" measuredH="32" zOrder="0" locked="false" isInGroup="3">
+                      <controlProperties>
+                        <align>center</align>
+                        <borderColor>6710886</borderColor>
+                        <color>0</color>
+                        <shape>roundRect</shape>
+                        <text>Notice</text>
+                      </controlProperties>
+                    </control>
+                    <control controlID="1" controlTypeID="com.balsamiq.mockups::Image" x="15" y="50" w="-1" h="-1" measuredW="32" measuredH="32" zOrder="1" locked="false" isInGroup="3">
+                      <controlProperties>
+                        <src>./images/jQuery/toast/notice.png</src>
+                        <text/>
+                      </controlProperties>
+                    </control>
+                    <control controlID="2" controlTypeID="com.balsamiq.mockups::Image" x="242" y="13" w="-1" h="-1" measuredW="22" measuredH="22" zOrder="2" locked="false" isInGroup="3">
+                      <controlProperties>
+                        <src>./images/jQuery/toast/close.gif</src>
+                        <text/>
+                      </controlProperties>
+                    </control>
+                  </groupChildrenDescriptors>
+                </control>
+              </groupChildrenDescriptors>
+            </control>
+          </groupChildrenDescriptors>
+        </control>
+      </groupChildrenDescriptors>
+    </control>
+  </controls>
+</mockup>

@@ -1,0 +1,36 @@
+package com.tomtom.security.shiro.aop.method;
+
+import com.tomtom.security.shiro.UserDeviceCheckException;
+import com.tomtom.security.shiro.annotation.RequireDeviceAssociation;
+import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler;
+import org.apache.shiro.subject.Subject;
+
+import java.lang.annotation.Annotation;
+
+/**
+ * TomTom International BV Proprietary
+ *
+ * @author Ilya Pimenov
+ */
+public class RequireDeviceAssociationAnnotationHandler extends AuthorizingAnnotationHandler {
+
+    public void assertAuthorized(Annotation a) throws AuthorizationException {
+        if (!(a instanceof RequireDeviceAssociation)) return;
+
+        RequireDeviceAssociation rducAnnotation = (RequireDeviceAssociation) a;
+        Subject subject = getSubject();
+
+        if (true) {
+            System.out.println("RequireDeviceAssociationAnnotationHandler was here !");
+            /* do checks and bla-bla here */
+            return;
+        } else {
+            throw new UserDeviceCheckException();
+        }
+    }
+
+    public RequireDeviceAssociationAnnotationHandler() {
+        super(RequireDeviceAssociation.class);
+    }
+}

@@ -1,0 +1,27 @@
+package com.tomtom.security.shiro;
+
+import org.apache.shiro.ShiroException;
+
+/**
+ * TomTom International BV Proprietary
+ *
+ * @author Ilya Pimenov
+ */
+public class UserDeviceCheckException extends ShiroException {
+
+    public UserDeviceCheckException() {
+        super();
+    }
+
+    public UserDeviceCheckException(String message) {
+        super(message);
+    }
+
+    public UserDeviceCheckException(Throwable cause) {
+        super(cause);
+    }
+
+    public UserDeviceCheckException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}

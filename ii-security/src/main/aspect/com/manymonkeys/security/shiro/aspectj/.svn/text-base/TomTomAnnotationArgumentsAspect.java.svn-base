@@ -1,0 +1,82 @@
+package com.tomtom.security.shiro.aspectj;
+
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
+
+/**
+ * TomTom International BV Proprietary
+ *
+ * @author Ilya Pimenov
+ */
+@Aspect()
+public class TomTomAnnotationArgumentsAspect {
+
+    /*------------------------
+    |   F I R S T   A R G    |
+    ========================*/
+
+    @Pointcut("execution(* *(@com.tomtom.security.shiro.annotation.MUID (*), ..)) && args(o, ..)")
+    void anyTomTomAnnotatedArgumentMethodCall(JoinPoint thisJoinPoint, Object o) {
+    }
+
+    @Before("anyTomTomAnnotatedArgumentMethodCall(thisJoinPoint, o)")
+    public void executeAnnotatedMethod(JoinPoint thisJoinPoint, Object o) throws Throwable {
+        interceptor.performBeforeInterception(thisJoinPoint, o);
+    }
+
+    /*--------------------------
+    |   S E C O N D   A R G    |
+    ==========================*/
+
+    @Pointcut("execution(* *(*, @com.tomtom.security.shiro.annotation.MUID (*), ..)) && args(*, o, ..)")
+    void anyTomTomAnnotatedArgumentMethodCallSecond(JoinPoint thisJoinPoint, Object o) {
+    }
+
+    @Before("anyTomTomAnnotatedArgumentMethodCallSecond(thisJoinPoint, o)")
+    public void executeAnnotatedMethodSecond(JoinPoint thisJoinPoint, Object o) throws Throwable {
+        interceptor.performBeforeInterception(thisJoinPoint, o);
+    }
+
+    /*------------------------
+    |   T H I R D   A R G    |
+    ========================*/
+
+    @Pointcut("execution(* *(*, *, @com.tomtom.security.shiro.annotation.MUID (*), ..)) && args(*, *, o, ..)")
+    void anyTomTomAnnotatedArgumentMethodCallThird(JoinPoint thisJoinPoint, Object o) {
+    }
+
+    @Before("anyTomTomAnnotatedArgumentMethodCallThird(thisJoinPoint, o)")
+    public void executeAnnotatedMethodThird(JoinPoint thisJoinPoint, Object o) throws Throwable {
+        interceptor.performBeforeInterception(thisJoinPoint, o);
+    }
+
+    /*--------------------------
+    |   F O U R T H   A R G    |
+    ==========================*/
+
+    @Pointcut("execution(* *(*, *, *, @com.tomtom.security.shiro.annotation.MUID (*), ..)) && args(*, *, *, o, ..)")
+    void anyTomTomAnnotatedArgumentMethodCallForth(JoinPoint thisJoinPoint, Object o) {
+    }
+
+    @Before("anyTomTomAnnotatedArgumentMethodCallForth(thisJoinPoint, o)")
+    public void executeAnnotatedMethodForth(JoinPoint thisJoinPoint, Object o) throws Throwable {
+        interceptor.performBeforeInterception(thisJoinPoint, o);
+    }
+
+    /*------------------------
+    |   F I F T H   A R G    |
+    ========================*/
+
+    @Pointcut("execution(* *(*, *, *, *, @com.tomtom.security.shiro.annotation.MUID (*), ..)) && args(*, *, *, *, o, ..)")
+    void anyTomTomAnnotatedArgumentMethodCallFifth(JoinPoint thisJoinPoint, Object o) {
+    }
+
+    @Before("anyTomTomAnnotatedArgumentMethodCallFifth(thisJoinPoint, o)")
+    public void executeAnnotatedMethodFifth(JoinPoint thisJoinPoint, Object o) throws Throwable {
+        interceptor.performBeforeInterception(thisJoinPoint, o);
+    }
+
+    private AspectjAnnotationsTomTomArgumentInterceptor interceptor = new AspectjAnnotationsTomTomArgumentInterceptor();
+}

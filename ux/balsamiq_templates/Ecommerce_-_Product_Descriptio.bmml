@@ -1,0 +1,109 @@
+<mockup version="1.0" skin="sketch" measuredW="945" measuredH="732" mockupW="835" mockupH="727">
+  <controls>
+    <control controlID="33" controlTypeID="com.balsamiq.mockups::BrowserWindow" x="110" y="5" w="835" h="727" measuredW="450" measuredH="400" zOrder="0" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Website%20Name%20-%20Product%20title%0Ahttp%3A//www.example.com/products/books/booktitle/</text>
+      </controlProperties>
+    </control>
+    <control controlID="34" controlTypeID="__group__" x="200" y="106" w="642" h="578" measuredW="642" measuredH="578" zOrder="1" locked="false" isInGroup="-1">
+      <groupChildrenDescriptors>
+        <control controlID="0" controlTypeID="com.balsamiq.mockups::Paragraph" x="217" y="156" w="425" h="115" measuredW="200" measuredH="140" zOrder="0" locked="false" isInGroup="34">
+          <controlProperties>
+            <align>left</align>
+            <text>Product%20description.%20Lorem%20ipsum%20dolor%20sit%20amet%2C%20consectetur%20adipisicing%20elit%2C%20sed%20do%20eiusmod%20tempor%20incididunt%20ut%20labore%20et%20dolore%20magna%20aliqua.%20Ut%20enim%20ad%20minim%20veniam%2C%20quis%20nostrud%20exercitation%20ullamco%20laboris%20nisi%20ut%20aliquip%20ex%20ea%20commodo%20consequat.%20Duis%20aute%20irure%20dolor%20in%20reprehenderit%20in%20voluptate%20velit%20esse%20cillum%20dolore%20eu%20fugiat%20nulla%20pariatur.%20Excepteur%20sint%20occaecat%20cupidatat%20non%20proident%2C%20sunt%20in%20culpa%20qui%20officia%20deserunt%20mollit%20anim%20id%20est%20laborum.</text>
+          </controlProperties>
+        </control>
+        <control controlID="1" controlTypeID="com.balsamiq.mockups::Image" x="2" y="156" w="195" h="306" measuredW="77" measuredH="79" zOrder="1" locked="false" isInGroup="34">
+          <controlProperties>
+            <text/>
+          </controlProperties>
+        </control>
+        <control controlID="2" controlTypeID="com.balsamiq.mockups::BreadCrumbs" x="2" y="0" w="-1" h="-1" measuredW="244" measuredH="25" zOrder="2" locked="false" isInGroup="34">
+          <controlProperties>
+            <text>Home%2C%20Products%2C%20Books%2C%20Booktitle</text>
+          </controlProperties>
+        </control>
+        <control controlID="3" controlTypeID="com.balsamiq.mockups::DataGrid" x="455" y="69" w="173" h="66" measuredW="167" measuredH="66" zOrder="3" locked="false" isInGroup="34">
+          <controlProperties>
+            <align>left</align>
+            <alternateRowColor>16777215</alternateRowColor>
+            <borderStyle>square</borderStyle>
+            <color>16777215</color>
+            <hasHeader>false</hasHeader>
+            <hLines>false</hLines>
+            <rowHeight>20</rowHeight>
+            <selectedIndex>-1</selectedIndex>
+            <size>10</size>
+            <text>Download%2C%20%A314.99%2C%3Cadd%3E%0APaperback%2C%20%A323.99%2C%20%3Cadd%3E%0AHardback%2C%20%A334.99%2C%20%3Cadd%3E</text>
+            <vLines>false</vLines>
+          </controlProperties>
+        </control>
+        <control controlID="4" controlTypeID="com.balsamiq.mockups::Title" x="0" y="71" w="446" h="-1" measuredW="252" measuredH="62" zOrder="4" locked="false" isInGroup="34">
+          <controlProperties>
+            <align>left</align>
+            <text>Product%20title</text>
+          </controlProperties>
+        </control>
+        <control controlID="5" controlTypeID="com.balsamiq.mockups::TabBar" x="2" y="478" w="622" h="100" measuredW="325" measuredH="100" zOrder="5" locked="false" isInGroup="34">
+          <controlProperties>
+            <tabVPosition>top</tabVPosition>
+            <text>Description%2C%20Reviews%2C%20Similar%20items</text>
+          </controlProperties>
+        </control>
+        <control controlID="6" controlTypeID="com.balsamiq.mockups::TabBar" x="213" y="308" w="416" h="154" measuredW="309" measuredH="100" zOrder="6" locked="false" isInGroup="34">
+          <controlProperties>
+            <tabVPosition>top</tabVPosition>
+            <text>Download%2C%20Paperback%2C%20Hardback</text>
+          </controlProperties>
+        </control>
+        <control controlID="7" controlTypeID="com.balsamiq.mockups::IconLabel" x="490" y="376" w="-1" h="-1" measuredW="106" measuredH="48" zOrder="7" locked="false" isInGroup="34">
+          <controlProperties>
+            <icon>PoundIcon%7Clarge</icon>
+            <labelPosition>right</labelPosition>
+            <text>Buy%20now</text>
+          </controlProperties>
+        </control>
+        <control controlID="8" controlTypeID="com.balsamiq.mockups::Paragraph" x="229" y="351" w="244" h="98" measuredW="200" measuredH="140" zOrder="8" locked="false" isInGroup="34">
+          <controlProperties>
+            <align>left</align>
+            <text>Description%20of%20product%2C%20stock%20levels%20etc.</text>
+          </controlProperties>
+        </control>
+        <control controlID="9" controlTypeID="__group__" x="31" y="518" w="118" h="24" measuredW="118" measuredH="24" zOrder="9" locked="false" isInGroup="34">
+          <groupChildrenDescriptors>
+            <control controlID="0" controlTypeID="com.balsamiq.mockups::Icon" x="0" y="0" w="-1" h="-1" measuredW="24" measuredH="24" zOrder="0" locked="false" isInGroup="9">
+              <controlProperties>
+                <icon>StarIcon%7Csmall</icon>
+              </controlProperties>
+            </control>
+            <control controlID="1" controlTypeID="com.balsamiq.mockups::Icon" x="24" y="0" w="-1" h="-1" measuredW="24" measuredH="24" zOrder="1" locked="false" isInGroup="9">
+              <controlProperties>
+                <icon>StarIcon%7Csmall</icon>
+              </controlProperties>
+            </control>
+            <control controlID="2" controlTypeID="com.balsamiq.mockups::Icon" x="46" y="0" w="-1" h="-1" measuredW="24" measuredH="24" zOrder="2" locked="false" isInGroup="9">
+              <controlProperties>
+                <icon>StarIcon%7Csmall</icon>
+              </controlProperties>
+            </control>
+            <control controlID="3" controlTypeID="com.balsamiq.mockups::Icon" x="70" y="0" w="-1" h="-1" measuredW="24" measuredH="24" zOrder="3" locked="false" isInGroup="9">
+              <controlProperties>
+                <icon>StarIcon%7Csmall</icon>
+              </controlProperties>
+            </control>
+            <control controlID="4" controlTypeID="com.balsamiq.mockups::Icon" x="94" y="0" w="-1" h="-1" measuredW="24" measuredH="24" zOrder="4" locked="false" isInGroup="9">
+              <controlProperties>
+                <icon>StarIcon%7Csmall</icon>
+              </controlProperties>
+            </control>
+          </groupChildrenDescriptors>
+        </control>
+        <control controlID="10" controlTypeID="com.balsamiq.mockups::PointyButton" x="498" y="516" w="-1" h="-1" measuredW="88" measuredH="28" zOrder="10" locked="false" isInGroup="34">
+          <controlProperties>
+            <text>Tweet%20this</text>
+          </controlProperties>
+        </control>
+      </groupChildrenDescriptors>
+    </control>
+  </controls>
+</mockup>

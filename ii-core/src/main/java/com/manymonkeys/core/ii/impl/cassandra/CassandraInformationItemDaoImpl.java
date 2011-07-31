@@ -2,6 +2,8 @@ package com.manymonkeys.core.ii.impl.cassandra;
 
 import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.core.ii.InformationItemDao;
+import com.manymonkeys.security.shiro.annotation.OwledArgument;
+import com.manymonkeys.security.shiro.annotation.OwledMethod;
 import me.prettyprint.cassandra.serializers.DoubleSerializer;
 import me.prettyprint.cassandra.serializers.StringSerializer;
 import me.prettyprint.cassandra.serializers.UUIDSerializer;
@@ -79,7 +81,6 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         this.keyspace = keyspace;
     }
 
-    @Override
     public CassandraInformationItemImpl createInformationItem() {
         UUID uuid = UUID.fromString(UUIDGenerator.getInstance().generateTimeBasedUUID().toString());
         CassandraInformationItemImpl item = createInformationItem(uuid);
@@ -91,7 +92,6 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         return new CassandraInformationItemImpl(uuid);
     }
 
-    @Override
     public void deleteInformationItem(InformationItem item) {
         if (!(item instanceof CassandraInformationItemImpl))
             throw generateWrongDaoException();
@@ -115,7 +115,6 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         stringMutator.execute();
     }
 
-    @Override
     public void reloadMetadata(Collection<InformationItem> items) {
         if (items.isEmpty())
             return;
@@ -146,7 +145,6 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         logger.debug(String.format("reloadMetadata(%d) got result in %d seconds", items.size(), (System.currentTimeMillis() - startTime) / 1000));
     }
 
-    @Override
     public Collection<InformationItem> reloadComponents(Collection<InformationItem> items) {
         if (items.isEmpty())
             return Collections.emptySet();
@@ -181,12 +179,14 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         return result;
     }
 
-    @Override
-    public Collection<InformationItem> reloadParents(Collection<InformationItem> items) {
+    @OwledMethod
+    public Collection<InformationItem> reloadParents(@OwledArgument Collection<InformationItem> items) {
         if (items.isEmpty())
             return Collections.emptySet();
 
         Collection<UUID> ids = getUniqueIds(items);
+
+        System.out.println("FUCK");
 
         logger.debug(String.format("reloadParents(%d) called", items.size()));
         long startTime = System.currentTimeMillis();
@@ -216,7 +216,7 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         return result;
     }
 
-    @Override
+    @OwledMethod
     public InformationItem loadByUUID(UUID uuid) {
 
         SliceQuery<UUID, String, String> sliceQuery = HFactory.createSliceQuery(keyspace, us, ss, ss);
@@ -237,7 +237,7 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         return item;
     }
 
-    @Override
+    @OwledMethod
     public Collection<InformationItem> loadByUUIDs(Collection<UUID> uuids) {
 
         logger.debug(String.format("loadByUUIDs(%d) called", uuids.size()));
@@ -269,7 +269,6 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
     }
 
 
-    @Override
     public void setComponentWeight(InformationItem item, InformationItem component, Double weight) {
         if (!(item instanceof CassandraInformationItemImpl))
             throw generateWrongDaoException();
@@ -289,7 +288,6 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         //TODO: in case of precalculated recommendations add all parents of component to recalculate queue
     }
 
-    @Override
     public void removeComponent(InformationItem item, InformationItem component) {
         if (!(item instanceof CassandraInformationItemImpl && component instanceof CassandraInformationItemImpl))
             throw generateWrongDaoException();
@@ -308,12 +306,10 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
 
     }
 
-    @Override
     public void setMeta(InformationItem item, String key, String value) {
         setMeta(item, key, value, false);
     }
 
-    @Override
     public void setMeta(InformationItem item, String key, String value, boolean isIndexed) {
         if (!(item instanceof CassandraInformationItemImpl))
             throw generateWrongDaoException();
@@ -333,7 +329,6 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         localItem.meta.put(key, value);
     }
 
-    @Override
     public void removeMeta(InformationItem item, String key) {
         if (!(item instanceof CassandraInformationItemImpl))
             throw generateWrongDaoException();
@@ -352,7 +347,6 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         localItem.meta.remove(key);
     }
 
-    @Override
     public Collection<InformationItem> loadByMeta(String key, String value) {
 
         String queryKey = String.format(META_FORMAT, key, value);
@@ -371,7 +365,6 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         return loadByUUIDs(result);
     }
 
-    @Override
     public Map<UUID, String> searchByMetaPrefix(String key, String prefix) {
 
         String queryKey = String.format(META_FORMAT, key, prefix.toLowerCase());

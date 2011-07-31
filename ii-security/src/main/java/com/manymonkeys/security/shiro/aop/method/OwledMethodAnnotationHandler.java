@@ -23,6 +23,7 @@ public class OwledMethodAnnotationHandler extends AuthorizingAnnotationHandler {
 
         if (true) {
             System.out.println("OwledMethodAnnotationHandler was here !");
+            System.out.println(subject);
             /* do checks and bla-bla here */
             return;
         } else {

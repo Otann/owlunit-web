@@ -18,6 +18,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
         <catalina.home>C:/Program Files/Java/apache-tomcat-7.0.14-windows-x64/apache-tomcat-7.0.14/</catalina.home>
+
+        <shiro.version>1.1.0</shiro.version>
+        <aspectj.version>1.6.10</aspectj.version>
     </properties>
 
     <build>
@@ -108,7 +111,8 @@
                         <baseResource implementation="org.mortbay.resource.ResourceCollection">
                             <!-- Workaround for Maven/Jetty issue http://jira.codehaus.org/browse/JETTY-680 -->
                             <!-- <resources>src/main/webapp,${project.build.directory}/${project.build.finalName}</resources> -->
-                            <resourcesAsCSV>src/main/webapp,${project.build.directory}/${project.build.finalName}</resourcesAsCSV>
+                            <resourcesAsCSV>src/main/webapp,${project.build.directory}/${project.build.finalName}
+                            </resourcesAsCSV>
                         </baseResource>
                     </webAppConfig>
                 </configuration>
@@ -288,6 +292,32 @@
             <artifactId>gwt-user</artifactId>
             <version>2.1.1</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- Shiro -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>ii-security</artifactId>
+            <version>[${project.version},]</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-spring</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+
+        <!-- - - - - - -
+        | A S P E C T J |
+        \=============-->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspectj.version}</version>
         </dependency>
     </dependencies>
 

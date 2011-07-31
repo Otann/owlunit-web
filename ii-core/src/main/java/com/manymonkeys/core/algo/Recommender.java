@@ -6,7 +6,7 @@ import com.manymonkeys.core.ii.InformationItemDao;
 import java.util.Map;
 
 /**
- * Many Mokeys
+ * Many Monkeys
  *
  * @author Anton Chebotaev
  */

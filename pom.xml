@@ -18,6 +18,8 @@
         <module>ii-website-widgets</module>
         <module>ii-website</module>
         <module>ii-local</module>
+        <module>ii-security</module>
+        <module>rd-aspects</module>
         <!--<module>ii-benchmark</module>-->
     </modules>
 

@@ -2,6 +2,7 @@ package com.manymonkeys.service.cinema;
 
 import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.core.ii.impl.cassandra.CassandraInformationItemDaoImpl;
+import com.manymonkeys.security.shiro.annotation.OwledMethod;
 import me.prettyprint.hector.api.Keyspace;
 
 import java.util.Collection;

@@ -17,7 +17,7 @@ class Item {
   val item = MockItem //.loadByUUID(UUID.fromString(S.param("id").get)) //TODO: error prone
 
   def render =
-    ".name *" #> <h3>{item.getMeta(TagService.NAME)}</h3> &
+    ".name *" #> item.getMeta(TagService.NAME) &
     ".param *" #> S.param("id").getOrElse("no parameter passed") &
     ".components *" #> components(item)
 

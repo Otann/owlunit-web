@@ -256,9 +256,98 @@
 #item-cover {
     float: left;
     width: 150px;
+    margin: 5px 10px 10px 0;
+    /*padding: 5px;*/
+    /*border: 1px solid #bebebe;*/
 }
 #item-description {
 
+}
+
+.ii-group-name {
+    margin-bottom: 0.5em;
+}
+.ii-group {
+    /*border: 1px solid red;*/
+    margin-bottom: 1.5em;
+    /*padding: 5px;*/
+
+    /*-moz-box-shadow: inset 0 0 6px #888;*/
+    /*-webkit-box-shadow: inset 0 0 6px #888;*/
+    /*box-shadow: inner 0 0 6px #888;*/
+}
+.ii-tag {
+    display: inline-block;
+    /*background-color: #ddd;*/
+    border: 1px solid #bebebe;
+    cursor: move;
+    margin: 3px;
+}
+.ii-tag .ii-marker {
+    float: left;
+    /*background-color: #f66;*/
+    background-color: #bebebe;
+    width: 5px;
+}
+.ii-tag a.name {
+    font-size: 1em;
+    font-weight: bold;
+    text-decoration: none;
+    color: #000000;
+    margin-left: 3px;
+}
+.ii-tag .weight {
+    font-size: 0.8em;
+    font-weight: bold;
+    color: #999;
+    margin: 0 3px 0 7px;
+}
+
+.ii-recommendation {
+    position: relative;
+    display: block;
+    border: 1px solid #bebebe;
+    margin: 0 0 10px 0;
+}
+.ii-recommendation .ii-marker {
+    height: 100%;
+    width: 5px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -10;
+    background-color: #bebebe;
+}
+.ii-recommendation .ii-weight {
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -10;
+    background-color: #e5e5e5;
+}
+.ii-recommendation a.name {
+    font-size: 1em;
+    font-weight: bold;
+    text-decoration: none;
+    color: #000000;
+    margin-left: 10px;
+}
+.ii-recommendation .ii-reasons {
+    margin-left: 10px;
+}
+.ii-recommendation .ii-reasons a.reason {
+    font-size: 0.8em;
+    text-decoration: none;
+    color: #fff;
+    background-color: #999999;
+    padding: 0 7px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+.ii-recommendation .ii-reasons a.reason.common {
+    background-color: #009900;
 }
 
 .splash {

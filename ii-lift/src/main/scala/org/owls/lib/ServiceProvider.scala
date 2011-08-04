@@ -14,15 +14,15 @@ import com.manymonkeys.core.ii.InformationItemDao
 
 object ServiceProvider extends SimpleInjector {
 
-  val testMode = true
+  val mockMode = false
 
   val service = new Inject(buildOne _) {}
 
   def buildOne : MovieService = {
-    if (testMode) {
+    if (mockMode) {
       MockService
     } else {
-      val cluster = HFactory.getOrCreateCluster("Local Cluster", "localhost:9160")
+      val cluster = HFactory.getOrCreateCluster("Test Cluster", "192.168.1.41:9160")
       val keyspace = HFactory.createKeyspace("InformationItems", cluster)
       new MovieService(keyspace)
     }

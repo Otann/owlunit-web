@@ -38,5 +38,9 @@ class Boot {
 
     // Use HTML5 for rendering
     LiftRules.htmlProperties.default.set((r: Req) => new Html5Properties(r.userAgent))
+
+    LiftRules.statelessRewrite.append {
+      case RewriteRequest(ParsePath("item" :: id :: Nil,"",true,_),_,_) => RewriteResponse("item" :: Nil, Map("id" -> id))
+    }
   }
 }

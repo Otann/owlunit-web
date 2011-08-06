@@ -27,10 +27,11 @@ class Item {
     ".param *" #> S.param("id").getOrElse("no parameter was passed") &
     ".components *" #> components(item)
 
-  def components(item: InformationItem) = ".ii-tag *" #> item.getComponents.map({case (i, w) => (i, w.doubleValue())}).toSeq.sortWith(_._2 > _._2).map({case (i, w) => tag(i, w)})
+  def components(item: InformationItem) =
+    ".ii-tag *" #> item.getComponents.map({case (i, w) => (i, w.doubleValue())}).toSeq.sortWith(_._2 > _._2).map({case (i, w) => tag(i, w)})
 
   def tag(item: InformationItem, weight: Double) : CssSel =
-    ".name [href]" #> ("/item?id=" + item.getUUID.toString) &
+    ".name [href]" #> ("/item/" + item.getUUID.toString) &
     ".name *" #> item.getMeta(TagService.NAME) &
     ".weight *" #> "%1.1f".format(weight)
 

@@ -21,7 +21,7 @@
         <text>Owls</text>
       </controlProperties>
     </control>
-    <control controlID="8" controlTypeID="com.balsamiq.mockups::Component" x="18" y="77" w="1132" h="43" measuredW="1132" measuredH="43" zOrder="3" locked="false" isInGroup="-1">
+    <control controlID="8" controlTypeID="com.balsamiq.mockups::Component" x="202" y="87" w="776" h="43" measuredW="776" measuredH="43" zOrder="3" locked="false" isInGroup="-1">
       <controlProperties>
         <src>./assets/symbols.bmml#top_menu</src>
       </controlProperties>

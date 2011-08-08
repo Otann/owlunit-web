@@ -1,128 +1,132 @@
-<mockup version="1.0" skin="sketch" measuredW="1167" measuredH="718" mockupW="1153" mockupH="710">
+<mockup version="1.0" skin="sketch" measuredW="1167" measuredH="846" mockupW="1153" mockupH="838">
   <controls>
-    <control controlID="0" controlTypeID="com.balsamiq.mockups::BrowserWindow" x="14" y="8" w="1153" h="710" measuredW="450" measuredH="400" zOrder="0" locked="true" isInGroup="-1">
+    <control controlID="0" controlTypeID="com.balsamiq.mockups::BrowserWindow" x="14" y="8" w="1153" h="838" measuredW="450" measuredH="400" zOrder="0" locked="true" isInGroup="-1">
       <controlProperties>
         <text>Owls%20/%20Search%0Ahttp%3A//owls.com/search/one-item+another-item</text>
         <value>0</value>
         <verticalScrollbar>true</verticalScrollbar>
       </controlProperties>
     </control>
-    <control controlID="1" controlTypeID="com.balsamiq.mockups::Component" x="119" y="214" w="580" h="64" measuredW="580" measuredH="64" zOrder="1" locked="false" isInGroup="-1">
+    <control controlID="1" controlTypeID="com.balsamiq.mockups::Component" x="122" y="285" w="580" h="64" measuredW="580" measuredH="64" zOrder="1" locked="false" isInGroup="-1">
       <controlProperties>
         <override controlID="0" x="7" y="2" w="573" h="59"/>
         <override controlID="1" x="13" y="6" w="199" h="21"/>
         <override controlID="2" x="0" y="0" w="580" h="64"/>
         <override controlID="3" x="0" y="0" w="11" h="59"/>
-        <override controlID="7" x="85" y="33" w="65" h="21"/>
         <override controlID="6" x="14" y="33" w="65" h="21"/>
-        <override controlID="6:0" x="0" y="0" w="65" h="21"/>
-        <override controlID="7:0" x="0" y="0" w="65" h="21"/>
-        <override controlID="6:1" x="2" y="0" w="61" h="18"/>
+        <override controlID="7" x="85" y="33" w="65" h="21"/>
         <override controlID="7:1" x="2" y="0" w="61" h="18"/>
+        <override controlID="6:1" x="2" y="0" w="61" h="18"/>
+        <override controlID="7:0" x="0" y="0" w="65" h="21"/>
+        <override controlID="6:0" x="0" y="0" w="65" h="21"/>
         <src>./assets/symbols.bmml#recommendation</src>
       </controlProperties>
     </control>
-    <control controlID="2" controlTypeID="com.balsamiq.mockups::Component" x="119" y="372" w="580" h="64" measuredW="580" measuredH="64" zOrder="2" locked="false" isInGroup="-1">
+    <control controlID="2" controlTypeID="com.balsamiq.mockups::Component" x="122" y="443" w="580" h="64" measuredW="580" measuredH="64" zOrder="2" locked="false" isInGroup="-1">
       <controlProperties>
         <override controlID="0" x="7" y="2" w="449" h="59"/>
         <override controlID="1" x="13" y="6" w="190" h="21"/>
         <override controlID="2" x="0" y="0" w="580" h="64"/>
         <override controlID="3" x="0" y="0" w="11" h="59"/>
-        <override controlID="7" x="85" y="33" w="65" h="21"/>
         <override controlID="6" x="14" y="33" w="65" h="21"/>
-        <override controlID="6:0" x="0" y="0" w="65" h="21"/>
-        <override controlID="7:0" x="0" y="0" w="65" h="21"/>
-        <override controlID="6:1" x="2" y="0" w="61" h="18"/>
+        <override controlID="7" x="85" y="33" w="65" h="21"/>
         <override controlID="7:1" x="2" y="0" w="61" h="18"/>
+        <override controlID="6:1" x="2" y="0" w="61" h="18"/>
+        <override controlID="7:0" x="0" y="0" w="65" h="21"/>
+        <override controlID="6:0" x="0" y="0" w="65" h="21"/>
         <src>./assets/symbols.bmml#recommendation</src>
       </controlProperties>
     </control>
-    <control controlID="3" controlTypeID="com.balsamiq.mockups::Component" x="119" y="293" w="580" h="64" measuredW="580" measuredH="64" zOrder="3" locked="false" isInGroup="-1">
+    <control controlID="3" controlTypeID="com.balsamiq.mockups::Component" x="122" y="364" w="580" h="64" measuredW="580" measuredH="64" zOrder="3" locked="false" isInGroup="-1">
       <controlProperties>
         <override controlID="0" x="7" y="3" w="526" h="59"/>
         <override controlID="1" x="13" y="8" w="137" h="21"/>
         <override controlID="2" x="0" y="0" w="580" h="64"/>
         <override controlID="3" x="0" y="2" w="11" h="59"/>
-        <override controlID="7" x="85" y="37" w="65" h="21"/>
         <override controlID="6" x="14" y="35" w="65" h="21"/>
-        <override controlID="6:0" x="0" y="0" w="65" h="21"/>
-        <override controlID="7:0" x="0" y="0" w="65" h="21"/>
-        <override controlID="6:1" x="2" y="0" w="61" h="18"/>
+        <override controlID="7" x="85" y="37" w="65" h="21"/>
         <override controlID="7:1" x="2" y="0" w="61" h="18"/>
+        <override controlID="6:1" x="2" y="0" w="61" h="18"/>
+        <override controlID="7:0" x="0" y="0" w="65" h="21"/>
+        <override controlID="6:0" x="0" y="0" w="65" h="21"/>
         <src>./assets/symbols.bmml#recommendation</src>
       </controlProperties>
     </control>
-    <control controlID="4" controlTypeID="com.balsamiq.mockups::Component" x="119" y="451" w="580" h="64" measuredW="580" measuredH="64" zOrder="4" locked="false" isInGroup="-1">
+    <control controlID="4" controlTypeID="com.balsamiq.mockups::Component" x="122" y="522" w="580" h="64" measuredW="580" measuredH="64" zOrder="4" locked="false" isInGroup="-1">
       <controlProperties>
         <override controlID="0" x="7" y="2" w="416" h="59"/>
         <override controlID="1" x="13" y="6" w="193" h="21"/>
         <override controlID="2" x="0" y="0" w="580" h="64"/>
         <override controlID="3" x="0" y="0" w="11" h="59"/>
-        <override controlID="7" x="85" y="33" w="65" h="21"/>
         <override controlID="6" x="14" y="33" w="65" h="21"/>
-        <override controlID="6:0" x="0" y="0" w="65" h="21"/>
-        <override controlID="7:0" x="0" y="0" w="65" h="21"/>
-        <override controlID="6:1" x="2" y="0" w="61" h="18"/>
+        <override controlID="7" x="85" y="33" w="65" h="21"/>
         <override controlID="7:1" x="2" y="0" w="61" h="18"/>
+        <override controlID="6:1" x="2" y="0" w="61" h="18"/>
+        <override controlID="7:0" x="0" y="0" w="65" h="21"/>
+        <override controlID="6:0" x="0" y="0" w="65" h="21"/>
         <src>./assets/symbols.bmml#recommendation</src>
       </controlProperties>
     </control>
-    <control controlID="5" controlTypeID="com.balsamiq.mockups::Component" x="119" y="530" w="580" h="64" measuredW="580" measuredH="64" zOrder="5" locked="false" isInGroup="-1">
+    <control controlID="5" controlTypeID="com.balsamiq.mockups::Component" x="122" y="601" w="580" h="64" measuredW="580" measuredH="64" zOrder="5" locked="false" isInGroup="-1">
       <controlProperties>
         <override controlID="0" x="7" y="2" w="378" h="59"/>
         <override controlID="1" x="13" y="6" w="137" h="21"/>
         <override controlID="2" x="0" y="0" w="580" h="64"/>
         <override controlID="3" x="0" y="0" w="11" h="59"/>
-        <override controlID="7" x="85" y="33" w="65" h="21"/>
         <override controlID="6" x="14" y="33" w="65" h="21"/>
-        <override controlID="6:0" x="0" y="0" w="65" h="21"/>
-        <override controlID="7:0" x="0" y="0" w="65" h="21"/>
-        <override controlID="6:1" x="2" y="0" w="61" h="18"/>
+        <override controlID="7" x="85" y="33" w="65" h="21"/>
         <override controlID="7:1" x="2" y="0" w="61" h="18"/>
+        <override controlID="6:1" x="2" y="0" w="61" h="18"/>
+        <override controlID="7:0" x="0" y="0" w="65" h="21"/>
+        <override controlID="6:0" x="0" y="0" w="65" h="21"/>
         <src>./assets/symbols.bmml#recommendation</src>
       </controlProperties>
     </control>
-    <control controlID="6" controlTypeID="com.balsamiq.mockups::Component" x="119" y="609" w="580" h="64" measuredW="580" measuredH="64" zOrder="6" locked="false" isInGroup="-1">
+    <control controlID="6" controlTypeID="com.balsamiq.mockups::Component" x="122" y="680" w="580" h="64" measuredW="580" measuredH="64" zOrder="6" locked="false" isInGroup="-1">
       <controlProperties>
         <override controlID="0" x="7" y="2" w="353" h="59"/>
         <override controlID="1" x="13" y="6" w="173" h="21"/>
         <override controlID="2" x="0" y="0" w="580" h="64"/>
         <override controlID="3" x="0" y="0" w="11" h="59"/>
-        <override controlID="7" x="85" y="33" w="65" h="21"/>
         <override controlID="6" x="14" y="33" w="65" h="21"/>
-        <override controlID="6:0" x="0" y="0" w="65" h="21"/>
-        <override controlID="7:0" x="0" y="0" w="65" h="21"/>
-        <override controlID="6:1" x="2" y="0" w="61" h="18"/>
+        <override controlID="7" x="85" y="33" w="65" h="21"/>
         <override controlID="7:1" x="2" y="0" w="61" h="18"/>
+        <override controlID="6:1" x="2" y="0" w="61" h="18"/>
+        <override controlID="7:0" x="0" y="0" w="65" h="21"/>
+        <override controlID="6:0" x="0" y="0" w="65" h="21"/>
         <src>./assets/symbols.bmml#recommendation</src>
       </controlProperties>
     </control>
-    <control controlID="8" controlTypeID="com.balsamiq.mockups::Component" x="18" y="80" w="1132" h="43" measuredW="1132" measuredH="43" zOrder="7" locked="false" isInGroup="-1">
+    <control controlID="8" controlTypeID="com.balsamiq.mockups::Component" x="201" y="93" w="776" h="43" measuredW="776" measuredH="43" zOrder="7" locked="false" isInGroup="-1">
       <controlProperties>
         <src>./assets/symbols.bmml#top_menu</src>
       </controlProperties>
     </control>
-    <control controlID="9" controlTypeID="com.balsamiq.mockups::Component" x="119" y="143" w="911" h="53" measuredW="911" measuredH="53" zOrder="8" locked="false" isInGroup="-1">
+    <control controlID="9" controlTypeID="com.balsamiq.mockups::Component" x="122" y="162" w="909" h="54" measuredW="909" measuredH="54" zOrder="8" locked="false" isInGroup="-1">
       <controlProperties>
-        <override controlID="0" x="0" y="0" w="911" h="53"/>
+        <override controlID="0" x="0" y="0" w="850" h="53"/>
         <override controlID="1" x="865" y="10" w="32" h="32"/>
         <override controlID="5" x="333" y="17" w="65" h="21"/>
-        <override controlID="7" x="10" y="9" w="134" h="32"/>
         <override controlID="6" x="153" y="10" w="171" h="32"/>
-        <override controlID="6:4" x="0" y="0" w="11" h="30"/>
-        <override controlID="5:1" x="2" y="0" w="61" h="17"/>
+        <override controlID="7" x="10" y="9" w="134" h="32"/>
+        <override controlID="8" x="817" y="14" w="-1" h="-1"/>
+        <override controlID="9" x="856" y="1" w="53" h="53"/>
         <override controlID="7:2" x="105" y="4" w="23" h="25"/>
-        <override controlID="7:4" x="0" y="0" w="11" h="30"/>
-        <override controlID="6:1" x="13" y="3" w="115" h="25"/>
-        <override controlID="7:1" x="13" y="3" w="76" h="25"/>
-        <override controlID="5:0" x="0" y="0" w="65" h="21"/>
-        <override controlID="7:3" x="0" y="0" w="134" h="32"/>
+        <override controlID="6:4" x="0" y="0" w="11" h="30"/>
         <override controlID="6:3" x="0" y="0" w="171" h="32"/>
+        <override controlID="5:1" x="2" y="0" w="61" h="17"/>
+        <override controlID="7:3" x="0" y="0" w="134" h="32"/>
+        <override controlID="9:1" x="8" y="8" w="36" h="36"/>
+        <override controlID="6:1" x="13" y="3" w="115" h="25"/>
+        <override controlID="7:4" x="0" y="0" w="11" h="30"/>
+        <override controlID="5:0" x="0" y="0" w="65" h="21"/>
         <override controlID="6:2" x="143" y="4" w="23" h="25"/>
+        <override controlID="7:1" x="13" y="3" w="76" h="25"/>
+        <override controlID="9:0" x="0" y="0" w="53" h="53"/>
         <src>./assets/symbols.bmml#search_bar</src>
       </controlProperties>
     </control>
-    <control controlID="27" controlTypeID="__group__" x="743" y="211" w="287" h="179" measuredW="287" measuredH="179" zOrder="9" locked="false" isInGroup="-1">
+    <control controlID="27" controlTypeID="__group__" x="746" y="282" w="287" h="179" measuredW="287" measuredH="179" zOrder="9" locked="false" isInGroup="-1">
       <groupChildrenDescriptors>
         <control controlID="0" controlTypeID="com.balsamiq.mockups::FieldSet" x="0" y="0" w="287" h="179" measuredW="200" measuredH="170" zOrder="0" locked="false" isInGroup="27">
           <controlProperties>
@@ -203,7 +207,7 @@
         </control>
       </groupChildrenDescriptors>
     </control>
-    <control controlID="28" controlTypeID="__group__" x="743" y="411" w="287" h="262" measuredW="287" measuredH="262" zOrder="10" locked="false" isInGroup="-1">
+    <control controlID="28" controlTypeID="__group__" x="746" y="482" w="287" h="262" measuredW="287" measuredH="262" zOrder="10" locked="false" isInGroup="-1">
       <groupChildrenDescriptors>
         <control controlID="0" controlTypeID="com.balsamiq.mockups::FieldSet" x="0" y="0" w="287" h="262" measuredW="200" measuredH="170" zOrder="0" locked="false" isInGroup="28">
           <controlProperties>
@@ -316,21 +320,21 @@
         </control>
       </groupChildrenDescriptors>
     </control>
-    <control controlID="29" controlTypeID="com.balsamiq.mockups::StickyNote" x="976" y="263" w="144" h="109" measuredW="109" measuredH="123" zOrder="11" locked="false" isInGroup="-1">
+    <control controlID="29" controlTypeID="com.balsamiq.mockups::StickyNote" x="979" y="334" w="144" h="109" measuredW="109" measuredH="123" zOrder="11" locked="false" isInGroup="-1">
       <controlProperties>
         <color>16767334</color>
         <size>12</size>
         <text>Shows%20tags%20from%20profile%20relative%20to%20this%20search</text>
       </controlProperties>
     </control>
-    <control controlID="30" controlTypeID="com.balsamiq.mockups::StickyNote" x="976" y="530" w="144" h="127" measuredW="109" measuredH="123" zOrder="12" locked="false" isInGroup="-1">
+    <control controlID="30" controlTypeID="com.balsamiq.mockups::StickyNote" x="979" y="601" w="144" h="127" measuredW="109" measuredH="123" zOrder="12" locked="false" isInGroup="-1">
       <controlProperties>
         <color>16767334</color>
         <size>12</size>
         <text>Shows%20commonly%20used%20or%20likely-to-use%20tags%20with%20this%20search</text>
       </controlProperties>
     </control>
-    <control controlID="31" controlTypeID="com.balsamiq.mockups::StickyNote" x="555" y="122" w="173" h="135" measuredW="109" measuredH="123" zOrder="13" locked="false" isInGroup="-1">
+    <control controlID="31" controlTypeID="com.balsamiq.mockups::StickyNote" x="558" y="161" w="173" h="135" measuredW="109" measuredH="123" zOrder="13" locked="false" isInGroup="-1">
       <controlProperties>
         <color>16767334</color>
         <size>12</size>

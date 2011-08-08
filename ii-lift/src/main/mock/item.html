@@ -16,43 +16,19 @@
 
 <body>
 
-<div id="top-stuff">
-    <div id="banners" style="clear:both;"></div>
-    <img alt="" id="ajax-loader" style="display:none; margin-bottom: 0px; margin-left: 5px" src="../webapp/img/ajax-loader.gif">
-    <div id="top-bar-outer">
-        <div id="top-bar-bg"></div>
-        <div id="top-bar">
-            <div class="top-bar-inside">
-                <div class="static-links">
-                    <div id="logo"><a href="#">Owls</a></div>
-                    <div id="global-nav">
-                        <ul>
-                            <li id="global-nav-home" class="active new"><a href="#">Home</a></li>
-                            <li id="global-nav-profile"><a href="#">Profile</a></li>
-                        </ul>
-                    </div>
-                    <form id="search-form" action="/search" method="GET">
-                        <span class="glass"><i></i></span>
-                        <input value="" placeholder="Quick Search" name="q" id="search-query" type="text" />
-                    </form>
-                </div>
-                <div class="active-links">
-                    <span class="vr"></span>
-                    <span id="session" class="loggedin">
-                        <!--<a class="profile-links" href="#"><img src=""/></a>-->
-                        <span id="screen-name">Recent Searches</span>&nbsp;
-                        <span id="screen-name-dropdown">&nbsp;</span>
-                        <div class="dropdown">
-                            <ul class="user-dropdown">
-                                <li><a href="#">Settings</a></li>
-                                <li><a href="#">Help</a></li>
-                                <li><a href="#">Help</a></li>
-                            </ul>
-                        </div>
-                    </span>
-                </div>
-            </div>
-        </div>
+<div id="top-stuff-wrap">
+    <div id="top-stuff">
+        <div id="top-bg"></div>
+        <div id="banners" style="clear:both;"></div>
+        <img alt="" id="ajax-loader" style="display:none; margin-bottom: 0px; margin-left: 5px" src="../webapp/img/ajax-loader.gif">
+        <div id="logo"><a href="#"></a></div>
+
+        <form id="search-form" action="/search" method="GET">
+            <span class="glass"><i></i></span>
+            <input value="" placeholder="Quick Search" name="q" id="search-query" type="text" />
+        </form>
+        <span id="saved-searches"><a href="#"></a></span>
+        <span id="profile-icon"><a href="#"></a></span>
         <div id="message-drawer"></div>
     </div>
 </div>
@@ -61,12 +37,11 @@
 
     <div class="column span-24" id="item-page">
 
-        <div class="span-15 prepend-1 colborder">
+        <div class="span-15 colborder">
             <img src="cover.jpg" alt="test" id="item-cover">
             <h1 class="name">Fight Club</h1>
             <p>Lorem ipsum dolor sit amet, <em>consectetuer adipiscing elit</em>. Nunc congue ipsum vestibulum libero. <a href="#">Morbi et risus</a>. Aenean vitae justo. Nam eget tellus. <span class="caps">SMALL CAPS</span> Etiam convallis, est eu lobortis mattis, lectus tellus tempus felis, a ultricies erat ipsum at metus.</p>
             <blockquote>Integer cursus ornare mauris. Praesent nisl arcu, imperdiet eu, ornare id, scelerisque ut, nunc. Praesent sagittis erat sed velit tempus imperdiet.</blockquote>
-
             <hr>
 
             <h3 class="ii-group-name first">Keypoints</h3>
@@ -196,7 +171,7 @@
             </div>
         </div>
 
-        <div class="span-7 last">
+        <div class="span-8 last">
             <div id="recommendation-box">
                 <div class="ii-recommendation">
                     <div class="ii-weight" style="width: 100%">&nbsp;</div>
@@ -316,14 +291,16 @@
     <!-- BASE TEMPLATE WRAPPING BOTTOM -->
 </div>
 
-<div id="recommender-box-wrap">
-    <div id="recommender-box">
-        <div id="recommender-items">
-            <p id="recommender-box-helper">Drop any items here to get specific recommendations</p>
+<div id="bottom-stuff-wrap">
+    <div id="bottom-stuff">
+        <div id="recommender-box">
+            <div id="recommender-items">
+                <p id="recommender-box-helper">Drop any items here to get specific recommendations</p>
+            </div>
+            <span class="glass"><i></i></span>
         </div>
-        <span class="glass"><i></i></span>
+        <div id="trash-box"><a href="#"></a></div>
     </div>
-    <div id="trash-box"><img src="../webapp/img/trash.png"></div>
 </div>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js"></script>

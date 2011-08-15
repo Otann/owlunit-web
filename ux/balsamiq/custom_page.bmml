@@ -143,10 +143,10 @@
         <override controlID="3" x="0" y="0" w="11" h="59"/>
         <override controlID="6" x="14" y="33" w="65" h="21"/>
         <override controlID="7" x="85" y="34" w="65" h="21"/>
-        <override controlID="6:0" x="0" y="0" w="65" h="21"/>
-        <override controlID="6:1" x="2" y="0" w="61" h="17"/>
         <override controlID="7:1" x="2" y="0" w="61" h="17"/>
         <override controlID="7:0" x="0" y="0" w="65" h="21"/>
+        <override controlID="6:1" x="2" y="0" w="61" h="17"/>
+        <override controlID="6:0" x="0" y="0" w="65" h="21"/>
         <src>./assets/symbols.bmml#recommendation</src>
       </controlProperties>
     </control>
@@ -158,10 +158,10 @@
         <override controlID="3" x="0" y="0" w="11" h="59"/>
         <override controlID="6" x="14" y="33" w="65" h="21"/>
         <override controlID="7" x="85" y="34" w="65" h="21"/>
-        <override controlID="6:0" x="0" y="0" w="65" h="21"/>
-        <override controlID="6:1" x="2" y="0" w="61" h="17"/>
         <override controlID="7:1" x="2" y="0" w="61" h="17"/>
         <override controlID="7:0" x="0" y="0" w="65" h="21"/>
+        <override controlID="6:1" x="2" y="0" w="61" h="17"/>
+        <override controlID="6:0" x="0" y="0" w="65" h="21"/>
         <src>./assets/symbols.bmml#recommendation</src>
       </controlProperties>
     </control>
@@ -173,10 +173,10 @@
         <override controlID="3" x="0" y="2" w="11" h="59"/>
         <override controlID="6" x="14" y="35" w="65" h="21"/>
         <override controlID="7" x="85" y="36" w="65" h="21"/>
-        <override controlID="6:0" x="0" y="0" w="65" h="21"/>
-        <override controlID="6:1" x="2" y="0" w="61" h="17"/>
         <override controlID="7:1" x="2" y="0" w="61" h="17"/>
         <override controlID="7:0" x="0" y="0" w="65" h="21"/>
+        <override controlID="6:1" x="2" y="0" w="61" h="17"/>
+        <override controlID="6:0" x="0" y="0" w="65" h="21"/>
         <src>./assets/symbols.bmml#recommendation</src>
       </controlProperties>
     </control>
@@ -188,10 +188,10 @@
         <override controlID="3" x="0" y="0" w="11" h="59"/>
         <override controlID="6" x="14" y="33" w="65" h="21"/>
         <override controlID="7" x="85" y="34" w="65" h="21"/>
-        <override controlID="6:0" x="0" y="0" w="65" h="21"/>
-        <override controlID="6:1" x="2" y="0" w="61" h="17"/>
         <override controlID="7:1" x="2" y="0" w="61" h="17"/>
         <override controlID="7:0" x="0" y="0" w="65" h="21"/>
+        <override controlID="6:1" x="2" y="0" w="61" h="17"/>
+        <override controlID="6:0" x="0" y="0" w="65" h="21"/>
         <src>./assets/symbols.bmml#recommendation</src>
       </controlProperties>
     </control>
@@ -203,10 +203,10 @@
         <override controlID="3" x="0" y="0" w="11" h="59"/>
         <override controlID="6" x="14" y="33" w="65" h="21"/>
         <override controlID="7" x="85" y="34" w="65" h="21"/>
-        <override controlID="6:0" x="0" y="0" w="65" h="21"/>
-        <override controlID="6:1" x="2" y="0" w="61" h="17"/>
         <override controlID="7:1" x="2" y="0" w="61" h="17"/>
         <override controlID="7:0" x="0" y="0" w="65" h="21"/>
+        <override controlID="6:1" x="2" y="0" w="61" h="17"/>
+        <override controlID="6:0" x="0" y="0" w="65" h="21"/>
         <src>./assets/symbols.bmml#recommendation</src>
       </controlProperties>
     </control>
@@ -218,10 +218,10 @@
         <override controlID="3" x="0" y="0" w="11" h="59"/>
         <override controlID="6" x="14" y="33" w="65" h="21"/>
         <override controlID="7" x="85" y="34" w="65" h="21"/>
-        <override controlID="6:0" x="0" y="0" w="65" h="21"/>
-        <override controlID="6:1" x="2" y="0" w="61" h="17"/>
         <override controlID="7:1" x="2" y="0" w="61" h="17"/>
         <override controlID="7:0" x="0" y="0" w="65" h="21"/>
+        <override controlID="6:1" x="2" y="0" w="61" h="17"/>
+        <override controlID="6:0" x="0" y="0" w="65" h="21"/>
         <src>./assets/symbols.bmml#recommendation</src>
       </controlProperties>
     </control>
@@ -239,7 +239,7 @@
     </control>
     <control controlID="114" controlTypeID="com.balsamiq.mockups::StickyNote" x="938" y="235" w="198" h="112" measuredW="109" measuredH="123" zOrder="26" locked="false" isInGroup="-1">
       <controlProperties>
-        <color>16770457</color>
+        <color>15843890</color>
         <size>12</size>
         <text>Qucksearch%20used%20to%20navigate%20to%20custom%20page%20or%20add%20tag%20to%20bottom%20search%20bar</text>
       </controlProperties>
@@ -259,7 +259,7 @@
     </control>
     <control controlID="121" controlTypeID="com.balsamiq.mockups::StickyNote" x="186" y="807" w="144" h="94" measuredW="109" measuredH="123" zOrder="38" locked="false" isInGroup="-1">
       <controlProperties>
-        <color>16767334</color>
+        <color>15843890</color>
         <size>12</size>
         <text>This%20box%20should%20be%20same%20on%20all%20pages</text>
       </controlProperties>
@@ -273,7 +273,7 @@
     </control>
     <control controlID="124" controlTypeID="com.balsamiq.mockups::StickyNote" x="932" y="487" w="151" h="91" measuredW="109" measuredH="123" zOrder="30" locked="false" isInGroup="-1">
       <controlProperties>
-        <color>16770457</color>
+        <color>15843890</color>
         <size>12</size>
         <text>Filled%20area%0Arepresents%20similarity</text>
       </controlProperties>
@@ -339,7 +339,7 @@
     </control>
     <control controlID="142" controlTypeID="com.balsamiq.mockups::StickyNote" x="457" y="117" w="198" h="66" measuredW="109" measuredH="123" zOrder="39" locked="false" isInGroup="-1">
       <controlProperties>
-        <color>16770457</color>
+        <color>15843890</color>
         <size>12</size>
         <text>Profile%20and%20recent%20searches</text>
       </controlProperties>

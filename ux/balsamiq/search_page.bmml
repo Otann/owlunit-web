@@ -16,8 +16,8 @@
         <override controlID="6" x="14" y="33" w="65" h="21"/>
         <override controlID="7" x="85" y="33" w="65" h="21"/>
         <override controlID="7:1" x="2" y="0" w="61" h="18"/>
-        <override controlID="6:1" x="2" y="0" w="61" h="18"/>
         <override controlID="7:0" x="0" y="0" w="65" h="21"/>
+        <override controlID="6:1" x="2" y="0" w="61" h="18"/>
         <override controlID="6:0" x="0" y="0" w="65" h="21"/>
         <src>./assets/symbols.bmml#recommendation</src>
       </controlProperties>
@@ -31,8 +31,8 @@
         <override controlID="6" x="14" y="33" w="65" h="21"/>
         <override controlID="7" x="85" y="33" w="65" h="21"/>
         <override controlID="7:1" x="2" y="0" w="61" h="18"/>
-        <override controlID="6:1" x="2" y="0" w="61" h="18"/>
         <override controlID="7:0" x="0" y="0" w="65" h="21"/>
+        <override controlID="6:1" x="2" y="0" w="61" h="18"/>
         <override controlID="6:0" x="0" y="0" w="65" h="21"/>
         <src>./assets/symbols.bmml#recommendation</src>
       </controlProperties>
@@ -46,8 +46,8 @@
         <override controlID="6" x="14" y="35" w="65" h="21"/>
         <override controlID="7" x="85" y="37" w="65" h="21"/>
         <override controlID="7:1" x="2" y="0" w="61" h="18"/>
-        <override controlID="6:1" x="2" y="0" w="61" h="18"/>
         <override controlID="7:0" x="0" y="0" w="65" h="21"/>
+        <override controlID="6:1" x="2" y="0" w="61" h="18"/>
         <override controlID="6:0" x="0" y="0" w="65" h="21"/>
         <src>./assets/symbols.bmml#recommendation</src>
       </controlProperties>
@@ -61,8 +61,8 @@
         <override controlID="6" x="14" y="33" w="65" h="21"/>
         <override controlID="7" x="85" y="33" w="65" h="21"/>
         <override controlID="7:1" x="2" y="0" w="61" h="18"/>
-        <override controlID="6:1" x="2" y="0" w="61" h="18"/>
         <override controlID="7:0" x="0" y="0" w="65" h="21"/>
+        <override controlID="6:1" x="2" y="0" w="61" h="18"/>
         <override controlID="6:0" x="0" y="0" w="65" h="21"/>
         <src>./assets/symbols.bmml#recommendation</src>
       </controlProperties>
@@ -76,8 +76,8 @@
         <override controlID="6" x="14" y="33" w="65" h="21"/>
         <override controlID="7" x="85" y="33" w="65" h="21"/>
         <override controlID="7:1" x="2" y="0" w="61" h="18"/>
-        <override controlID="6:1" x="2" y="0" w="61" h="18"/>
         <override controlID="7:0" x="0" y="0" w="65" h="21"/>
+        <override controlID="6:1" x="2" y="0" w="61" h="18"/>
         <override controlID="6:0" x="0" y="0" w="65" h="21"/>
         <src>./assets/symbols.bmml#recommendation</src>
       </controlProperties>
@@ -91,8 +91,8 @@
         <override controlID="6" x="14" y="33" w="65" h="21"/>
         <override controlID="7" x="85" y="33" w="65" h="21"/>
         <override controlID="7:1" x="2" y="0" w="61" h="18"/>
-        <override controlID="6:1" x="2" y="0" w="61" h="18"/>
         <override controlID="7:0" x="0" y="0" w="65" h="21"/>
+        <override controlID="6:1" x="2" y="0" w="61" h="18"/>
         <override controlID="6:0" x="0" y="0" w="65" h="21"/>
         <src>./assets/symbols.bmml#recommendation</src>
       </controlProperties>
@@ -111,18 +111,18 @@
         <override controlID="7" x="10" y="9" w="134" h="32"/>
         <override controlID="8" x="817" y="14" w="-1" h="-1"/>
         <override controlID="9" x="856" y="1" w="53" h="53"/>
-        <override controlID="7:2" x="105" y="4" w="23" h="25"/>
-        <override controlID="6:4" x="0" y="0" w="11" h="30"/>
-        <override controlID="6:3" x="0" y="0" w="171" h="32"/>
-        <override controlID="5:1" x="2" y="0" w="61" h="17"/>
-        <override controlID="7:3" x="0" y="0" w="134" h="32"/>
-        <override controlID="9:1" x="8" y="8" w="36" h="36"/>
-        <override controlID="6:1" x="13" y="3" w="115" h="25"/>
-        <override controlID="7:4" x="0" y="0" w="11" h="30"/>
-        <override controlID="5:0" x="0" y="0" w="65" h="21"/>
         <override controlID="6:2" x="143" y="4" w="23" h="25"/>
-        <override controlID="7:1" x="13" y="3" w="76" h="25"/>
+        <override controlID="7:3" x="0" y="0" w="134" h="32"/>
+        <override controlID="7:2" x="105" y="4" w="23" h="25"/>
         <override controlID="9:0" x="0" y="0" w="53" h="53"/>
+        <override controlID="7:1" x="13" y="3" w="76" h="25"/>
+        <override controlID="5:0" x="0" y="0" w="65" h="21"/>
+        <override controlID="9:1" x="8" y="8" w="36" h="36"/>
+        <override controlID="6:3" x="0" y="0" w="171" h="32"/>
+        <override controlID="6:4" x="0" y="0" w="11" h="30"/>
+        <override controlID="6:1" x="13" y="3" w="115" h="25"/>
+        <override controlID="5:1" x="2" y="0" w="61" h="17"/>
+        <override controlID="7:4" x="0" y="0" w="11" h="30"/>
         <src>./assets/symbols.bmml#search_bar</src>
       </controlProperties>
     </control>
@@ -130,6 +130,7 @@
       <groupChildrenDescriptors>
         <control controlID="0" controlTypeID="com.balsamiq.mockups::FieldSet" x="0" y="0" w="287" h="179" measuredW="200" measuredH="170" zOrder="0" locked="false" isInGroup="27">
           <controlProperties>
+            <color>15658734</color>
             <text>My%20Related%20Tags</text>
           </controlProperties>
         </control>
@@ -211,6 +212,7 @@
       <groupChildrenDescriptors>
         <control controlID="0" controlTypeID="com.balsamiq.mockups::FieldSet" x="0" y="0" w="287" h="262" measuredW="200" measuredH="170" zOrder="0" locked="false" isInGroup="28">
           <controlProperties>
+            <color>15658734</color>
             <text>Related%20Tags</text>
           </controlProperties>
         </control>
@@ -322,21 +324,21 @@
     </control>
     <control controlID="29" controlTypeID="com.balsamiq.mockups::StickyNote" x="979" y="334" w="144" h="109" measuredW="109" measuredH="123" zOrder="11" locked="false" isInGroup="-1">
       <controlProperties>
-        <color>16767334</color>
+        <color>15843890</color>
         <size>12</size>
         <text>Shows%20tags%20from%20profile%20relative%20to%20this%20search</text>
       </controlProperties>
     </control>
     <control controlID="30" controlTypeID="com.balsamiq.mockups::StickyNote" x="979" y="601" w="144" h="127" measuredW="109" measuredH="123" zOrder="12" locked="false" isInGroup="-1">
       <controlProperties>
-        <color>16767334</color>
+        <color>15843890</color>
         <size>12</size>
         <text>Shows%20commonly%20used%20or%20likely-to-use%20tags%20with%20this%20search</text>
       </controlProperties>
     </control>
     <control controlID="31" controlTypeID="com.balsamiq.mockups::StickyNote" x="558" y="161" w="173" h="135" measuredW="109" measuredH="123" zOrder="13" locked="false" isInGroup="-1">
       <controlProperties>
-        <color>16767334</color>
+        <color>15843890</color>
         <size>12</size>
         <text>Search%20area%20is%20droppable%2C%20any%20reasons%20can%20be%20added%20to%20specify%20search</text>
       </controlProperties>

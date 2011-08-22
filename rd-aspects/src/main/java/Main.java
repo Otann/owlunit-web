@@ -23,11 +23,11 @@ public class Main {
 class TestBean {
 
     public void work() {
-        System.out.println("work работает блеать !");
+        System.out.println("method work called");
     }
 
     public void stop() {
-        System.out.println("stop работает блеать !");
+        System.out.println("method stop called");
     }
 
 }
@@ -45,7 +45,9 @@ class LoggingAspectPC {
     public Object log(ProceedingJoinPoint pjp) throws Throwable {
         System.out.printf(this.beforeMessage, pjp.getSignature().getName(), Arrays.toString(pjp.getArgs()));
         System.out.println();
+
         Object ret = pjp.proceed();
+
         System.out.printf(this.afterMessage, pjp.getSignature().getName(), Arrays.toString(pjp.getArgs()));
         System.out.println();
         return ret;
@@ -53,7 +55,7 @@ class LoggingAspectPC {
 
     @After("testBeanExecution()")
     public void afterCall(JoinPoint jp) {
-        System.out.println("After");
+        System.out.println("After hook called using @After");
     }
 
     @PostConstruct

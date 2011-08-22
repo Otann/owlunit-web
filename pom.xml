@@ -20,7 +20,7 @@
         <module>ii-local</module>
         <module>ii-security</module>
         <module>rd-aspects</module>
-        <!--<module>ii-benchmark</module>-->
+        <module>ex-api</module>
     </modules>
 
     <build>

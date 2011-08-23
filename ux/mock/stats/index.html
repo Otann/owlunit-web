@@ -86,31 +86,65 @@ For optimal performance, use a custom Modernizr build: www.modernizr.com/downloa
 
     <!-- About Bootstrap
    ================================================== -->
-    <section id="about">
+    <section id="h-overview">
         <div class="page-header">
             <h1>Overview <small>Owls System overview</small></h1>
         </div>
         <div class="row">
             <div class="span11 columns">
-                <h3>Sample chart</h3>
-                <div id="chart"></div>
+                <div id="h-chart"></div>
             </div>
             <div class="span5 columns">
-                <h3>What's included</h3>
-                <p>Bootstrap comes complete with compiled CSS, uncompiled, and example templates.</p>
-                <ul>
-                    <li>All original .less files</li>
-                    <li>Fully compiled and minified CSS</li>
-                    <li>Complete styleguide documentation</li>
-                    <li>Example page template (more to come soon)</li>
-                </ul>
+                <h3>Controls</h3>
+                <p>Remember that this is only a demo.</p>
+                <ul class="inputs-list">
+                    <li>
+                        <label>
+                            <input type="checkbox" name="optionsCheckboxes" value="option1" id="h-live-update">
+                            <span>Live update</span>
+                        </label>
+                    </li>
+                    <li>
+                        <label class="disabled">
+                            <input type="checkbox" name="optionsCheckboxes" value="option2" disabled="">
+                            <span>Another option</span>
+                        </label>
+                    </li>
+                </ul>            </div>
+        </div> <!-- /row -->
+    </section>
+
+    <section id="g-overview">
+        <div class="page-header">
+            <h1>Overview <small>Owls System overview</small></h1>
+        </div>
+        <div class="row">
+            <div class="span11 columns">
+                <div id="chart_div">&nbsp;</div>
             </div>
+            <div class="span5 columns">
+                <h3>Controls</h3>
+                <p>Remember that this is only a demo.</p>
+                <ul class="inputs-list">
+                    <li>
+                        <label>
+                            <input type="checkbox" name="optionsCheckboxes" value="option1" id="g-live-update">
+                            <span>Live update</span>
+                        </label>
+                    </li>
+                    <li>
+                        <label class="disabled">
+                            <input type="checkbox" name="optionsCheckboxes" value="option2" disabled="">
+                            <span>Another option</span>
+                        </label>
+                    </li>
+                </ul>            </div>
         </div> <!-- /row -->
     </section>
 
     <section id="second-section">
         <div class="page-header">
-            <h1>Overview <small>Owls System overview</small></h1>
+            <h1>Sandbox <small></small></h1>
         </div>
 
         <div class="row">
@@ -162,6 +196,13 @@ For optimal performance, use a custom Modernizr build: www.modernizr.com/downloa
 <!-- scripts concatenated and minified via ant build script-->
 <script defer src="js/plugins.js"></script>
 <script defer src="js/script.js"></script>
+<script defer src="js/h_charts.js"></script>
+
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+    google.load('visualization', '1.0', {'packages':['corechart']});
+</script>
+<script defer src="js/g_charts.js"></script>
 <!-- end scripts-->
 
 <!-- Change UA-XXXXX-X to be your site's ID -->

@@ -2,6 +2,7 @@
 ##############
 *.ipr
 *.iml
+*.iws
 .idea/
 target/
 
@@ -38,3 +39,4 @@ target/
 ehthumbs.db
 Icon?
 Thumbs.db
+.DS_Store

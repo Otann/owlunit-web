@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0"?>
 <!DOCTYPE project>
-<project name="Boilerplate Build" default="build" basedir="../"> <!-- one back since we're in build/ -->
+<project name="Boilerplate Build" default="build" basedir="../..//"> <!-- one back since we're in build/ -->
 
 
     <!-- Load in Ant-Contrib to give us access to some very useful tasks! -->
@@ -15,8 +15,8 @@
     <property environment="ENV" />
 
     <!-- load property files -->
-    <property file="build/config/project.properties"/>
-    <property file="build/config/default.properties"/>
+    <property file="config/project.properties"/>
+    <property file="config/default.properties"/>
 
     <!-- merge the stylesheet properties -->
     <var name="stylesheet-files" value="${file.default.stylesheets}, ${file.stylesheets}"/>

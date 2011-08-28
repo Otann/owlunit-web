@@ -3,7 +3,7 @@ package com.manymonkeys.app.auth.window;
 import com.manymonkeys.app.auth.AuthManager;
 import com.manymonkeys.app.MainApplication;
 import com.manymonkeys.app.auth.PasswordValidator;
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.service.auth.UserService;
 import com.manymonkeys.ui.theme.Stream;
 import com.vaadin.ui.*;
@@ -76,7 +76,7 @@ public class LoginWindow extends Window {
                     String password = (String) form.getField("password").getValue();
 
                     try {
-                        InformationItem user = authManager.authenticate(login, password);
+                        Ii user = authManager.authenticate(login, password);
                         if (user == null)
                             getApplication().getMainWindow().showNotification("Authentication failed, User is null");
 
@@ -98,7 +98,7 @@ public class LoginWindow extends Window {
     }
 
     public static interface UserLoggedInListener {
-        public void userLoggedIn(InformationItem user);
+        public void userLoggedIn(Ii user);
     }
 
 }

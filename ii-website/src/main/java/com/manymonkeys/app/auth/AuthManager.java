@@ -1,7 +1,7 @@
 package com.manymonkeys.app.auth;
 
 import com.manymonkeys.app.MainAppLevelWindow;
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.service.auth.UserService;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Window;
@@ -43,8 +43,8 @@ public class AuthManager {
         }
     }
 
-    public InformationItem authenticate(String login, String password) throws AuthException {
-        InformationItem user = service.getUser(login);
+    public Ii authenticate(String login, String password) throws AuthException {
+        Ii user = service.getUser(login);
         if (user == null) {
             throw new AuthException(String.format("User %s not found", login));
         }
@@ -59,13 +59,13 @@ public class AuthManager {
         return user;
     }
 
-    public InformationItem getCurrentUser() throws AuthException {
+    public Ii getCurrentUser() throws AuthException {
         String login = cookies.getCookie(COOKIE_NAME_LOGIN);
         if (login == null) {
             return null;
         }
 
-        InformationItem user = service.getUser(login);
+        Ii user = service.getUser(login);
 
         if (user == null) {
             throw new AuthException("Can't load current user, try to clean cookies");
@@ -85,7 +85,7 @@ public class AuthManager {
         cookies.setCookie(COOKIE_NAME_CHECK, "", now);
     }
 
-    public InformationItem createUser(String login, String password) throws AuthException {
+    public Ii createUser(String login, String password) throws AuthException {
         if (service.getUser(login) != null) {
             throw new AuthException("User with this login already exists");
         }

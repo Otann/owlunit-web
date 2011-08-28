@@ -1,6 +1,6 @@
 package com.manymonkeys.service.cinema;
 
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import me.prettyprint.hector.api.Keyspace;
 
 import java.util.Arrays;
@@ -32,8 +32,8 @@ public class PersonService extends TagService {
         super(keyspace);
     }
 
-    public InformationItem createPerson(String firstName, String lastName) {
-        InformationItem person = createTag(String.format(FULL_NAME_FORMAT, firstName, lastName));
+    public Ii createPerson(String firstName, String lastName) {
+        Ii person = createTag(String.format(FULL_NAME_FORMAT, firstName, lastName));
 
         setMeta(person, CLASS_MARK_KEY, CLASS_MARK_VALUE);
         setMeta(person, SEARCH_KEY, String.format(SEARCH_FORMAT, firstName, lastName));
@@ -43,7 +43,7 @@ public class PersonService extends TagService {
         return person;
     }
 
-    public InformationItem getPerson(String firstName, String lastName) {
+    public Ii getPerson(String firstName, String lastName) {
         try {
             return loadByMeta(SEARCH_KEY, String.format(SEARCH_FORMAT, firstName, lastName)).iterator().next();
         } catch (NoSuchElementException e) {
@@ -51,7 +51,7 @@ public class PersonService extends TagService {
         }
     }
 
-    public Collection<String> getRoles(InformationItem person) {
+    public Collection<String> getRoles(Ii person) {
         String rolesRaw = person.getMeta(ROLES_KEY);
         if (rolesRaw == null)
             return Collections.emptySet();
@@ -63,12 +63,21 @@ public class PersonService extends TagService {
         return Arrays.asList(roles);
     }
 
-    public void addRole(InformationItem person, String role) {
+    public void addRole(Ii person, String role) {
         String rolesRaw = person.getMeta(ROLES_KEY);
         if (rolesRaw == null)
             setMeta(person, ROLES_KEY, role);
         else
             setMeta(person, ROLES_KEY, String.format("%s###%s", rolesRaw, role));
+    }
+
+    public Ii findOrCreate(String name, String surname, String role) {
+        Ii person = this.getPerson(name, surname);
+        if (person == null) {
+            person = this.createPerson(name, surname);
+        }
+        this.addRole(person, role);
+        return person;
     }
 
 }

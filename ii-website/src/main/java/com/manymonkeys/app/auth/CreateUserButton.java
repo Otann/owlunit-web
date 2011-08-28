@@ -2,7 +2,7 @@ package com.manymonkeys.app.auth;
 
 import com.manymonkeys.app.MainApplication;
 import com.manymonkeys.app.auth.window.CreateUserWindow;
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Window;
@@ -42,7 +42,7 @@ public class CreateUserButton extends Button implements MenuBar.Command, CreateU
     }
 
     @Override
-    public void userCreated(InformationItem user) {
+    public void userCreated(Ii user) {
         closeWindow();
     }
 }

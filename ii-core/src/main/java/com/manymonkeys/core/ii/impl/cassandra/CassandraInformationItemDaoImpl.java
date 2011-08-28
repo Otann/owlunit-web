@@ -1,6 +1,6 @@
 package com.manymonkeys.core.ii.impl.cassandra;
 
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.core.ii.InformationItemDao;
 import com.manymonkeys.security.shiro.annotation.OwledArgument;
 import com.manymonkeys.security.shiro.annotation.OwledMethod;
@@ -28,7 +28,7 @@ import java.util.*;
  *
  * @author Anton Chebotaev
  */
-public class CassandraInformationItemDaoImpl implements InformationItemDao {
+public class CassandraInformationItemDaoImpl{//implements InformationItemDao {
 
     final static Logger logger = LoggerFactory.getLogger(CassandraInformationItemDaoImpl.class);
 
@@ -81,26 +81,26 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         this.keyspace = keyspace;
     }
 
-    public CassandraInformationItemImpl createInformationItem() {
+    public CassandraIiImpl createInformationItem() {
         UUID uuid = UUID.fromString(UUIDGenerator.getInstance().generateTimeBasedUUID().toString());
-        CassandraInformationItemImpl item = createInformationItem(uuid);
+        CassandraIiImpl item = createInformationItem(uuid);
         setMeta(item, META_KEY_CREATOR, this.getClass().getName());
         return item;
     }
 
-    CassandraInformationItemImpl createInformationItem(UUID uuid) {
-        return new CassandraInformationItemImpl(uuid);
+    CassandraIiImpl createInformationItem(UUID uuid) {
+        return new CassandraIiImpl(uuid);
     }
 
-    public void deleteInformationItem(InformationItem item) {
-        if (!(item instanceof CassandraInformationItemImpl))
+    protected void deleteInformationItem(Ii item) {
+        if (!(item instanceof CassandraIiImpl))
             throw generateWrongDaoException();
-        CassandraInformationItemImpl localItem = (CassandraInformationItemImpl) item;
+        CassandraIiImpl localItem = (CassandraIiImpl) item;
 
         Mutator<UUID> uuidMutator = HFactory.createMutator(keyspace, us);
-        for (InformationItem parent : item.getParents().keySet())
+        for (Ii parent : item.getParents().keySet())
             uuidMutator.addDeletion(parent.getUUID(), CF_COMPONENTS, localItem.uuid, us);
-        for (InformationItem component : item.getComponents().keySet())
+        for (Ii component : item.getComponents().keySet())
             uuidMutator.addDeletion(component.getUUID(), CF_PARENTS, localItem.uuid, us);
         uuidMutator.addDeletion(localItem.uuid, CF_META, null, ss);
         uuidMutator.addDeletion(localItem.uuid, CF_COMPONENTS, null, ss);
@@ -115,7 +115,8 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         stringMutator.execute();
     }
 
-    public void reloadMetadata(Collection<InformationItem> items) {
+    //Todo Anton Chebotaev - wtf is this method for in stateless class?
+    public void reloadMetadata(Collection<Ii> items) {
         if (items.isEmpty())
             return;
 
@@ -132,10 +133,10 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         QueryResult<Rows<UUID, String, String>> queryResult = query.execute();
         Rows<UUID, String, String> rows = queryResult.get();
 
-        for (InformationItem item : items) {
-            if (!(item instanceof CassandraInformationItemImpl))
+        for (Ii item : items) {
+            if (!(item instanceof CassandraIiImpl))
                 continue;
-            CassandraInformationItemImpl itemImpl = (CassandraInformationItemImpl) item;
+            CassandraIiImpl itemImpl = (CassandraIiImpl) item;
             itemImpl.meta = new HashMap<String, String>();
             for (HColumn<String, String> column : rows.getByKey(itemImpl.uuid).getColumnSlice().getColumns()) {
                 itemImpl.meta.put(column.getName(), column.getValue());
@@ -145,7 +146,8 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         logger.debug(String.format("reloadMetadata(%d) got result in %d seconds", items.size(), (System.currentTimeMillis() - startTime) / 1000));
     }
 
-    public Collection<InformationItem> reloadComponents(Collection<InformationItem> items) {
+    //Todo Anton Chebotaev - wtf is this method for in stateless class?
+    public Collection<Ii> reloadComponents(Collection<Ii> items) {
         if (items.isEmpty())
             return Collections.emptySet();
 
@@ -162,14 +164,14 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         QueryResult<Rows<UUID, UUID, Double>> queryResult = query.execute();
         Rows<UUID, UUID, Double> rows = queryResult.get();
 
-        Set<InformationItem> result = new HashSet<InformationItem>();
-        for (InformationItem item : items) {
-            if (!(item instanceof CassandraInformationItemImpl))
+        Set<Ii> result = new HashSet<Ii>();
+        for (Ii item : items) {
+            if (!(item instanceof CassandraIiImpl))
                 continue;
-            CassandraInformationItemImpl itemImpl = (CassandraInformationItemImpl) item;
-            itemImpl.components = new HashMap<InformationItem, Double>();
+            CassandraIiImpl itemImpl = (CassandraIiImpl) item;
+            itemImpl.components = new HashMap<Ii, Double>();
             for (HColumn<UUID, Double> column : rows.getByKey(itemImpl.uuid).getColumnSlice().getColumns()) {
-                CassandraInformationItemImpl component = createInformationItem(column.getName());
+                CassandraIiImpl component = createInformationItem(column.getName());
                 result.add(component);
                 itemImpl.components.put(component, column.getValue());
             }
@@ -180,7 +182,7 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
     }
 
     @OwledMethod
-    public Collection<InformationItem> reloadParents(@OwledArgument Collection<InformationItem> items) {
+    public Collection<Ii> reloadParents(@OwledArgument Collection<Ii> items) {
         if (items.isEmpty())
             return Collections.emptySet();
 
@@ -199,14 +201,14 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         QueryResult<Rows<UUID, UUID, Double>> queryResult = query.execute();
         Rows<UUID, UUID, Double> rows = queryResult.get();
 
-        Set<InformationItem> result = new HashSet<InformationItem>();
-        for (InformationItem item : items) {
-            if (!(item instanceof CassandraInformationItemImpl))
+        Set<Ii> result = new HashSet<Ii>();
+        for (Ii item : items) {
+            if (!(item instanceof CassandraIiImpl))
                 continue;
-            CassandraInformationItemImpl itemImpl = (CassandraInformationItemImpl) item;
-            itemImpl.parents = new HashMap<InformationItem, Double>();
+            CassandraIiImpl itemImpl = (CassandraIiImpl) item;
+            itemImpl.parents = new HashMap<Ii, Double>();
             for (HColumn<UUID, Double> column : rows.getByKey(itemImpl.uuid).getColumnSlice().getColumns()) {
-                CassandraInformationItemImpl component = createInformationItem(column.getName());
+                CassandraIiImpl component = createInformationItem(column.getName());
                 result.add(component);
                 itemImpl.parents.put(component, column.getValue());
             }
@@ -217,7 +219,7 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
     }
 
     @OwledMethod
-    public InformationItem loadByUUID(UUID uuid) {
+    public Ii loadByUUID(UUID uuid) {
 
         SliceQuery<UUID, String, String> sliceQuery = HFactory.createSliceQuery(keyspace, us, ss, ss);
         sliceQuery.setColumnFamily(CF_META);
@@ -230,7 +232,7 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         if (columns.isEmpty())
             return null; //TODO: means meta can't be loaded without meta; discuss
 
-        CassandraInformationItemImpl item = createInformationItem(uuid);
+        CassandraIiImpl item = createInformationItem(uuid);
         for (HColumn<String, String> column : columns)
             item.meta.put(column.getName(), column.getValue());
 
@@ -238,7 +240,7 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
     }
 
     @OwledMethod
-    public Collection<InformationItem> loadByUUIDs(Collection<UUID> uuids) {
+    public Collection<Ii> loadByUUIDs(Collection<UUID> uuids) {
 
         logger.debug(String.format("loadByUUIDs(%d) called", uuids.size()));
         long startTime = System.currentTimeMillis();
@@ -251,13 +253,13 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         QueryResult<Rows<UUID, String, String>> queryResult = multigetSliceQuery.execute();
         Rows<UUID, String, String> rows = queryResult.get();
 
-        List<InformationItem> result = new LinkedList<InformationItem>();
+        List<Ii> result = new LinkedList<Ii>();
         for (Row<UUID, String, String> row : rows) {
             List<HColumn<String, String>> columns = row.getColumnSlice().getColumns();
             if (columns.isEmpty())
                 continue;  //TODO: means meta can't be loaded without meta; discuss
 
-            CassandraInformationItemImpl item = createInformationItem(row.getKey());
+            CassandraIiImpl item = createInformationItem(row.getKey());
             for (HColumn<String, String> column : columns)
                 item.meta.put(column.getName(), column.getValue());
 
@@ -269,11 +271,11 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
     }
 
 
-    public void setComponentWeight(InformationItem item, InformationItem component, Double weight) {
-        if (!(item instanceof CassandraInformationItemImpl))
+    protected void setComponentWeight(Ii item, Ii component, Double weight) {
+        if (!(item instanceof CassandraIiImpl))
             throw generateWrongDaoException();
-        CassandraInformationItemImpl localItem = (CassandraInformationItemImpl) item;
-        CassandraInformationItemImpl localComponent = (CassandraInformationItemImpl) component;
+        CassandraIiImpl localItem = (CassandraIiImpl) item;
+        CassandraIiImpl localComponent = (CassandraIiImpl) component;
 
         if (localItem.components != null)
             localItem.components.put(component, weight);
@@ -288,11 +290,11 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         //TODO: in case of precalculated recommendations add all parents of component to recalculate queue
     }
 
-    public void removeComponent(InformationItem item, InformationItem component) {
-        if (!(item instanceof CassandraInformationItemImpl && component instanceof CassandraInformationItemImpl))
+    protected void removeComponent(Ii item, Ii component) {
+        if (!(item instanceof CassandraIiImpl && component instanceof CassandraIiImpl))
             throw generateWrongDaoException();
-        CassandraInformationItemImpl localItem = (CassandraInformationItemImpl) item;
-        CassandraInformationItemImpl localComponent = (CassandraInformationItemImpl) component;
+        CassandraIiImpl localItem = (CassandraIiImpl) item;
+        CassandraIiImpl localComponent = (CassandraIiImpl) component;
 
         if (localItem.components != null)
             localItem.components.remove(component);
@@ -306,14 +308,14 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
 
     }
 
-    public void setMeta(InformationItem item, String key, String value) {
+    protected void setMeta(Ii item, String key, String value) {
         setMeta(item, key, value, false);
     }
 
-    public void setMeta(InformationItem item, String key, String value, boolean isIndexed) {
-        if (!(item instanceof CassandraInformationItemImpl))
+    protected void setMeta(Ii item, String key, String value, boolean isIndexed) {
+        if (!(item instanceof CassandraIiImpl))
             throw generateWrongDaoException();
-        CassandraInformationItemImpl localItem = ((CassandraInformationItemImpl) item);
+        CassandraIiImpl localItem = ((CassandraIiImpl) item);
 
         // Update data
         HFactory.createMutator(keyspace, us).insert(item.getUUID(), CF_META, HFactory.createStringColumn(key, value));
@@ -329,10 +331,10 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         localItem.meta.put(key, value);
     }
 
-    public void removeMeta(InformationItem item, String key) {
-        if (!(item instanceof CassandraInformationItemImpl))
+    protected void removeMeta(Ii item, String key) {
+        if (!(item instanceof CassandraIiImpl))
             throw generateWrongDaoException();
-        CassandraInformationItemImpl localItem = (CassandraInformationItemImpl) item;
+        CassandraIiImpl localItem = (CassandraIiImpl) item;
 
         // Update data
         HFactory.createMutator(keyspace, us).delete(item.getUUID(), CF_META, key, ss);
@@ -347,7 +349,7 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         localItem.meta.remove(key);
     }
 
-    public Collection<InformationItem> loadByMeta(String key, String value) {
+    protected Collection<Ii> loadByMeta(String key, String value) {
 
         String queryKey = String.format(META_FORMAT, key, value);
 
@@ -365,7 +367,7 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         return loadByUUIDs(result);
     }
 
-    public Map<UUID, String> searchByMetaPrefix(String key, String prefix) {
+    protected Map<UUID, String> searchByMetaPrefix(String key, String prefix) {
 
         String queryKey = String.format(META_FORMAT, key, prefix.toLowerCase());
 
@@ -383,14 +385,14 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         return result;
     }
 
-    /*
-                             Private methods
-     */
+    /*------------------\
+    |   P R I V A T E   |
+    \__________________*/
 
-    private Collection<UUID> getUniqueIds(Collection<InformationItem> items) {
+    private Collection<UUID> getUniqueIds(Collection<Ii> items) {
         Set<UUID> result = new HashSet<UUID>();
-        for (InformationItem item : items) {
-            CassandraInformationItemImpl local = (CassandraInformationItemImpl) item;
+        for (Ii item : items) {
+            CassandraIiImpl local = (CassandraIiImpl) item;
             result.add(local.uuid);
         }
         return result;
@@ -400,7 +402,7 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         return new UnsupportedOperationException("This dao can't operate with this item");
     }
 
-    private void addMetaIndex(CassandraInformationItemImpl item, String key, String value, Mutator<String> mutator, boolean isIndexed) {
+    private void addMetaIndex(CassandraIiImpl item, String key, String value, Mutator<String> mutator, boolean isIndexed) {
         String rowKey = String.format(META_FORMAT, key, value);
         mutator.addInsertion(rowKey, CF_META_INDEX, HFactory.createColumn(item.getUUID(), 1D, us, ds));
         if (isIndexed) {
@@ -414,7 +416,7 @@ public class CassandraInformationItemDaoImpl implements InformationItemDao {
         }
     }
 
-    private void removeMetaIndex(CassandraInformationItemImpl item, String key, String oldValue, Mutator<String> mutator) {
+    private void removeMetaIndex(CassandraIiImpl item, String key, String oldValue, Mutator<String> mutator) {
         if (oldValue == null || key == null)
             return;
         String rowKey = String.format(META_FORMAT, key, oldValue);

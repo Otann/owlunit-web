@@ -1,7 +1,7 @@
 package com.manymonkeys.app.tag.common;
 
 import com.manymonkeys.app.MainApplication;
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.service.cinema.TagService;
 import com.vaadin.data.Validator;
 import com.vaadin.data.validator.RegexpValidator;
@@ -36,7 +36,7 @@ public abstract class FilterTagButton extends OpenDialogButton {
      *
      * @param item that was selected by user and needed to process
      */
-    public abstract void processItem(InformationItem item);
+    public abstract void processItem(Ii item);
 
     @Override
     public Layout getDialogContent() {

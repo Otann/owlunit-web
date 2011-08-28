@@ -3,7 +3,7 @@ package com.manymonkeys.app.auth.window;
 import com.manymonkeys.app.auth.AuthManager;
 import com.manymonkeys.app.MainApplication;
 import com.manymonkeys.app.auth.PasswordValidator;
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.service.auth.UserService;
 import com.manymonkeys.ui.theme.Stream;
 import com.vaadin.data.validator.EmailValidator;
@@ -92,7 +92,7 @@ public class CreateUserWindow extends Window {
                     String email = (String) form.getField("email").getValue();
 
                     try {
-                        InformationItem user = authManager.createUser(login, password);
+                        Ii user = authManager.createUser(login, password);
                         userService.setMeta(user, "email", email);
 
                         if (listener != null) {
@@ -114,7 +114,7 @@ public class CreateUserWindow extends Window {
     }
 
     public static interface UserCreatedListener {
-        public void userCreated(InformationItem user);
+        public void userCreated(Ii user);
     }
 
 }

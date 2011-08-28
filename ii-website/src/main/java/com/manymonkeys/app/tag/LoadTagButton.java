@@ -4,7 +4,7 @@ package com.manymonkeys.app.tag;
 import com.manymonkeys.app.MainApplication;
 import com.manymonkeys.app.tag.common.FilterTagButton;
 import com.manymonkeys.app.page.ItemPage;
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.service.cinema.TagService;
 import org.vaadin.navigator7.Navigator;
 
@@ -20,7 +20,7 @@ public class LoadTagButton extends FilterTagButton {
     }
 
     @Override
-    public void processItem(InformationItem item) {
+    public void processItem(Ii item) {
         Navigator nav = MainApplication.getCurrentNavigableAppLevelWindow().getNavigator();
         nav.navigateTo(ItemPage.class, item.getUUID().toString());
     }

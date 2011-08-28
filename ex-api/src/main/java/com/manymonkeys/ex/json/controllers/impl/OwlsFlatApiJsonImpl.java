@@ -1,6 +1,6 @@
 package com.manymonkeys.ex.json.controllers.impl;
 
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.ex.json.controllers.OwlsFlatApi;
 
 import java.util.List;
@@ -12,13 +12,13 @@ import java.util.Map;
  */
 public class OwlsFlatApiJsonImpl implements OwlsFlatApi {
     @Override
-    public Map<InformationItem, Double> getSimilarMovies(String userId, String movieName, Long amount, boolean showReasons) {
+    public Map<Ii, Double> getSimilarMovies(String userId, String movieName, Long amount, boolean showReasons) {
         //movie service
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public Map<InformationItem, Double> getRecommendations(String userId, Long amount, boolean showReasons) {
+    public Map<Ii, Double> getRecommendations(String userId, Long amount, boolean showReasons) {
         //recommender serivce
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
@@ -48,7 +48,7 @@ public class OwlsFlatApiJsonImpl implements OwlsFlatApi {
     }
 
     @Override
-    public void addMovie(String name, List<Person> persons, String description, Map<String, String> other) {
+    public void addMovie(String name, String year, String description, List<Person> persons, Map<String, String> other) {
         //movie service
         //To change body of implemented methods use File | Settings | File Templates.
     }

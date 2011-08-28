@@ -12,9 +12,8 @@ import com.manymonkeys.app.page.ItemPage;
 import com.manymonkeys.app.page.MonitoringPage;
 import com.manymonkeys.app.page.ProfilePage;
 import com.manymonkeys.app.page.SearchPage;
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.service.auth.UserService;
-import com.manymonkeys.service.cinema.TagService;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Window;
@@ -94,7 +93,7 @@ public class MainMenu extends MenuBar {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     Window mainWindow = getApplication().getMainWindow();
-                    InformationItem user;
+                    Ii user;
                     try {
                         user = AuthManager.getCurrent(mainWindow).getCurrentUser();
                     } catch (AuthManager.AuthException e) {
@@ -102,7 +101,7 @@ public class MainMenu extends MenuBar {
                         return;
                     }
 
-                    InformationItem item = page.getItem();
+                    Ii item = page.getItem();
                     if (item == null) {
                         mainWindow.showNotification("No item selected.", Window.Notification.TYPE_ERROR_MESSAGE);
                         return;

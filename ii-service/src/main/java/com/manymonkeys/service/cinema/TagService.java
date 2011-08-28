@@ -1,8 +1,7 @@
 package com.manymonkeys.service.cinema;
 
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.core.ii.impl.cassandra.CassandraInformationItemDaoImpl;
-import com.manymonkeys.security.shiro.annotation.OwledMethod;
 import me.prettyprint.hector.api.Keyspace;
 
 import java.util.Collection;
@@ -24,14 +23,14 @@ public class TagService extends CassandraInformationItemDaoImpl {
         super(keyspace);
     }
 
-    public InformationItem createTag(String name) {
-        InformationItem item = createInformationItem();
+    public Ii createTag(String name) {
+        Ii item = createInformationItem();
         setMeta(item, NAME, name, true);
         setMeta(item, CLASS_MARK_KEY, CLASS_MARK_VALUE);
         return item;
     }
 
-    public InformationItem getTag(String name) {
+    public Ii getTag(String name) {
         try {
             return loadByMeta(NAME, name).iterator().next();
         } catch (NoSuchElementException e) {
@@ -39,7 +38,7 @@ public class TagService extends CassandraInformationItemDaoImpl {
         }
     }
 
-    public Collection<InformationItem> getAll() {
+    public Collection<Ii> getAll() {
         return loadByMeta(CLASS_MARK_KEY, CLASS_MARK_VALUE);
     }
 

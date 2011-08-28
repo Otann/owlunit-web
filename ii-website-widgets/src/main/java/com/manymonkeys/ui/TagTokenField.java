@@ -1,6 +1,6 @@
 package com.manymonkeys.ui;
 
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.service.cinema.TagService;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
@@ -18,20 +18,20 @@ import java.util.Set;
  */
 public class TagTokenField extends TokenField {
 
-    private Set<InformationItem> items;
+    private Set<Ii> items;
 
     public TagTokenField(Container container) {
-        this.items = new HashSet<InformationItem>();
+        this.items = new HashSet<Ii>();
         super.setTokenInsertPosition(InsertPosition.BEFORE);
         super.setContainerDataSource(container);
     }
 
-    public Collection<InformationItem> getInformationItems() {
+    public Collection<Ii> getInformationItems() {
         return items;
     }
 
-    private InformationItem extractInformationItem(Item item) {
-        return (InformationItem) item.getItemProperty(null).getValue();
+    private Ii extractInformationItem(Item item) {
+        return (Ii) item.getItemProperty(null).getValue();
     }
 
     @Override
@@ -40,7 +40,7 @@ public class TagTokenField extends TokenField {
         if (item == null)
             return;
 
-        InformationItem ii = extractInformationItem(getContainerDataSource().getItem(tokenId));
+        Ii ii = extractInformationItem(getContainerDataSource().getItem(tokenId));
         items.add(ii);
 
         String name = ii.getMeta(TagService.NAME);
@@ -56,7 +56,7 @@ public class TagTokenField extends TokenField {
         if (item == null)
             return;
 
-        InformationItem ii = extractInformationItem(getContainerDataSource().getItem(tokenId));
+        Ii ii = extractInformationItem(getContainerDataSource().getItem(tokenId));
         items.remove(ii);
         super.onTokenClick(item);
 
@@ -68,7 +68,7 @@ public class TagTokenField extends TokenField {
         if (item == null)
             return;
 
-        InformationItem ii = extractInformationItem(getContainerDataSource().getItem(tokenId));
+        Ii ii = extractInformationItem(getContainerDataSource().getItem(tokenId));
         items.remove(ii);
         super.onTokenDelete(item);
     }

@@ -1,6 +1,6 @@
 package com.manymonkeys.crawlers.imdb;
 
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.crawlers.common.CassandraCrawler;
 import com.manymonkeys.crawlers.common.TimeWatch;
 import com.manymonkeys.service.cinema.MovieService;
@@ -21,8 +21,8 @@ public class ImdbPlotParser extends CassandraCrawler {
 
     final Logger logger = LoggerFactory.getLogger(ImdbPlotParser.class);
 
-    static final Pattern movieName  = Pattern.compile("^MV: (.+) \\(\\d+\\).*$");
-    static final Pattern plotLine   = Pattern.compile("PL: (.+)$");
+    static final Pattern movieName = Pattern.compile("^MV: (.+) \\(\\d+\\).*$");
+    static final Pattern plotLine = Pattern.compile("PL: (.+)$");
     static final Pattern authorLine = Pattern.compile("BY: (.+)$");
 
     String filePath;
@@ -50,7 +50,7 @@ public class ImdbPlotParser extends CassandraCrawler {
         TimeWatch watch = TimeWatch.start();
 
         String line = reader.readLine();
-        InformationItem movieItem = null;
+        Ii movieItem = null;
         StringBuffer buffer = new StringBuffer();
 
         while (line != null) {
@@ -61,7 +61,7 @@ public class ImdbPlotParser extends CassandraCrawler {
                 Matcher matcher;
                 if ((matcher = movieName.matcher(line)).matches()) {
                     if (movieItem != null) {
-                        service.setMeta(movieItem, MovieService.PLOT, buffer.toString());
+                        service.createOrUpdateDescription(movieItem, buffer.toString());
                         buffer = new StringBuffer();
                     }
 
@@ -93,7 +93,7 @@ public class ImdbPlotParser extends CassandraCrawler {
         }
 
         if (movieItem != null) {
-            service.setMeta(movieItem, MovieService.PLOT, buffer.toString());
+            service.createOrUpdateDescription(movieItem, buffer.toString());
         }
 
     }

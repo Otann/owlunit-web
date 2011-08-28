@@ -1,6 +1,6 @@
 package com.manymonkeys.ex.json.mock;
 
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.ex.json.controllers.OwlsFlatApi;
 
 import java.util.HashMap;
@@ -8,40 +8,37 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by IntelliJ IDEA.
- * User: anton
- * Date: 8/25/11
- * Time: 4:41 PM
- * To change this template use File | Settings | File Templates.
+ * @author Anton Chebotaev
+ *         Owls Proprietary
  */
 public class OwlsFlatApiMock implements OwlsFlatApi {
 
     @Override
-    public Map<InformationItem, Double> getSimilarMovies(String userId, String movieName, Long amount, boolean showReasons) {
-        Map<InformationItem, Double> result = new HashMap<InformationItem, Double>();
+    public Map<Ii, Double> getSimilarMovies(String userId, String movieName, Long amount, boolean showReasons) {
+        Map<Ii, Double> result = new HashMap<Ii, Double>();
 
         if (showReasons) {
-            result.put(InformationItemMock.getSampleMovie("User", 5), 0d);
-            result.put(InformationItemMock.getSampleMovie(movieName, 20), 0d);
+            result.put(IiMock.getSampleMovie("User", 5), 0d);
+            result.put(IiMock.getSampleMovie(movieName, 20), 0d);
         }
 
-        for(int i = 0; i < amount; ++i) {
-            result.put(InformationItemMock.getSampleMovie(String.format("Recommendation #%d", i), i), (double) i);
+        for (int i = 0; i < amount; ++i) {
+            result.put(IiMock.getSampleMovie(String.format("Recommendation #%d", i), i), (double) i);
         }
 
         return result;
     }
 
     @Override
-    public Map<InformationItem, Double> getRecommendations(String userId, Long amount, boolean showReasons) {
-        Map<InformationItem, Double> result = new HashMap<InformationItem, Double>();
+    public Map<Ii, Double> getRecommendations(String userId, Long amount, boolean showReasons) {
+        Map<Ii, Double> result = new HashMap<Ii, Double>();
 
         if (showReasons) {
-            result.put(InformationItemMock.getSampleMovie("User", 5), 0d);
+            result.put(IiMock.getSampleMovie("User", 5), 0d);
         }
 
-        for(int i = 0; i < amount; ++i) {
-            result.put(InformationItemMock.getSampleMovie(String.format("Recommendation #%d", i), i), (double) i);
+        for (int i = 0; i < amount; ++i) {
+            result.put(IiMock.getSampleMovie(String.format("Recommendation #%d", i), i), (double) i);
         }
 
         return result;

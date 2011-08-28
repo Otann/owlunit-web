@@ -1,6 +1,6 @@
 package com.manymonkeys.app.binding;
 
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.service.cinema.TagService;
 import com.vaadin.data.util.ObjectProperty;
 
@@ -9,10 +9,10 @@ import com.vaadin.data.util.ObjectProperty;
  *
  * @author Anton Chebotaev
  */
-public class InformationItemProperty extends ObjectProperty<InformationItem> {
+public class InformationItemProperty extends ObjectProperty<Ii> {
 
-    public InformationItemProperty(InformationItem item) {
-        super(item, InformationItem.class, true);
+    public InformationItemProperty(Ii item) {
+        super(item, Ii.class, true);
     }
 
     public void setReadOnly(boolean newStatus) { }

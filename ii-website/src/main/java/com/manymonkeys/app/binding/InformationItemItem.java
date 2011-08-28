@@ -1,6 +1,6 @@
 package com.manymonkeys.app.binding;
 
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 
@@ -17,7 +17,7 @@ public class InformationItemItem implements Item {
     public static final Object SINGLE_PROPERTY_ID = InformationItemItem.class;
     private final InformationItemProperty property;
 
-    public InformationItemItem(InformationItem item) {
+    public InformationItemItem(Ii item) {
         property = new InformationItemProperty(item);
     }
 

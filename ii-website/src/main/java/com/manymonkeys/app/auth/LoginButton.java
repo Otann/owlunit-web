@@ -3,7 +3,7 @@ package com.manymonkeys.app.auth;
 import com.manymonkeys.app.MainApplication;
 import com.manymonkeys.app.auth.window.LoginWindow;
 import com.manymonkeys.app.page.ProfilePage;
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Window;
@@ -43,7 +43,7 @@ public class LoginButton extends Button implements MenuBar.Command, LoginWindow.
     }
 
     @Override
-    public void userLoggedIn(InformationItem user) {
+    public void userLoggedIn(Ii user) {
         closeWindow();
         MainApplication.getCurrentNavigableAppLevelWindow().getNavigator().navigateTo(ProfilePage.class);
     }

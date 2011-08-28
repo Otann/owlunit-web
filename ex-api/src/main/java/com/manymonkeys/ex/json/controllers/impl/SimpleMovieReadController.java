@@ -1,6 +1,6 @@
 package com.manymonkeys.ex.json.controllers.impl;
 
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.service.cinema.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -48,7 +48,7 @@ public class SimpleMovieReadController {
     @RequestMapping(value = "/getbyname", method = RequestMethod.GET)
     public
     @ResponseBody
-    InformationItem getByName(@RequestParam String movieName) {
+    Ii getByName(@RequestParam String movieName) {
         return movieService.getByNameSimplified(movieName);
     }
     /*

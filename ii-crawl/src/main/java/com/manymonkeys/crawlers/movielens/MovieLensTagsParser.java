@@ -1,6 +1,6 @@
 package com.manymonkeys.crawlers.movielens;
 
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.crawlers.common.PropertyManager;
 import com.manymonkeys.crawlers.common.TimeWatch;
 import com.manymonkeys.service.cinema.MovieService;
@@ -45,8 +45,8 @@ public class MovieLensTagsParser {
 
             BufferedReader fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF8"));
 
-            Map<String, InformationItem> tagCache = new HashMap<String, InformationItem>();
-            Map<String, InformationItem> moviesCache = new HashMap<String, InformationItem>();
+            Map<String, Ii> tagCache = new HashMap<String, Ii>();
+            Map<String, Ii> moviesCache = new HashMap<String, Ii>();
 
             TimeWatch watch = TimeWatch.start();
 
@@ -63,15 +63,16 @@ public class MovieLensTagsParser {
                     String externalId = str.substring(0, str.indexOf(':'));
                     String tagName = str.substring(str.lastIndexOf(':') + 1, str.length()).toLowerCase();
 
-                    InformationItem movieItem = moviesCache.get(externalId);
+                    Ii movieItem = moviesCache.get(externalId);
                     if (movieItem == null) {
-                        movieItem = movieService.loadByMeta(MovieLensMoviesParser.EXTERNAL_ID, externalId).iterator().next();
+                        //TODO Anton Chebotaev - Create method "loadByMovieLensId()" in MovieService, use it instead
+                        //movieItem = movieService.loadByMeta(MovieLensMoviesParser.EXTERNAL_ID, externalId).iterator().next();
                         moviesCache.put(externalId, movieItem);
                     }
 
                     watch.tick(logger, 2000, "Processing movielens.", "tags");
 
-                    InformationItem tagItem = tagCache.get(tagName);
+                    Ii tagItem = tagCache.get(tagName);
                     if (tagItem == null) {
                         tagItem = movieService.createTag(tagName);
                         tagCache.put(tagName, tagItem);
@@ -79,9 +80,11 @@ public class MovieLensTagsParser {
 
                     Double weight = movieItem.getComponentWeight(tagItem);
                     if (weight == null) {
-                        movieService.setComponentWeight(movieItem, tagItem, INITIAL_WEIGHT);
+                        //TODO Anton Chebotaev - Use appropriate methods from MovieService intstead
+//                        movieService.setComponentWeight(movieItem, tagItem, INITIAL_WEIGHT);
                     } else {
-                        movieService.setComponentWeight(movieItem, tagItem, weight + ADDITIONAL_WEIGHT);
+                        //TODO Anton Chebotaev - Use appropriate methods from MovieService instead
+//                        movieService.setComponentWeight(movieItem, tagItem, weight + ADDITIONAL_WEIGHT);
                     }
 
                 } catch (Exception e) {

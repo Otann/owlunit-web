@@ -15,8 +15,8 @@
         <module>ii-service</module>
         <module>ii-crawl</module>
         <module>ii-impex</module>
-        <module>ii-website-widgets</module>
-        <module>ii-website</module>
+        <!--<module>ii-website-widgets</module>-->
+        <!--<module>ii-website</module>-->
         <module>ii-local</module>
         <module>ii-security</module>
         <module>rd-aspects</module>

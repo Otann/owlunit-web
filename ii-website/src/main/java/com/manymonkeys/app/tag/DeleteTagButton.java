@@ -2,7 +2,7 @@ package com.manymonkeys.app.tag;
 
 import com.manymonkeys.app.tag.common.OpenDialogButton;
 import com.manymonkeys.app.page.ItemPage;
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
@@ -30,7 +30,7 @@ public class DeleteTagButton extends OpenDialogButton {
 
     @Override
     public void onSubmit() {
-        InformationItem item = page.getItem();
+        Ii item = page.getItem();
         if (item != null) {
             page.setItemId(null);
             page.getService().deleteInformationItem(item);

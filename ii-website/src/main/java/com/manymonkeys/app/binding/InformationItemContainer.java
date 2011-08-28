@@ -1,6 +1,6 @@
 package com.manymonkeys.app.binding;
 
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.service.cinema.TagService;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
@@ -34,7 +34,7 @@ public class InformationItemContainer implements Container, Container.Filterable
             id = UUID.fromString((String) itemId);
         } catch (Exception e) { }
 
-        InformationItem ii = null;
+        Ii ii = null;
         if (id != null) {
             ii = service.loadByUUID(id);
         } else if (itemId instanceof String) {
@@ -64,7 +64,7 @@ public class InformationItemContainer implements Container, Container.Filterable
     }
 
     public Class<?> getType(Object propertyId) {
-        return InformationItem.class;
+        return Ii.class;
     }
 
     public int size() {

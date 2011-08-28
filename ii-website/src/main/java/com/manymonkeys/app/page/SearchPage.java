@@ -2,7 +2,7 @@ package com.manymonkeys.app.page;
 
 import com.manymonkeys.app.binding.InformationItemContainer;
 import com.manymonkeys.core.algo.Recommender;
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.service.auth.UserService;
 import com.manymonkeys.service.cinema.TagService;
 import com.manymonkeys.ui.ItemTag;
@@ -76,20 +76,20 @@ public class SearchPage extends VerDashLayout implements Button.ClickListener {
     public void buttonClick(Button.ClickEvent event) {
         long startTime = System.currentTimeMillis();
 
-        Map<InformationItem, Double> queryMap = new HashMap<InformationItem, Double>();
-        Collection<InformationItem> queryItems = new HashSet<InformationItem>(searchTokens.getInformationItems());
-        Collection<InformationItem> highlightItems = new HashSet<InformationItem>(searchTokens.getInformationItems());
+        Map<Ii, Double> queryMap = new HashMap<Ii, Double>();
+        Collection<Ii> queryItems = new HashSet<Ii>(searchTokens.getInformationItems());
+        Collection<Ii> highlightItems = new HashSet<Ii>(searchTokens.getInformationItems());
 
         service.reloadComponents(queryItems);
 
         // add items
-        for (InformationItem queryItem : queryItems) {
+        for (Ii queryItem : queryItems) {
             queryMap.put(queryItem, 10D);
         }
 
         // add item's components
-        for (InformationItem queryItem : queryItems) {
-            for (Map.Entry<InformationItem, Double> componentEntry : queryItem.getComponents().entrySet()) {
+        for (Ii queryItem : queryItems) {
+            for (Map.Entry<Ii, Double> componentEntry : queryItem.getComponents().entrySet()) {
                 Double componentWeight = queryMap.get(componentEntry.getKey());
                 if (componentWeight == null) {
                     componentWeight = 0D;
@@ -103,16 +103,16 @@ public class SearchPage extends VerDashLayout implements Button.ClickListener {
             }
         }
 
-        Map<InformationItem, Double> result = recommender.getMostLike(queryMap, service);
-        for (InformationItem item : highlightItems) {
+        Map<Ii, Double> result = recommender.getMostLike(queryMap, service);
+        for (Ii item : highlightItems) {
             result.remove(item);
         }
 
         long limit = SEARCH_RESULTS_LIMIT;
-        List<InformationItem> reloadList = new LinkedList<InformationItem>();
+        List<Ii> reloadList = new LinkedList<Ii>();
         List<ItemTag> displayTags = new LinkedList<ItemTag>();
 
-        for (Map.Entry<InformationItem, Double> entry : result.entrySet()) {
+        for (Map.Entry<Ii, Double> entry : result.entrySet()) {
             if (limit-- <= 0)
                 break;
 

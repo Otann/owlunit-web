@@ -1,6 +1,6 @@
 package com.manymonkeys.local;
 
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.core.ii.InformationItemDao;
 import com.manymonkeys.core.ii.impl.cassandra.CassandraInformationItemDaoImpl;
 import com.manymonkeys.service.cinema.MovieService;
@@ -30,20 +30,20 @@ public class CoreTest {
 
         InformationItemDao dao = new CassandraInformationItemDaoImpl(keyspace);
 
-        List<InformationItem> items = new LinkedList<InformationItem>();
+        List<Ii> items = new LinkedList<Ii>();
         for (int i = 0; i < 10; i++) {
-            InformationItem item = dao.createInformationItem();
+            Ii item = dao.createInformationItem();
             items.add(item);
             dao.setMeta(item, "key", "value" + i);
         }
 
-        Collection<InformationItem> itemsByMultiget = dao.loadByMeta("key", "value1");
+        Collection<Ii> itemsByMultiget = dao.loadByMeta("key", "value1");
         Map<UUID, String> itemsBySearch = dao.searchByMetaPrefix("key", "value");
 
         logger.info(String.format("Items found by multiget: %s", itemsByMultiget));
         logger.info(String.format("Items found by prefix search: %s", itemsBySearch));
 
-        for (InformationItem item : items) {
+        for (Ii item : items) {
             dao.deleteInformationItem(item);
         }
 
@@ -52,7 +52,7 @@ public class CoreTest {
         MovieService service = new MovieService(keyspace);
 
         service.createTag("new tag");
-        InformationItem tag = service.getTag("new tag");
+        Ii tag = service.getTag("new tag");
         logger.info("tag loaded");
 
         logger.info("=====================================");

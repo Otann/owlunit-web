@@ -1,7 +1,6 @@
 package com.manymonkeys.service.auth;
 
-import com.manymonkeys.core.ii.InformationItem;
-import com.manymonkeys.core.ii.impl.cassandra.CassandraInformationItemDaoImpl;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.service.cinema.TagService;
 import me.prettyprint.hector.api.Keyspace;
 
@@ -26,15 +25,15 @@ public class UserService extends TagService {
         super(keyspace);
     }
 
-    public InformationItem createUser(String login, String password) {
+    public Ii createUser(String login, String password) {
         //TODO: validate login name to be alphanumeric
-        InformationItem user = createTag(login);
+        Ii user = createTag(login);
         setMeta(user, LOGIN, login, true);
         setMeta(user, PASSWORD, getPasswordHash(password));
         return user;
     }
 
-    public InformationItem getUser(String login) {
+    public Ii getUser(String login) {
         try {
             return loadByMeta(LOGIN, login).iterator().next();
         } catch (NoSuchElementException e) {
@@ -42,11 +41,11 @@ public class UserService extends TagService {
         }
     }
 
-    public void setPassword(InformationItem item, String password) {
+    public void setPassword(Ii item, String password) {
         setMeta(item, PASSWORD, getPasswordHash(password));
     }
 
-    public boolean checkPassword(InformationItem user, String password) {
+    public boolean checkPassword(Ii user, String password) {
         return getPasswordHash(password).equals(user.getMeta(PASSWORD));
     }
 

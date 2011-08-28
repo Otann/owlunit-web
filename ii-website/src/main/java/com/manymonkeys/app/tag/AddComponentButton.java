@@ -2,7 +2,7 @@ package com.manymonkeys.app.tag;
 
 import com.manymonkeys.app.tag.common.FilterTagButton;
 import com.manymonkeys.app.page.ItemPage;
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 
 /**
  * Many Monkeys
@@ -19,8 +19,8 @@ public class AddComponentButton extends FilterTagButton {
     }
 
     @Override
-    public void processItem(InformationItem item) {
-        InformationItem pageItem = page.getItem();
+    public void processItem(Ii item) {
+        Ii pageItem = page.getItem();
         if (pageItem != null) {
             double initialWeight = 10;
             page.getService().setComponentWeight(pageItem, item, initialWeight);

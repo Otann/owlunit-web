@@ -1,6 +1,6 @@
 package com.manymonkeys.crawlers.movielens;
 
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.crawlers.common.PropertyManager;
 import com.manymonkeys.crawlers.common.PropertyManager.Property;
 import com.manymonkeys.crawlers.common.TimeWatch;
@@ -31,7 +31,7 @@ public class MovieLensMoviesParser {
 
     public final double INITIAL_GENRE_WEIGHT = Double.parseDouble(PropertyManager.get(Property.MOVIELENS_GENRE_WEIGHT_INITIAL));
 
-    private static Map<String, InformationItem> localYearsCache = new HashMap<String, InformationItem>();
+    private static Map<String, Ii> localYearsCache = new HashMap<String, Ii>();
 
     public static void main(String[] args) throws IOException {
         new MovieLensMoviesParser().run(args[0]);
@@ -77,16 +77,19 @@ public class MovieLensMoviesParser {
                 String year = line.substring(lastSemicolon - 6, lastSemicolon - 2);
                 String[] genres = line.substring(lastSemicolon + 1, line.length()).split("\\|");
 
-                InformationItem movie = movieService.createMovie(name, Long.parseLong(year));
-                movieService.setMeta(movie, EXTERNAL_ID, id, true);
+                Ii movie = movieService.createMovie(name, Long.parseLong(year));
+
+                /* TODO Anton Chebotaev move logic about externalId to MovieService (add "service" field, because externalIds
+                 can come from a number of thirdparties; we should nicely destinguish them in a nice manner ) */
+                movieService.addExternalId(movie, EXTERNAL_ID, id, true);
                 if (aka != null) {
-                    movieService.setMeta(movie, MovieService.AKA_NAME, aka, true);
+                    movieService.addAkaName(movie, aka, true);
                 }
                 if (nameTranslate != null) {
-                    movieService.setMeta(movie, MovieService.TRANSLATE_NAME, nameTranslate, true);
+                    movieService.addTranslateName(movie, nameTranslate, true);
                 }
 
-//                InformationItem yearItem;
+//                Ii yearItem;
 //                if (localYearsCache.containsKey(year)) {
 //                    yearItem = localYearsCache.get(year);
 //                } else {
@@ -98,11 +101,12 @@ public class MovieLensMoviesParser {
                 watch.tick(logger, 250, "Crawling movielens.", "movies");
 
                 for (String genre : genres) {
-                    InformationItem tag = tagService.getTag(genre);
+                    Ii tag = tagService.getTag(genre);
                     if (tag == null) {
                         tag = movieService.createTag(genre);
                     }
-                    movieService.setComponentWeight(movie, tag, INITIAL_GENRE_WEIGHT);
+                    //TODO Anton Chebotaev - Move initial genre weight to MovieService
+                    movieService.addGenre(movie, tag, INITIAL_GENRE_WEIGHT);
                 }
 
                 line = fileReader.readLine();

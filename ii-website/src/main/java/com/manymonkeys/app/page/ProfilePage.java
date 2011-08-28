@@ -1,21 +1,15 @@
 package com.manymonkeys.app.page;
 
 import com.manymonkeys.app.auth.AuthManager;
-import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.service.auth.UserService;
-import com.manymonkeys.service.cinema.TagService;
-import com.manymonkeys.ui.ItemTag;
 import com.manymonkeys.ui.theme.Stream;
-import com.vaadin.incubator.dashlayout.ui.VerDashLayout;
 import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.vaadin.gravatar.GravatarResource;
 import org.vaadin.navigator7.Page;
-import org.vaadin.navigator7.ParamPageLink;
 
 import java.net.MalformedURLException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Map;
 
 /**
  * Many Monkeys

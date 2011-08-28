@@ -1,7 +1,7 @@
 package com.manymonkeys.app.page;
 
 import com.manymonkeys.core.algo.Recommender;
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.service.auth.UserService;
 import com.manymonkeys.service.cinema.MovieService;
 import com.manymonkeys.service.cinema.PersonService;
@@ -37,7 +37,7 @@ public class ItemPage extends CustomLayout {
     @Param(pos = 0)
     String uuid;
 
-    InformationItem item;
+    Ii item;
 
     Layout meta;
     Layout components;
@@ -47,7 +47,7 @@ public class ItemPage extends CustomLayout {
         super("ii_page");
     }
 
-    public InformationItem getItem() {
+    public Ii getItem() {
         return item;
     }
 
@@ -150,10 +150,10 @@ public class ItemPage extends CustomLayout {
 
         components.removeAllComponents();
 
-        final Map<InformationItem, Double> uselessComponents = new HashMap<InformationItem, Double>();
-        Map<InformationItem, Double> componentsMap = new HashMap<InformationItem, Double>();
+        final Map<Ii, Double> uselessComponents = new HashMap<Ii, Double>();
+        Map<Ii, Double> componentsMap = new HashMap<Ii, Double>();
 
-        for (Map.Entry<InformationItem, Double> componentEntry : item.getComponents().entrySet()) {
+        for (Map.Entry<Ii, Double> componentEntry : item.getComponents().entrySet()) {
             if ((componentEntry.getValue() > 0) && (componentEntry.getValue() < COMPONENT_THRESHOLD)) {
                 uselessComponents.put(componentEntry.getKey(), componentEntry.getValue());
             } else {
@@ -179,10 +179,10 @@ public class ItemPage extends CustomLayout {
         }
     }
 
-    private void addItemsToComponents(Map<InformationItem, Double> items) {
+    private void addItemsToComponents(Map<Ii, Double> items) {
         service.reloadMetadata(items.keySet());
-        for (Map.Entry<InformationItem, Double> componentEntry : sortByValue(items, false).entrySet()) {
-            InformationItem item = componentEntry.getKey();
+        for (Map.Entry<Ii, Double> componentEntry : sortByValue(items, false).entrySet()) {
+            Ii item = componentEntry.getKey();
             ItemTag tag = new ItemTag(item, componentEntry.getValue(), ItemPage.class);
             tag.setWidth(null);
 
@@ -216,20 +216,20 @@ public class ItemPage extends CustomLayout {
         long startTime = System.currentTimeMillis();
 
         long limit = STREAM_SIZE_LIMIT;
-        Map<InformationItem, Double> recommendations = recommender.getMostLike(item, service);
+        Map<Ii, Double> recommendations = recommender.getMostLike(item, service);
 
-        for (InformationItem component : item.getComponents().keySet()) {
+        for (Ii component : item.getComponents().keySet()) {
             recommendations.remove(component);
         }
 
-        List<InformationItem> itemsToReload = new LinkedList<InformationItem>();
+        List<Ii> itemsToReload = new LinkedList<Ii>();
         List<ItemTag> tagsToAdd = new LinkedList<ItemTag>();
 
-        for (Map.Entry<InformationItem, Double> entry : recommendations.entrySet()) {
+        for (Map.Entry<Ii, Double> entry : recommendations.entrySet()) {
             if (limit-- < 0)
                 break;
 
-            InformationItem recommendedItem = entry.getKey();
+            Ii recommendedItem = entry.getKey();
             Double value = entry.getValue();
             ItemTag tag = new ItemTag(recommendedItem, value, ItemTag.DEFAULT_COMPONENTS_LIMIT, ItemPage.class);
 //            tag.setComponentsLimit(50);

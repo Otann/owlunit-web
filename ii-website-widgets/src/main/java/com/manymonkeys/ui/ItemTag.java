@@ -1,6 +1,6 @@
 package com.manymonkeys.ui;
 
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.service.cinema.TagService;
 import com.manymonkeys.ui.widgetset.client.ui.VItemTag;
 import com.vaadin.terminal.PaintException;
@@ -27,19 +27,19 @@ public class ItemTag extends AbstractComponent {
 
     public static final String CLASSNAME_COMMON_COMPONENT = "common";
 
-    private InformationItem item;
+    private Ii item;
     private Double value;
     private int componentsLimit = DEFAULT_COMPONENTS_LIMIT;
 
-    private Collection<InformationItem> commonItems;
+    private Collection<Ii> commonItems;
 
     private Class linkPageClass;
 
-    public ItemTag(InformationItem item, Double value, Class linkPageClass) {
+    public ItemTag(Ii item, Double value, Class linkPageClass) {
         this(item, value, 0, linkPageClass);
     }
 
-    public ItemTag(InformationItem item, Double value, int componentsLimit, Class linkPageClass) {
+    public ItemTag(Ii item, Double value, int componentsLimit, Class linkPageClass) {
         this.item = item;
         this.value = value;
         this.componentsLimit = componentsLimit;
@@ -48,11 +48,11 @@ public class ItemTag extends AbstractComponent {
         requestRepaintRequests();
     }
 
-    public Collection<InformationItem> getCommonItems() {
+    public Collection<Ii> getCommonItems() {
         return commonItems;
     }
 
-    public void setCommonItems(Collection<InformationItem> commonItems) {
+    public void setCommonItems(Collection<Ii> commonItems) {
         this.commonItems = commonItems;
     }
 
@@ -65,11 +65,11 @@ public class ItemTag extends AbstractComponent {
         requestRepaint();
     }
 
-    public InformationItem getItem() {
+    public Ii getItem() {
         return item;
     }
 
-    public void setItem(InformationItem item) {
+    public void setItem(Ii item) {
         this.item = item;
         requestRepaint();
     }
@@ -108,7 +108,7 @@ public class ItemTag extends AbstractComponent {
         valueLabel.setSizeUndefined();
         valueLabel.paint(target);
 
-        for (InformationItem componentItem : getDisplayedComponents()) {
+        for (Ii componentItem : getDisplayedComponents()) {
             Link componentLink = new ParamPageLink(componentItem.getMeta(TagService.NAME), linkPageClass, componentItem.getUUID().toString());
             if (commonItems != null && commonItems.contains(componentItem))
                 componentLink.addStyleName(CLASSNAME_COMMON_COMPONENT);
@@ -119,7 +119,7 @@ public class ItemTag extends AbstractComponent {
     @Override
     public String toString() {
         String name = item.getMeta(TagService.NAME);
-        String out = name != null ? name : "InformationItem#%d" + item.getUUID().toString();
+        String out = name != null ? name : "Ii#%d" + item.getUUID().toString();
         if (value == null) {
             return out;
         } else {
@@ -127,26 +127,26 @@ public class ItemTag extends AbstractComponent {
         }
     }
 
-    public Collection<InformationItem> getDisplayedComponents() {
+    public Collection<Ii> getDisplayedComponents() {
         if (componentsLimit <= 0)
             return Collections.emptySet();
 
         int limit = componentsLimit;
-        List<InformationItem> result = new LinkedList<InformationItem>();
+        List<Ii> result = new LinkedList<Ii>();
 
         // Sort components by weight value
         if (item.getComponents().isEmpty())
             return Collections.emptySet();
-        Map<InformationItem, Double> sorted = sortByValue(item.getComponents(), false);
+        Map<Ii, Double> sorted = sortByValue(item.getComponents(), false);
 
         // If there is common items, add them first
         if (commonItems != null && !commonItems.isEmpty()) {
-            Iterator<Map.Entry<InformationItem, Double>> iterator = sorted.entrySet().iterator();
+            Iterator<Map.Entry<Ii, Double>> iterator = sorted.entrySet().iterator();
             while (iterator.hasNext()) {
                 if (limit <= 0)
                     return result;
 
-                InformationItem component = iterator.next().getKey();
+                Ii component = iterator.next().getKey();
                 if (commonItems.contains(component)) {
                     result.add(component);
                     iterator.remove();
@@ -156,7 +156,7 @@ public class ItemTag extends AbstractComponent {
         }
 
         // If limit is not exceeded with common items, add rest
-        for (InformationItem component : sorted.keySet()) {
+        for (Ii component : sorted.keySet()) {
             if (limit-- <= 0)
                 return result;
             result.add(component);

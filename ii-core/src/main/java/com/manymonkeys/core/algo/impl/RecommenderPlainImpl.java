@@ -1,7 +1,7 @@
 package com.manymonkeys.core.algo.impl;
 
 import com.manymonkeys.core.algo.Recommender;
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.core.ii.InformationItemDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +13,9 @@ import java.util.*;
  *
  * @author Anton Chebotaev
  */
+/* Todo Anton Chebotaev - Move this class to "ii-service" package;
+    Algorithm and it's logic goes here, all the rest (like API for external calls) - to ii-service,
+    that will be used by other components. */
 public class RecommenderPlainImpl implements Recommender {
 
     final Logger logger = LoggerFactory.getLogger(RecommenderPlainImpl.class);
@@ -22,7 +25,7 @@ public class RecommenderPlainImpl implements Recommender {
     private double weightThreshold = 1.5;
 
     @Override
-    public void diffuse(InformationItem item, InformationItem component, Double rating, InformationItemDao dao) {
+    public void diffuse(Ii item, Ii component, Double rating, InformationItemDao dao) {
         // TODO: implement
     }
 
@@ -32,13 +35,13 @@ public class RecommenderPlainImpl implements Recommender {
      * And I'm sorry for that
      */
     @Override
-    public double compareItems(InformationItem a, InformationItem b) {
+    public double compareItems(Ii a, Ii b) {
         return compareItemsMaps(a.getComponents(), b.getComponents());
     }
 
     @Override
-    public double compareItemsMaps(Map<InformationItem, Double> a, Map<InformationItem, Double> b) {
-        Set<InformationItem> union = new HashSet<InformationItem>();
+    public double compareItemsMaps(Map<Ii, Double> a, Map<Ii, Double> b) {
+        Set<Ii> union = new HashSet<Ii>();
         union.addAll(a.keySet());
         union.addAll(b.keySet());
 
@@ -58,7 +61,7 @@ public class RecommenderPlainImpl implements Recommender {
 
         double min = 0;
 
-        for (InformationItem item : union) {
+        for (Ii item : union) {
             double a_w = a.get(item) == null ? 0 : a.get(item);
             double b_w = b.get(item) == null ? 0 : b.get(item);
 
@@ -72,20 +75,20 @@ public class RecommenderPlainImpl implements Recommender {
     }
 
     @Override
-    public Map<InformationItem, Double> getMostLike(InformationItem item, InformationItemDao dao) {
-        Map<InformationItem, Double> result = getMostLike(item.getComponents(), dao);
+    public Map<Ii, Double> getMostLike(Ii item, InformationItemDao dao) {
+        Map<Ii, Double> result = getMostLike(item.getComponents(), dao);
         result.remove(item);
         return result;
     }
 
     @Override
-    public Map<InformationItem, Double> getMostLike(Map<InformationItem, Double> items, InformationItemDao dao) {
-        Map<InformationItem, Double> result = new HashMap<InformationItem, Double>();
+    public Map<Ii, Double> getMostLike(Map<Ii, Double> items, InformationItemDao dao) {
+        Map<Ii, Double> result = new HashMap<Ii, Double>();
 
-        Collection<InformationItem> parents = dao.reloadParents(getValuableComponents(items).keySet());
+        Collection<Ii> parents = dao.reloadParents(getValuableComponents(items).keySet());
         dao.reloadComponents(parents);
 
-        for (InformationItem parent : parents) {
+        for (Ii parent : parents) {
             result.put(parent, compareItemsMaps(items, parent.getComponents()));
         }
 
@@ -104,11 +107,11 @@ public class RecommenderPlainImpl implements Recommender {
         this.weightThreshold = weightThreshold;
     }
 
-    private Map<InformationItem, Double> getValuableComponents(Map<InformationItem, Double> items) {
-        Map<InformationItem, Double> result = new HashMap<InformationItem, Double>();
+    private Map<Ii, Double> getValuableComponents(Map<Ii, Double> items) {
+        Map<Ii, Double> result = new HashMap<Ii, Double>();
 
         int limit = componentsLimit;
-        for(Map.Entry<InformationItem, Double> componentEntry : sortByValue(items, true).entrySet()) {
+        for(Map.Entry<Ii, Double> componentEntry : sortByValue(items, true).entrySet()) {
             if (limit-- <= 0)
                 break;
 

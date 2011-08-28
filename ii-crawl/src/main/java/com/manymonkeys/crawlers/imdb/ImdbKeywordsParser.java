@@ -1,6 +1,6 @@
 package com.manymonkeys.crawlers.imdb;
 
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.crawlers.common.CassandraCrawler;
 import com.manymonkeys.crawlers.common.PropertyManager;
 import com.manymonkeys.crawlers.common.TimeWatch;
@@ -108,7 +108,7 @@ public class ImdbKeywordsParser extends CassandraCrawler {
 
         String line = reader.readLine();
         String oldMovieName = null;
-        InformationItem movieItem = null;
+        Ii movieItem = null;
 
         while (line != null) {
             try {
@@ -133,7 +133,7 @@ public class ImdbKeywordsParser extends CassandraCrawler {
                 if (movieItem == null)
                     continue;
 
-                InformationItem keywordItem = null;
+                Ii keywordItem = null;
                 if (localCache.containsKey(keywordName)) {
                     keywordItem = service.loadByUUID(localCache.get(keywordName));
                 } else {
@@ -148,7 +148,8 @@ public class ImdbKeywordsParser extends CassandraCrawler {
                         MIN_WEIGHT :
                         MAX_WEIGHT - (1d * count / MAX_COUNT) * WEIGHT_RANGE;
 
-                service.setComponentWeight(movieItem, keywordItem, weight);
+                //TODO Anton Chebotaev - Logic about weight calculation somehow should be in MovieService in this case
+                service.addKeyword(movieItem, keywordItem, weight);
 
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();

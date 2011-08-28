@@ -1,6 +1,6 @@
 package com.manymonkeys.crawlers.imdb;
 
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.crawlers.common.CassandraCrawler;
 import com.manymonkeys.crawlers.common.TimeWatch;
 import com.manymonkeys.service.cinema.MovieService;
@@ -54,7 +54,7 @@ public class ImdbTaglinesParser extends CassandraCrawler {
         TimeWatch watch = TimeWatch.start();
 
         String line = reader.readLine();
-        InformationItem movieItem = null;
+        Ii movieItem = null;
         StringBuffer buffer = new StringBuffer();
 
         while (line != null) {
@@ -65,7 +65,7 @@ public class ImdbTaglinesParser extends CassandraCrawler {
                 Matcher matcher;
                 if ((matcher = movieName.matcher(line)).matches()) {
                     if (movieItem != null) {
-                        service.setMeta(movieItem, MovieService.TAGLINES, buffer.toString());
+                        service.addTagline(movieItem, buffer.toString());
                         buffer = new StringBuffer();
                     }
 
@@ -90,7 +90,7 @@ public class ImdbTaglinesParser extends CassandraCrawler {
         }
 
         if (movieItem != null) {
-            service.setMeta(movieItem, MovieService.TAGLINES, buffer.toString());
+            service.addTagline(movieItem, buffer.toString());
         }
 
     }

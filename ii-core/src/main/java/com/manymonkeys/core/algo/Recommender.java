@@ -1,6 +1,6 @@
 package com.manymonkeys.core.algo;
 
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.core.ii.InformationItemDao;
 
 import java.util.Map;
@@ -20,7 +20,7 @@ public interface Recommender {
      * @param rating level of attraction described as number belonging to [-1, 1]
      * @param dao to perform add operations
      */
-    void diffuse(InformationItem item, InformationItem component, Double rating, InformationItemDao dao);
+    void diffuse(Ii item, Ii component, Double rating, InformationItemDao dao);
 
     /**
      * Compares two items based on a secret metric
@@ -30,7 +30,7 @@ public interface Recommender {
      * @param right item
      * @return value of metric
      */
-    double compareItems(InformationItem left, InformationItem right);
+    double compareItems(Ii left, Ii right);
 
     /**
      * Compares two maps of components as if it would be InformationItems based on secret metric
@@ -39,7 +39,7 @@ public interface Recommender {
      * @param b map
      * @return value of metric
      */
-    double compareItemsMaps(Map<InformationItem, Double> a, Map<InformationItem, Double> b);
+    double compareItemsMaps(Map<Ii, Double> a, Map<Ii, Double> b);
 
     /**
      * Searches similar items to provided one. Based on a comparation metric
@@ -49,15 +49,15 @@ public interface Recommender {
      * @param dao  to perform fast loads
      * @return map os similar items with comparation results sorted by value of comparation
      */
-    Map<InformationItem, Double> getMostLike(InformationItem item, InformationItemDao dao);
+    Map<Ii, Double> getMostLike(Ii item, InformationItemDao dao);
 
     /**
-     * Searches similar items to map of components as if it would be components of InformationItem
+     * Searches similar items to map of components as if it would be components of Ii
      * Based on a comparation metric
      *
      * @param items used as a query
      * @param dao   to perform fast loads
      * @return map os similar items with comparation results sorted by value of comparation
      */
-    Map<InformationItem, Double> getMostLike(Map<InformationItem, Double> items, InformationItemDao dao);
+    Map<Ii, Double> getMostLike(Map<Ii, Double> items, InformationItemDao dao);
 }

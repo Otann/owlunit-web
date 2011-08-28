@@ -12,24 +12,24 @@ import java.util.UUID;
 public interface InformationItemDao {
 
     /**
-     * Creates new InformationItem object with valid unique uuid
+     * Creates new Ii object with valid unique uuid
      * @return InformationItem
      */
-    InformationItem createInformationItem();
+    Ii createInformationItem();
 
     /**
-     * Deletes InformationItem and all links to/from it
+     * Deletes Ii and all links to/from it
      * @param item to delete
      */
-    void deleteInformationItem(InformationItem item);
+    void deleteInformationItem(Ii item);
 
     /**
-     * Loads InformationItem from datastore with metadata only.
+     * Loads Ii from datastore with metadata only.
      *
-     * @param uuid of InformationItem
-     * @return loaded InformationItem with metadata only
+     * @param uuid of Ii
+     * @return loaded Ii with metadata only
      */
-    InformationItem loadByUUID(UUID uuid);
+    Ii loadByUUID(UUID uuid);
 
     /**
      * Multiget version of {@link #loadByUUIDs(java.util.Collection) loadByUUIDs} method.
@@ -37,7 +37,7 @@ public interface InformationItemDao {
      * @param uuids set of uuids of items
      * @return collection of items with metadata only
      */
-    Collection<InformationItem> loadByUUIDs(Collection<UUID> uuids);
+    Collection<Ii> loadByUUIDs(Collection<UUID> uuids);
 
     /**
      * Reloads all metadata for collection of items from datastore.
@@ -46,7 +46,7 @@ public interface InformationItemDao {
      * - {@link #reloadParents(java.util.Collection) reloadParents}
      * @param items
      */
-    void reloadMetadata(Collection<InformationItem> items);
+    void reloadMetadata(Collection<Ii> items);
 
     /**
      * Loads components for set of items as objects with id only and nothing else.
@@ -54,7 +54,7 @@ public interface InformationItemDao {
      * @param items to reload components
      * @return collection of "plain" items with id only that are components of provided items
      */
-    Collection<InformationItem> reloadComponents(Collection<InformationItem> items);
+    Collection<Ii> reloadComponents(Collection<Ii> items);
 
     /**
      * Loads parents for set of items as objects with id only and nothing else.
@@ -62,7 +62,7 @@ public interface InformationItemDao {
      * @param items to reload parents
      * @return collection of "plain" items with id only that are parents of provided items
      */
-    Collection<InformationItem> reloadParents(Collection<InformationItem> items);
+    Collection<Ii> reloadParents(Collection<Ii> items);
 
     /**
      * Loads items that has provided key-value pair in metadata.
@@ -70,7 +70,7 @@ public interface InformationItemDao {
      * @param value of metadata
      * @return collection of items with metadata
      */
-    Collection<InformationItem> loadByMeta(String key, String value);
+    Collection<Ii> loadByMeta(String key, String value);
 
     /**
      * Searches for items that meta's contain word that starts with prefix
@@ -90,7 +90,7 @@ public interface InformationItemDao {
      * @param component - child ii
      * @param weight    of connection
      */
-    void setComponentWeight(InformationItem item, InformationItem component, Double weight);
+    void setComponentWeight(Ii item, Ii component, Double weight);
 
     /**
      * Removes relation between items
@@ -98,20 +98,20 @@ public interface InformationItemDao {
      * @param item      parent ii
      * @param component child ii
      */
-    void removeComponent(InformationItem item, InformationItem component);
+    void removeComponent(Ii item, Ii component);
 
     /**
-     * Updates or creates metadata of InformationItem
+     * Updates or creates metadata of Ii
      * Does not create index for this pair
      *
      * @param item  to update
      * @param key   of metadata
      * @param value of metadata
      */
-    void setMeta(InformationItem item, String key, String value);
+    void setMeta(Ii item, String key, String value);
 
     /**
-     * Updates or creates metadata of InformationItem
+     * Updates or creates metadata of Ii
      * Allows to index this key for this item
      *
      * @param item   to update
@@ -119,7 +119,7 @@ public interface InformationItemDao {
      * @param value  of metadata
      * @param indexed enables meta for searchByPrefix
      */
-    void setMeta(InformationItem item, String key, String value, boolean indexed);
+    void setMeta(Ii item, String key, String value, boolean indexed);
 
     /**
      * Removes metadata from item
@@ -127,6 +127,6 @@ public interface InformationItemDao {
      * @param item to operate
      * @param key  of metadata
      */
-    void removeMeta(InformationItem item, String key);
+    void removeMeta(Ii item, String key);
 
 }

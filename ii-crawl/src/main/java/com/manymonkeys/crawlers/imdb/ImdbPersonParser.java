@@ -1,7 +1,6 @@
-
 package com.manymonkeys.crawlers.imdb;
 
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.crawlers.common.CassandraCrawler;
 import com.manymonkeys.crawlers.common.TimeWatch;
 import com.manymonkeys.service.cinema.MovieService;
@@ -22,7 +21,8 @@ import java.util.regex.Pattern;
  */
 public class ImdbPersonParser extends CassandraCrawler {
 
-    final Logger logger = LoggerFactory.getLogger(ImdbPersonParser.class);
+    public static final String DEFAULT_EMPTY_NAME = "";
+    final Logger log = LoggerFactory.getLogger(ImdbPersonParser.class);
 
     private final String filePath;
     private final String role;
@@ -32,7 +32,7 @@ public class ImdbPersonParser extends CassandraCrawler {
     PersonService personService;
 
     Pattern personMoviePattern = Pattern.compile("^([^\\t]+)\\t+(.+)\\((\\d+)\\).*$");
-    Pattern moviePattern =       Pattern.compile("^\\t\\t\\t(.+)\\((\\d+)\\).*$");
+    Pattern moviePattern = Pattern.compile("^\\t\\t\\t(.+)\\((\\d+)\\).*$");
 
     public ImdbPersonParser(String filePath, double initialWeight, String role) {
         this.filePath = filePath;
@@ -62,14 +62,14 @@ public class ImdbPersonParser extends CassandraCrawler {
 
 //        String year = null;
 
-        InformationItem personItem = null;
+        Ii personItem = null;
 
         int actorsCount = 0;
         TimeWatch timer = TimeWatch.start();
 
         while (line != null) {
             try {
-                timer.tick(logger, 10000, String.format("Found %d persons in file %s.", actorsCount, filePath), "lines");
+                timer.tick(log, 10000, String.format("Found %d persons in file %s.", actorsCount, filePath), "lines");
 
                 if ("".equals(line)) continue;
 
@@ -96,50 +96,43 @@ public class ImdbPersonParser extends CassandraCrawler {
                     oldName = name;
                 }
 
-                InformationItem movieItem = movieService.getByNameSimplified(movie);
+                Ii movieItem = movieService.getByNameSimplified(movie);
                 if (movieItem == null)
                     continue;
 
                 if (personItem == null) {
-                    personItem = processPerson(name);
+                    String[] fullname = splitName(name);
+                    personItem = personService.findOrCreate(fullname[0], fullname[1], role);
                     actorsCount++;
                 }
 
-                processMovie(movieItem, personItem);
+                //TODO Anton Chebotaev - Move "initial person weight" to movie service
+                movieService.addPerson(movieItem, personItem, INITIAL_PERSON_WEIGHT);
 
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);
                 e.printStackTrace(pw);
-                logger.error(String.format("Unable to parse line %s. Exception: %s", line, sw.toString()));
+                log.error(String.format("Unable to parse line %s. Exception: %s", line, sw.toString()));
             } finally {
                 line = fileReader.readLine();
             }
         }
-        logger.info(String.format("Processed %d persons all-in-all", actorsCount));
+        log.info(String.format("Processed %d persons all-in-all", actorsCount));
     }
 
-    InformationItem processPerson(String name) {
-        String firstName;
-        String lastName;
-        if (name.indexOf(", ") > 0) {
-            String[] parts = name.split(", ");
-            firstName = parts[1];
-            lastName = parts[0];
+    String[] splitName(String fullname) {
+        String name;
+        String surname;
+        if (fullname.indexOf(", ") > 0) {
+            String[] parts = fullname.split(", ");
+            name = parts[1];
+            surname = parts[0];
         } else {
-            firstName = "";
-            lastName = name;
+            name = DEFAULT_EMPTY_NAME;
+            surname = name;
         }
-        InformationItem person = personService.getPerson(firstName, lastName);
-        if (person == null) {
-            person = personService.createPerson(firstName, lastName);
-        }
-        personService.addRole(person, role);
-        return person;
-    }
-
-    void processMovie(InformationItem movie, InformationItem person) {
-        movieService.setComponentWeight(movie, person, INITIAL_PERSON_WEIGHT);
+        return new String[]{name, surname};
     }
 
     private String cropMovieName(String movieName) {

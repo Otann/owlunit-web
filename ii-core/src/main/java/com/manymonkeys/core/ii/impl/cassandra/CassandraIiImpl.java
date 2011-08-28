@@ -1,7 +1,7 @@
 package com.manymonkeys.core.ii.impl.cassandra;
 
 import com.google.common.collect.ImmutableMap;
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,14 +12,14 @@ import java.util.UUID;
  *
  * @author Anton Chebotaev
  */
-public class CassandraInformationItemImpl implements InformationItem, Comparable<InformationItem> {
+public class CassandraIiImpl implements Ii, Comparable<Ii> {
 
     UUID uuid;
     Map<String, String> meta = new HashMap<String, String>();
-    Map<InformationItem, Double> components = new HashMap<InformationItem, Double>();
-    Map<InformationItem, Double> parents = new HashMap<InformationItem, Double>();
+    Map<Ii, Double> components = new HashMap<Ii, Double>();
+    Map<Ii, Double> parents = new HashMap<Ii, Double>();
 
-    CassandraInformationItemImpl(UUID uuid) {
+    CassandraIiImpl(UUID uuid) {
         this.uuid = uuid;
     }
 
@@ -39,22 +39,22 @@ public class CassandraInformationItemImpl implements InformationItem, Comparable
     }
 
     @Override
-    public Map<InformationItem, Double> getComponents() {
+    public Map<Ii, Double> getComponents() {
         return components;
     }
 
     @Override
-    public Double getComponentWeight(InformationItem component) {
+    public Double getComponentWeight(Ii component) {
         return components.get(component);
     }
 
     @Override
-    public Map<InformationItem, Double> getParents() {
+    public Map<Ii, Double> getParents() {
         return parents;
     }
 
     @Override
-    public Double getParentWeight(InformationItem parent) {
+    public Double getParentWeight(Ii parent) {
         return parents.get(parent);
     }
 
@@ -66,8 +66,8 @@ public class CassandraInformationItemImpl implements InformationItem, Comparable
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof InformationItem) {
-            InformationItem local = (InformationItem) obj;
+        if (obj instanceof Ii) {
+            Ii local = (Ii) obj;
             return uuid.equals(local.getUUID());
         } else {
             return false;
@@ -75,7 +75,7 @@ public class CassandraInformationItemImpl implements InformationItem, Comparable
     }
 
     @Override
-    public int compareTo(InformationItem item) {
+    public int compareTo(Ii item) {
         return uuid.compareTo(item.getUUID());
     }
 

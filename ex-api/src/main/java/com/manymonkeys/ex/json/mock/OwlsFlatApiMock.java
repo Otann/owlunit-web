@@ -1,7 +1,7 @@
 package com.manymonkeys.ex.json.mock;
 
 import com.manymonkeys.core.ii.InformationItem;
-import com.manymonkeys.ex.json.controllers.OwlsSimpleApi;
+import com.manymonkeys.ex.json.controllers.OwlsFlatApi;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.Map;
  * Time: 4:41 PM
  * To change this template use File | Settings | File Templates.
  */
-public class OwlsSimpleApiMock implements OwlsSimpleApi {
+public class OwlsFlatApiMock implements OwlsFlatApi {
 
     @Override
     public Map<InformationItem, Double> getSimilarMovies(String userId, String movieName, Long amount, boolean showReasons) {

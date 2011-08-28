@@ -8,7 +8,7 @@ import java.util.UUID;
  *
  * @author Anton Chebotaev
  */
-public interface InformationItem {
+public interface Ii {
 
     /**
      * Each ii has it's own identifier which is unique across implementation package
@@ -33,11 +33,11 @@ public interface InformationItem {
     String getMeta(String key);
 
     /**
-     * Each InformationItem contains links to another items. Each link has weight
+     * Each Ii contains links to another items. Each link has weight
      *
      * @return immutable map of item's components with weights
      */
-    Map<InformationItem, Double> getComponents();
+    Map<Ii, Double> getComponents();
 
     /**
      * Shortcut for {@see getComponents}
@@ -45,7 +45,7 @@ public interface InformationItem {
      * @param component to get weight of
      * @return weight of a connection to that component. Null if there is no such component
      */
-    Double getComponentWeight(InformationItem component);
+    Double getComponentWeight(Ii component);
 
     /**
      * As each item contains links it's , it contains also link to
@@ -53,7 +53,7 @@ public interface InformationItem {
      *
      * @return immutable map of items that contain this item as a component
      */
-    Map<InformationItem, Double> getParents();
+    Map<Ii, Double> getParents();
 
     /**
      * Shortcut for {@see getParents()}
@@ -61,5 +61,5 @@ public interface InformationItem {
      * @param parent to get weight of
      * @return weight of connection to that parent. Null if there is no such parent
      */
-    Double getParentWeight(InformationItem parent);
+    Double getParentWeight(Ii parent);
 }

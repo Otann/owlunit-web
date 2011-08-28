@@ -1,6 +1,6 @@
 package com.manymonkeys.ex.json.mock;
 
-import com.manymonkeys.core.ii.InformationItem;
+import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.service.cinema.MovieService;
 import com.manymonkeys.service.cinema.TagService;
 
@@ -9,30 +9,27 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Created by IntelliJ IDEA.
- * User: anton
- * Date: 8/25/11
- * Time: 4:25 PM
- * To change this template use File | Settings | File Templates.
+ * @author Anton Chebotaev
+ *         Owls Proprietary
  */
-public class InformationItemMock implements InformationItem {
+public class IiMock implements Ii {
 
     private UUID uuid;
     private Map<String, String> meta = new HashMap<String, String>();
-    private Map<InformationItem, Double> components = new HashMap<InformationItem, Double>();
-    private Map<InformationItem, Double> parents    = new HashMap<InformationItem, Double>();
+    private Map<Ii, Double> components = new HashMap<Ii, Double>();
+    private Map<Ii, Double> parents    = new HashMap<Ii, Double>();
 
-    public static InformationItem getSampleMovie(String name, long size){
-        InformationItemMock mock = generateItem("Sample", 0);
+    public static Ii getSampleMovie(String name, long size){
+        IiMock mock = generateItem("Sample", 0);
 
         mock.meta.put(MovieService.NAME, name);
 
         for (int i = 0; i < size; ++i) {
-            InformationItemMock component = generateItem("Component", i);
+            IiMock component = generateItem("Component", i);
             mock.components.put(component, (double) i);
             component.parents.put(mock, (double) i);
 
-            InformationItemMock parent = generateItem("Parent", i);
+            IiMock parent = generateItem("Parent", i);
             mock.parents.put(component, (double) i);
             component.components.put(mock, (double) i);
         }
@@ -40,8 +37,8 @@ public class InformationItemMock implements InformationItem {
         return mock;
     }
 
-    private static InformationItemMock generateItem(String type, long id) {
-        InformationItemMock item = new InformationItemMock();
+    private static IiMock generateItem(String type, long id) {
+        IiMock item = new IiMock();
         item.uuid = generateFromString(String.format("%s-%d", type, id));
         item.meta.put(TagService.NAME, String.format("Item %d of %s", id, type));
         return item;
@@ -71,22 +68,22 @@ public class InformationItemMock implements InformationItem {
     }
 
     @Override
-    public Map<InformationItem, Double> getComponents() {
+    public Map<Ii, Double> getComponents() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public Double getComponentWeight(InformationItem component) {
+    public Double getComponentWeight(Ii component) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public Map<InformationItem, Double> getParents() {
+    public Map<Ii, Double> getParents() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public Double getParentWeight(InformationItem parent) {
+    public Double getParentWeight(Ii parent) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

@@ -1,4 +1,4 @@
-package com.manymonkeys.ex.json.controllers;
+package com.manymonkeys.ex.json.controllers.impl;
 
 import com.manymonkeys.core.ii.InformationItem;
 import com.manymonkeys.service.cinema.MovieService;

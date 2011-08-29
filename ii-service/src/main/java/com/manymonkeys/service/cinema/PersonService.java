@@ -1,86 +1,99 @@
 package com.manymonkeys.service.cinema;
 
 import com.manymonkeys.core.ii.Ii;
-import me.prettyprint.hector.api.Keyspace;
+import com.manymonkeys.core.ii.IiDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import static com.manymonkeys.service.cinema.Utils.itemWithMeta;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
- * Many Monkeys
- *
  * @author Anton Chebotaev
+ *         Owls Proprietary
  */
-public class PersonService extends TagService {
+public class PersonService {
 
-    public static final String CLASS_MARK_KEY = PersonService.class.getName();
-    public static final String CLASS_MARK_VALUE = ".#"; // This indicates that item was created through PersonService class
-
-    public static final String PERSON_FIRST_NAME = CLASS_MARK_KEY + ".PERSON_FIRST_NAME";
-    public static final String PERSON_LAST_NAME = CLASS_MARK_KEY + ".PERSON_LAST_NAME";
-
-    private static final String SEARCH_KEY = PersonService.class.getName();
-    private static final String SEARCH_FORMAT = "%s#%s"; // This indicates that item was created through PersonService class
-
-    private static final String ROLES_KEY = CLASS_MARK_KEY + ".ROLES";
-
-    private static final String FULL_NAME_FORMAT = "%s %s";
-
-    public PersonService(Keyspace keyspace) {
-        super(keyspace);
-
-        StringBuilder sb = new StringBuilder();
-        sb.a
+    public enum Role {
+        ACTOR, DIRECTOR, PRODUCER
     }
 
-    public Ii createPerson(String firstName, String lastName) {
-        Ii person = createTag(String.format(FULL_NAME_FORMAT, firstName, lastName));
+    @Autowired
+    private IiDao dao;
 
-        setMeta(person, CLASS_MARK_KEY, CLASS_MARK_VALUE);
-        setMeta(person, SEARCH_KEY, String.format(SEARCH_FORMAT, firstName, lastName));
-        setMeta(person, PERSON_FIRST_NAME, firstName);
-        setMeta(person, PERSON_LAST_NAME, lastName);
+    private static final String CLASS_MARK_KEY = PersonService.class.getName();
+    private static final String CLASS_MARK_VALUE = "#";
 
+    private static final String META_KEY_FULL_NAME = CLASS_MARK_KEY + ".FULL_NAME";
+    private static final String META_KEY_ROLES = CLASS_MARK_KEY + ".ROLES";
+    private static final String ROLES_DELIMITER = "#";
+
+    public Ii createPerson(String fullName) {
+        Ii person = dao.createInformationItem();
+        dao.setUnindexedMeta(person, CLASS_MARK_KEY, CLASS_MARK_VALUE);
+
+        dao.setMeta(person, META_KEY_FULL_NAME, fullName);
+        dao.setMeta(person, META_KEY_ROLES, "");
         return person;
     }
 
-    public Ii getPerson(String firstName, String lastName) {
-        try {
-            return loadByMeta(SEARCH_KEY, String.format(SEARCH_FORMAT, firstName, lastName)).iterator().next();
-        } catch (NoSuchElementException e) {
+    public Collection<Ii> getPersons(String fullName) {
+        Collection<Ii> blankItems = dao.load(META_KEY_FULL_NAME, fullName);
+        if (blankItems.isEmpty()) {
             return null;
         }
+        return dao.loadMetadata(blankItems);
     }
 
-    public Collection<String> getRoles(Ii person) {
-        String rolesRaw = person.getMeta(ROLES_KEY);
-        if (rolesRaw == null)
-            return Collections.emptySet();
-
-        String[] roles = rolesRaw.split("###");
-        if (roles.length == 0)
-            return Collections.emptySet();
-
-        return Arrays.asList(roles);
+    public boolean isPerson(Ii item) {
+        return itemWithMeta(dao, item).getMeta(CLASS_MARK_KEY) != null;
     }
 
-    public void addRole(Ii person, String role) {
-        String rolesRaw = person.getMeta(ROLES_KEY);
-        if (rolesRaw == null)
-            setMeta(person, ROLES_KEY, role);
-        else
-            setMeta(person, ROLES_KEY, String.format("%s###%s", rolesRaw, role));
+    public Set<Role> getRoles(Ii person) {
+        String rolesRaw = itemWithMeta(dao, person).getMeta(META_KEY_ROLES);
+        return rolesFromString(rolesRaw);
     }
 
-    public Ii findOrCreate(String name, String surname, String role) {
-        Ii person = this.getPerson(name, surname);
-        if (person == null) {
-            person = this.createPerson(name, surname);
+    public Ii addRole(Ii person, Role role) {
+        Set<Role> roles = getRoles(person);
+        if (roles.contains(role)) {
+            return person;
+        } else {
+            roles.add(role);
+            return dao.setMeta(person, META_KEY_ROLES, rolesToString(roles));
         }
-        this.addRole(person, role);
-        return person;
+    }
+
+    public Ii findOrCreate(String fullName, Role role) {
+        Collection<Ii> persons = this.getPersons(fullName);
+        Ii person;
+        if (persons.isEmpty()) {
+            person = createPerson(fullName);
+        } else {
+            person = persons.iterator().next();
+        }
+        return addRole(person, role);
+    }
+
+    private String rolesToString(Collection<Role> roles) {
+        StringBuilder buffer = new StringBuilder();
+        Iterator<Role> iterator = roles.iterator();
+        while (iterator.hasNext()) {
+            Role role = iterator.next();
+            buffer.append(role.name());
+            if (iterator.hasNext()) {
+                buffer.append(ROLES_DELIMITER);
+            }
+        }
+        return buffer.toString();
+    }
+
+    private Set<Role> rolesFromString(String rolesRaw) {
+        String[] roles = rolesRaw.split(ROLES_DELIMITER);
+        Set<Role> result = new HashSet<Role>();
+        for (String role : roles) {
+            result.add(Role.valueOf(role));
+        }
+        return result;
     }
 
 }

@@ -108,6 +108,19 @@ public class CassandraIiDaoImpl implements IiDao {
         stringMutator.execute();
     }
 
+    @Override
+    public Ii loadMetadata(Ii item) {
+        SliceQuery<UUID, String, String> query = HFactory.createSliceQuery(keyspace, us, ss, ss);
+        query.setColumnFamily(CF_META);
+        query.setKey(item.getUUID());
+        query.setRange(null, null, false, MULTIGET_COUNT);
+
+        QueryResult<ColumnSlice<String, String>> queryResult = query.execute();
+        ColumnSlice<String, String> slice = queryResult.get();
+
+        return updateMetadata(item, slice.getColumns());
+    }
+
     public Collection<Ii> loadMetadata(Collection<Ii> items) {
         if (items.isEmpty())
             return items;
@@ -125,18 +138,22 @@ public class CassandraIiDaoImpl implements IiDao {
         logger.debug(String.format("loadMetadata(%d) called, query took %d milliseconds", items.size(), queryResult.getExecutionTimeMicro() / 1000));
 
         for (Ii item : items) {
-            if (!(item instanceof CassandraIiImpl))
-                continue;
-            CassandraIiImpl newItem = new CassandraIiImpl((CassandraIiImpl) item);
-            newItem.meta = new HashMap<String, String>();
-
-            Collection<HColumn<String, String>> columns = rows.getByKey(newItem.uuid).getColumnSlice().getColumns();
-            for (HColumn<String, String> column : columns) {
-                newItem.meta.put(column.getName(), column.getValue());
-            }
-            result.add(newItem);
+            result.add(updateMetadata(item, rows.getByKey(item.getUUID()).getColumnSlice().getColumns()));
         }
         return result;
+    }
+
+    @Override
+    public Ii loadComponents(Ii item) {
+        SliceQuery<UUID, UUID, Double> query = HFactory.createSliceQuery(keyspace, us, us, ds);
+        query.setColumnFamily(CF_COMPONENTS);
+        query.setKey(item.getUUID());
+        query.setRange(null, null, false, MULTIGET_COUNT);
+
+        QueryResult<ColumnSlice<UUID, Double>> queryResult = query.execute();
+        ColumnSlice<UUID, Double> slice = queryResult.get();
+
+        return updateComponents(item, slice.getColumns());
     }
 
     public Collection<Ii> loadComponents(Collection<Ii> items) {
@@ -156,40 +173,22 @@ public class CassandraIiDaoImpl implements IiDao {
         logger.debug(String.format("loadComponents(%d) called, query took %d milliseconds", items.size(), queryResult.getExecutionTimeMicro() / 1000));
 
         for (Ii item : items) {
-            if (!(item instanceof CassandraIiImpl))
-                continue;
-
-            List<HColumn<UUID, Double>> columns = rows.getByKey(item.getUUID()).getColumnSlice().getColumns();
-            if (item.getComponents() != null && item.getComponents().isEmpty() && columns.isEmpty()) {
-                // components was and should be empty
-                result.add(item);
-            } else {
-                CassandraIiImpl newItem;
-                if (item.getComponents() == null) {
-                    newItem = (CassandraIiImpl) item;
-                } else {
-                    newItem = new CassandraIiImpl((CassandraIiImpl) item);
-                }
-                newItem.components = new HashMap<Ii, Double>();
-                Map<UUID, Ii> oldComponents = toMap(item.getComponents().keySet());
-
-                for (HColumn<UUID, Double> column : columns) {
-                    UUID componentId = column.getName();
-                    Double weight = column.getValue();
-
-                    Ii component;
-                    if (oldComponents.containsKey(componentId)) {
-                        component = oldComponents.get(componentId);
-                    } else {
-                        component = new CassandraIiImpl(componentId);
-                    }
-
-                    newItem.components.put(component, weight);
-                }
-                result.add(newItem);
-            }
+            result.add(updateComponents(item, rows.getByKey(item.getUUID()).getColumnSlice().getColumns()));
         }
         return result;
+    }
+
+    @Override
+    public Ii loadParents(Ii item) {
+        SliceQuery<UUID, UUID, Double> query = HFactory.createSliceQuery(keyspace, us, us, ds);
+        query.setColumnFamily(CF_PARENTS);
+        query.setKey(item.getUUID());
+        query.setRange(null, null, false, MULTIGET_COUNT);
+
+        QueryResult<ColumnSlice<UUID, Double>> queryResult = query.execute();
+        ColumnSlice<UUID, Double> slice = queryResult.get();
+
+        return updateParents(item, slice.getColumns());
     }
 
     @OwledMethod
@@ -210,38 +209,7 @@ public class CassandraIiDaoImpl implements IiDao {
         logger.debug(String.format("loadParents(%d) called, query took %d milliseconds", items.size(), queryResult.getExecutionTimeMicro() / 1000));
 
         for (Ii item : items) {
-            if (!(item instanceof CassandraIiImpl))
-                continue;
-
-            List<HColumn<UUID, Double>> columns = rows.getByKey(item.getUUID()).getColumnSlice().getColumns();
-            if (item.getParents() != null && item.getParents().isEmpty() && columns.isEmpty()) {
-                // parents was and should be empty
-                result.add(item);
-            } else {
-                CassandraIiImpl newItem;
-                if (item.getParents() == null) {
-                    newItem = (CassandraIiImpl) item;
-                } else {
-                    newItem = new CassandraIiImpl((CassandraIiImpl) item);
-                }
-                newItem.parents = new HashMap<Ii, Double>();
-                Map<UUID, Ii> oldParents = toMap(item.getParents().keySet());
-
-                for (HColumn<UUID, Double> column : columns) {
-                    UUID parentId = column.getName();
-                    Double weight = column.getValue();
-
-                    Ii parent;
-                    if (oldParents.containsKey(parentId)) {
-                        parent = oldParents.get(parentId);
-                    } else {
-                        parent = new CassandraIiImpl(parentId);
-                    }
-
-                    newItem.parents.put(parent, weight);
-                }
-                result.add(newItem);
-            }
+            result.add(updateParents(item, rows.getByKey(item.getUUID()).getColumnSlice().getColumns()));
         }
         return result;
     }
@@ -450,6 +418,85 @@ public class CassandraIiDaoImpl implements IiDao {
 
     private UnsupportedOperationException generateWrongDaoException() {
         return new UnsupportedOperationException("This dao can't operate with this item");
+    }
+
+    private Ii updateMetadata(Ii item, Collection<HColumn<String, String>> columns) {
+        if (!(item instanceof CassandraIiImpl))
+            throw generateWrongDaoException();
+
+        CassandraIiImpl newItem = new CassandraIiImpl((CassandraIiImpl) item);
+        newItem.meta = new HashMap<String, String>();
+
+        for (HColumn<String, String> column : columns) {
+            newItem.meta.put(column.getName(), column.getValue());
+        }
+
+        return newItem;
+    }
+
+    private Ii updateComponents(Ii item, Collection<HColumn<UUID, Double>> columns) {
+        if (!(item instanceof CassandraIiImpl))
+            throw generateWrongDaoException();
+
+        Map<UUID, Ii> oldComponents = toMap(item.getComponents().keySet());
+
+        CassandraIiImpl newItem;
+        if (item.getComponents() == null) {
+            newItem = (CassandraIiImpl) item;
+            if (!newItem.components.isEmpty()) {
+                newItem.components = new HashMap<Ii, Double>();
+            }
+        } else {
+            newItem = new CassandraIiImpl((CassandraIiImpl) item);
+        }
+
+        for (HColumn<UUID, Double> column : columns) {
+            UUID componentId = column.getName();
+            Double weight = column.getValue();
+
+            Ii component;
+            if (oldComponents.containsKey(componentId)) {
+                component = oldComponents.get(componentId);
+            } else {
+                component = new CassandraIiImpl(componentId);
+            }
+
+            newItem.components.put(component, weight);
+        }
+
+        return newItem;
+    }
+
+    private Ii updateParents(Ii item, Collection<HColumn<UUID, Double>> columns) {
+        if (!(item instanceof CassandraIiImpl))
+            throw generateWrongDaoException();
+
+        Map<UUID, Ii> oldParents = toMap(item.getParents().keySet());
+
+        CassandraIiImpl newItem;
+        if (item.getComponents() == null) {
+            newItem = (CassandraIiImpl) item;
+            if (!newItem.parents.isEmpty()) {
+                newItem.parents = new HashMap<Ii, Double>();
+            }
+        } else {
+            newItem = new CassandraIiImpl((CassandraIiImpl) item);
+        }
+
+        for (HColumn<UUID, Double> column : columns) {
+            UUID parentId = column.getName();
+            Double weight = column.getValue();
+
+            Ii parent;
+            if (oldParents.containsKey(parentId)) {
+                parent = oldParents.get(parentId);
+            } else {
+                parent = new CassandraIiImpl(parentId);
+            }
+
+            newItem.parents.put(parent, weight);
+        }
+        return newItem;
     }
 
     private void addMetaIndex(Ii item, String key, String value, Mutator<String> mutator) {

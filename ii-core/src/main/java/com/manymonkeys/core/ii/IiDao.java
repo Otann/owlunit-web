@@ -53,26 +53,44 @@ public interface IiDao {
      *
      * @param key   of metadata
      * @param value of metadata
-     * @return collection of items with metadata
+     * @return collection of blank items
      */
     Collection<Ii> load(String key, String value);
 
+    /**
+     * Updates metadata for item
+     * @see #loadComponents(Ii)
+     * @see #loadParents(Ii)
+     *
+     * @param item original item
+     * @return copy of original item with updated metadata
+     */
+    Ii loadMetadata(Ii item);
 
     /**
-     * Updates all metadata for collection of items from datastore and returns as new collection
-     * @see #loadComponents(java.util.Collection)
-     * @see #loadParents(java.util.Collection)
+     * Collection-based version of {@link #loadMetadata(Ii)}
+     * Queries performed in parallel
      *
      * @param items original items
      * @return copy of original items with updated metadata
      */
     Collection<Ii> loadMetadata(Collection<Ii> items);
 
+
     /**
-     * Updates components for each item in collection
-     * Loaded new components are blank (have only uuid)
-     * @see #loadMetadata(java.util.Collection)
-     * @see #loadParents(java.util.Collection)
+     * Updates components links for item.
+     * New components loaded blank, with uuid only, old components are same as original
+     * @see #loadMetadata(Ii)
+     * @see #loadParents(Ii)
+     *
+     * @param item original item
+     * @return copy of original item with updated components links
+     */
+    Ii loadComponents(Ii item);
+
+    /**
+     * Collection-based version of {@link #loadComponents(Ii)}
+     * Queries performed in parallel
      *
      * @param items original items
      * @return copy of original items with updated components
@@ -80,10 +98,19 @@ public interface IiDao {
     Collection<Ii> loadComponents(Collection<Ii> items);
 
     /**
-     * Updates parents for each item in collection
-     * Loaded new parents are blank (have only uuid)
-     * @see #loadMetadata(java.util.Collection)
-     * @see #loadComponents(java.util.Collection)
+     * Updates parents links for item.
+     * New parents loaded blank, with uuid only, old parents are same as original
+     * @see #loadMetadata(Ii)
+     * @see #loadComponents(Ii)
+     *
+     * @param item original item
+     * @return copy of original item with updated parents links
+     */
+    Ii loadParents(Ii item);
+
+    /**
+     * Collection-based version of {@link #loadParents(Ii)}
+     * Queries performed in parallel
      *
      * @param items original items
      * @return copy of original items with updated parents

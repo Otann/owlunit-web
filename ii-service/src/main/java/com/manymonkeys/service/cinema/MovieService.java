@@ -2,7 +2,6 @@ package com.manymonkeys.service.cinema;
 
 import com.manymonkeys.core.ii.Ii;
 import me.prettyprint.hector.api.Keyspace;
-import sun.java2d.loops.XorPixelWriter;
 
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;

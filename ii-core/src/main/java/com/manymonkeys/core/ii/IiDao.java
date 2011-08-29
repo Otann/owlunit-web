@@ -11,124 +11,145 @@ import java.util.UUID;
 public interface IiDao {
 
     /**
-     * Creates new Ii object with valid unique uuid
+     * Creates new blank Ii object with valid uuid
      *
      * @return InformationItem
      */
     Ii createInformationItem();
 
     /**
-     * Deletes Ii and all links to/from it
+     * Deletes Ii and all links to/from it in datastore
      *
      * @param item to delete
      */
     void deleteInformationItem(Ii item);
 
     /**
-     * Loads Ii from datastore with metadata only.
+     * Loads Ii from datastore if such Ii exists.
+     * Loaded Ii is blank and has only uuid.
+     * @see #loadMetadata(java.util.Collection)
+     * @see #loadComponents(java.util.Collection)
+     * @see #loadParents(java.util.Collection)
      *
      * @param uuid of Ii
      * @return loaded Ii with metadata only
      */
-    Ii loadWithMetadata(UUID uuid);
+    Ii load(UUID uuid);
 
     /**
-     * Multiget version of {@link #loadWithMetadata(java.util.UUID) loadWithMetadata} method.
-     * Queries performed in parallel
+     * Multiget version of {@link #load(java.util.UUID)} method.
+     * Queries should be performed in parallel
+     * @see #load(java.util.UUID)
      *
      * @param uuids set of uuids of items
      * @return collection of items with metadata only
      */
-    Collection<Ii> loadWithMetadata(Collection<UUID> uuids);
-
-    /**
-     * Reloads all metadata for collection of items from datastore.
-     * Supposed to be used with following methods:
-     * - {@link #reloadComponents(java.util.Collection) reloadComponents}
-     * - {@link #reloadParents(java.util.Collection) reloadParents}
-     * @param items
-     */
-    void reloadMetadata(Collection<Ii> items);
-
-    /**
-     * Loads components for set of items as objects with id only and nothing else.
-     * You can use {@link #reloadMetadata(java.util.Collection) reloadMetadata} method to load metadata for components.
-     * @param items to reload components
-     * @return collection of "plain" items with id only that are components of provided items
-     */
-    Collection<Ii> reloadComponents(Collection<Ii> items);
-
-    /**
-     * Loads parents for set of items as objects with id only and nothing else.
-     * You can use {@link #reloadMetadata(java.util.Collection) reloadMetadata} method to load metadata for parents.
-     * @param items to reload parents
-     * @return collection of "plain" items with id only that are parents of provided items
-     */
-    Collection<Ii> reloadParents(Collection<Ii> items);
+    Collection<Ii> load(Collection<UUID> uuids);
 
     /**
      * Loads items that has provided key-value pair in metadata.
+     * Loaded items is blank, have only uuid.
+     * @see #load(java.util.UUID)
+     *
      * @param key   of metadata
      * @param value of metadata
      * @return collection of items with metadata
      */
-    Collection<Ii> loadByMeta(String key, String value);
+    Collection<Ii> load(String key, String value);
+
+
+    /**
+     * Updates all metadata for collection of items from datastore and returns as new collection
+     * @see #loadComponents(java.util.Collection)
+     * @see #loadParents(java.util.Collection)
+     *
+     * @param items original items
+     * @return copy of original items with updated metadata
+     */
+    Collection<Ii> loadMetadata(Collection<Ii> items);
+
+    /**
+     * Updates components for each item in collection
+     * Loaded new components are blank (have only uuid)
+     * @see #loadMetadata(java.util.Collection)
+     * @see #loadParents(java.util.Collection)
+     *
+     * @param items original items
+     * @return copy of original items with updated components
+     */
+    Collection<Ii> loadComponents(Collection<Ii> items);
+
+    /**
+     * Updates parents for each item in collection
+     * Loaded new parents are blank (have only uuid)
+     * @see #loadMetadata(java.util.Collection)
+     * @see #loadComponents(java.util.Collection)
+     *
+     * @param items original items
+     * @return copy of original items with updated parents
+     */
+    Collection<Ii> loadParents(Collection<Ii> items);
 
     /**
      * Searches for items that meta's contain word that starts with prefix
      * Items are loaded with metadata only
      *
-     * @param key    of meta
-     * @param prefix that word should start from
+     * @param key of metadata
+     * @param prefix that metadata value should start from
      * @return map of uuids and full meta values
      */
-    Map<UUID, String> searchByMetaPrefix(String key, String prefix);
+    Map<UUID, String> search(String key, String prefix);
 
     /**
      * Sets weight of relation between components.
      * If there was no connection, creates one
      *
-     * @param item      - parent ii
-     * @param component - child ii
-     * @param weight    of connection
+     * @param item parent Ii
+     * @param component child Ii
+     * @param weight value of connection
+     * @return updated Ii
      */
-    void setComponentWeight(Ii item, Ii component, Double weight);
+    Ii setComponentWeight(Ii item, Ii component, Double weight);
 
     /**
      * Removes relation between items
      *
-     * @param item      parent ii
+     * @param item parent ii
      * @param component child ii
+     * @return updated Ii
      */
-    void removeComponent(Ii item, Ii component);
+    Ii removeComponent(Ii item, Ii component);
 
     /**
      * Updates or creates metadata of Ii
-     * Does not create index for this pair
+     * @see #setUnindexedMeta(Ii, String, String)
      *
-     * @param item  to update
-     * @param key   of metadata
+     * @param item original item
+     * @param key of metadata
      * @param value of metadata
+     * @return updated Ii
      */
-    void setMeta(Ii item, String key, String value);
+    Ii setMeta(Ii item, String key, String value);
 
     /**
      * Updates or creates metadata of Ii
-     * Allows to index this key for this item
+     * This metadata will not be indexed for search through {@link #search(String, String)}
+     * @see #setMeta(Ii, String, String)
      *
-     * @param item   to update
-     * @param key    of metadata
-     * @param value  of metadata
-     * @param indexed enables meta for searchByPrefix
+     * @param item to update
+     * @param key of metadata
+     * @param value of metadata
+     * @return updated Ii
      */
-    void setMeta(Ii item, String key, String value, boolean indexed);
+    Ii setUnindexedMeta(Ii item, String key, String value);
 
     /**
      * Removes metadata from item
      *
-     * @param item to operate
-     * @param key  of metadata
+     * @param item original item
+     * @param key of metadata
+     * @return updated item
      */
-    void removeMeta(Ii item, String key);
+    Ii removeMeta(Ii item, String key);
 
 }

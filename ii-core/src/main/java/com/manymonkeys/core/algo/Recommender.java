@@ -1,7 +1,7 @@
 package com.manymonkeys.core.algo;
 
 import com.manymonkeys.core.ii.Ii;
-import com.manymonkeys.core.ii.InformationItemDao;
+import com.manymonkeys.core.ii.IiDao;
 
 import java.util.Map;
 
@@ -20,7 +20,7 @@ public interface Recommender {
      * @param rating level of attraction described as number belonging to [-1, 1]
      * @param dao to perform add operations
      */
-    void diffuse(Ii item, Ii component, Double rating, InformationItemDao dao);
+    void diffuse(Ii item, Ii component, Double rating, IiDao dao);
 
     /**
      * Compares two items based on a secret metric
@@ -49,7 +49,7 @@ public interface Recommender {
      * @param dao  to perform fast loads
      * @return map os similar items with comparation results sorted by value of comparation
      */
-    Map<Ii, Double> getMostLike(Ii item, InformationItemDao dao);
+    Map<Ii, Double> getMostLike(Ii item, IiDao dao);
 
     /**
      * Searches similar items to map of components as if it would be components of Ii
@@ -59,5 +59,5 @@ public interface Recommender {
      * @param dao   to perform fast loads
      * @return map os similar items with comparation results sorted by value of comparation
      */
-    Map<Ii, Double> getMostLike(Map<Ii, Double> items, InformationItemDao dao);
+    Map<Ii, Double> getMostLike(Map<Ii, Double> items, IiDao dao);
 }

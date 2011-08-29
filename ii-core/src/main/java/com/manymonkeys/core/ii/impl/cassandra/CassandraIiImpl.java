@@ -23,6 +23,13 @@ public class CassandraIiImpl implements Ii, Comparable<Ii> {
         this.uuid = uuid;
     }
 
+    CassandraIiImpl(CassandraIiImpl item) {
+        this.uuid = item.uuid;
+        this.meta = item.meta;
+        this.parents = item.parents;
+        this.components = item.components;
+    }
+
     @Override
     public UUID getUUID() {
         return uuid;
@@ -35,7 +42,7 @@ public class CassandraIiImpl implements Ii, Comparable<Ii> {
 
     @Override
     public String getMeta(String key) {
-        return meta.get(key);
+        return meta.get(key); //TODO anton chebotaev - potential NPE, throw exception here
     }
 
     @Override

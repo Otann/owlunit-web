@@ -30,6 +30,9 @@ public class PersonService extends TagService {
 
     public PersonService(Keyspace keyspace) {
         super(keyspace);
+
+        StringBuilder sb = new StringBuilder();
+        sb.a
     }
 
     public Ii createPerson(String firstName, String lastName) {

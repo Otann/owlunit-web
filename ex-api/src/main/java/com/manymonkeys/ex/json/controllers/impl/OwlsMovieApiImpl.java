@@ -16,7 +16,7 @@ import java.util.Map;
 
 /**
  * @author Ilya Pimenov
- *         Xaton Proprietary
+ *         Owls Proprietary
  */
 @Controller
 @RequestMapping(value = "/movie")

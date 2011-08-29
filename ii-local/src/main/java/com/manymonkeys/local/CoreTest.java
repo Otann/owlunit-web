@@ -1,8 +1,8 @@
 package com.manymonkeys.local;
 
 import com.manymonkeys.core.ii.Ii;
-import com.manymonkeys.core.ii.InformationItemDao;
-import com.manymonkeys.core.ii.impl.cassandra.CassandraInformationItemDaoImpl;
+import com.manymonkeys.core.ii.IiDao;
+import com.manymonkeys.core.ii.impl.cassandra.CassandraIiDaoImpl;
 import com.manymonkeys.service.cinema.MovieService;
 import me.prettyprint.hector.api.Cluster;
 import me.prettyprint.hector.api.Keyspace;
@@ -28,7 +28,7 @@ public class CoreTest {
 
         logger.info("=====================================");
 
-        InformationItemDao dao = new CassandraInformationItemDaoImpl(keyspace);
+        IiDao dao = new CassandraIiDaoImpl(keyspace);
 
         List<Ii> items = new LinkedList<Ii>();
         for (int i = 0; i < 10; i++) {
@@ -37,8 +37,8 @@ public class CoreTest {
             dao.setMeta(item, "key", "value" + i);
         }
 
-        Collection<Ii> itemsByMultiget = dao.loadByMeta("key", "value1");
-        Map<UUID, String> itemsBySearch = dao.searchByMetaPrefix("key", "value");
+        Collection<Ii> itemsByMultiget = dao.load("key", "value1");
+        Map<UUID, String> itemsBySearch = dao.search("key", "value");
 
         logger.info(String.format("Items found by multiget: %s", itemsByMultiget));
         logger.info(String.format("Items found by prefix search: %s", itemsBySearch));

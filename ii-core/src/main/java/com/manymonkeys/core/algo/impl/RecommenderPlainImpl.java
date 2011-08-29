@@ -2,7 +2,7 @@ package com.manymonkeys.core.algo.impl;
 
 import com.manymonkeys.core.algo.Recommender;
 import com.manymonkeys.core.ii.Ii;
-import com.manymonkeys.core.ii.InformationItemDao;
+import com.manymonkeys.core.ii.IiDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,9 @@ import java.util.*;
  */
 /* Todo Anton Chebotaev - Move this class to "ii-service" package;
     Algorithm and it's logic goes here, all the rest (like API for external calls) - to ii-service,
-    that will be used by other components. */
+    that will be used by other components.
+
+    leave it here, main point is that ex-api should not depend on ii-core */
 public class RecommenderPlainImpl implements Recommender {
 
     final Logger logger = LoggerFactory.getLogger(RecommenderPlainImpl.class);
@@ -25,8 +27,8 @@ public class RecommenderPlainImpl implements Recommender {
     private double weightThreshold = 1.5;
 
     @Override
-    public void diffuse(Ii item, Ii component, Double rating, InformationItemDao dao) {
-        // TODO: implement
+    public void diffuse(Ii item, Ii component, Double rating, IiDao dao) {
+        // TODO Anton Chebotaev - implement
     }
 
     /**
@@ -75,18 +77,18 @@ public class RecommenderPlainImpl implements Recommender {
     }
 
     @Override
-    public Map<Ii, Double> getMostLike(Ii item, InformationItemDao dao) {
+    public Map<Ii, Double> getMostLike(Ii item, IiDao dao) {
         Map<Ii, Double> result = getMostLike(item.getComponents(), dao);
         result.remove(item);
         return result;
     }
 
     @Override
-    public Map<Ii, Double> getMostLike(Map<Ii, Double> items, InformationItemDao dao) {
+    public Map<Ii, Double> getMostLike(Map<Ii, Double> items, IiDao dao) {
         Map<Ii, Double> result = new HashMap<Ii, Double>();
 
-        Collection<Ii> parents = dao.reloadParents(getValuableComponents(items).keySet());
-        dao.reloadComponents(parents);
+        Collection<Ii> parents = dao.loadParents(getValuableComponents(items).keySet());
+        dao.loadComponents(parents);
 
         for (Ii parent : parents) {
             result.put(parent, compareItemsMaps(items, parent.getComponents()));

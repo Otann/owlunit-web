@@ -5,20 +5,21 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Many Monkeys
- *
  * @author Anton Chebotaev
+ *         Owls Proprietary
  */
-public interface InformationItemDao {
+public interface IiDao {
 
     /**
      * Creates new Ii object with valid unique uuid
+     *
      * @return InformationItem
      */
     Ii createInformationItem();
 
     /**
      * Deletes Ii and all links to/from it
+     *
      * @param item to delete
      */
     void deleteInformationItem(Ii item);
@@ -29,15 +30,16 @@ public interface InformationItemDao {
      * @param uuid of Ii
      * @return loaded Ii with metadata only
      */
-    Ii loadByUUID(UUID uuid);
+    Ii loadWithMetadata(UUID uuid);
 
     /**
-     * Multiget version of {@link #loadByUUIDs(java.util.Collection) loadByUUIDs} method.
+     * Multiget version of {@link #loadWithMetadata(java.util.UUID) loadWithMetadata} method.
      * Queries performed in parallel
+     *
      * @param uuids set of uuids of items
      * @return collection of items with metadata only
      */
-    Collection<Ii> loadByUUIDs(Collection<UUID> uuids);
+    Collection<Ii> loadWithMetadata(Collection<UUID> uuids);
 
     /**
      * Reloads all metadata for collection of items from datastore.
@@ -84,7 +86,7 @@ public interface InformationItemDao {
 
     /**
      * Sets weight of relation between components.
-     * Tf there was no connection, creates one
+     * If there was no connection, creates one
      *
      * @param item      - parent ii
      * @param component - child ii

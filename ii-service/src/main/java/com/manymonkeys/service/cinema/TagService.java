@@ -1,7 +1,7 @@
 package com.manymonkeys.service.cinema;
 
 import com.manymonkeys.core.ii.Ii;
-import com.manymonkeys.core.ii.impl.cassandra.CassandraInformationItemDaoImpl;
+import com.manymonkeys.core.ii.impl.cassandra.CassandraIiDaoImpl;
 import me.prettyprint.hector.api.Keyspace;
 
 import java.util.Collection;
@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
  *
  * @author Anton Chebotaev
  */
-public class TagService extends CassandraInformationItemDaoImpl {
+public class TagService extends CassandraIiDaoImpl {
 
     public static final String CLASS_MARK_KEY = TagService.class.getName();
     public static final String CLASS_MARK_VALUE = "#"; // this indicates that item was created through TagService class

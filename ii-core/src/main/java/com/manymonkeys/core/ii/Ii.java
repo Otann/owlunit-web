@@ -4,16 +4,17 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Many Monkeys
+ * Ii stands for InformationItem
  *
  * @author Anton Chebotaev
+ *         Owls Proprietary
  */
 public interface Ii {
 
     /**
      * Each ii has it's own identifier which is unique across implementation package
      *
-     * @return unique string
+     * @return unique identifier
      */
     UUID getUUID();
 
@@ -25,7 +26,7 @@ public interface Ii {
     Map<String, String> getMetaMap();
 
     /**
-     * Shortcut for {@see getMetaMap}
+     * Shortcut for {@link #getMetaMap() getMetaMap}
      *
      * @param key for metadata
      * @return metadata
@@ -35,12 +36,12 @@ public interface Ii {
     /**
      * Each Ii contains links to another items. Each link has weight
      *
-     * @return immutable map of item's components with weights
+     * @return map of item's components with weights (clients should not change it, use dao class instead)
      */
     Map<Ii, Double> getComponents();
 
     /**
-     * Shortcut for {@see getComponents}
+     * Shortcut for {@link #getComponents() getComponents}
      *
      * @param component to get weight of
      * @return weight of a connection to that component. Null if there is no such component
@@ -51,12 +52,12 @@ public interface Ii {
      * As each item contains links it's , it contains also link to
      * items that contain this item
      *
-     * @return immutable map of items that contain this item as a component
+     * @return map of items that contain this item as a component (clients should not change it, use dao class instead)
      */
     Map<Ii, Double> getParents();
 
     /**
-     * Shortcut for {@see getParents()}
+     * Shortcut for {@link #getParents() getParents()}
      *
      * @param parent to get weight of
      * @return weight of connection to that parent. Null if there is no such parent

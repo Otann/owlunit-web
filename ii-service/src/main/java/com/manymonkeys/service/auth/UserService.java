@@ -26,7 +26,7 @@ public class UserService extends TagService {
     }
 
     public Ii createUser(String login, String password) {
-        //TODO: validate login name to be alphanumeric
+        //TODO Ilya Pimenov - validate login name to be alphanumeric
         Ii user = createTag(login);
         setMeta(user, LOGIN, login, true);
         setMeta(user, PASSWORD, getPasswordHash(password));

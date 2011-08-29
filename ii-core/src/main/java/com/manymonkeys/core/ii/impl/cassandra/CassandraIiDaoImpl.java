@@ -1,7 +1,6 @@
 package com.manymonkeys.core.ii.impl.cassandra;
 
 import com.manymonkeys.core.ii.Ii;
-import com.manymonkeys.core.ii.InformationItemDao;
 import com.manymonkeys.security.shiro.annotation.OwledArgument;
 import com.manymonkeys.security.shiro.annotation.OwledMethod;
 import me.prettyprint.cassandra.serializers.DoubleSerializer;
@@ -28,9 +27,9 @@ import java.util.*;
  *
  * @author Anton Chebotaev
  */
-public class CassandraInformationItemDaoImpl{//implements InformationItemDao {
+public class CassandraIiDaoImpl implements IiDao {
 
-    final static Logger logger = LoggerFactory.getLogger(CassandraInformationItemDaoImpl.class);
+    final static Logger logger = LoggerFactory.getLogger(CassandraIiDaoImpl.class);
 
     /**
      * Miltiget queries in Cassandra requires to set either query sizelimit or returnKeysOnly flag.
@@ -77,7 +76,7 @@ public class CassandraInformationItemDaoImpl{//implements InformationItemDao {
 //    private static final String CF_SIMILAR = "SIMILAR";
 //    private static final String CF_RECALCULATE = "RECALCULATE";
 
-    public CassandraInformationItemDaoImpl(Keyspace keyspace) {
+    public CassandraIiDaoImpl(Keyspace keyspace) {
         this.keyspace = keyspace;
     }
 
@@ -115,12 +114,12 @@ public class CassandraInformationItemDaoImpl{//implements InformationItemDao {
         stringMutator.execute();
     }
 
-    //Todo Anton Chebotaev - wtf is this method for in stateless class?
+    // Todo Anton Chebotaev - wtf is this method for in stateless class? (this is not fucking stateless)
     public void reloadMetadata(Collection<Ii> items) {
         if (items.isEmpty())
             return;
 
-        logger.debug(String.format("reloadMetadata(%d) called", items.size()));
+        logger.debug(String.format("loadMetadata(%d) called", items.size()));
         long startTime = System.currentTimeMillis();
 
         Collection<UUID> ids = getUniqueIds(items);
@@ -143,17 +142,17 @@ public class CassandraInformationItemDaoImpl{//implements InformationItemDao {
             }
         }
 
-        logger.debug(String.format("reloadMetadata(%d) got result in %d seconds", items.size(), (System.currentTimeMillis() - startTime) / 1000));
+        logger.debug(String.format("loadMetadata(%d) got result in %d seconds", items.size(), (System.currentTimeMillis() - startTime) / 1000));
     }
 
-    //Todo Anton Chebotaev - wtf is this method for in stateless class?
+    //Todo Anton Chebotaev - wtf is this method for in stateless class? (this is not fucking stateless)
     public Collection<Ii> reloadComponents(Collection<Ii> items) {
         if (items.isEmpty())
             return Collections.emptySet();
 
         Collection<UUID> ids = getUniqueIds(items);
 
-        logger.debug(String.format("reloadComponents(%d) called", items.size()));
+        logger.debug(String.format("loadComponents(%d) called", items.size()));
         long startTime = System.currentTimeMillis();
 
         MultigetSliceQuery<UUID, UUID, Double> query = HFactory.createMultigetSliceQuery(keyspace, us, us, ds);
@@ -177,7 +176,7 @@ public class CassandraInformationItemDaoImpl{//implements InformationItemDao {
             }
         }
 
-        logger.debug(String.format("reloadComponents(%d) got result in %d seconds", items.size(), (System.currentTimeMillis() - startTime) / 1000));
+        logger.debug(String.format("loadComponents(%d) got result in %d seconds", items.size(), (System.currentTimeMillis() - startTime) / 1000));
         return result;
     }
 
@@ -190,7 +189,7 @@ public class CassandraInformationItemDaoImpl{//implements InformationItemDao {
 
         System.out.println("FUCK");
 
-        logger.debug(String.format("reloadParents(%d) called", items.size()));
+        logger.debug(String.format("loadParents(%d) called", items.size()));
         long startTime = System.currentTimeMillis();
 
         MultigetSliceQuery<UUID, UUID, Double> query = HFactory.createMultigetSliceQuery(keyspace, us, us, ds);
@@ -214,7 +213,7 @@ public class CassandraInformationItemDaoImpl{//implements InformationItemDao {
             }
         }
 
-        logger.debug(String.format("reloadParents(%d) got result in %d seconds", items.size(), (System.currentTimeMillis() - startTime) / 1000));
+        logger.debug(String.format("loadParents(%d) got result in %d seconds", items.size(), (System.currentTimeMillis() - startTime) / 1000));
         return result;
     }
 
@@ -230,7 +229,7 @@ public class CassandraInformationItemDaoImpl{//implements InformationItemDao {
         List<HColumn<String, String>> columns = queryResult.get().getColumns();
 
         if (columns.isEmpty())
-            return null; //TODO: means meta can't be loaded without meta; discuss
+            return null; //TODO: means meta can't be loaded without meta; discuss (should be not)
 
         CassandraIiImpl item = createInformationItem(uuid);
         for (HColumn<String, String> column : columns)
@@ -242,7 +241,7 @@ public class CassandraInformationItemDaoImpl{//implements InformationItemDao {
     @OwledMethod
     public Collection<Ii> loadByUUIDs(Collection<UUID> uuids) {
 
-        logger.debug(String.format("loadByUUIDs(%d) called", uuids.size()));
+        logger.debug(String.format("load(%d) called", uuids.size()));
         long startTime = System.currentTimeMillis();
 
         MultigetSliceQuery<UUID, String, String> multigetSliceQuery = HFactory.createMultigetSliceQuery(keyspace, us, ss, ss);
@@ -257,7 +256,7 @@ public class CassandraInformationItemDaoImpl{//implements InformationItemDao {
         for (Row<UUID, String, String> row : rows) {
             List<HColumn<String, String>> columns = row.getColumnSlice().getColumns();
             if (columns.isEmpty())
-                continue;  //TODO: means meta can't be loaded without meta; discuss
+                continue;  //TODO: means meta can't be loaded without meta; (should be not)
 
             CassandraIiImpl item = createInformationItem(row.getKey());
             for (HColumn<String, String> column : columns)
@@ -266,7 +265,7 @@ public class CassandraInformationItemDaoImpl{//implements InformationItemDao {
             result.add(item);
         }
 
-        logger.debug(String.format("loadByUUIDs(%d) got result in %d seconds", result.size(), (System.currentTimeMillis() - startTime) / 1000));
+        logger.debug(String.format("load(%d) got result in %d seconds", result.size(), (System.currentTimeMillis() - startTime) / 1000));
         return result;
     }
 
@@ -287,7 +286,7 @@ public class CassandraInformationItemDaoImpl{//implements InformationItemDao {
         mutator.addInsertion(component.getUUID(), CF_PARENTS, HFactory.createColumn(item.getUUID(), weight, us, ds));
         mutator.execute();
 
-        //TODO: in case of precalculated recommendations add all parents of component to recalculate queue
+        //NB: in case of precalculated recommendations add all parents of component to recalculate queue
     }
 
     protected void removeComponent(Ii item, Ii component) {

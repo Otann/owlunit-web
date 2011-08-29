@@ -113,7 +113,7 @@ public abstract class FilterTagButton extends OpenDialogButton {
                 button.submitButton.setEnabled(true);
                 button.tagSelect.removeAllItems();
 
-                Map<UUID, String> map = button.service.searchByMetaPrefix(TagService.NAME, text.trim());
+                Map<UUID, String> map = button.service.search(TagService.NAME, text.trim());
                 for (Map.Entry<UUID, String> entry : map.entrySet()) {
                     button.tagSelect.addItem(new MetaPair(entry.getKey(), entry.getValue()));
                 }

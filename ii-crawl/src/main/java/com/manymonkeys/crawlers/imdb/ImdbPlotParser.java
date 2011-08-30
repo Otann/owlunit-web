@@ -7,6 +7,7 @@ import com.manymonkeys.service.cinema.MovieService;
 import me.prettyprint.hector.api.Keyspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
 import java.util.regex.Matcher;
@@ -20,6 +21,9 @@ import java.util.regex.Pattern;
 public class ImdbPlotParser extends CassandraCrawler {
 
     final Logger logger = LoggerFactory.getLogger(ImdbPlotParser.class);
+
+    @Autowired
+    MovieService service;
 
     static final Pattern movieName = Pattern.compile("^MV: (.+) \\(\\d+\\).*$");
     static final Pattern plotLine = Pattern.compile("PL: (.+)$");
@@ -36,8 +40,7 @@ public class ImdbPlotParser extends CassandraCrawler {
     }
 
     @Override
-    public void run(Keyspace keyspace) throws Exception {
-        MovieService service = new MovieService(keyspace);
+    public void run() throws Exception {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "windows-1250"));
 

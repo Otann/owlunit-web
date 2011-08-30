@@ -96,4 +96,7 @@ public class PersonService {
         return result;
     }
 
+    public void setDao(IiDao dao) {
+        this.dao = dao;
+    }
 }

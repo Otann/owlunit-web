@@ -35,7 +35,7 @@ public class OwlsMovieApiImpl implements OwlsMovieApi {
                          @RequestParam("description") String description,
                          //Todo Ilya Pimenov - Move "persons" to @RequestBody
                          @RequestParam("persons") List<Person> persons) {
-        Ii movie = movieService.createMovie(name, year);
+        Ii movie = movieService.createMovie(name, Long.parseLong(year));
         movieService.createOrUpdateDescription(movie, description);
         for (Person person : persons) {
             movieService.addPerson(

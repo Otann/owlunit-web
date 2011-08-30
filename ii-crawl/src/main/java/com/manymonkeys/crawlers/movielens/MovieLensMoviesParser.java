@@ -11,6 +11,7 @@ import me.prettyprint.hector.api.Keyspace;
 import me.prettyprint.hector.api.factory.HFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
 import java.util.HashMap;
@@ -26,6 +27,12 @@ public class MovieLensMoviesParser {
 
     final Logger logger = LoggerFactory.getLogger(MovieLensMoviesParser.class);
 
+    @Autowired
+    MovieService movieService;
+
+    @Autowired
+    TagService tagService;
+
     public static final String SERVICE_NAME = "movielens";
     private static final String A_K_A = "a.k.a.";
 
@@ -39,53 +46,44 @@ public class MovieLensMoviesParser {
 
     public void run(String filePath) throws IOException, UnsupportedEncodingException {
 
-        Cluster cluster = HFactory.getOrCreateCluster(
-                PropertyManager.get(Property.CASSANDRA_CLUSTER),
-                PropertyManager.get(Property.CASSANDRA_HOST));
-        Keyspace keyspace = HFactory.createKeyspace(PropertyManager.get(PropertyManager.Property.CASSANDRA_KEYSPACE), cluster);
+        BufferedReader fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF8"));
 
-        try {
-            MovieService movieService = new MovieService(keyspace);
-            TagService tagService = new TagService(keyspace);
+        String line = fileReader.readLine();
 
-            BufferedReader fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF8"));
+        TimeWatch watch = TimeWatch.start();
 
-            String line = fileReader.readLine();
+        while (line != null) {
 
-            TimeWatch watch = TimeWatch.start();
+            if ("".equals(line)) {
+                continue;
+            }
 
-            while (line != null) {
-
-                if ("".equals(line)) {
-                    continue;
+            int fistSemicolon = line.indexOf(':');
+            String id = line.substring(0, fistSemicolon);
+            int lastSemicolon = line.lastIndexOf(':');
+            String name = line.substring(fistSemicolon + 2, lastSemicolon - 2 - 6).trim();
+            String nameTranslate = null;
+            String aka = null;
+            if (name.charAt(name.length() - 1) == ')'){
+                nameTranslate = name.substring(name.indexOf("(") + 1, name.length() - 1);
+                name = name.substring(0, name.indexOf("(")).trim();
+                if (nameTranslate.startsWith(A_K_A)){
+                    aka = nameTranslate.substring(A_K_A.length(), nameTranslate.length()).trim();
+                    nameTranslate = null;
                 }
+            }
+            String year = line.substring(lastSemicolon - 6, lastSemicolon - 2);
+            String[] genres = line.substring(lastSemicolon + 1, line.length()).split("\\|");
 
-                int fistSemicolon = line.indexOf(':');
-                String id = line.substring(0, fistSemicolon);
-                int lastSemicolon = line.lastIndexOf(':');
-                String name = line.substring(fistSemicolon + 2, lastSemicolon - 2 - 6).trim();
-                String nameTranslate = null;
-                String aka = null;
-                if (name.charAt(name.length() - 1) == ')'){
-                    nameTranslate = name.substring(name.indexOf("(") + 1, name.length() - 1);
-                    name = name.substring(0, name.indexOf("(")).trim();
-                    if (nameTranslate.startsWith(A_K_A)){
-                        aka = nameTranslate.substring(A_K_A.length(), nameTranslate.length()).trim();
-                        nameTranslate = null;
-                    }
-                }
-                String year = line.substring(lastSemicolon - 6, lastSemicolon - 2);
-                String[] genres = line.substring(lastSemicolon + 1, line.length()).split("\\|");
+            Ii movie = movieService.createMovie(name, Long.parseLong(year));
 
-                Ii movie = movieService.createMovie(name, Long.parseLong(year));
-
-                movieService.addExternalId(movie, SERVICE_NAME, id, true);
-                if (aka != null) {
-                    movieService.addAkaName(movie, aka, true);
-                }
-                if (nameTranslate != null) {
-                    movieService.addTranslateName(movie, nameTranslate, true);
-                }
+            movieService.addExternalId(movie, SERVICE_NAME, id);
+            if (aka != null) {
+                movieService.addAkaName(movie, aka, true);
+            }
+            if (nameTranslate != null) {
+                movieService.addTranslateName(movie, nameTranslate, true);
+            }
 
 //                Ii yearItem;
 //                if (localYearsCache.containsKey(year)) {
@@ -96,24 +94,21 @@ public class MovieLensMoviesParser {
 //                }
 //                movieService.setComponentWeight(movie, yearItem, INITIAL_YEAR_WEIGHT);
 
-                watch.tick(logger, 250, "Crawling movielens.", "movies");
+            watch.tick(logger, 250, "Crawling movielens.", "movies");
 
-                for (String genre : genres) {
-                    Ii tag = tagService.getTag(genre);
-                    if (tag == null) {
-                        tag = movieService.createTag(genre);
-                    }
-                    movieService.addGenre(movie, tag);
+            for (String genre : genres) {
+                Ii tag = tagService.getTag(genre);
+                if (tag == null) {
+                    tag = tagService.createTag(genre);
                 }
-
-                line = fileReader.readLine();
-
+                movieService.addGenre(movie, tag);
             }
 
-            System.out.println("All done");
-        } finally {
-            cluster.getConnectionManager().shutdown();
+            line = fileReader.readLine();
+
         }
+
+        System.out.println("All done");
     }
 
 }

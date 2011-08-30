@@ -63,14 +63,24 @@
     <!-- - - - - - - - - - -
     |  O W L S   B E A N S  |
     \=====================-->
-    <bean id="iiRecommender" class="com.manymonkeys.core.algo.impl.RecommenderPlainImpl">
+
+    <bean id="cassandraDao" class="com.manymonkeys.core.ii.impl.cassandra.CassandraIiDaoImpl">
+        <constructor-arg name="keyspace" ref="keyspace"/>
+    </bean>
+
+    <bean id="plainRecommender" class="com.manymonkeys.core.algo.impl.RecommenderPlainImpl">
         <property name="componentsLimit" value="75"/>
         <property name="parentsLimit" value="100"/>
         <property name="weightThreshold" value="2.1"/>
     </bean>
 
     <bean id="movieService" class="com.manymonkeys.service.cinema.MovieService">
-        <constructor-arg ref="keyspace"/>
+        <property name="dao" ref="cassandraDao"/>
+        <property name="recommender" ref="plainRecommender"/>
+    </bean>
+
+    <bean id="personService" class="com.manymonkeys.service.cinema.PersonService">
+        <property name="dao" ref="cassandraDao"/>
     </bean>
 
     <!-- - - - - - -

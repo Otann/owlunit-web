@@ -37,12 +37,12 @@ public class MovieService {
     private double initialPersonWeight = 25;
     private Map<PersonService.Role, Double> initialRoleWeight = new HashMap<PersonService.Role, Double>();
 
-    public Ii createMovie(String name, String year) {
+    public Ii createMovie(String name, long year) {
         Ii movie = dao.createInformationItem();
         dao.setUnindexedMeta(movie, CLASS_MARK_KEY, CLASS_MARK_VALUE);
 
         dao.setMeta(movie, META_KEY_NAME, name);
-        dao.setMeta(movie, META_KEY_YEAR, year);
+        dao.setMeta(movie, META_KEY_YEAR, Long.toString(year));
         dao.setUnindexedMeta(movie, SIMPLE_NAME, simplifyName(name));
         return movie;
     }
@@ -125,6 +125,14 @@ public class MovieService {
         matcher.appendTail(sb);
         return sb.toString();
 
+    }
+
+    public void setDao(IiDao dao) {
+        this.dao = dao;
+    }
+
+    public void setRecommender(Recommender recommender) {
+        this.recommender = recommender;
     }
 
     public void setInitialKeywordWeight(double initialKeywordWeight) {

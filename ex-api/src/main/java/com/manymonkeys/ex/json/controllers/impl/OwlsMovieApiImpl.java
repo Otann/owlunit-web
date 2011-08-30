@@ -28,17 +28,13 @@ public class OwlsMovieApiImpl implements OwlsMovieApi {
     @Autowired
     PersonService personService;
 
-    @Autowired
-    Recommender recommender;
-
     @Override
     @RequestMapping(value = "/addmovie", method = RequestMethod.POST)
     public void addMovie(@RequestParam("name") String name,
                          @RequestParam("year") String year,
                          @RequestParam("description") String description,
                          //Todo Ilya Pimenov - Move "persons" to @RequestBody
-                         @RequestParam("persons") List<Person> persons,
-                         Map<String, String> other) {
+                         @RequestParam("persons") List<Person> persons) {
         Ii movie = movieService.createMovie(name, year);
         movieService.createOrUpdateDescription(movie, description);
         for (Person person : persons) {
@@ -54,7 +50,7 @@ public class OwlsMovieApiImpl implements OwlsMovieApi {
     @Override
     public Map<Ii, Double> getSimilarMovies(String userId, String movieName, Long amount, boolean showReasons) {
         Ii movie = movieService.getByNameSimplified(movieName);
-        recommender.getMostLike(movie);
+        movieService.getMostLike(movie);
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

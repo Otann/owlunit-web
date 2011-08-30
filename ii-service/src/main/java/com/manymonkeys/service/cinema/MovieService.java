@@ -1,13 +1,11 @@
 package com.manymonkeys.service.cinema;
 
+import com.manymonkeys.core.algo.Recommender;
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.core.ii.IiDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,6 +17,9 @@ public class MovieService {
 
     @Autowired
     protected IiDao dao;
+
+    @Autowired
+    protected Recommender recommender;
 
     private static final String CLASS_MARK_KEY = MovieService.class.getName();
     private static final String CLASS_MARK_VALUE = "#";
@@ -44,6 +45,10 @@ public class MovieService {
         dao.setMeta(movie, META_KEY_YEAR, year);
         dao.setUnindexedMeta(movie, SIMPLE_NAME, simplifyName(name));
         return movie;
+    }
+
+    public Map<Ii, Double> getMostLike(Ii movie) {
+        return recommender.getMostLike(movie, dao);
     }
 
     public Ii createOrUpdateDescription(Ii movie, String description) {

@@ -2,6 +2,7 @@ package com.manymonkeys.ex.json.controllers.impl;
 
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.ex.json.controllers.OwlsFlatApi;
+import com.manymonkeys.ex.json.controllers.OwlsMovieApi;
 
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,7 @@ public class OwlsFlatApiJsonImpl implements OwlsFlatApi {
     }
 
     @Override
-    public void addMovie(String name, String year, String description, List<Person> persons, Map<String, String> other) {
+    public void addMovie(String name, String year, String description, List<Person> persons) {
         //movie service
         //To change body of implemented methods use File | Settings | File Templates.
     }

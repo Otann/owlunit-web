@@ -58,11 +58,6 @@
             <artifactId>ii-service</artifactId>
             <version>[${project.version},]</version>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>ii-crawl</artifactId>
-            <version>[${project.version},]</version>
-        </dependency>
 
         <!-- - - - - - - -
         |   S P R I N G   |

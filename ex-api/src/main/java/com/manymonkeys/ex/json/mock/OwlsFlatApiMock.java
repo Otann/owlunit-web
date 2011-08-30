@@ -2,6 +2,7 @@ package com.manymonkeys.ex.json.mock;
 
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.ex.json.controllers.OwlsFlatApi;
+import com.manymonkeys.ex.json.controllers.OwlsMovieApi;
 
 import java.util.HashMap;
 import java.util.List;
@@ -65,7 +66,7 @@ public class OwlsFlatApiMock implements OwlsFlatApi {
     }
 
     @Override
-    public void addMovie(String name, List<Person> persons, String description, Map<String, String> other) {
+    public void addMovie(String name, String year, String description, List<Person> persons) {
         // do nothing
     }
 }

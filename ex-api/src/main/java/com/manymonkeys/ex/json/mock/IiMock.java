@@ -22,7 +22,7 @@ public class IiMock implements Ii {
     public static Ii getSampleMovie(String name, long size){
         IiMock mock = generateItem("Sample", 0);
 
-        mock.meta.put(MovieService.NAME, name);
+        mock.meta.put("NAME", name);
 
         for (int i = 0; i < size; ++i) {
             IiMock component = generateItem("Component", i);
@@ -40,7 +40,7 @@ public class IiMock implements Ii {
     private static IiMock generateItem(String type, long id) {
         IiMock item = new IiMock();
         item.uuid = generateFromString(String.format("%s-%d", type, id));
-        item.meta.put(TagService.NAME, String.format("Item %d of %s", id, type));
+        item.meta.put("NAME", String.format("Item %d of %s", id, type));
         return item;
     }
 

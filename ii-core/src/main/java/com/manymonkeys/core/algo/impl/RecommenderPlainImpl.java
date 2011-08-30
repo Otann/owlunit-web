@@ -13,11 +13,6 @@ import java.util.*;
  *
  * @author Anton Chebotaev
  */
-/* Todo Anton Chebotaev - Move this class to "ii-service" package;
-    Algorithm and it's logic goes here, all the rest (like API for external calls) - to ii-service,
-    that will be used by other components.
-
-    leave it here, main point is that ex-api should not depend on ii-core */
 public class RecommenderPlainImpl implements Recommender {
 
     final Logger logger = LoggerFactory.getLogger(RecommenderPlainImpl.class);
@@ -28,7 +23,7 @@ public class RecommenderPlainImpl implements Recommender {
 
     @Override
     public void diffuse(Ii item, Ii component, Double rating, IiDao dao) {
-        // TODO Anton Chebotaev - implement
+        // TODO Anton Chebotaev - implement "like" and "rate"
     }
 
     /**

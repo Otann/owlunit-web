@@ -1,83 +1,106 @@
 package com.manymonkeys.service.cinema;
 
 import com.manymonkeys.core.ii.Ii;
-import me.prettyprint.hector.api.Keyspace;
+import com.manymonkeys.core.ii.IiDao;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Rocket Science Software
- *
  * @author Anton Chebotaev
+ *         Owls Proprietary
  */
-public class MovieService extends TagService {
+public class MovieService {
 
-    private static final String YEAR = MovieService.class.getName() + ".YEAR";
-    private static final String TAGLINES = MovieService.class.getName() + ".TAGLINES";
-    private static final String PLOT = MovieService.class.getName() + ".PLOT";
+    @Autowired
+    protected IiDao dao;
 
-    private static final String TRANSLATE_NAME = MovieService.class.getName() + ".TRANSLATE_NAME";
-    private static final String AKA_NAME = MovieService.class.getName() + ".AKA_NAME";
+    private static final String CLASS_MARK_KEY = MovieService.class.getName();
+    private static final String CLASS_MARK_VALUE = "#";
 
+    private static final String META_KEY_YEAR = CLASS_MARK_KEY + ".YEAR";
+    private static final String META_KEY_NAME = CLASS_MARK_KEY + ".NAME";
+    private static final String META_KEY_PLOT = CLASS_MARK_KEY + ".PLOT";
+
+    private static final String EXTERNAL_ID_KEY = CLASS_MARK_KEY + ".EXTERNAL_ID.";
     private static final String SIMPLE_NAME = MovieService.class.getName() + ".SIMPLE_NAME";
-
     private final Pattern simplifyPatter = Pattern.compile("(a |the |, a|, the|,|\\.|\\s|'|\"|:|-|!|#|)");
 
-    public MovieService(Keyspace keyspace) {
-        super(keyspace);
-    }
+    private double initialKeywordWeight = 15;
+    private double initialGenreWeight = 50;
+    private double initialPersonWeight = 25;
+    private Map<PersonService.Role, Double> initialRoleWeight = new HashMap<PersonService.Role, Double>();
 
     public Ii createMovie(String name, String year) {
-        Ii movie = createTag(name);
-        setMeta(movie, YEAR, year);
-        setMeta(movie, SIMPLE_NAME, simplifyName(name), true);
+        Ii movie = dao.createInformationItem();
+        dao.setUnindexedMeta(movie, CLASS_MARK_KEY, CLASS_MARK_VALUE);
+
+        dao.setMeta(movie, META_KEY_NAME, name);
+        dao.setMeta(movie, META_KEY_YEAR, year);
+        dao.setUnindexedMeta(movie, SIMPLE_NAME, simplifyName(name));
         return movie;
     }
 
-    public void createOrUpdateDescription(Ii movie, String description) {
-        setMeta(movie, MovieService.PLOT, description);
+    public Ii createOrUpdateDescription(Ii movie, String description) {
+        return dao.setMeta(movie, META_KEY_PLOT, description);
     }
 
-    public void addPerson(Ii movie, Ii person, Double weight) {
-        this.setComponentWeight(movie, person, weight);
-    }
-
-    public void addKeyword(Ii movie, Ii keyword, Double weight) {
-        this.setComponentWeight(movie, keyword, weight);
-    }
-
-    public void addTagline(Ii movie, String tagline) {
-        this.setMeta(movie, MovieService.TAGLINES, tagline);
-    }
-
-    public void addAkaName(Ii movie, String akaName, Boolean index) {
-        this.setMeta(movie, MovieService.AKA_NAME, akaName, index);
-    }
-
-    public void addTranslateName(Ii movie, String translateName, Boolean index) {
-        this.setMeta(movie, MovieService.TRANSLATE_NAME, translateName, index);
-    }
-
-    public void addGenre(Ii movie, Ii genre, Double weight) {
-        this.setComponentWeight(movie, genre, weight);
-    }
-
-    public void addExternalId(Ii movie, String storeKey, String externalId, Boolean index){
-        this.setMeta(movie, storeKey, externalId, index);
-    }
-
-    public Ii getByNameSimplified(String name) {
+    public Ii loadByExternalId(String service, String id) {
         try {
-            return loadByMeta(SIMPLE_NAME, simplifyName(name)).iterator().next();
+            return dao.load(EXTERNAL_ID_KEY + service, id).iterator().next();
         } catch (NoSuchElementException e) {
             return null;
         }
     }
 
-    private String simplifyName(String name) {
+    public Ii addPerson(Ii movie, Ii person, PersonService.Role role) {
+        double weight;
+        if (role == null || initialRoleWeight.containsKey(role)) {
+            weight = initialPersonWeight;
+        } else {
+            weight = initialRoleWeight.get(role);
+        }
+        return dao.setComponentWeight(movie, person, weight);
+    }
 
+    public Ii addKeyword(Ii movie, Ii keyword) {
+        return dao.setComponentWeight(movie, keyword, initialKeywordWeight);
+    }
+
+    public Ii addTagline(Ii movie, String tagline) {
+        throw new UnsupportedOperationException();
+    }
+
+    public Ii addAkaName(Ii movie, String akaName, Boolean index) {
+        throw new UnsupportedOperationException();
+    }
+
+    public Ii addTranslateName(Ii movie, String translateName, Boolean index) {
+        throw new UnsupportedOperationException();
+    }
+
+    public Ii addGenre(Ii movie, Ii genre) {
+        return dao.setComponentWeight(movie, genre, initialGenreWeight);
+    }
+
+    public Ii addExternalId(Ii movie, String service, String externalId){
+        return dao.setUnindexedMeta(movie, EXTERNAL_ID_KEY + service, externalId);
+    }
+
+    public Ii getByNameSimplified(String name) {
+        Collection<Ii> blankItems = dao.load(SIMPLE_NAME, simplifyName(name));
+        if (blankItems.isEmpty()) {
+            return null;
+        }
+        return dao.loadMetadata(blankItems).iterator().next();
+    }
+
+    private String simplifyName(String name) {
         String unromanized = name
                 .replace(" I", " 1")
                 .replace(" II", " 2")
@@ -95,10 +118,25 @@ public class MovieService extends TagService {
         while (matcher.find())
             matcher.appendReplacement(sb, "");
         matcher.appendTail(sb);
-
-        // replace roman characters
         return sb.toString();
 
+    }
+
+    public void setInitialKeywordWeight(double initialKeywordWeight) {
+        this.initialKeywordWeight = initialKeywordWeight;
+    }
+
+    public void setInitialGenreWeight(double initialGenreWeight) {
+        this.initialGenreWeight = initialGenreWeight;
+    }
+
+    public void setInitialPersonWeight(double initialPersonWeight) {
+        this.initialPersonWeight = initialPersonWeight;
+    }
+
+    public void setInitialRoleWeight(String roleRaw, double weight) {
+        PersonService.Role role = PersonService.Role.valueOf(roleRaw);
+        this.initialRoleWeight.put(role, weight);
     }
 
 }

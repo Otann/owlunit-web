@@ -53,11 +53,8 @@ public interface OwlsMovieApi {
      * @param name        of the movie
      * @param persons     list of persons associated with movie
      * @param description short description of the movie
-     * @param other       any other metadata that can be processed later
      */
-    /* Todo Anton Chebotaev - Remove "Map<String, String> other" from contract - discuss if necessary,
-        no need for flexibility in contract; better solution is to introduce contract versions */
-    void addMovie(String name, String year, String description, List<Person> persons, Map<String, String> other);
+    void addMovie(String name, String year, String description, List<Person> persons);
 
     /**
      * Loads similar movies

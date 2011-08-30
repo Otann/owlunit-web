@@ -36,7 +36,7 @@ public class SimpleMovieReadController {
      *          "com.manymonkeys.service.cinema.MovieService.SIMPLE_NAME":"dead",
      *          "com.manymonkeys.service.cinema.MovieService.YEAR":"1987",
      *          "com.manymonkeys.service.cinema.TagService.NAME":"Dead, The",
-     *          "com.manymonkeys.crawlers.movielens.MovieLensMoviesParser.EXTERNAL_ID":"4098"}}
+     *          "com.manymonkeys.crawlers.movielens.MovieLensMoviesParser.SERVICE_NAME":"4098"}}
      *
      * For more complex names, request can go like -
      * <p/>

@@ -1,4 +1,4 @@
-package com.manymonkeys.service.cinema;
+package com.manymonkeys.service;
 
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.core.ii.IiDao;

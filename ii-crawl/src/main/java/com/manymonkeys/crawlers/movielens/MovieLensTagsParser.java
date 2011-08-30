@@ -65,8 +65,7 @@ public class MovieLensTagsParser {
 
                     Ii movieItem = moviesCache.get(externalId);
                     if (movieItem == null) {
-                        //TODO Anton Chebotaev - Create method "loadByMovieLensId()" in MovieService, use it instead
-                        //movieItem = movieService.load(MovieLensMoviesParser.EXTERNAL_ID, externalId).iterator().next();
+                        movieItem = movieService.loadByExternalId(MovieLensMoviesParser.SERVICE_NAME, externalId);
                         moviesCache.put(externalId, movieItem);
                     }
 

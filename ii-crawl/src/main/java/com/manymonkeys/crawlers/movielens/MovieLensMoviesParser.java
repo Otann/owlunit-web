@@ -26,7 +26,7 @@ public class MovieLensMoviesParser {
 
     final Logger logger = LoggerFactory.getLogger(MovieLensMoviesParser.class);
 
-    public static final String EXTERNAL_ID = MovieLensMoviesParser.class.getName() + ".EXTERNAL_ID";
+    public static final String SERVICE_NAME = "movielens";
     private static final String A_K_A = "a.k.a.";
 
     public final double INITIAL_GENRE_WEIGHT = Double.parseDouble(PropertyManager.get(Property.MOVIELENS_GENRE_WEIGHT_INITIAL));
@@ -79,9 +79,7 @@ public class MovieLensMoviesParser {
 
                 Ii movie = movieService.createMovie(name, Long.parseLong(year));
 
-                /* TODO Anton Chebotaev move logic about externalId to MovieService (add "service" field, because externalIds
-                 can come from a number of thirdparties; we should nicely destinguish them in a nice manner ) */
-                movieService.addExternalId(movie, EXTERNAL_ID, id, true);
+                movieService.addExternalId(movie, SERVICE_NAME, id, true);
                 if (aka != null) {
                     movieService.addAkaName(movie, aka, true);
                 }
@@ -105,8 +103,7 @@ public class MovieLensMoviesParser {
                     if (tag == null) {
                         tag = movieService.createTag(genre);
                     }
-                    //TODO Anton Chebotaev - Move initial genre weight to MovieService
-                    movieService.addGenre(movie, tag, INITIAL_GENRE_WEIGHT);
+                    movieService.addGenre(movie, tag);
                 }
 
                 line = fileReader.readLine();

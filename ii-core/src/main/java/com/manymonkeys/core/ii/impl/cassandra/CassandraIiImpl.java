@@ -42,7 +42,7 @@ public class CassandraIiImpl implements Ii, Comparable<Ii> {
 
     @Override
     public String getMeta(String key) {
-        return meta.get(key); //TODO anton chebotaev - potential NPE, throw exception here
+        return meta.get(key);
     }
 
     @Override

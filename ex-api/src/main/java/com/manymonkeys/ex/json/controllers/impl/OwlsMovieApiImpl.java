@@ -45,19 +45,16 @@ public class OwlsMovieApiImpl implements OwlsMovieApi {
             movieService.addPerson(
                     movie,
                     personService.findOrCreate(
-                            person.getName(),
-                            person.getSurname(),
-                            person.getRole().name()),
-                    /* TODO Anton Chebotaev - After you'll fix issues with manual weight calculation,
-                        there will be no need to set it here */
-                    666.00);
+                            person.getName() + " " + person.getSurname(),
+                            PersonService.Role.valueOf(person.getRole().name())),
+                    PersonService.Role.valueOf(person.getRole().name()));
         }
     }
 
     @Override
     public Map<Ii, Double> getSimilarMovies(String userId, String movieName, Long amount, boolean showReasons) {
         Ii movie = movieService.getByNameSimplified(movieName);
-        recommender.getMostLike(movie, movieService);
+        recommender.getMostLike(movie);
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

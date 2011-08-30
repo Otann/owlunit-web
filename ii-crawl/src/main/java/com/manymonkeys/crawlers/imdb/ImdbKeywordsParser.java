@@ -5,9 +5,11 @@ import com.manymonkeys.crawlers.common.CassandraCrawler;
 import com.manymonkeys.crawlers.common.PropertyManager;
 import com.manymonkeys.crawlers.common.TimeWatch;
 import com.manymonkeys.service.cinema.MovieService;
+import com.manymonkeys.service.cinema.TagService;
 import me.prettyprint.hector.api.Keyspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
 import java.util.HashMap;
@@ -22,6 +24,12 @@ import java.util.regex.Pattern;
  * @author Anton Chebotaev
  */
 public class ImdbKeywordsParser extends CassandraCrawler {
+
+    @Autowired
+    MovieService movieService;
+
+    @Autowired
+    TagService tagService;
 
     final Logger logger = LoggerFactory.getLogger(ImdbKeywordsParser.class);
 
@@ -47,15 +55,14 @@ public class ImdbKeywordsParser extends CassandraCrawler {
     }
 
     @Override
-    public void run(Keyspace keyspace) throws Exception {
-        MovieService service = new MovieService(keyspace);
+    public void run() throws Exception {
 
         BufferedReader fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "windows-1250"));
 
         Map<String, Integer> keywordsCounts = parseCounts(fileReader);
         logger.info(String.format("Found %d keywords in file %s all-in-all, now parsing movies", keywordsCounts.size(), filePath));
 
-        parseMovies(keywordsCounts, fileReader, service);
+        parseMovies(keywordsCounts, fileReader, movieService);
 
     }
 
@@ -135,21 +142,17 @@ public class ImdbKeywordsParser extends CassandraCrawler {
 
                 Ii keywordItem = null;
                 if (localCache.containsKey(keywordName)) {
-                    keywordItem = service.loadByUUID(localCache.get(keywordName));
+                    keywordItem = tagService.getEmptyTag(localCache.get(keywordName));
                 } else {
-                    keywordItem = service.createTag(keywordName);
+                    keywordItem = tagService.createTag(keywordName);
                     localCache.put(keywordName, keywordItem.getUUID());
                 }
 
                 Integer count = keywordsCounts.get(keywordName);
                 if (count == null)
                     continue;
-                double weight = count >= MAX_COUNT ?
-                        MIN_WEIGHT :
-                        MAX_WEIGHT - (1d * count / MAX_COUNT) * WEIGHT_RANGE;
-
-                //TODO Anton Chebotaev - Logic about weight calculation somehow should be in MovieService in this case
-                service.addKeyword(movieItem, keywordItem, weight);
+                double frequency = 1d * count / MAX_COUNT;
+                service.addKeyword(movieItem, keywordItem);
 
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();

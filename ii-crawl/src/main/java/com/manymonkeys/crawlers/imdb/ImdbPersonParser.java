@@ -8,6 +8,7 @@ import com.manymonkeys.service.cinema.PersonService;
 import me.prettyprint.hector.api.Keyspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
 import java.util.regex.Matcher;
@@ -28,7 +29,10 @@ public class ImdbPersonParser extends CassandraCrawler {
     private final String role;
     private final double INITIAL_PERSON_WEIGHT;
 
+    @Autowired
     MovieService movieService;
+
+    @Autowired
     PersonService personService;
 
     Pattern personMoviePattern = Pattern.compile("^([^\\t]+)\\t+(.+)\\((\\d+)\\).*$");
@@ -45,10 +49,7 @@ public class ImdbPersonParser extends CassandraCrawler {
         new ImdbPersonParser(args[0], Double.parseDouble(args[1]), args[2]).crawl();
     }
 
-    public void run(Keyspace keyspace) throws Exception {
-
-        movieService = new MovieService(keyspace);
-        personService = new PersonService(keyspace);
+    public void run() throws Exception {
 
         BufferedReader fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "windows-1250"));
         String line = fileReader.readLine();
@@ -102,12 +103,11 @@ public class ImdbPersonParser extends CassandraCrawler {
 
                 if (personItem == null) {
                     String[] fullname = splitName(name);
-                    personItem = personService.findOrCreate(fullname[0], fullname[1], role);
+                    personItem = personService.findOrCreate(fullname[0] + " " + fullname[1], PersonService.Role.valueOf(role));
                     actorsCount++;
                 }
 
-                //TODO Anton Chebotaev - Move "initial person weight" to movie service
-                movieService.addPerson(movieItem, personItem, INITIAL_PERSON_WEIGHT);
+                movieService.addPerson(movieItem, personItem, PersonService.Role.valueOf(role));
 
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();

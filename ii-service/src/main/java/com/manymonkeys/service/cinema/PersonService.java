@@ -3,7 +3,7 @@ package com.manymonkeys.service.cinema;
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.core.ii.IiDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import static com.manymonkeys.service.cinema.Utils.itemWithMeta;
+import static com.manymonkeys.service.Utils.itemWithMeta;
 
 import java.util.*;
 

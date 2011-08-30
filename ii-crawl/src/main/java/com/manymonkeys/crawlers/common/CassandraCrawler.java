@@ -13,7 +13,7 @@ import java.io.IOException;
  */
 public abstract class CassandraCrawler {
 
-    public abstract void run(Keyspace keyspace) throws Exception;
+    public abstract void run() throws Exception;
 
     protected void crawl() {
         Cluster cluster = HFactory.getOrCreateCluster(
@@ -22,7 +22,7 @@ public abstract class CassandraCrawler {
         Keyspace keyspace = HFactory.createKeyspace(PropertyManager.get(PropertyManager.Property.CASSANDRA_KEYSPACE), cluster);
 
         try {
-            run(keyspace);
+            run();
 
             System.out.println("All done");
         } catch (Exception e) {

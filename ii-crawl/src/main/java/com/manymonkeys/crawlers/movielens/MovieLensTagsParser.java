@@ -79,12 +79,11 @@ public class MovieLensTagsParser {
 
                     Double weight = movieItem.getComponentWeight(tagItem);
                     if (weight == null) {
-                        //TODO Anton Chebotaev - Use appropriate methods from MovieService intstead
-//                        movieService.setComponentWeight(movieItem, tagItem, INITIAL_WEIGHT);
-                    } else {
-                        //TODO Anton Chebotaev - Use appropriate methods from MovieService instead
-//                        movieService.setComponentWeight(movieItem, tagItem, weight + ADDITIONAL_WEIGHT);
+                        movieService.addKeyword(movieItem, tagItem);
                     }
+//                    else {
+//                        movieService.addKeyword(movieItem, tagItem);
+//                    }
 
                 } catch (Exception e) {
                     StringWriter sw = new StringWriter();

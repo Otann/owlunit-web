@@ -1,10 +1,12 @@
 package com.manymonkeys.model
 
+import reflect.{BooleanBeanProperty, BeanProperty}
+
 /**
  * @author Ilya Pimenov
- * Xaton Proprietary
+ * Owl Proprietary
  */
 
-class Person {
-
-}
+case class Person (@BeanProperty var name: String = "Joe",
+                   @BeanProperty var surname: String = "Dow",
+                   @BeanProperty var role: Role) {}

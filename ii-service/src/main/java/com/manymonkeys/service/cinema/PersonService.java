@@ -2,20 +2,20 @@ package com.manymonkeys.service.cinema;
 
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.core.ii.IiDao;
+import com.manymonkeys.model.Person;
+import com.manymonkeys.model.Role;
 import org.springframework.beans.factory.annotation.Autowired;
-import static com.manymonkeys.service.Utils.itemWithMeta;
 
 import java.util.*;
 
+import static com.manymonkeys.service.Utils.itemWithMeta;
+
 /**
  * @author Anton Chebotaev
+ * @author Ilya Pimenov
  *         Owls Proprietary
  */
 public class PersonService {
-
-    public enum Role {
-        ACTOR, DIRECTOR, PRODUCER
-    }
 
     @Autowired
     private IiDao dao;
@@ -27,13 +27,13 @@ public class PersonService {
     private static final String META_KEY_ROLES = CLASS_MARK_KEY + ".ROLES";
     private static final String ROLES_DELIMITER = "#";
 
-    public Ii createPerson(String fullName) {
-        Ii person = dao.createInformationItem();
-        dao.setUnindexedMeta(person, CLASS_MARK_KEY, CLASS_MARK_VALUE);
+    public Ii createPerson(Person person) {
+        Ii personIi = dao.createInformationItem();
+        dao.setUnindexedMeta(personIi, CLASS_MARK_KEY, CLASS_MARK_VALUE);
 
-        dao.setMeta(person, META_KEY_FULL_NAME, fullName);
-        dao.setMeta(person, META_KEY_ROLES, "");
-        return person;
+        dao.setMeta(personIi, META_KEY_FULL_NAME, fullName(person));
+        dao.setMeta(personIi, META_KEY_ROLES, rolesToString(Collections.singleton(person.getRole())));
+        return personIi;
     }
 
     public Collection<Ii> getPersons(String fullName) {
@@ -63,15 +63,15 @@ public class PersonService {
         }
     }
 
-    public Ii findOrCreate(String fullName, Role role) {
-        Collection<Ii> persons = this.getPersons(fullName);
-        Ii person;
+    public Ii findOrCreate(Person person) {
+        Collection<Ii> persons = this.getPersons(fullName(person));
+        Ii personIi;
         if (persons.isEmpty()) {
-            person = createPerson(fullName);
+            personIi = createPerson(person);
         } else {
-            person = persons.iterator().next();
+            personIi = persons.iterator().next();
         }
-        return addRole(person, role);
+        return personIi;
     }
 
     private String rolesToString(Collection<Role> roles) {
@@ -94,6 +94,10 @@ public class PersonService {
             result.add(Role.valueOf(role));
         }
         return result;
+    }
+
+    private String fullName(Person person) {
+        return person.getName() + " " + person.getSurname();
     }
 
     public void setDao(IiDao dao) {

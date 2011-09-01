@@ -3,9 +3,13 @@ package com.manymonkeys.service.cinema;
 import com.manymonkeys.core.algo.Recommender;
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.core.ii.IiDao;
+import com.manymonkeys.model.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,7 +39,7 @@ public class MovieService {
     private double initialKeywordWeight = 15;
     private double initialGenreWeight = 50;
     private double initialPersonWeight = 25;
-    private Map<PersonService.Role, Double> initialRoleWeight = new HashMap<PersonService.Role, Double>();
+    private Map<Role, Double> initialRoleWeight = new HashMap<Role, Double>();
 
     public Ii createMovie(String name, long year) {
         Ii movie = dao.createInformationItem();
@@ -63,7 +67,7 @@ public class MovieService {
         }
     }
 
-    public Ii addPerson(Ii movie, Ii person, PersonService.Role role) {
+    public Ii addPerson(Ii movie, Ii person, Role role) {
         double weight;
         if (role == null || initialRoleWeight.containsKey(role)) {
             weight = initialPersonWeight;
@@ -93,7 +97,7 @@ public class MovieService {
         return dao.setComponentWeight(movie, genre, initialGenreWeight);
     }
 
-    public Ii addExternalId(Ii movie, String service, String externalId){
+    public Ii addExternalId(Ii movie, String service, String externalId) {
         return dao.setUnindexedMeta(movie, EXTERNAL_ID_KEY + service, externalId);
     }
 
@@ -148,7 +152,7 @@ public class MovieService {
     }
 
     public void setInitialRoleWeight(String roleRaw, double weight) {
-        PersonService.Role role = PersonService.Role.valueOf(roleRaw);
+        Role role = Role.valueOf(roleRaw);
         this.initialRoleWeight.put(role, weight);
     }
 

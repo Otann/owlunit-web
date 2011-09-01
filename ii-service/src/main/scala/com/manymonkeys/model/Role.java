@@ -2,7 +2,8 @@ package com.manymonkeys.model;
 
 /**
  * @author Ilya Pimenov
- *         Xaton Proprietary
+ *         Owl Proprietary
  */
-public class Role {
+public enum Role {
+    ACTOR, DIRECTOR, PRODUCER
 }

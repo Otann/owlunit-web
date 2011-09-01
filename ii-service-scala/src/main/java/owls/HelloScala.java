@@ -6,5 +6,6 @@ public class HelloScala {
 
         // call scala class
         System.out.println("Scala says: " + App.helloJava());
+        System.out.println("Scala says: " + new PersonTest().getName() + new PersonTest().isBadass());
     }
 }

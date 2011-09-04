@@ -1,8 +1,8 @@
 package com.manymonkeys.ex.json.mock;
 
 import com.manymonkeys.core.ii.Ii;
-import com.manymonkeys.service.cinema.MovieService;
-import com.manymonkeys.service.cinema.TagService;
+import com.manymonkeys.service.cinema.impl.MovieServiceImpl;
+import com.manymonkeys.service.cinema.impl.TagServiceImpl;
 
 import java.util.HashMap;
 import java.util.Map;

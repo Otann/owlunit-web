@@ -3,8 +3,10 @@ package com.manymonkeys.crawlers.imdb;
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.crawlers.common.CassandraCrawler;
 import com.manymonkeys.crawlers.common.TimeWatch;
-import com.manymonkeys.service.cinema.MovieService;
-import com.manymonkeys.service.cinema.PersonService;
+import com.manymonkeys.model.cinema.Person;
+import com.manymonkeys.model.cinema.Role;
+import com.manymonkeys.service.cinema.impl.MovieServiceImpl;
+import com.manymonkeys.service.cinema.impl.PersonServiceImpl;
 import me.prettyprint.hector.api.Keyspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +32,10 @@ public class ImdbPersonParser extends CassandraCrawler {
     private final double INITIAL_PERSON_WEIGHT;
 
     @Autowired
-    MovieService movieService;
+    MovieServiceImpl movieService;
 
     @Autowired
-    PersonService personService;
+    PersonServiceImpl personService;
 
     Pattern personMoviePattern = Pattern.compile("^([^\\t]+)\\t+(.+)\\((\\d+)\\).*$");
     Pattern moviePattern = Pattern.compile("^\\t\\t\\t(.+)\\((\\d+)\\).*$");
@@ -103,11 +105,11 @@ public class ImdbPersonParser extends CassandraCrawler {
 
                 if (personItem == null) {
                     String[] fullname = splitName(name);
-                    personItem = personService.findOrCreate(fullname[0] + " " + fullname[1], PersonService.Role.valueOf(role));
+                    personItem = personService.getPersons(fullname[0] + " " + fullname[1]).iterator().next(); //TODO Anton Chebotaev - review
                     actorsCount++;
                 }
 
-                movieService.addPerson(movieItem, personItem, PersonService.Role.valueOf(role));
+                movieService.addPerson(movieItem, personItem, Role.valueOf(role));
 
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();

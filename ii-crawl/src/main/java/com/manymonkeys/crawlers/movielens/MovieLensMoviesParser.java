@@ -4,8 +4,8 @@ import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.crawlers.common.PropertyManager;
 import com.manymonkeys.crawlers.common.PropertyManager.Property;
 import com.manymonkeys.crawlers.common.TimeWatch;
-import com.manymonkeys.service.cinema.MovieService;
-import com.manymonkeys.service.cinema.TagService;
+import com.manymonkeys.service.cinema.impl.MovieServiceImpl;
+import com.manymonkeys.service.cinema.impl.TagServiceImpl;
 import me.prettyprint.hector.api.Cluster;
 import me.prettyprint.hector.api.Keyspace;
 import me.prettyprint.hector.api.factory.HFactory;
@@ -28,10 +28,10 @@ public class MovieLensMoviesParser {
     final Logger logger = LoggerFactory.getLogger(MovieLensMoviesParser.class);
 
     @Autowired
-    MovieService movieService;
+    MovieServiceImpl movieService;
 
     @Autowired
-    TagService tagService;
+    TagServiceImpl tagService;
 
     public static final String SERVICE_NAME = "movielens";
     private static final String A_K_A = "a.k.a.";

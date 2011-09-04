@@ -2,13 +2,12 @@ package com.manymonkeys.service.cinema.impl;
 
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.core.ii.IiDao;
-import com.manymonkeys.model.Person;
-import com.manymonkeys.model.Role;
+import com.manymonkeys.model.cinema.Person;
+import com.manymonkeys.model.cinema.Role;
 import org.springframework.beans.factory.annotation.Autowired;
+import static com.manymonkeys.service.cinema.util.Utils.itemWithMeta;
 
 import java.util.*;
-
-import static com.manymonkeys.service.Utils.itemWithMeta;
 
 /**
  * @author Anton Chebotaev
@@ -32,7 +31,7 @@ public class PersonServiceImpl {
         dao.setUnindexedMeta(personIi, CLASS_MARK_KEY, CLASS_MARK_VALUE);
 
         dao.setMeta(personIi, META_KEY_FULL_NAME, fullName(person));
-        dao.setMeta(personIi, META_KEY_ROLES, rolesToString(Collections.singleton(person.getRole())));
+        dao.setMeta(personIi, META_KEY_ROLES, rolesToString(person.getRoles()));
         return personIi;
     }
 

@@ -3,6 +3,7 @@ package com.manymonkeys.ex.json.controllers.impl;
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.ex.json.controllers.OwlsFlatApi;
 import com.manymonkeys.ex.json.controllers.OwlsMovieApi;
+import com.manymonkeys.model.cinema.Person;
 
 import java.util.List;
 import java.util.Map;

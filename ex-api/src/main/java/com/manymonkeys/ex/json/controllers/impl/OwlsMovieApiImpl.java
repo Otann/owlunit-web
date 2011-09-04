@@ -3,8 +3,12 @@ package com.manymonkeys.ex.json.controllers.impl;
 import com.manymonkeys.core.algo.Recommender;
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.ex.json.controllers.OwlsMovieApi;
+import com.manymonkeys.model.cinema.Person;
+import com.manymonkeys.model.cinema.Role;
 import com.manymonkeys.service.cinema.MovieService;
 import com.manymonkeys.service.cinema.PersonService;
+import com.manymonkeys.service.cinema.impl.MovieServiceImpl;
+import com.manymonkeys.service.cinema.impl.PersonServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,10 +27,10 @@ import java.util.Map;
 public class OwlsMovieApiImpl implements OwlsMovieApi {
 
     @Autowired
-    MovieService movieService;
+    MovieServiceImpl movieService;
 
     @Autowired
-    PersonService personService;
+    PersonServiceImpl personService;
 
     @Override
     @RequestMapping(value = "/addmovie", method = RequestMethod.POST)
@@ -38,12 +42,9 @@ public class OwlsMovieApiImpl implements OwlsMovieApi {
         Ii movie = movieService.createMovie(name, Long.parseLong(year));
         movieService.createOrUpdateDescription(movie, description);
         for (Person person : persons) {
-            movieService.addPerson(
-                    movie,
-                    personService.findOrCreate(
-                            person.getName() + " " + person.getSurname(),
-                            PersonService.Role.valueOf(person.getRole().name())),
-                    PersonService.Role.valueOf(person.getRole().name()));
+            for (Role role : person.getRoles()) {
+                movieService.addPerson(movie, personService.findOrCreate(person), role);
+            }
         }
     }
 

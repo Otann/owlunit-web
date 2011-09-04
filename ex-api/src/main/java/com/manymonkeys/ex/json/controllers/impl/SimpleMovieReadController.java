@@ -2,6 +2,7 @@ package com.manymonkeys.ex.json.controllers.impl;
 
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.service.cinema.MovieService;
+import com.manymonkeys.service.cinema.impl.MovieServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class SimpleMovieReadController {
 
     @Autowired
-    MovieService movieService;
+    MovieServiceImpl movieService;
 
     /**
      * Try by going to -

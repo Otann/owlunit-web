@@ -3,7 +3,7 @@ package com.manymonkeys.service.cinema.impl;
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.core.ii.IiDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import static com.manymonkeys.service.Utils.itemWithMeta;
+import static com.manymonkeys.service.cinema.util.Utils.itemWithMeta;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -21,7 +21,7 @@ public class TagServiceImpl {
     private static final String CLASS_MARK_VALUE = "#";
     private static final String META_KEY_NAME = CLASS_MARK_KEY + ".NAME";
 
-    protected Ii createTag(String name) {
+    public Ii createTag(String name) { //TODO Anton Chebotaev - change to protected
         Ii item = dao.createInformationItem();
         dao.setUnindexedMeta(item, CLASS_MARK_KEY, CLASS_MARK_VALUE);
 

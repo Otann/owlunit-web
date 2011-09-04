@@ -4,8 +4,8 @@ import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.crawlers.common.CassandraCrawler;
 import com.manymonkeys.crawlers.common.PropertyManager;
 import com.manymonkeys.crawlers.common.TimeWatch;
-import com.manymonkeys.service.cinema.MovieService;
-import com.manymonkeys.service.cinema.TagService;
+import com.manymonkeys.service.cinema.impl.MovieServiceImpl;
+import com.manymonkeys.service.cinema.impl.TagServiceImpl;
 import me.prettyprint.hector.api.Keyspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,10 +26,10 @@ import java.util.regex.Pattern;
 public class ImdbKeywordsParser extends CassandraCrawler {
 
     @Autowired
-    MovieService movieService;
+    MovieServiceImpl movieService;
 
     @Autowired
-    TagService tagService;
+    TagServiceImpl tagService;
 
     final Logger logger = LoggerFactory.getLogger(ImdbKeywordsParser.class);
 
@@ -106,7 +106,7 @@ public class ImdbKeywordsParser extends CassandraCrawler {
         return result;
     }
 
-    void parseMovies(Map<String, Integer> keywordsCounts, BufferedReader reader, MovieService service) throws IOException {
+    void parseMovies(Map<String, Integer> keywordsCounts, BufferedReader reader, MovieServiceImpl service) throws IOException {
 
 
         TimeWatch watch = TimeWatch.start();

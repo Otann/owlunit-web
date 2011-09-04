@@ -26,6 +26,9 @@ public class UserServiceImpl {
 
     private static final String SALT = "Humpty Dumpty sat on a wall, Humpty Dumpty had a great fall";
 
+    public double followerWeight = 10d;
+    public double ratingsMultiplicator = 5d;
+
     public Ii createUser(String login, String password) {
         //TODO Ilya Pimenov - validate login name to be alphanumeric
         Ii user = dao.createInformationItem();
@@ -41,6 +44,18 @@ public class UserServiceImpl {
         } catch (NoSuchElementException e) {
             return null;
         }
+    }
+
+    public void follow(Ii follower, Ii followed) {
+        dao.setComponentWeight(follower, followed, followerWeight);
+    }
+
+    public void unfollow(Ii follower, Ii followed) {
+        dao.removeComponent(follower, followed);
+    }
+
+    public void rate(Ii user, Ii movie, Double rate) {
+        dao.setComponentWeight(user, movie, rate * ratingsMultiplicator);
     }
 
     public String getLogin(Ii user) {
@@ -68,4 +83,7 @@ public class UserServiceImpl {
         }
     }
 
+    public void setFollowerWeight(double followerWeight) {
+        this.followerWeight = followerWeight;
+    }
 }

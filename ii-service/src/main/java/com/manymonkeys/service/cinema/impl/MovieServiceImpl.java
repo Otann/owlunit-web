@@ -3,7 +3,7 @@ package com.manymonkeys.service.cinema.impl;
 import com.manymonkeys.core.algo.Recommender;
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.core.ii.IiDao;
-import com.manymonkeys.model.Role;
+import com.manymonkeys.model.cinema.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;

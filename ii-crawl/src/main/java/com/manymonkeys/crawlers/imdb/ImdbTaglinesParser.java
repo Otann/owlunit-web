@@ -4,6 +4,7 @@ import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.crawlers.common.CassandraCrawler;
 import com.manymonkeys.crawlers.common.TimeWatch;
 import com.manymonkeys.service.cinema.MovieService;
+import com.manymonkeys.service.cinema.impl.MovieServiceImpl;
 import me.prettyprint.hector.api.Keyspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,7 @@ public class ImdbTaglinesParser extends CassandraCrawler {
     final Logger logger = LoggerFactory.getLogger(ImdbTaglinesParser.class);
 
     @Autowired
-    MovieService service;
+    MovieServiceImpl service;
 
 
     static final Pattern movieName = Pattern.compile("^# (.+) \\(\\d+\\)$");
@@ -52,7 +53,7 @@ public class ImdbTaglinesParser extends CassandraCrawler {
 
     }
 
-    void parse(BufferedReader reader, MovieService service) throws IOException {
+    void parse(BufferedReader reader, MovieServiceImpl service) throws IOException {
 
 
         TimeWatch watch = TimeWatch.start();

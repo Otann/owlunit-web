@@ -3,6 +3,7 @@ package com.manymonkeys.ex.json.mock;
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.ex.json.controllers.OwlsFlatApi;
 import com.manymonkeys.ex.json.controllers.OwlsMovieApi;
+import com.manymonkeys.model.cinema.Person;
 
 import java.util.HashMap;
 import java.util.List;

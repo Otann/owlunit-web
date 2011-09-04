@@ -14,12 +14,8 @@
         <module>ii-security</module>
         <module>ii-core</module>
         <module>ii-service</module>
-        <module>ii-service-scala</module>
         <module>ii-crawl</module>
         <module>ii-impex</module>
-        <!--<module>ii-website-widgets</module>-->
-        <!--<module>ii-website</module>-->
-        <!--<module>ii-local</module>-->
         <!--<module>rd-aspects</module>-->
         <module>ex-api</module>
     </modules>

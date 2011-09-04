@@ -1,4 +1,4 @@
-package com.manymonkeys.model;
+package com.manymonkeys.model.cinema;
 
 /**
  * @author Ilya Pimenov

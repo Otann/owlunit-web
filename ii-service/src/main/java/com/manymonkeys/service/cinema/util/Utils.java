@@ -1,4 +1,4 @@
-package com.manymonkeys.service;
+package com.manymonkeys.service.cinema.util;
 
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.core.ii.IiDao;
@@ -17,5 +17,4 @@ public class Utils {
             return item;
         }
     }
-
 }

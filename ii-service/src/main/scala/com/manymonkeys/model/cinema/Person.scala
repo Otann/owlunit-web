@@ -1,4 +1,4 @@
-package com.manymonkeys.model
+package com.manymonkeys.model.cinema
 
 import reflect.{BooleanBeanProperty, BeanProperty}
 
@@ -9,4 +9,4 @@ import reflect.{BooleanBeanProperty, BeanProperty}
 
 case class Person (@BeanProperty var name: String = "Joe",
                    @BeanProperty var surname: String = "Dow",
-                   @BeanProperty var role: Role) {}
+                   @BeanProperty var roles: java.util.Set[Role]) {}

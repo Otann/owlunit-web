@@ -1,4 +1,4 @@
-package com.manymonkeys.service.cinema;
+package com.manymonkeys.service.cinema.impl;
 
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.core.ii.IiDao;
@@ -12,16 +12,16 @@ import java.util.UUID;
  * @author Anton Chebotaev
  *         Owls Proprietary
  */
-public class TagService {
+public class TagServiceImpl {
 
     @Autowired
     protected IiDao dao;
 
-    private static final String CLASS_MARK_KEY = TagService.class.getName();
+    private static final String CLASS_MARK_KEY = TagServiceImpl.class.getName();
     private static final String CLASS_MARK_VALUE = "#";
     private static final String META_KEY_NAME = CLASS_MARK_KEY + ".NAME";
 
-    public Ii createTag(String name) {
+    protected Ii createTag(String name) {
         Ii item = dao.createInformationItem();
         dao.setUnindexedMeta(item, CLASS_MARK_KEY, CLASS_MARK_VALUE);
 

@@ -2,24 +2,30 @@ package com.manymonkeys.service.auth.impl;
 
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.core.ii.IiDao;
+import com.manymonkeys.model.user.User;
+import com.manymonkeys.service.auth.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import static com.manymonkeys.service.cinema.util.Utils.itemWithMeta;
-
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.NoSuchElementException;
 
+import static com.manymonkeys.service.cinema.util.Utils.itemWithMeta;
+
 /**
  * Many Monkeys
  *
  * @author Anton Chebotaev
+ * @author Ilya Pimenov
  */
-public class UserServiceImpl {
+public class UserServiceImpl implements UserService {
 
+    //Todo Anton Chebotaev - Move to ii-service.properties
+    public static final String HASH_ALGORITHM = "MD5";
+    public static final int HASH_LENGTH = 16;
     @Autowired
-    IiDao dao;
+    private IiDao dao;
 
     public static final String LOGIN = UserServiceImpl.class.getName() + ".LOGIN";
     private static final String PASSWORD = UserServiceImpl.class.getName() + ".PASSWORD";
@@ -29,27 +35,28 @@ public class UserServiceImpl {
     public double followerWeight = 10d;
     public double ratingsMultiplicator = 5d;
 
-    public Ii createUser(String login, String password) {
+    public User createUser(User user) {
         //TODO Ilya Pimenov - validate login name to be alphanumeric
-        Ii user = dao.createInformationItem();
-        dao.setUnindexedMeta(user, LOGIN, login);
-        dao.setUnindexedMeta(user, PASSWORD, getPasswordHash(password));
-        return user;
+        Ii userIi = dao.createInformationItem();
+        dao.setUnindexedMeta(userIi, LOGIN, user.getLogin());
+        dao.setUnindexedMeta(userIi, PASSWORD, getPasswordHash(user.getPassword()));
+        return toDomainClass(userIi);
     }
 
-    public Ii getUser(String login) {
+    public User getUser(String login) {
         try {
-            Ii blankUser = dao.load(LOGIN, login).iterator().next();
-            return dao.loadMetadata(blankUser);
+            return toDomainClass(retrieve(login));
         } catch (NoSuchElementException e) {
             return null;
         }
     }
 
+    //Todo Anton Chebotaev - Remove "Ii" type from contract
     public void follow(Ii follower, Ii followed) {
         dao.setComponentWeight(follower, followed, followerWeight);
     }
 
+    //Todo Anton Chebotaev - Remove "Ii" type from contract
     public void unfollow(Ii follower, Ii followed) {
         dao.removeComponent(follower, followed);
     }
@@ -58,32 +65,64 @@ public class UserServiceImpl {
         dao.setComponentWeight(user, movie, rate * ratingsMultiplicator);
     }
 
-    public String getLogin(Ii user) {
+    public User setPassword(User user, String password) {
+        return toDomainClass(dao.setMeta(retrieve(user), PASSWORD, getPasswordHash(password)));
+    }
+
+    public Boolean checkPassword(User user, String password) {
+        return getPasswordHash(password).equals(user.getPassword());
+    }
+
+    /*-- - - - - - - - -\
+    |   P R I V A T E   |
+    \__________________*/
+
+    private Ii retrieve(User user) {
+        return retrieve(user.getLogin());
+    }
+
+    private Ii retrieve(String login) {
+        Ii blankUser = dao.load(LOGIN, login).iterator().next();
+        return dao.loadMetadata(blankUser);
+    }
+
+    private User toDomainClass(Ii userIi) {
+        return new User(getLogin(userIi), getPassword(userIi));
+    }
+
+    private String getLogin(Ii user) {
         return itemWithMeta(dao, user).getMeta(LOGIN);
     }
 
-    public void setPassword(Ii item, String password) {
-        dao.setMeta(item, PASSWORD, getPasswordHash(password));
-    }
-
-    public boolean checkPassword(Ii user, String password) {
-        return getPasswordHash(password).equals(user.getMeta(PASSWORD));
+    private String getPassword(Ii user) {
+        return user.getMeta(PASSWORD);
     }
 
     private static String getPasswordHash(String password) {
         try {
-            MessageDigest md5 = MessageDigest.getInstance("MD5");
+            MessageDigest md5 = MessageDigest.getInstance(HASH_ALGORITHM);
             md5.reset();
             md5.update((password + SALT).getBytes());
             BigInteger hash = new BigInteger(1, md5.digest());
-            return hash.toString(16);
+            return hash.toString(HASH_LENGTH);
         } catch (NoSuchAlgorithmException e) {
             // Well, there is
+
+            //Todo Anton Chebotaev - "well, there is" what, my ass? Add exception handling here
+            //introduce specific "ApplicationException" class, with appropriate subclasses
             return null;
         }
     }
 
-    public void setFollowerWeight(double followerWeight) {
-        this.followerWeight = followerWeight;
+    /*-- - - - - - - - - - - - - - - - -\
+    |   G E T T E R S  &  S E T T E R S |
+    \_________________________________ */
+
+    public IiDao getDao() {
+        return dao;
+    }
+
+    public void setDao(IiDao dao) {
+        this.dao = dao;
     }
 }

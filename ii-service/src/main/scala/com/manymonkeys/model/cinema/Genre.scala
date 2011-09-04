@@ -7,4 +7,4 @@ import reflect.BeanProperty
  * Owl Proprietary
  */
 
-case class Genre (@BeanProperty var name: String = "howl") {}
+case class Genre (@BeanProperty var name: String = "pulp fiction") {}

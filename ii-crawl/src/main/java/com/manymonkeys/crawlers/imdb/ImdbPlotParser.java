@@ -4,7 +4,10 @@ import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.crawlers.common.CassandraCrawler;
 import com.manymonkeys.crawlers.common.TimeWatch;
 import com.manymonkeys.service.cinema.impl.MovieServiceImpl;
+<<<<<<< HEAD
 import me.prettyprint.hector.api.Keyspace;
+=======
+>>>>>>> All pending changes
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

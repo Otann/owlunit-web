@@ -1,12 +1,14 @@
 package com.manymonkeys.ex.json.controllers.impl;
 
-import com.manymonkeys.core.algo.Recommender;
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.ex.json.controllers.OwlsMovieApi;
+<<<<<<< HEAD
 import com.manymonkeys.model.cinema.Person;
 import com.manymonkeys.model.cinema.Role;
 import com.manymonkeys.service.cinema.MovieService;
 import com.manymonkeys.service.cinema.PersonService;
+=======
+>>>>>>> All pending changes
 import com.manymonkeys.service.cinema.impl.MovieServiceImpl;
 import com.manymonkeys.service.cinema.impl.PersonServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +44,18 @@ public class OwlsMovieApiImpl implements OwlsMovieApi {
         Ii movie = movieService.createMovie(name, Long.parseLong(year));
         movieService.createOrUpdateDescription(movie, description);
         for (Person person : persons) {
+<<<<<<< HEAD
             for (Role role : person.getRoles()) {
                 movieService.addPerson(movie, personService.findOrCreate(person), role);
             }
+=======
+            movieService.addPerson(
+                    movie,
+                    personService.findOrCreate(
+                            person.getName() + " " + person.getSurname(),
+                            PersonServiceImpl.Role.valueOf(person.getRole().name())),
+                    PersonServiceImpl.Role.valueOf(person.getRole().name()));
+>>>>>>> All pending changes
         }
     }
 

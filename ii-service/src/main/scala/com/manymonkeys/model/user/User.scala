@@ -7,4 +7,5 @@ import reflect.BeanProperty
  * Owl Proprietary
  */
 
-case class User (@BeanProperty var name: String = "howl") {}
+case class User(@BeanProperty var login: String = "joe",
+                @BeanProperty var password: String = "qwerty") {}

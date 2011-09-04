@@ -1,8 +1,11 @@
 package com.manymonkeys.ex.json.mock;
 
 import com.manymonkeys.core.ii.Ii;
+<<<<<<< HEAD
 import com.manymonkeys.service.cinema.impl.MovieServiceImpl;
 import com.manymonkeys.service.cinema.impl.TagServiceImpl;
+=======
+>>>>>>> All pending changes
 
 import java.util.HashMap;
 import java.util.Map;

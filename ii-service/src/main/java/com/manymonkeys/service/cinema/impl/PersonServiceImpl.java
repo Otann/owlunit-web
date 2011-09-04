@@ -4,18 +4,24 @@ import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.core.ii.IiDao;
 import com.manymonkeys.model.cinema.Person;
 import com.manymonkeys.model.cinema.Role;
+import com.manymonkeys.service.cinema.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
-import static com.manymonkeys.service.cinema.util.Utils.itemWithMeta;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import static com.manymonkeys.service.cinema.util.Utils.itemWithMeta;
 
 /**
  * @author Anton Chebotaev
  * @author Ilya Pimenov
  *         Owls Proprietary
  */
-public class PersonServiceImpl {
+public class PersonServiceImpl implements PersonService {
 
+    public static final String FULLNAME_DELIMITER = " ";
     @Autowired
     private IiDao dao;
 
@@ -26,7 +32,41 @@ public class PersonServiceImpl {
     private static final String META_KEY_ROLES = CLASS_MARK_KEY + ".ROLES";
     private static final String ROLES_DELIMITER = "#";
 
-    public Ii createPerson(Person person) {
+    public Person createPerson(Person person) {
+        return toDomainClass(create(person));
+    }
+
+    public Boolean isPerson(Person person) {
+        return itemWithMeta(dao, retrieve(person)).getMeta(CLASS_MARK_KEY) != null;
+    }
+
+    public Person addRole(Person person, Role role) {
+        Ii personIi = retrieve(person);
+        Set<Role> roles = getRoles(personIi);
+        if (roles.contains(role)) {
+            return toDomainClass(personIi);
+        } else {
+            roles.add(role);
+            return toDomainClass(dao.setMeta(personIi, META_KEY_ROLES, rolesToString(roles)));
+        }
+    }
+
+    public Person findOrCreate(Person person) {
+        Collection<Ii> persons = this.getPersons(fullName(person));
+        Ii personIi;
+        if (persons.isEmpty()) {
+            personIi = create(person);
+        } else {
+            personIi = persons.iterator().next();
+        }
+        return toDomainClass(personIi);
+    }
+
+    /*-- - - - - - - - -\
+    |   P R I V A T E   |
+    \__________________*/
+
+    public Ii create(Person person) {
         Ii personIi = dao.createInformationItem();
         dao.setUnindexedMeta(personIi, CLASS_MARK_KEY, CLASS_MARK_VALUE);
 
@@ -35,7 +75,17 @@ public class PersonServiceImpl {
         return personIi;
     }
 
-    public Collection<Ii> getPersons(String fullName) {
+    /* Ilya Pimenov - special hack with package visibility to use it later in MovieService */
+    Ii retrieve(Person person) {
+        Collection<Ii> persons = this.getPersons(fullName(person));
+        if (persons.isEmpty()) {
+            return null;
+        } else {
+            return persons.iterator().next();
+        }
+    }
+
+    private Collection<Ii> getPersons(String fullName) {
         Collection<Ii> blankItems = dao.load(META_KEY_FULL_NAME, fullName);
         if (blankItems.isEmpty()) {
             return null;
@@ -43,39 +93,19 @@ public class PersonServiceImpl {
         return dao.loadMetadata(blankItems);
     }
 
-    public boolean isPerson(Ii item) {
-        return itemWithMeta(dao, item).getMeta(CLASS_MARK_KEY) != null;
+    private Person toDomainClass(Ii personIi) {
+        String[] name = getName(personIi);
+        return new Person(name[0], name[1], getRoles(personIi));
     }
 
-    public Set<Role> getRoles(Ii person) {
+    private String[] getName(Ii personIi) {
+        return itemWithMeta(dao, personIi).getMeta(META_KEY_FULL_NAME).split(FULLNAME_DELIMITER);
+    }
+
+    private Set<Role> getRoles(Ii person) {
         String rolesRaw = itemWithMeta(dao, person).getMeta(META_KEY_ROLES);
         return rolesFromString(rolesRaw);
     }
-
-    public Ii addRole(Ii person, Role role) {
-        Set<Role> roles = getRoles(person);
-        if (roles.contains(role)) {
-            return person;
-        } else {
-            roles.add(role);
-            return dao.setMeta(person, META_KEY_ROLES, rolesToString(roles));
-        }
-    }
-
-    public Ii findOrCreate(Person person) {
-        Collection<Ii> persons = this.getPersons(fullName(person));
-        Ii personIi;
-        if (persons.isEmpty()) {
-            personIi = createPerson(person);
-        } else {
-            personIi = persons.iterator().next();
-        }
-        return personIi;
-    }
-
-    /*-- - - - - - - - -\
-    |   P R I V A T E   |
-    \__________________*/
 
     private String rolesToString(Collection<Role> roles) {
         StringBuilder buffer = new StringBuilder();
@@ -100,10 +130,15 @@ public class PersonServiceImpl {
     }
 
     private String fullName(Person person) {
-        return person.getName() + " " + person.getSurname();
+        return person.getName() + FULLNAME_DELIMITER + person.getSurname();
     }
+
+    /*-- - - - - - - - - - - - - - - - -\
+   |   G E T T E R S  &  S E T T E R S |
+   \_________________________________ */
 
     public void setDao(IiDao dao) {
         this.dao = dao;
     }
+
 }

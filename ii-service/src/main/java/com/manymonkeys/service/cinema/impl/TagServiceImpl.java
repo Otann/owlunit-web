@@ -3,10 +3,11 @@ package com.manymonkeys.service.cinema.impl;
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.core.ii.IiDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import static com.manymonkeys.service.cinema.util.Utils.itemWithMeta;
 
 import java.util.Collection;
 import java.util.UUID;
+
+import static com.manymonkeys.service.cinema.util.Utils.itemWithMeta;
 
 /**
  * @author Anton Chebotaev

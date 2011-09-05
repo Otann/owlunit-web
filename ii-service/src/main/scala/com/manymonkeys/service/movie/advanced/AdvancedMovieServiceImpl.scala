@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import com.manymonkeys.core.algo.Recommender
 import com.manymonkeys.core.ii.{Ii, IiDao}
 import com.manymonkeys.service.movie.advanced.AdvancedMovieServiceImpl._
-import scala.collection.JavaConversions._
 import scalaj.collection.Imports._
 
 
@@ -69,7 +68,7 @@ class AdvancedMovieServiceImpl extends AdvancedMovieService {
     dao.setUnindexedMeta(item, KEY_PLOT, movie.description)
   }
 
-  def getMostLike(movie: Movie) = recommender.getMostLike(movie, dao).asScala.map({case (k,v) => (k.asInstanceOf[Movie], v)}).toMap // false negative
+  def getMostLike(movie: Movie) = recommender.getMostLike(movie, dao).asScala.toMap.map({case (k,v) => (iiToMovie(k), v)}) // false negative
 
   def createOrUpdateDescription(movie: Movie, description: String) = dao.setMeta(movie, KEY_PLOT, description)
 

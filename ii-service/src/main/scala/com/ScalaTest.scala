@@ -8,7 +8,7 @@ package com
 
 class ScalaTest {
 
-  def returnOption(): Option[String] = Option("ok")
+  def returnOption(): Option[String] = Option(null)
 
   def returnDouble(): Double = 1.0
 

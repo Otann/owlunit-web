@@ -28,7 +28,7 @@ public class MovieLensMoviesCrawler {
     MovieService movieService;
 
     @Autowired
-    KeywordService tagService;
+    KeywordService keywordService;
 
     public static final String SERVICE_NAME = "movielens";
     private static final String A_K_A = "a.k.a.";
@@ -81,9 +81,9 @@ public class MovieLensMoviesCrawler {
             watch.tick(log, 250, "Crawling movielens.", "movies");
 
             for (String genre : genres) {
-                Keyword tag = tagService.loadKeyword(genre);
+                Keyword tag = keywordService.loadKeyword(genre);
                 if (tag == null) {
-                    tag = tagService.createKeyword(genre);
+                    tag = keywordService.createKeyword(genre);
                 }
                 movieService.addGenre(movie, movieService.genreKeyword(tag));
             }

@@ -1,12 +1,10 @@
 package com.manymonkeys.crawlers.movielens;
 
-import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.crawlers.common.TimeWatch;
-<<<<<<< HEAD
-import com.manymonkeys.service.cinema.impl.KeywordServiceImpl;
-import com.manymonkeys.service.cinema.impl.MovieServiceImpl;
-=======
->>>>>>> All pending changes
+import com.manymonkeys.model.cinema.Keyword;
+import com.manymonkeys.model.cinema.Movie;
+import com.manymonkeys.service.cinema.KeywordService;
+import com.manymonkeys.service.cinema.MovieService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +22,15 @@ import java.util.regex.Pattern;
  */
 public class MovieLensTagsCrawler {
 
+    public static final String EMPTY_STRING = "";
+
     final Logger log = LoggerFactory.getLogger(MovieLensTagsCrawler.class);
 
     @Autowired
-    MovieServiceImpl movieService;
+    MovieService movieService;
 
     @Autowired
-    KeywordServiceImpl tagService;
+    KeywordService tagService;
 
     public static void main(String[] args) throws IOException {
         new MovieLensTagsCrawler().run(args[0]);
@@ -40,15 +40,15 @@ public class MovieLensTagsCrawler {
 
         BufferedReader fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF8"));
 
-        Map<String, Ii> tagCache = new HashMap<String, Ii>();
-        Map<String, Ii> moviesCache = new HashMap<String, Ii>();
+        Map<String, Keyword> keywordLocalCache = new HashMap<String, Keyword>();
+        Map<String, Movie> movieLocalCache = new HashMap<String, Movie>();
 
         TimeWatch watch = TimeWatch.start();
 
         String line = fileReader.readLine();
         Pattern p = Pattern.compile("\\:\\:(.*)\\:\\:");
         while (line != null) {
-            if ("".equals(line))
+            if (EMPTY_STRING.equals(line))
                 continue;
 
             try {
@@ -58,27 +58,23 @@ public class MovieLensTagsCrawler {
                 String externalId = str.substring(0, str.indexOf(':'));
                 String tagName = str.substring(str.lastIndexOf(':') + 1, str.length()).toLowerCase();
 
-                Ii movieItem = moviesCache.get(externalId);
-                if (movieItem == null) {
-                    movieItem = movieService.loadByExternalId(MovieLensMoviesCrawler.SERVICE_NAME, externalId);
-                    moviesCache.put(externalId, movieItem);
+                Movie movie = movieLocalCache.get(externalId);
+                if (movie == null) {
+                    movie = movieService.loadByExternalId(MovieLensMoviesCrawler.SERVICE_NAME, externalId);
+                    movieLocalCache.put(externalId, movie);
                 }
 
                 watch.tick(log, 2000, "Processing movielens.", "tags");
 
-                Ii tagItem = tagCache.get(tagName);
-                if (tagItem == null) {
-                    tagItem = tagService.createTag(tagName);
-                    tagCache.put(tagName, tagItem);
+                Keyword keyword = keywordLocalCache.get(tagName);
+                if (keyword == null) {
+                    keyword = tagService.createKeyword(tagName);
+                    keywordLocalCache.put(tagName, keyword);
                 }
 
-                Double weight = movieItem.getComponentWeight(tagItem);
-                if (weight == null) {
-                    movieService.addKeyword(movieItem, tagItem);
+                if (movieService.hasKeyword(movie, keyword)) {
+                    movieService.addKeyword(movie, keyword);
                 }
-//                    else {
-//                        movieService.addKeyword(movieItem, tagItem);
-//                    }
 
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();
@@ -90,8 +86,7 @@ public class MovieLensTagsCrawler {
             }
 
         }
-
-        log.info("All done");
+        log.info("All done.");
     }
 
 }

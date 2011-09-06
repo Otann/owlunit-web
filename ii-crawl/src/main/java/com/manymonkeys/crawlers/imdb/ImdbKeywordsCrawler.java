@@ -5,8 +5,8 @@ import com.manymonkeys.crawlers.common.PropertyManager;
 import com.manymonkeys.crawlers.common.TimeWatch;
 import com.manymonkeys.model.cinema.Keyword;
 import com.manymonkeys.model.cinema.Movie;
-import com.manymonkeys.service.cinema.impl.MovieServiceImpl;
-import com.manymonkeys.service.cinema.impl.KeywordServiceImpl;
+import com.manymonkeys.service.cinema.KeywordService;
+import com.manymonkeys.service.cinema.MovieService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,19 +22,20 @@ import java.util.regex.Pattern;
  * Many Monkeys
  *
  * @author Anton Chebotaev
+ * @author Ilya Pimenov
  */
-public class ImdbKeywordsParser extends CassandraCrawler {
+public class ImdbKeywordsCrawler extends CassandraCrawler {
 
     @Autowired
-    MovieServiceImpl movieService;
+    MovieService movieService;
 
     @Autowired
-    KeywordServiceImpl tagService;
+    KeywordService keywordService;
 
-    final Logger logger = LoggerFactory.getLogger(ImdbKeywordsParser.class);
+    final Logger logger = LoggerFactory.getLogger(ImdbKeywordsCrawler.class);
 
     static final Pattern keywordCounter = Pattern.compile("([^\\s]+ \\(\\d+\\))");
-    static final Pattern keywordLine    = Pattern.compile("^([^\\t]+) \\(\\d+\\)\\s+([^\\s]+)$");
+    static final Pattern keywordLine = Pattern.compile("^([^\\t]+) \\(\\d+\\)\\s+([^\\s]+)$");
 
 
     final double MIN_WEIGHT = Double.parseDouble(PropertyManager.get(PropertyManager.Property.IMDB_WEIGHT_KEYWORD_MIN));
@@ -46,12 +47,12 @@ public class ImdbKeywordsParser extends CassandraCrawler {
 
     String filePath;
 
-    public ImdbKeywordsParser(String filePath) {
+    public ImdbKeywordsCrawler(String filePath) {
         this.filePath = filePath;
     }
 
     public static void main(String[] args) {
-        new ImdbKeywordsParser(args[0]).crawl();
+        new ImdbKeywordsCrawler(args[0]).crawl();
     }
 
     @Override
@@ -62,7 +63,7 @@ public class ImdbKeywordsParser extends CassandraCrawler {
         Map<String, Integer> keywordsCounts = parseCounts(fileReader);
         logger.info(String.format("Found %d keywords in file %s all-in-all, now parsing movies", keywordsCounts.size(), filePath));
 
-        parseMovies(keywordsCounts, fileReader, movieService);
+        parseMovies(keywordsCounts, fileReader);
 
     }
 
@@ -70,7 +71,7 @@ public class ImdbKeywordsParser extends CassandraCrawler {
         Map<String, Integer> result = new HashMap<String, Integer>();
 
         String line = reader.readLine();
-        while(line != null && !line.contains("keywords in use"))
+        while (line != null && !line.contains("keywords in use"))
             line = reader.readLine();
 
         if (line == null)
@@ -106,8 +107,7 @@ public class ImdbKeywordsParser extends CassandraCrawler {
         return result;
     }
 
-    void parseMovies(Map<String, Integer> keywordsCounts, BufferedReader reader, MovieServiceImpl service) throws IOException {
-
+    void parseMovies(Map<String, Integer> keywordsCounts, BufferedReader reader) throws IOException {
 
         TimeWatch watch = TimeWatch.start();
 
@@ -115,44 +115,45 @@ public class ImdbKeywordsParser extends CassandraCrawler {
 
         String line = reader.readLine();
         String oldMovieName = null;
-        Movie movieItem = null;
+        Movie movie = null;
 
         while (line != null) {
             try {
-
                 watch.tick(logger, 100000, "Processing movies", "lines");
 
                 Matcher matcher = keywordLine.matcher(line);
-                if(!matcher.matches())
+                if (!matcher.matches()) {
                     continue;
+                }
 
                 String movieName = matcher.group(1);
                 String keywordName = matcher.group(2);
 
                 if (!movieName.equals(oldMovieName)) {
                     oldMovieName = movieName;
-                    movieItem = service.loadByName(movieName);
-                } else if (movieItem == null) {
+                    movie = movieService.loadByName(movieName);
+                } else if (movie == null) {
                     // this means movie was not found previously
                     continue;
                 }
 
-                if (movieItem == null)
+                if (movie == null)
                     continue;
 
-                Keyword keywordItem = null;
+                Keyword keyword = null;
                 if (localCache.containsKey(keywordName)) {
-                    keywordItem = k//tagService.getEmptyTag(localCache.get(keywordName));
+                    keyword = keywordService.loadKeyword(localCache.get(keywordName));
                 } else {
-                    keywordItem = tagService.createTag(keywordName);
-                    localCache.put(keywordName, keywordItem.getUUID());
+                    keyword = keywordService.createKeyword(keywordName);
+                    localCache.put(keywordName, keyword.getUuid());
                 }
 
                 Integer count = keywordsCounts.get(keywordName);
-                if (count == null)
+                if (count == null) {
                     continue;
+                }
                 double frequency = 1d * count / MAX_COUNT;
-                service.addKeyword(movieItem, keywordItem);
+                movieService.addKeyword(movie, keyword);
 
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();
@@ -163,5 +164,6 @@ public class ImdbKeywordsParser extends CassandraCrawler {
                 line = reader.readLine();
             }
         }
+
     }
 }

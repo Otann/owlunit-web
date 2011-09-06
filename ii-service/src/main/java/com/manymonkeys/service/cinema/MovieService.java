@@ -22,6 +22,8 @@ public interface MovieService {
 
     Movie addPerson(Movie movie, Person person, Role role);
 
+    Boolean hasKeyword(Movie movie, Keyword keyword);
+
     Movie addKeyword(Movie movie, Keyword keyword);
 
     Movie addTagline(Movie movie, String tagline);
@@ -29,6 +31,8 @@ public interface MovieService {
     Movie addAkaName(Movie movie, String akaName, Boolean index);
 
     Movie addTranslateName(Movie movie, String translateName, Boolean index);
+
+    Genre genreKeyword(Keyword keyword);
 
     Movie addGenre(Movie movie, Genre genre);
 

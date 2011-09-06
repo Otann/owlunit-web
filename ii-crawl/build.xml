@@ -18,7 +18,7 @@
     <target name="crawl-movielens-movies">
         <antcall target="crawl-file">
             <param name="parse.greeting" value="Crawling movies from movielens"/>
-            <param name="parse.classname" value="com.manymonkeys.crawlers.movielens.MovieLensMoviesParser"/>
+            <param name="parse.classname" value="com.manymonkeys.crawlers.movielens.MovieLensMoviesCrawler"/>
             <param name="parse.filename" value="${movielens.file.movies}" />
         </antcall>
     </target>
@@ -26,7 +26,7 @@
     <target name="crawl-movielens-tags">
         <antcall target="crawl-file">
             <param name="parse.greeting" value="Crawling tags from movielens"/>
-            <param name="parse.classname" value="com.manymonkeys.crawlers.movielens.MovieLensTagsParser"/>
+            <param name="parse.classname" value="com.manymonkeys.crawlers.movielens.MovieLensTagsCrawler"/>
             <param name="parse.filename" value="${movielens.file.tags}" />
         </antcall>
     </target>
@@ -46,7 +46,7 @@
     <target name="crawl-imdb-actors">
         <antcall target="crawl-file">
             <param name="parse.greeting"  value="Crawling IMDB actors"/>
-            <param name="parse.classname" value="com.manymonkeys.crawlers.imdb.ImdbPersonParser"/>
+            <param name="parse.classname" value="com.manymonkeys.crawlers.imdb.ImdbPersonCrawler"/>
             <param name="parse.filename"  value="${imdb.file.actors}" />
             <param name="parse.weight"    value="${imdb.weight.actor}"/>
             <param name="parse.role"      value="${imdb.role.actor}"/>
@@ -56,7 +56,7 @@
     <target name="crawl-imdb-actresses">
         <antcall target="crawl-file">
             <param name="parse.greeting"  value="Crawling IMDB actress"/>
-            <param name="parse.classname" value="com.manymonkeys.crawlers.imdb.ImdbPersonParser"/>
+            <param name="parse.classname" value="com.manymonkeys.crawlers.imdb.ImdbPersonCrawler"/>
             <param name="parse.filename"  value="${imdb.file.actress}" />
             <param name="parse.weight"    value="${imdb.weight.actress}"/>
             <param name="parse.role"      value="${imdb.role.actress}"/>
@@ -66,7 +66,7 @@
     <target name="crawl-imdb-producers">
         <antcall target="crawl-file">
             <param name="parse.greeting"  value="Crawling IMDB producers"/>
-            <param name="parse.classname" value="com.manymonkeys.crawlers.imdb.ImdbPersonParser"/>
+            <param name="parse.classname" value="com.manymonkeys.crawlers.imdb.ImdbPersonCrawler"/>
             <param name="parse.filename"  value="${imdb.file.producers}" />
             <param name="parse.weight"    value="${imdb.weight.producer}"/>
             <param name="parse.role"      value="${imdb.role.producer}"/>
@@ -76,7 +76,7 @@
     <target name="crawl-imdb-directors">
         <antcall target="crawl-file">
             <param name="parse.greeting"  value="Crawling IMDB directors"/>
-            <param name="parse.classname" value="com.manymonkeys.crawlers.imdb.ImdbPersonParser"/>
+            <param name="parse.classname" value="com.manymonkeys.crawlers.imdb.ImdbPersonCrawler"/>
             <param name="parse.filename"  value="${imdb.file.directors}" />
             <param name="parse.weight"    value="${imdb.weight.producer}"/>
             <param name="parse.role"      value="${imdb.role.director}"/>
@@ -86,7 +86,7 @@
     <target name="crawl-imdb-keywords">
         <antcall target="crawl-file">
             <param name="parse.greeting"  value="Crawling IMDB keywords"/>
-            <param name="parse.classname" value="com.manymonkeys.crawlers.imdb.ImdbKeywordsParser"/>
+            <param name="parse.classname" value="com.manymonkeys.crawlers.imdb.ImdbKeywordsCrawler"/>
             <param name="parse.filename"  value="${imdb.file.keywords}" />
         </antcall>
     </target>
@@ -94,7 +94,7 @@
     <target name="crawl-imdb-taglines">
         <antcall target="crawl-file">
             <param name="parse.greeting"  value="Crawling IMDB taglines"/>
-            <param name="parse.classname" value="com.manymonkeys.crawlers.imdb.ImdbTaglinesParser"/>
+            <param name="parse.classname" value="com.manymonkeys.crawlers.imdb.ImdbTaglinesCrawler"/>
             <param name="parse.filename"  value="${imdb.file.taglines}" />
         </antcall>
     </target>
@@ -102,7 +102,7 @@
     <target name="crawl-imdb-plot">
         <antcall target="crawl-file">
             <param name="parse.greeting"  value="Crawling IMDB plots"/>
-            <param name="parse.classname" value="com.manymonkeys.crawlers.imdb.ImdbPlotParser"/>
+            <param name="parse.classname" value="com.manymonkeys.crawlers.imdb.ImdbPlotCrawler"/>
             <param name="parse.filename"  value="${imdb.file.plot}" />
         </antcall>
     </target>

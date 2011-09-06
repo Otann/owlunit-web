@@ -4,9 +4,11 @@ import com.manymonkeys.core.algo.Recommender;
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.core.ii.IiDao;
 import com.manymonkeys.model.cinema.*;
+import com.manymonkeys.service.cinema.KeywordService;
 import com.manymonkeys.service.cinema.MovieService;
 import com.manymonkeys.service.cinema.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
+import sun.java2d.loops.GeneralRenderer;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -54,6 +56,7 @@ public class MovieServiceImpl implements MovieService {
         return toDomainClass(retrieveByName(name));
     }
 
+    @Override
     public Movie createMovie(Movie movie) {
         Ii movieIi = dao.createInformationItem();
         dao.setUnindexedMeta(movieIi, CLASS_MARK_KEY, CLASS_MARK_VALUE);
@@ -64,14 +67,17 @@ public class MovieServiceImpl implements MovieService {
         return toDomainClass(movieIi);
     }
 
+    @Override
     public Map<Movie, Double> getMostLike(Movie movie) {
         return toDomainClass(recommender.getMostLike(retrieve(movie), dao));
     }
 
+    @Override
     public Movie createOrUpdateDescription(Movie movie, String description) {
         return toDomainClass(dao.setMeta(retrieve(movie), META_KEY_PLOT, description));
     }
 
+    @Override
     public Movie loadByExternalId(String service, String externalId) {
         try {
             //Todo Anton Chebotaev - Method should be rewriteen to return "null" without catching exception
@@ -82,6 +88,7 @@ public class MovieServiceImpl implements MovieService {
         }
     }
 
+    @Override
     public Movie addPerson(Movie movie, Person person, Role role) {
         double weight;
         if (role == null || initialRoleWeight.containsKey(role)) {
@@ -98,24 +105,39 @@ public class MovieServiceImpl implements MovieService {
                         weight));
     }
 
+    @Override
+    public Boolean hasKeyword(Movie movie, Keyword keyword) {
+        return retrieve(movie).getComponentWeight(retrieve(keyword)) != null;
+    }
+
+    @Override
     public Movie addKeyword(Movie movie, Keyword keyword) {
         return toDomainClass(dao.setComponentWeight(retrieve(movie),
                 retrieve(keyword),
                 initialKeywordWeight));
     }
 
+    @Override
     public Movie addTagline(Movie movie, String tagline) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public Movie addAkaName(Movie movie, String akaName, Boolean index) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public Movie addTranslateName(Movie movie, String translateName, Boolean index) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public Genre genreKeyword(Keyword keyword){
+        return new Genre(keyword.getName());
+    }
+
+    @Override
     public Movie addGenre(Movie movie, Genre genre) {
         return toDomainClass(
                 dao.setComponentWeight(retrieve(movie),
@@ -123,6 +145,7 @@ public class MovieServiceImpl implements MovieService {
                         initialGenreWeight));
     }
 
+    @Override
     public Movie addExternalId(Movie movie, String service, String externalId) {
         return toDomainClass(
                 dao.setUnindexedMeta(

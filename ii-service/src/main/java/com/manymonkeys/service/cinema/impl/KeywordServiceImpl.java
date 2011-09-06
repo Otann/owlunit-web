@@ -26,6 +26,7 @@ public class KeywordServiceImpl implements KeywordService {
     private static final String CLASS_MARK_VALUE = "#";
     private static final String META_KEY_NAME = CLASS_MARK_KEY + ".NAME";
 
+    @Override
     public Keyword createKeyword(String name) {
         Ii item = dao.createInformationItem();
         dao.setUnindexedMeta(item, CLASS_MARK_KEY, CLASS_MARK_VALUE);
@@ -34,10 +35,12 @@ public class KeywordServiceImpl implements KeywordService {
         return toDomainClass(item);
     }
 
+    @Override
     public Keyword loadKeyword(UUID uuid) {
         return toDomainClass(dao.load(uuid));
     }
 
+    @Override
     public Keyword loadKeyword(String name) {
         //TODO Anton Chebotaev - discuss if we have unique tags or not
         Collection<Ii> blankItems = dao.load(META_KEY_NAME, name);
@@ -48,16 +51,18 @@ public class KeywordServiceImpl implements KeywordService {
         }
     }
 
+    @Override
     public List<Keyword> listKeywords() {
         Collection<Ii> blankItems = dao.load(CLASS_MARK_KEY, CLASS_MARK_VALUE);
         return toDomainClass(dao.loadMetadata(blankItems));
     }
 
-
+    @Override
     public Keyword updateName(Keyword keyword, String name) {
         return toDomainClass(dao.setMeta(retrieve(keyword), META_KEY_NAME, name));
     }
 
+    @Override
     public Boolean isKeyword(Keyword keyword) {
         return itemWithMeta(dao, retrieve(keyword)).getMeta(CLASS_MARK_KEY) != null;
     }

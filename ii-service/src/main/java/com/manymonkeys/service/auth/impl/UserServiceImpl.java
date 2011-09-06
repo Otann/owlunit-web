@@ -35,6 +35,7 @@ public class UserServiceImpl implements UserService {
     public double followerWeight = 10d;
     public double ratingsMultiplicator = 5d;
 
+    @Override
     public User createUser(User user) {
         //TODO Ilya Pimenov - validate login name to be alphanumeric
         Ii userIi = dao.createInformationItem();
@@ -43,6 +44,7 @@ public class UserServiceImpl implements UserService {
         return toDomainClass(userIi);
     }
 
+    @Override
     public User getUser(String login) {
         try {
             return toDomainClass(retrieve(login));
@@ -65,10 +67,12 @@ public class UserServiceImpl implements UserService {
         dao.setComponentWeight(user, movie, rate * ratingsMultiplicator);
     }
 
+    @Override
     public User setPassword(User user, String password) {
         return toDomainClass(dao.setMeta(retrieve(user), PASSWORD, getPasswordHash(password)));
     }
 
+    @Override
     public Boolean checkPassword(User user, String password) {
         return getPasswordHash(password).equals(user.getPassword());
     }

@@ -16,4 +16,6 @@ public interface PersonService {
     Person addRole(Person person, Role role);
 
     Person findOrCreate(Person person);
+
+    Person findOrCreate(Person person, Role role);
 }

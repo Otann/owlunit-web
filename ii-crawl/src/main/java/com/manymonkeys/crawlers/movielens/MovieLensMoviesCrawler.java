@@ -1,21 +1,18 @@
 package com.manymonkeys.crawlers.movielens;
 
-import com.manymonkeys.core.ii.Ii;
-import com.manymonkeys.crawlers.common.PropertyManager;
-import com.manymonkeys.crawlers.common.PropertyManager.Property;
 import com.manymonkeys.crawlers.common.TimeWatch;
-<<<<<<< HEAD
-import com.manymonkeys.service.cinema.impl.KeywordServiceImpl;
-import com.manymonkeys.service.cinema.impl.MovieServiceImpl;
-=======
->>>>>>> All pending changes
+import com.manymonkeys.model.cinema.Keyword;
+import com.manymonkeys.model.cinema.Movie;
+import com.manymonkeys.service.cinema.KeywordService;
+import com.manymonkeys.service.cinema.MovieService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * Many Monkeys
@@ -23,28 +20,24 @@ import java.util.Map;
  * @author Anton Chebotaev
  * @author Ilya Pimenov
  */
-public class MovieLensMoviesParser {
+public class MovieLensMoviesCrawler {
 
-    final Logger logger = LoggerFactory.getLogger(MovieLensMoviesParser.class);
-
-    @Autowired
-    MovieServiceImpl movieService;
+    final Logger log = LoggerFactory.getLogger(MovieLensMoviesCrawler.class);
 
     @Autowired
-    KeywordServiceImpl tagService;
+    MovieService movieService;
+
+    @Autowired
+    KeywordService tagService;
 
     public static final String SERVICE_NAME = "movielens";
     private static final String A_K_A = "a.k.a.";
 
-    public final double INITIAL_GENRE_WEIGHT = Double.parseDouble(PropertyManager.get(Property.MOVIELENS_GENRE_WEIGHT_INITIAL));
-
-    private static Map<String, Ii> localYearsCache = new HashMap<String, Ii>();
-
     public static void main(String[] args) throws IOException {
-        new MovieLensMoviesParser().run(args[0]);
+        new MovieLensMoviesCrawler().run(args[0]);
     }
 
-    public void run(String filePath) throws IOException, UnsupportedEncodingException {
+    public void run(String filePath) throws IOException {
 
         BufferedReader fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF8"));
 
@@ -64,10 +57,10 @@ public class MovieLensMoviesParser {
             String name = line.substring(fistSemicolon + 2, lastSemicolon - 2 - 6).trim();
             String nameTranslate = null;
             String aka = null;
-            if (name.charAt(name.length() - 1) == ')'){
+            if (name.charAt(name.length() - 1) == ')') {
                 nameTranslate = name.substring(name.indexOf("(") + 1, name.length() - 1);
                 name = name.substring(0, name.indexOf("(")).trim();
-                if (nameTranslate.startsWith(A_K_A)){
+                if (nameTranslate.startsWith(A_K_A)) {
                     aka = nameTranslate.substring(A_K_A.length(), nameTranslate.length()).trim();
                     nameTranslate = null;
                 }
@@ -75,7 +68,7 @@ public class MovieLensMoviesParser {
             String year = line.substring(lastSemicolon - 6, lastSemicolon - 2);
             String[] genres = line.substring(lastSemicolon + 1, line.length()).split("\\|");
 
-            Ii movie = movieService.createMovie(name, Long.parseLong(year));
+            Movie movie = movieService.createMovie(new Movie(name, Long.parseLong(year), null));
 
             movieService.addExternalId(movie, SERVICE_NAME, id);
             if (aka != null) {
@@ -85,30 +78,20 @@ public class MovieLensMoviesParser {
                 movieService.addTranslateName(movie, nameTranslate, true);
             }
 
-//                Ii yearItem;
-//                if (localYearsCache.containsKey(year)) {
-//                    yearItem = localYearsCache.get(year);
-//                } else {
-//                    yearItem = tagService.createTag(year);
-//                    localYearsCache.put(year, yearItem);
-//                }
-//                movieService.setComponentWeight(movie, yearItem, INITIAL_YEAR_WEIGHT);
-
-            watch.tick(logger, 250, "Crawling movielens.", "movies");
+            watch.tick(log, 250, "Crawling movielens.", "movies");
 
             for (String genre : genres) {
-                Ii tag = tagService.getTag(genre);
+                Keyword tag = tagService.loadKeyword(genre);
                 if (tag == null) {
-                    tag = tagService.createTag(genre);
+                    tag = tagService.createKeyword(genre);
                 }
-                movieService.addGenre(movie, tag);
+                movieService.addGenre(movie, movieService.genreKeyword(tag));
             }
 
             line = fileReader.readLine();
 
         }
-
-        System.out.println("All done");
+        log.info("All done");
     }
 
 }

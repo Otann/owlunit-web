@@ -1,15 +1,9 @@
 package com.manymonkeys.crawlers.imdb;
 
-import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.crawlers.common.CassandraCrawler;
 import com.manymonkeys.crawlers.common.TimeWatch;
-<<<<<<< HEAD
+import com.manymonkeys.model.cinema.Movie;
 import com.manymonkeys.service.cinema.MovieService;
-import com.manymonkeys.service.cinema.impl.MovieServiceImpl;
-import me.prettyprint.hector.api.Keyspace;
-=======
-import com.manymonkeys.service.cinema.impl.MovieServiceImpl;
->>>>>>> All pending changes
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,26 +16,26 @@ import java.util.regex.Pattern;
  * Many Monkeys
  *
  * @author Anton Chebotaev
+ * @author Ilya Pimenov
  */
-public class ImdbTaglinesParser extends CassandraCrawler {
+public class ImdbTaglinesCrawler extends CassandraCrawler {
 
-    final Logger logger = LoggerFactory.getLogger(ImdbTaglinesParser.class);
+    final Logger log = LoggerFactory.getLogger(ImdbTaglinesCrawler.class);
 
     @Autowired
-    MovieServiceImpl service;
+    MovieService movieService;
 
+    static final Pattern MOVIE_NAME = Pattern.compile("^# (.+) \\(\\d+\\)$");
+    static final Pattern TAGLINE = Pattern.compile("^\t(.+)$");
 
-    static final Pattern movieName = Pattern.compile("^# (.+) \\(\\d+\\)$");
-    static final Pattern tagline   = Pattern.compile("^\t(.+)$");
+    private String filePath;
 
-    String filePath;
-
-    public ImdbTaglinesParser(String filePath) {
+    public ImdbTaglinesCrawler(String filePath) {
         this.filePath = filePath;
     }
 
     public static void main(String[] args) {
-        new ImdbTaglinesParser(args[0]).crawl();
+        new ImdbTaglinesCrawler(args[0]).crawl();
     }
 
     @Override
@@ -50,37 +44,36 @@ public class ImdbTaglinesParser extends CassandraCrawler {
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "windows-1250"));
 
         String line = reader.readLine();
-        while(line != null && !line.contains("TAG LINES LIST"))
+        while (line != null && !line.contains("TAG LINES LIST"))
             line = reader.readLine();
 
-        parse(reader, service);
+        parse(reader);
 
     }
 
-    void parse(BufferedReader reader, MovieServiceImpl service) throws IOException {
-
+    void parse(BufferedReader reader) throws IOException {
 
         TimeWatch watch = TimeWatch.start();
 
         String line = reader.readLine();
-        Ii movieItem = null;
+        Movie movieItem = null;
         StringBuffer buffer = new StringBuffer();
 
         while (line != null) {
             try {
 
-                watch.tick(logger, 100000, "Processing taglines", "lines");
+                watch.tick(log, 100000, "Processing taglines", "lines");
 
                 Matcher matcher;
-                if ((matcher = movieName.matcher(line)).matches()) {
+                if ((matcher = MOVIE_NAME.matcher(line)).matches()) {
                     if (movieItem != null) {
-                        service.addTagline(movieItem, buffer.toString());
+                        movieService.addTagline(movieItem, buffer.toString());
                         buffer = new StringBuffer();
                     }
 
                     String movieName = matcher.group(1);
-                    movieItem = service.getByNameSimplified(movieName);
-                } else if ((matcher = tagline.matcher(line)).matches()) {
+                    movieItem = movieService.loadByName(movieName);
+                } else if ((matcher = TAGLINE.matcher(line)).matches()) {
                     if (movieItem == null)
                         continue;
 
@@ -92,15 +85,15 @@ public class ImdbTaglinesParser extends CassandraCrawler {
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);
                 e.printStackTrace(pw);
-                logger.error(String.format("Unable to parse line %s. Exception: %s", line, sw.toString()));
+                log.error(String.format("Unable to parse line %s. Exception: %s", line, sw.toString()));
             } finally {
                 line = reader.readLine();
             }
         }
 
         if (movieItem != null) {
-            service.addTagline(movieItem, buffer.toString());
+            movieService.addTagline(movieItem, buffer.toString());
         }
-
     }
+
 }

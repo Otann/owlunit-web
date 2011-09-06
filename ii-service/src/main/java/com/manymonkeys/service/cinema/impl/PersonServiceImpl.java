@@ -32,14 +32,17 @@ public class PersonServiceImpl implements PersonService {
     private static final String META_KEY_ROLES = CLASS_MARK_KEY + ".ROLES";
     private static final String ROLES_DELIMITER = "#";
 
+    @Override
     public Person createPerson(Person person) {
         return toDomainClass(create(person));
     }
 
+    @Override
     public Boolean isPerson(Person person) {
         return itemWithMeta(dao, retrieve(person)).getMeta(CLASS_MARK_KEY) != null;
     }
 
+    @Override
     public Person addRole(Person person, Role role) {
         Ii personIi = retrieve(person);
         Set<Role> roles = getRoles(personIi);
@@ -51,6 +54,12 @@ public class PersonServiceImpl implements PersonService {
         }
     }
 
+    @Override
+    public Person findOrCreate(Person person, Role role) {
+        return addRole(findOrCreate(person), role);
+    }
+
+    @Override
     public Person findOrCreate(Person person) {
         Collection<Ii> persons = this.getPersons(fullName(person));
         Ii personIi;

@@ -22,9 +22,9 @@ import java.util.regex.Pattern;
  *
  * @author Ilya Pimenov
  */
-public class MovieLensTagsParser {
+public class MovieLensTagsCrawler {
 
-    final Logger logger = LoggerFactory.getLogger(MovieLensTagsParser.class);
+    final Logger log = LoggerFactory.getLogger(MovieLensTagsCrawler.class);
 
     @Autowired
     MovieServiceImpl movieService;
@@ -33,7 +33,7 @@ public class MovieLensTagsParser {
     KeywordServiceImpl tagService;
 
     public static void main(String[] args) throws IOException {
-        new MovieLensTagsParser().run(args[0]);
+        new MovieLensTagsCrawler().run(args[0]);
     }
 
     public void run(String filePath) throws IOException {
@@ -60,11 +60,11 @@ public class MovieLensTagsParser {
 
                 Ii movieItem = moviesCache.get(externalId);
                 if (movieItem == null) {
-                    movieItem = movieService.loadByExternalId(MovieLensMoviesParser.SERVICE_NAME, externalId);
+                    movieItem = movieService.loadByExternalId(MovieLensMoviesCrawler.SERVICE_NAME, externalId);
                     moviesCache.put(externalId, movieItem);
                 }
 
-                watch.tick(logger, 2000, "Processing movielens.", "tags");
+                watch.tick(log, 2000, "Processing movielens.", "tags");
 
                 Ii tagItem = tagCache.get(tagName);
                 if (tagItem == null) {
@@ -84,14 +84,14 @@ public class MovieLensTagsParser {
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);
                 e.printStackTrace(pw);
-                logger.error(String.format("Unable to parse line %s. Exception: %s", line, sw.toString()));
+                log.error(String.format("Unable to parse line %s. Exception: %s", line, sw.toString()));
             } finally {
                 line = fileReader.readLine();
             }
 
         }
 
-        logger.info("All done");
+        log.info("All done");
     }
 
 }

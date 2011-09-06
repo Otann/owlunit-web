@@ -13,12 +13,12 @@ import static com.manymonkeys.service.cinema.util.Utils.itemWithMeta;
  * @author Anton Chebotaev
  *         Owls Proprietary
  */
-public class TagServiceImpl {
+public class KeywordServiceImpl {
 
     @Autowired
     protected IiDao dao;
 
-    private static final String CLASS_MARK_KEY = TagServiceImpl.class.getName();
+    private static final String CLASS_MARK_KEY = KeywordServiceImpl.class.getName();
     private static final String CLASS_MARK_VALUE = "#";
     private static final String META_KEY_NAME = CLASS_MARK_KEY + ".NAME";
 

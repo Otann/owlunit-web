@@ -30,7 +30,7 @@ public class SimpleMovieReadController {
      *      "parents":{},
      *      "uuid":"eb928e84-a7be-11e0-95ac-53145286faee",
      *      "metaMap":{"CREATED BY":"com.manymonkeys.service.cinema.impl.MovieServiceImpl",
-     *          "com.manymonkeys.service.cinema.impl.TagServiceImpl":"#",
+     *          "com.manymonkeys.service.cinema.impl.KeywordServiceImpl":"#",
      *          "com.manymonkeys.service.cinema.impl.MovieServiceImpl.TAGLINES":"A vast, merry, and uncommon tale of love.\n",
      *          "com.manymonkeys.service.cinema.impl.MovieServiceImpl.PLOT":"The film is an updated version of James Joyce's short story,
      *                  detailing a small house party at the Morkan sisters' residence, attended by friends and family.
@@ -39,7 +39,7 @@ public class SimpleMovieReadController {
      *                  Before the end of the evening, melancholy events & memories arise. ",
      *          "com.manymonkeys.service.cinema.impl.MovieServiceImpl.SIMPLE_NAME":"dead",
      *          "com.manymonkeys.service.cinema.impl.MovieServiceImpl.YEAR":"1987",
-     *          "com.manymonkeys.service.cinema.impl.TagServiceImpl.NAME":"Dead, The",
+     *          "com.manymonkeys.service.cinema.impl.KeywordServiceImpl.NAME":"Dead, The",
      *          "com.manymonkeys.crawlers.movielens.MovieLensMoviesParser.SERVICE_NAME":"4098"}}
      *
      * For more complex names, request can go like -

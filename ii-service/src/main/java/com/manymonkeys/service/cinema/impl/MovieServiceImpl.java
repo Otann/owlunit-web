@@ -49,6 +49,11 @@ public class MovieServiceImpl implements MovieService {
 
     private Map<Role, Double> initialRoleWeight = new HashMap<Role, Double>();
 
+    @Override
+    public Movie loadByName(String name) {
+        return toDomainClass(retrieveByName(name));
+    }
+
     public Movie createMovie(Movie movie) {
         Ii movieIi = dao.createInformationItem();
         dao.setUnindexedMeta(movieIi, CLASS_MARK_KEY, CLASS_MARK_VALUE);

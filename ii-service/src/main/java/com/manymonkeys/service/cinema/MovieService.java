@@ -10,6 +10,8 @@ import java.util.Map;
  */
 public interface MovieService {
 
+    Movie loadByName(String name);
+
     Movie createMovie(Movie movie);
 
     Map<Movie, Double> getMostLike(Movie movie);

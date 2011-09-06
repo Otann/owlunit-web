@@ -23,9 +23,7 @@ public class PropertyManager {
         IMDB_WEIGHT_KEYWORD_MIN("imdb.weight.keyword.min"),
         IMDB_WEIGHT_KEYWORD_MAX("imdb.weight.keyword.max"),
         IMDB_KEYWORD_COUNT_MAX("imdb.keyword.count.max"),
-        IMDB_KEYWORD_COUNT_THRESHOLD("imdb.keyword.count.threshold")
-        ;
-
+        IMDB_KEYWORD_COUNT_THRESHOLD("imdb.keyword.count.threshold");
 
         String value;
 

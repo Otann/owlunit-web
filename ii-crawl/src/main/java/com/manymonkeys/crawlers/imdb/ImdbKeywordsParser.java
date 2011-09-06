@@ -1,15 +1,12 @@
 package com.manymonkeys.crawlers.imdb;
 
-import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.crawlers.common.CassandraCrawler;
 import com.manymonkeys.crawlers.common.PropertyManager;
 import com.manymonkeys.crawlers.common.TimeWatch;
+import com.manymonkeys.model.cinema.Keyword;
+import com.manymonkeys.model.cinema.Movie;
 import com.manymonkeys.service.cinema.impl.MovieServiceImpl;
-import com.manymonkeys.service.cinema.impl.TagServiceImpl;
-<<<<<<< HEAD
-import me.prettyprint.hector.api.Keyspace;
-=======
->>>>>>> All pending changes
+import com.manymonkeys.service.cinema.impl.KeywordServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +29,7 @@ public class ImdbKeywordsParser extends CassandraCrawler {
     MovieServiceImpl movieService;
 
     @Autowired
-    TagServiceImpl tagService;
+    KeywordServiceImpl tagService;
 
     final Logger logger = LoggerFactory.getLogger(ImdbKeywordsParser.class);
 
@@ -118,7 +115,7 @@ public class ImdbKeywordsParser extends CassandraCrawler {
 
         String line = reader.readLine();
         String oldMovieName = null;
-        Ii movieItem = null;
+        Movie movieItem = null;
 
         while (line != null) {
             try {
@@ -134,7 +131,7 @@ public class ImdbKeywordsParser extends CassandraCrawler {
 
                 if (!movieName.equals(oldMovieName)) {
                     oldMovieName = movieName;
-                    movieItem = service.getByNameSimplified(movieName);
+                    movieItem = service.loadByName(movieName);
                 } else if (movieItem == null) {
                     // this means movie was not found previously
                     continue;
@@ -143,9 +140,9 @@ public class ImdbKeywordsParser extends CassandraCrawler {
                 if (movieItem == null)
                     continue;
 
-                Ii keywordItem = null;
+                Keyword keywordItem = null;
                 if (localCache.containsKey(keywordName)) {
-                    keywordItem = tagService.getEmptyTag(localCache.get(keywordName));
+                    keywordItem = k//tagService.getEmptyTag(localCache.get(keywordName));
                 } else {
                     keywordItem = tagService.createTag(keywordName);
                     localCache.put(keywordName, keywordItem.getUUID());

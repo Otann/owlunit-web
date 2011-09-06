@@ -3,14 +3,9 @@ package com.manymonkeys.crawlers.movielens;
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.crawlers.common.TimeWatch;
 <<<<<<< HEAD
+import com.manymonkeys.service.cinema.impl.KeywordServiceImpl;
 import com.manymonkeys.service.cinema.impl.MovieServiceImpl;
-import com.manymonkeys.service.cinema.impl.TagServiceImpl;
-import me.prettyprint.hector.api.Cluster;
-import me.prettyprint.hector.api.Keyspace;
-import me.prettyprint.hector.api.factory.HFactory;
 =======
-import com.manymonkeys.service.cinema.impl.TagServiceImpl;
-import com.manymonkeys.service.cinema.impl.MovieServiceImpl;
 >>>>>>> All pending changes
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +30,7 @@ public class MovieLensTagsParser {
     MovieServiceImpl movieService;
 
     @Autowired
-    TagServiceImpl tagService;
+    KeywordServiceImpl tagService;
 
     public static void main(String[] args) throws IOException {
         new MovieLensTagsParser().run(args[0]);

@@ -2,9 +2,13 @@ package com.manymonkeys.service.cinema.impl;
 
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.core.ii.IiDao;
+import com.manymonkeys.model.cinema.Keyword;
+import com.manymonkeys.service.cinema.KeywordService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 import static com.manymonkeys.service.cinema.util.Utils.itemWithMeta;
@@ -13,7 +17,7 @@ import static com.manymonkeys.service.cinema.util.Utils.itemWithMeta;
  * @author Anton Chebotaev
  *         Owls Proprietary
  */
-public class KeywordServiceImpl {
+public class KeywordServiceImpl implements KeywordService {
 
     @Autowired
     protected IiDao dao;
@@ -22,43 +26,76 @@ public class KeywordServiceImpl {
     private static final String CLASS_MARK_VALUE = "#";
     private static final String META_KEY_NAME = CLASS_MARK_KEY + ".NAME";
 
-    public Ii createTag(String name) { //TODO Anton Chebotaev - change to protected
+    public Keyword createKeyword(String name) {
         Ii item = dao.createInformationItem();
         dao.setUnindexedMeta(item, CLASS_MARK_KEY, CLASS_MARK_VALUE);
 
         dao.setMeta(item, META_KEY_NAME, name);
-        return item;
+        return toDomainClass(item);
     }
 
-    public Ii getEmptyTag(UUID uuid) {
-        return dao.load(uuid);
+    public Keyword loadKeyword(UUID uuid) {
+        return toDomainClass(dao.load(uuid));
     }
 
-    public Ii getTag(String name) {
+    public Keyword loadKeyword(String name) {
         //TODO Anton Chebotaev - discuss if we have unique tags or not
         Collection<Ii> blankItems = dao.load(META_KEY_NAME, name);
         if (blankItems.isEmpty()) {
             return null;
         } else {
-            return dao.loadMetadata(blankItems).iterator().next();
+            return toDomainClass(dao.loadMetadata(blankItems).iterator().next());
         }
     }
 
-    public Collection<Ii> getAll() {
+    public List<Keyword> listKeywords() {
         Collection<Ii> blankItems = dao.load(CLASS_MARK_KEY, CLASS_MARK_VALUE);
-        return dao.loadMetadata(blankItems);
+        return toDomainClass(dao.loadMetadata(blankItems));
     }
 
-    public String getName(Ii item) {
+
+    public Keyword updateName(Keyword keyword, String name) {
+        return toDomainClass(dao.setMeta(retrieve(keyword), META_KEY_NAME, name));
+    }
+
+    public Boolean isKeyword(Keyword keyword) {
+        return itemWithMeta(dao, retrieve(keyword)).getMeta(CLASS_MARK_KEY) != null;
+    }
+
+    /*-- - - - - - - - -\
+    |   P R I V A T E   |
+    \_________________ */
+
+    private List<Keyword> toDomainClass(Collection<Ii> keywordsIi) {
+        List<Keyword> result = new ArrayList<Keyword>();
+        for (Ii ii : keywordsIi) {
+            result.add(toDomainClass(ii));
+        }
+
+        return result;
+    }
+
+    private Keyword toDomainClass(Ii keywordIi) {
+        return new Keyword(getName(keywordIi), keywordIi.getUUID());
+    }
+
+    private String getName(Ii item) {
         return itemWithMeta(dao, item).getMeta(META_KEY_NAME);
     }
 
-    public Ii setName(Ii person, String name) {
-        return dao.setMeta(person, META_KEY_NAME, name);
+    private Ii retrieve(Keyword keyword) {
+        return dao.load(keyword.getUuid());
     }
 
-    public boolean isTag(Ii item) {
-        return itemWithMeta(dao, item).getMeta(CLASS_MARK_KEY) != null;
+    /*-- - - - - - - - - - - - - - - - -\
+    |   G E T T E R S  &  S E T T E R S |
+    \__________________________________*/
+
+    public IiDao getDao() {
+        return dao;
     }
 
+    public void setDao(IiDao dao) {
+        this.dao = dao;
+    }
 }

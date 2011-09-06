@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - -
+    |   S P R I N G   J S O N   C O N F I G U R A T I O N   |
+    \=====================================================-->
+    <!-- This will scan packades for spring-annotation -->
+    <context:component-scan base-package="com.manymonkeys.ex"/>
+
+    <!-- Configures the @Controller programming model -->
+    <mvc:annotation-driven/>
+
+    <!-- Forwards requests to the "/" resource to the "welcome" view -->
+    <mvc:view-controller path="/" view-name="welcome"/>
+
+    <!-- Configures Handler Interceptors -->
+    <mvc:interceptors>
+        <!-- Changes the locale when a 'locale' request parameter is sent; e.g. /?locale=en -->
+        <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"/>
+    </mvc:interceptors>
+
+    <!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources/ directory -->
+    <mvc:resources mapping="/resources/**" location="/resources/"/>
+
+    <!-- Saves a locale change using a cookie -->
+    <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver"/>
+
+    <!-- Application Message Bundle -->
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basename" value="/WEB-INF/messages/messages"/>
+        <property name="cacheSeconds" value="0"/>
+    </bean>
+
+    <!-- Resolves view names to protected .jsp resources within the /WEB-INF/views directory
+         Try it on "welcome" view -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/views/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+    <!-- TODO end -->
+
+    <!-- - - - - - - - - - -
+    |  C A S S A N D R A    |
+    \=====================-->
+    <bean id="cassandraHostConfigurator" class="me.prettyprint.cassandra.service.CassandraHostConfigurator">
+        <constructor-arg value="home.chebotaev.ru:9160"/>
+    </bean>
+    <bean id="cluster" class="me.prettyprint.cassandra.service.ThriftCluster">
+        <constructor-arg value="Test Cluster"/>
+        <constructor-arg ref="cassandraHostConfigurator"/>
+    </bean>
+    <bean id="keyspace" class="me.prettyprint.hector.api.factory.HFactory" factory-method="createKeyspace">
+        <constructor-arg value="InformationItems"/>
+        <constructor-arg ref="cluster"/>
+    </bean>
+
+    <!-- - - - - - - - - - -
+    |  O W L S   B E A N S  |
+    \=====================-->
+
+    <bean id="cassandraDao" class="com.manymonkeys.core.ii.impl.cassandra.CassandraIiDaoImpl">
+        <constructor-arg name="keyspace" ref="keyspace"/>
+    </bean>
+
+    <bean id="plainRecommender" class="com.manymonkeys.core.algo.impl.RecommenderPlainImpl">
+        <property name="componentsLimit" value="75"/>
+        <property name="parentsLimit" value="100"/>
+        <property name="weightThreshold" value="2.1"/>
+    </bean>
+
+    <bean id="movieService" class="com.manymonkeys.service.cinema.impl.MovieServiceImpl">
+        <property name="dao" ref="cassandraDao"/>
+        <property name="recommender" ref="plainRecommender"/>
+    </bean>
+
+    <bean id="personService" class="com.manymonkeys.service.cinema.impl.PersonServiceImpl">
+        <property name="dao" ref="cassandraDao"/>
+    </bean>
+
+    <!-- - - - - - -
+    |   S H I R O   |
+    \=============-->
+    <!--<import resource="shiro.xml"/>-->
+
+</beans>

@@ -27,7 +27,8 @@ public class JavaTest {
         List<String> list = JavaConversions.asList(test.returnSeq());
         String option = unpack(test.returnOption());
         boolean bool = test.returnBoolean();
-        Map<String, Double> map = JavaConversions.asMap(test.returnMap()); // this is false negative
+//        Map<String, Double> map1 = test.returnMap();
+        Map<String, Double> map2 = JavaConversions.asMap(test.returnMap()); // this is false negative
     }
 
 }

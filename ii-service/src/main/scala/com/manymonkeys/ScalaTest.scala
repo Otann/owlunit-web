@@ -12,6 +12,8 @@ class ScalaTest {
 
   def returnDouble(): Double = 1.0
 
+  def returnBoolean(): Boolean = true
+
   def returnMap(): Map[String, Double] = Map("1" -> 2)
 
   def returnSeq(): Seq[String] = "1" :: "2" :: "3" :: Nil

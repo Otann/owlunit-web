@@ -68,14 +68,14 @@ public class MovieLensMoviesCrawler {
             String year = line.substring(lastSemicolon - 6, lastSemicolon - 2);
             String[] genres = line.substring(lastSemicolon + 1, line.length()).split("\\|");
 
-            Movie movie = movieService.createMovie(new Movie(name, Long.parseLong(year), null));
+            Movie movie = movieService.createMovie(new Movie(name, Long.parseLong(year), null, null));
 
             movieService.addExternalId(movie, SERVICE_NAME, id);
             if (aka != null) {
-                movieService.addAkaName(movie, aka, true);
+                movieService.setAkaName(movie, aka);
             }
             if (nameTranslate != null) {
-                movieService.addTranslateName(movie, nameTranslate, true);
+                movieService.setTranslateName(movie, nameTranslate);
             }
 
             watch.tick(log, 250, "Crawling movielens.", "movies");
@@ -85,7 +85,7 @@ public class MovieLensMoviesCrawler {
                 if (tag == null) {
                     tag = keywordService.createKeyword(genre);
                 }
-                movieService.addGenre(movie, movieService.genreKeyword(tag));
+                movieService.addKeyword(movie, tag);
             }
 
             line = fileReader.readLine();

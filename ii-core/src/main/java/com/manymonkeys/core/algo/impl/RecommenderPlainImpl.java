@@ -21,11 +21,6 @@ public class RecommenderPlainImpl implements Recommender {
     private int parentsLimit = 20;
     private double weightThreshold = 1.5;
 
-    @Override
-    public void diffuse(Ii item, Ii component, Double rating, IiDao dao) {
-        // TODO Anton Chebotaev - implement "like" and "rate"
-    }
-
     /**
      * I do know about java code style, but this thing comes from my study research
      * and to be understandable with that research, i use short names and underscores here.

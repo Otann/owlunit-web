@@ -99,7 +99,7 @@ public class ImdbPersonCrawler extends CassandraCrawler {
 
                 if (person == null) {
                     String[] fullname = splitName(name);
-                    person = personService.findOrCreate(new Person(fullname[0], fullname[1], null), Role.valueOf(role));
+                    person = personService.findOrCreate(new Person(fullname[0], fullname[1], null, null), Role.valueOf(role));
                     actorsCount++;
                 }
 

@@ -1,4 +1,4 @@
-package com
+package com.manymonkeys
 
 /**
  * @author Anton Chebotaev

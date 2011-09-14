@@ -5,7 +5,7 @@ import java.util.UUID
 
 /**
  * @author Ilya Pimenov
- * Owl Proprietary
+ *         Owl Proprietary
  */
 
 case class Keyword(@BeanProperty var name: String = "howl",

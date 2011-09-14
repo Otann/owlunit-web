@@ -72,6 +72,8 @@ public class MovieLensTagsCrawler {
                     keywordLocalCache.put(tagName, keyword);
                 }
 
+                // Todo Ilya Pimenov this can be very slow, cuz it requires DB request. Better to keep it cached.
+                // Or kill this parses completely, MovieLens tags are crap
                 if (movieService.hasKeyword(movie, keyword)) {
                     movieService.addKeyword(movie, keyword);
                 }

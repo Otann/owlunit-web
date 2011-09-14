@@ -1,6 +1,7 @@
 package com.manymonkeys.model.cinema
 
-import reflect.{BooleanBeanProperty, BeanProperty}
+import reflect.BeanProperty
+import java.util.UUID
 
 /**
  * @author Ilya Pimenov
@@ -9,4 +10,5 @@ import reflect.{BooleanBeanProperty, BeanProperty}
 
 case class Person (@BeanProperty var name: String = "Joe",
                    @BeanProperty var surname: String = "Dow",
-                   @BeanProperty var roles: java.util.Set[Role]) {}
+                   @BeanProperty var roles: java.util.Set[Role],
+                   @BeanProperty var uuid: UUID) {}

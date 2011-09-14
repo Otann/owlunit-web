@@ -5,5 +5,7 @@ package com.manymonkeys.model.cinema;
  *         Owl Proprietary
  */
 public enum Role {
-    ACTOR, DIRECTOR, PRODUCER
+    ACTOR,
+    DIRECTOR,
+    PRODUCER
 }

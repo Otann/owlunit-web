@@ -13,16 +13,6 @@ import java.util.Map;
 public interface Recommender {
 
     /**
-     * Performs item diffusion. Items exchanges information about their components.
-     *
-     * @param item which component added to
-     * @param component that was added
-     * @param rating level of attraction described as number belonging to [-1, 1]
-     * @param dao to perform add operations
-     */
-    void diffuse(Ii item, Ii component, Double rating, IiDao dao);
-
-    /**
      * Compares two items based on a secret metric
      * Actually calls {@see compareItemsMaps(Map<InformationItem, Double> a, Map<InformationItem, Double> b)}
      *

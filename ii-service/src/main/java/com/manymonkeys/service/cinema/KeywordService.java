@@ -14,9 +14,9 @@ public interface KeywordService {
 
     Keyword createKeyword(String name);
 
-    Keyword loadKeyword(UUID uuid);
+    Keyword loadByUUID(UUID uuid) throws NotFoundException;
 
-    Keyword loadKeyword(String name);
+    Keyword loadByName(String name) throws NotFoundException;
 
     List<Keyword> listKeywords();
 

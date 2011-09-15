@@ -1,11 +1,7 @@
 package com.manymonkeys.ex.json.controllers.impl;
 
 import com.manymonkeys.core.ii.Ii;
-<<<<<<< HEAD
-import com.manymonkeys.service.cinema.MovieService;
-=======
->>>>>>> All pending changes
-import com.manymonkeys.service.cinema.impl.MovieServiceImpl;
+import com.manymonkeys.service.impl.MovieServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,17 +25,17 @@ public class SimpleMovieReadController {
      * {"components":{},
      *      "parents":{},
      *      "uuid":"eb928e84-a7be-11e0-95ac-53145286faee",
-     *      "metaMap":{"CREATED BY":"com.manymonkeys.service.cinema.impl.MovieServiceImpl",
-     *          "com.manymonkeys.service.cinema.impl.KeywordServiceImpl":"#",
-     *          "com.manymonkeys.service.cinema.impl.MovieServiceImpl.TAGLINES":"A vast, merry, and uncommon tale of love.\n",
-     *          "com.manymonkeys.service.cinema.impl.MovieServiceImpl.PLOT":"The film is an updated version of James Joyce's short story,
+     *      "metaMap":{"CREATED BY":"com.manymonkeys.service.impl.MovieServiceImpl",
+     *          "com.manymonkeys.service.impl.KeywordServiceImpl":"#",
+     *          "com.manymonkeys.service.impl.MovieServiceImpl.TAGLINES":"A vast, merry, and uncommon tale of love.\n",
+     *          "com.manymonkeys.service.impl.MovieServiceImpl.PLOT":"The film is an updated version of James Joyce's short story,
      *                  detailing a small house party at the Morkan sisters' residence, attended by friends and family.
      *                  Among the visiting attendees are the sisters' nephew Gabriel and his wife Gretta. The
      *                  evening's reminiscences bring up various interesting and a bit comedic conversations.
      *                  Before the end of the evening, melancholy events & memories arise. ",
-     *          "com.manymonkeys.service.cinema.impl.MovieServiceImpl.SIMPLE_NAME":"dead",
-     *          "com.manymonkeys.service.cinema.impl.MovieServiceImpl.YEAR":"1987",
-     *          "com.manymonkeys.service.cinema.impl.KeywordServiceImpl.NAME":"Dead, The",
+     *          "com.manymonkeys.service.impl.MovieServiceImpl.SIMPLE_NAME":"dead",
+     *          "com.manymonkeys.service.impl.MovieServiceImpl.YEAR":"1987",
+     *          "com.manymonkeys.service.impl.KeywordServiceImpl.NAME":"Dead, The",
      *          "com.manymonkeys.crawlers.movielens.MovieLensMoviesParser.SERVICE_NAME":"4098"}}
      *
      * For more complex names, request can go like -
@@ -53,7 +49,7 @@ public class SimpleMovieReadController {
     public
     @ResponseBody
     Ii getByName(@RequestParam String movieName) {
-        return movieService.getByNameSimplified(movieName);
+        return movieService.loadByName(movieName, 0L);
     }
     /*
     @RequestMapping(method = RequestMethod.GET)

@@ -142,7 +142,7 @@ public class ImdbKeywordsCrawler extends CassandraCrawler {
 
                 Keyword keyword = null;
                 if (localCache.containsKey(keywordName)) {
-                    keyword = keywordService.loadKeyword(localCache.get(keywordName));
+                    keyword = keywordService.loadByUUID(localCache.get(keywordName));
                 } else {
                     keyword = keywordService.createKeyword(keywordName);
                     localCache.put(keywordName, keyword.getUuid());

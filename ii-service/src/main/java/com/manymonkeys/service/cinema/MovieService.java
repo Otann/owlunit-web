@@ -14,19 +14,19 @@ public interface MovieService {
 
     Movie createMovie(Movie movie);
 
-    Movie load(String name, Long year) throws NotFoundException;
+    Movie loadByName(String name, Long year) throws NotFoundException;
 
-    Movie load(String service, String externalId) throws NotFoundException;
+    Movie loadByExternalId(String service, String externalId) throws NotFoundException;
 
     Map<Movie, Double> getMostLike(Movie movie) throws NotFoundException;
 
     Movie setDescription(Movie movie, String description) throws NotFoundException;
 
-    Movie setTranslateName(Movie movie, String translateName, Boolean index);
+    Movie setTranslateName(Movie movie, String translateName) throws NotFoundException;
 
     Movie setExternalId(Movie movie, String service, String externalId) throws NotFoundException;
 
-    Movie setAkaName(Movie movie, String akaName, Boolean index);
+    Movie setAkaName(Movie movie, String akaName) throws NotFoundException;
 
     Movie addPerson(Movie movie, Person person, Role role) throws NotFoundException;
 
@@ -34,8 +34,6 @@ public interface MovieService {
 
     Boolean hasKeyword(Movie movie, Keyword keyword) throws NotFoundException;
 
-    Movie addTagline(Movie movie, String tagline);
-
-    Movie addGenre(Movie movie, Genre genre) throws NotFoundException;
+    Movie addTagline(Movie movie, String tagline) throws NotFoundException;
 
 }

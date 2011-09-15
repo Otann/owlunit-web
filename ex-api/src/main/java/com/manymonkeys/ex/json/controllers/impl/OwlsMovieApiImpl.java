@@ -7,8 +7,8 @@ import com.manymonkeys.model.cinema.Person;
 import com.manymonkeys.model.cinema.Role;
 =======
 >>>>>>> All pending changes
-import com.manymonkeys.service.cinema.impl.MovieServiceImpl;
-import com.manymonkeys.service.cinema.impl.PersonServiceImpl;
+import com.manymonkeys.service.impl.MovieServiceImpl;
+import com.manymonkeys.service.impl.PersonServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,24 +42,15 @@ public class OwlsMovieApiImpl implements OwlsMovieApi {
         Ii movie = movieService.createMovie(name, Long.parseLong(year));
         movieService.setDescription(movie, description);
         for (Person person : persons) {
-<<<<<<< HEAD
             for (Role role : person.getRoles()) {
                 movieService.addPerson(movie, personService.findOrCreate(person), role);
             }
-=======
-            movieService.addPerson(
-                    movie,
-                    personService.findOrCreate(
-                            person.getName() + " " + person.getSurname(),
-                            PersonServiceImpl.Role.valueOf(person.getRole().name())),
-                    PersonServiceImpl.Role.valueOf(person.getRole().name()));
->>>>>>> All pending changes
         }
     }
 
     @Override
     public Map<Ii, Double> getSimilarMovies(String userId, String movieName, Long amount, boolean showReasons) {
-        Ii movie = movieService.getByNameSimplified(movieName);
+        Ii movie = movieService.loadByName(movieName, 0l);
         movieService.getMostLike(movie);
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }

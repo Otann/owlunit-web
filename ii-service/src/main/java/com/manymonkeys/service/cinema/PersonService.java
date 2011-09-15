@@ -2,6 +2,7 @@ package com.manymonkeys.service.cinema;
 
 import com.manymonkeys.model.cinema.Person;
 import com.manymonkeys.model.cinema.Role;
+import com.manymonkeys.service.exception.NotFoundException;
 
 /**
  * @author Ilya Pimenov
@@ -11,7 +12,7 @@ public interface PersonService {
 
     Person createPerson(Person person);
 
-    Person addRole(Person person, Role role);
+    Person addRole(Person person, Role role) throws NotFoundException;
 
     Person findOrCreate(Person person);
 

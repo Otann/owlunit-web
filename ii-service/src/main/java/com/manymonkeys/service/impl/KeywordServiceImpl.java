@@ -1,4 +1,4 @@
-package com.manymonkeys.service.cinema.impl;
+package com.manymonkeys.service.impl;
 
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.core.ii.IiDao;
@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-import static com.manymonkeys.service.cinema.util.Utils.itemWithMeta;
+import static com.manymonkeys.service.impl.util.Utils.itemWithMeta;
 
 /**
  * @author Anton Chebotaev
@@ -26,70 +26,77 @@ public class KeywordServiceImpl implements KeywordService {
     private static final String CLASS_MARK_KEY = KeywordServiceImpl.class.getName();
     private static final String CLASS_MARK_VALUE = "#";
 
-    private static final String META_KEY_NAME = CLASS_MARK_KEY + ".NAME";
+    static final String META_KEY_NAME = CLASS_MARK_KEY + ".NAME";
+
+    static Keyword iiToKeyword(IiDao dao, Ii item) {
+        Ii meta = itemWithMeta(dao, item);
+        return new Keyword(
+                item.getUUID(),
+                meta.getMeta(META_KEY_NAME)
+        );
+    }
+
+    static Ii keywordToIi(IiDao dao, Keyword keyword) throws NotFoundException {
+        Ii item = dao.load(keyword.getUuid());
+        if (item == null) {
+            throw new NotFoundException(String.format("Keyword(%s)", keyword.getName()));
+        } else {
+            return item;
+        }
+    }
 
     @Override
     public Keyword createKeyword(String name) {
         Ii item = dao.createInformationItem();
         dao.setUnindexedMeta(item, CLASS_MARK_KEY, CLASS_MARK_VALUE);
         dao.setMeta(item, META_KEY_NAME, name);
-        return toKeyword(item);
+        return iiToKeyword(dao, item);
     }
 
     @Override
-    public Keyword loadKeyword(UUID uuid) {
-        return toKeyword(dao.load(uuid));
+    public Keyword loadByUUID(UUID uuid) throws NotFoundException {
+        Ii item = dao.load(uuid);
+        if (item == null) {
+            throw new NotFoundException(String.format("Keyword(%s)", uuid.toString()));
+        } else {
+            return iiToKeyword(dao, item);
+        }
     }
 
     @Override
-    public Keyword loadKeyword(String name) {
+    public Keyword loadByName(String name) throws NotFoundException {
         Collection<Ii> blankItems = dao.load(META_KEY_NAME, name);
         if (blankItems.isEmpty()) {
-            return null;
+            throw new NotFoundException(String.format("Keyword(%s)", name));
         } else {
-            return toKeyword(dao.loadMetadata(blankItems).iterator().next());
+            Ii meta = dao.loadMetadata(blankItems.iterator().next());
+            return iiToKeyword(dao, meta);
         }
     }
 
     @Override
     public List<Keyword> listKeywords() {
         Collection<Ii> blankItems = dao.load(CLASS_MARK_KEY, CLASS_MARK_VALUE);
-        return toKeyword(dao.loadMetadata(blankItems));
+        return iisToKeywords(dao.loadMetadata(blankItems));
     }
 
     @Override
     public Keyword update(Keyword keyword) throws NotFoundException {
-        assert keyword.getUuid() != null;
-        return toKeyword(dao.setMeta(retrieve(keyword), META_KEY_NAME, keyword.getName()));
+        Ii item = keywordToIi(dao, keyword);
+        Ii updated = dao.setMeta(item, META_KEY_NAME, keyword.getName());
+        return iiToKeyword(dao, updated);
     }
 
     /*-- - - - - - - - -\
     |   P R I V A T E   |
     \_________________ */
 
-    private List<Keyword> toKeyword(Collection<Ii> keywordsIi) {
+    private List<Keyword> iisToKeywords(Collection<Ii> keywordsIi) {
         List<Keyword> result = new ArrayList<Keyword>();
         for (Ii ii : keywordsIi) {
-            result.add(toKeyword(ii));
+            result.add(iiToKeyword(dao, ii));
         }
         return result;
-    }
-
-    private Keyword toKeyword(Ii keywordIi) {
-        return new Keyword(keywordIi.getUUID(), getName(keywordIi));
-    }
-
-    private String getName(Ii item) {
-        return itemWithMeta(dao, item).getMeta(META_KEY_NAME);
-    }
-
-    private Ii retrieve(Keyword keyword) throws NotFoundException {
-        Ii item = dao.load(keyword.getUuid());
-        if (item == null) {
-            throw new NotFoundException(keyword.getName());
-        } else {
-            return item;
-        }
     }
 
     /*-- - - - - - - - - - - - - - - - -\

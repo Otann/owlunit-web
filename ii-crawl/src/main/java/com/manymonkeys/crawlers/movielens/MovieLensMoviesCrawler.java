@@ -81,7 +81,7 @@ public class MovieLensMoviesCrawler {
             watch.tick(log, 250, "Crawling movielens.", "movies");
 
             for (String genre : genres) {
-                Keyword tag = keywordService.loadKeyword(genre);
+                Keyword tag = keywordService.loadByName(genre);
                 if (tag == null) {
                     tag = keywordService.createKeyword(genre);
                 }

@@ -40,3 +40,7 @@ ehthumbs.db
 Icon?
 Thumbs.db
 .DS_Store
+
+*.keep
+*.lock
+*.db

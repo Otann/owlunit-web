@@ -1,10 +1,6 @@
 package com.manymonkeys.ex.json.mock;
 
 import com.manymonkeys.core.ii.Ii;
-<<<<<<< HEAD
-=======
->>>>>>> All pending changes
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;

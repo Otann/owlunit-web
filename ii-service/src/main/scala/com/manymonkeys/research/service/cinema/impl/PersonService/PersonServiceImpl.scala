@@ -1,6 +1,6 @@
 package com.manymonkeys.research.service.cinema.impl.PersonService
 
-import com.manymonkeys.service.cinema.PersonService
+import com.manymonkeys.research.service.cinema.PersonService
 import com.manymonkeys.model.cinema.{Role, Person}
 import com.manymonkeys.research.service.utils.IiDaoAccess
 import com.manymonkeys.core.ii.Ii

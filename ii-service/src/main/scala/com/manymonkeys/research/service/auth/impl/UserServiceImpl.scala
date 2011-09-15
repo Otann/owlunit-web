@@ -1,6 +1,6 @@
 package com.manymonkeys.research.service.auth.impl
 
-import com.manymonkeys.service.auth.UserService
+import com.manymonkeys.research.service.auth.UserService
 import com.manymonkeys.model.auth.User
 import com.manymonkeys.research.service.utils.IiDaoAccess
 import com.manymonkeys.core.ii.Ii

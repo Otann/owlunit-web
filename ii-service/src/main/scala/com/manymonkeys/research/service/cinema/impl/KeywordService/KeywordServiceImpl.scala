@@ -1,6 +1,6 @@
 package com.manymonkeys.research.service.cinema.impl.KeywordService
 
-import com.manymonkeys.service.cinema.KeywordService
+import com.manymonkeys.research.service.cinema.KeywordService
 import com.manymonkeys.model.cinema.Keyword
 import java.util.UUID
 import com.manymonkeys.research.service.utils.IiDaoAccess

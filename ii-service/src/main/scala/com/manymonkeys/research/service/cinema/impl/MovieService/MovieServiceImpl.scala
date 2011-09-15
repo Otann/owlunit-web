@@ -3,7 +3,7 @@ package com.manymonkeys.research.service.cinema.impl.MovieService
 import com.manymonkeys.model.cinema._
 import reflect.BeanProperty
 import com.manymonkeys.core.ii.Ii
-import com.manymonkeys.service.cinema.MovieService
+import com.manymonkeys.research.service.cinema.MovieService
 import com.manymonkeys.research.service.utils.{RecommenderAccess, IiDaoAccess}
 import com.manymonkeys.research.service.cinema.impl.PersonService.PersonConverter
 import com.manymonkeys.research.service.cinema.impl.KeywordService.KeywordConverter

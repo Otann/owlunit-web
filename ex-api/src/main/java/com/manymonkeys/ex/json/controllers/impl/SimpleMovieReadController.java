@@ -1,6 +1,9 @@
 package com.manymonkeys.ex.json.controllers.impl;
 
 import com.manymonkeys.core.ii.Ii;
+import com.manymonkeys.ex.json.exceptions.ObjectNotFoundException;
+import com.manymonkeys.model.cinema.Movie;
+import com.manymonkeys.service.exception.NotFoundException;
 import com.manymonkeys.service.impl.MovieServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -40,16 +43,21 @@ public class SimpleMovieReadController {
      *
      * For more complex names, request can go like -
      * <p/>
-     * http://localhost:8080/ex-api-1.0/movies/getbyname?movieName=Pulp Fiction
+     * http://localhost:8080/ex-api-1.0/movies/getbyname?movieName=Dead, The&year=1987
      *
-     * @param movieName
-     * @return
+     * @param name name of the movie
+     * @param year year or the movie
+     * @return movie
      */
     @RequestMapping(value = "/getbyname", method = RequestMethod.GET)
     public
     @ResponseBody
-    Ii getByName(@RequestParam String movieName) {
-        return movieService.loadByName(movieName, 0L);
+    Movie getByName(@RequestParam String name, @RequestParam Long year) {
+        try {
+            return movieService.loadByName(name, year);
+        } catch (NotFoundException e) {
+            throw new ObjectNotFoundException(e);
+        }
     }
     /*
     @RequestMapping(method = RequestMethod.GET)

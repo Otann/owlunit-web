@@ -3,9 +3,8 @@ package owls.snippet
 import net.liftweb.util.Helpers._
 import org.owls.lib.ServiceProvider
 import net.liftweb.http.S
-import com.manymonkeys.service.cinema.{TagService, MovieService}
-import org.owls.lib.mock.MockItem
-import com.manymonkeys.core.ii.InformationItem
+import com.manymonkeys.service.cinema.MovieService
+import com.manymonkeys.core.ii.Ii
 import net.liftweb.util.CssSel
 import scala.collection.JavaConversions._
 import java.util.{Collections, UUID}
@@ -17,22 +16,19 @@ import net.liftweb.textile._
 class Item {
 
   val service : MovieService = ServiceProvider.service.vend
-  val item =  service.loadByUUID(UUID.fromString(S.param("id").get)) // make safe with tryo and return 404
-
-  service.reloadMetadata(service.reloadComponents(Collections.singleton(item)))
-
-  def render =
-    ".name *" #> item.getMeta(TagService.NAME) &
-    ".description" #> tryo(TextileParser.toHtml(item.getMeta(MovieService.TAGLINES))) &
-    ".param *" #> S.param("id").getOrElse("no parameter was passed") &
-    ".components *" #> components(item)
-
-  def components(item: InformationItem) =
-    ".ii-tag *" #> item.getComponents.map({case (i, w) => (i, w.doubleValue())}).toSeq.sortWith(_._2 > _._2).map({case (i, w) => tag(i, w)})
-
-  def tag(item: InformationItem, weight: Double) : CssSel =
-    ".name [href]" #> ("/item/" + item.getUUID.toString) &
-    ".name *" #> item.getMeta(TagService.NAME) &
-    ".weight *" #> "%1.1f".format(weight)
+//
+//  def render =
+//    ".name *" #> item.getMeta(TagService.NAME) &
+//    ".description" #> tryo(TextileParser.toHtml(item.getMeta(MovieService.TAGLINES))) &
+//    ".param *" #> S.param("id").getOrElse("no parameter was passed") &
+//    ".components *" #> components(item)
+//
+//  def components(item: Ii) =
+//    ".ii-tag *" #> item.getComponents.map({case (i, w) => (i, w.doubleValue())}).toSeq.sortWith(_._2 > _._2).map({case (i, w) => tag(i, w)})
+//
+//  def tag(item: Ii, weight: Double) : CssSel =
+//    ".name [href]" #> ("/item/" + item.getUUID.toString) &
+//    ".name *" #> item.getMeta(TagService.NAME) &
+//    ".weight *" #> "%1.1f".format(weight)
 
 }

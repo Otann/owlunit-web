@@ -53,6 +53,11 @@
             <version>2.3</version>
         </dependency>
         <dependency>
+            <groupId>net.liftweb</groupId>
+            <artifactId>lift-textile</artifactId>
+            <version>0.7</version>
+        </dependency>
+        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>0.9.26</version>

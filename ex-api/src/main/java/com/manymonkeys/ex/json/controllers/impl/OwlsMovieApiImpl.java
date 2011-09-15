@@ -5,8 +5,6 @@ import com.manymonkeys.ex.json.controllers.OwlsMovieApi;
 <<<<<<< HEAD
 import com.manymonkeys.model.cinema.Person;
 import com.manymonkeys.model.cinema.Role;
-import com.manymonkeys.service.cinema.MovieService;
-import com.manymonkeys.service.cinema.PersonService;
 =======
 >>>>>>> All pending changes
 import com.manymonkeys.service.cinema.impl.MovieServiceImpl;
@@ -42,7 +40,7 @@ public class OwlsMovieApiImpl implements OwlsMovieApi {
                          //Todo Ilya Pimenov - Move "persons" to @RequestBody
                          @RequestParam("persons") List<Person> persons) {
         Ii movie = movieService.createMovie(name, Long.parseLong(year));
-        movieService.createOrUpdateDescription(movie, description);
+        movieService.setDescription(movie, description);
         for (Person person : persons) {
 <<<<<<< HEAD
             for (Role role : person.getRoles()) {

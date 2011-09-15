@@ -11,8 +11,6 @@ public interface PersonService {
 
     Person createPerson(Person person);
 
-    Boolean isPerson(Person person);
-
     Person addRole(Person person, Role role);
 
     Person findOrCreate(Person person);

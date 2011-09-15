@@ -1,40 +1,41 @@
 package com.manymonkeys.service.cinema;
 
 import com.manymonkeys.model.cinema.*;
+import com.manymonkeys.service.exception.NotFoundException;
 
 import java.util.Map;
 
 /**
  * @author Ilya Pimenov
+ * @author Anton Chebotaev
  *         Owls Proprietary
  */
 public interface MovieService {
 
-    Movie loadByName(String name);
-
     Movie createMovie(Movie movie);
 
-    Map<Movie, Double> getMostLike(Movie movie);
+    Movie load(String name, Long year) throws NotFoundException;
 
-    Movie createOrUpdateDescription(Movie movie, String description);
+    Movie load(String service, String externalId) throws NotFoundException;
 
-    Movie loadByExternalId(String service, String externalId);
+    Map<Movie, Double> getMostLike(Movie movie) throws NotFoundException;
 
-    Movie addPerson(Movie movie, Person person, Role role);
+    Movie setDescription(Movie movie, String description) throws NotFoundException;
 
-    Boolean hasKeyword(Movie movie, Keyword keyword);
+    Movie setTranslateName(Movie movie, String translateName, Boolean index);
 
-    Movie addKeyword(Movie movie, Keyword keyword);
+    Movie setExternalId(Movie movie, String service, String externalId) throws NotFoundException;
+
+    Movie setAkaName(Movie movie, String akaName, Boolean index);
+
+    Movie addPerson(Movie movie, Person person, Role role) throws NotFoundException;
+
+    Movie addKeyword(Movie movie, Keyword keyword) throws NotFoundException;
+
+    Boolean hasKeyword(Movie movie, Keyword keyword) throws NotFoundException;
 
     Movie addTagline(Movie movie, String tagline);
 
-    Movie addAkaName(Movie movie, String akaName, Boolean index);
+    Movie addGenre(Movie movie, Genre genre) throws NotFoundException;
 
-    Movie addTranslateName(Movie movie, String translateName, Boolean index);
-
-    Genre genreKeyword(Keyword keyword);
-
-    Movie addGenre(Movie movie, Genre genre);
-
-    Movie addExternalId(Movie movie, String service, String externalId);
 }

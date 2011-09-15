@@ -4,6 +4,7 @@ import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.core.ii.IiDao;
 import com.manymonkeys.model.cinema.Keyword;
 import com.manymonkeys.service.cinema.KeywordService;
+import com.manymonkeys.service.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -24,72 +25,71 @@ public class KeywordServiceImpl implements KeywordService {
 
     private static final String CLASS_MARK_KEY = KeywordServiceImpl.class.getName();
     private static final String CLASS_MARK_VALUE = "#";
+
     private static final String META_KEY_NAME = CLASS_MARK_KEY + ".NAME";
 
     @Override
     public Keyword createKeyword(String name) {
         Ii item = dao.createInformationItem();
         dao.setUnindexedMeta(item, CLASS_MARK_KEY, CLASS_MARK_VALUE);
-
         dao.setMeta(item, META_KEY_NAME, name);
-        return toDomainClass(item);
+        return toKeyword(item);
     }
 
     @Override
     public Keyword loadKeyword(UUID uuid) {
-        return toDomainClass(dao.load(uuid));
+        return toKeyword(dao.load(uuid));
     }
 
     @Override
     public Keyword loadKeyword(String name) {
-        //TODO Anton Chebotaev - discuss if we have unique tags or not
         Collection<Ii> blankItems = dao.load(META_KEY_NAME, name);
         if (blankItems.isEmpty()) {
             return null;
         } else {
-            return toDomainClass(dao.loadMetadata(blankItems).iterator().next());
+            return toKeyword(dao.loadMetadata(blankItems).iterator().next());
         }
     }
 
     @Override
     public List<Keyword> listKeywords() {
         Collection<Ii> blankItems = dao.load(CLASS_MARK_KEY, CLASS_MARK_VALUE);
-        return toDomainClass(dao.loadMetadata(blankItems));
+        return toKeyword(dao.loadMetadata(blankItems));
     }
 
     @Override
-    public Keyword updateName(Keyword keyword, String name) {
-        return toDomainClass(dao.setMeta(retrieve(keyword), META_KEY_NAME, name));
-    }
-
-    @Override
-    public Boolean isKeyword(Keyword keyword) {
-        return itemWithMeta(dao, retrieve(keyword)).getMeta(CLASS_MARK_KEY) != null;
+    public Keyword update(Keyword keyword) throws NotFoundException {
+        assert keyword.getUuid() != null;
+        return toKeyword(dao.setMeta(retrieve(keyword), META_KEY_NAME, keyword.getName()));
     }
 
     /*-- - - - - - - - -\
     |   P R I V A T E   |
     \_________________ */
 
-    private List<Keyword> toDomainClass(Collection<Ii> keywordsIi) {
+    private List<Keyword> toKeyword(Collection<Ii> keywordsIi) {
         List<Keyword> result = new ArrayList<Keyword>();
         for (Ii ii : keywordsIi) {
-            result.add(toDomainClass(ii));
+            result.add(toKeyword(ii));
         }
-
         return result;
     }
 
-    private Keyword toDomainClass(Ii keywordIi) {
-        return new Keyword(getName(keywordIi), keywordIi.getUUID());
+    private Keyword toKeyword(Ii keywordIi) {
+        return new Keyword(keywordIi.getUUID(), getName(keywordIi));
     }
 
     private String getName(Ii item) {
         return itemWithMeta(dao, item).getMeta(META_KEY_NAME);
     }
 
-    private Ii retrieve(Keyword keyword) {
-        return dao.load(keyword.getUuid());
+    private Ii retrieve(Keyword keyword) throws NotFoundException {
+        Ii item = dao.load(keyword.getUuid());
+        if (item == null) {
+            throw new NotFoundException(keyword.getName());
+        } else {
+            return item;
+        }
     }
 
     /*-- - - - - - - - - - - - - - - - -\

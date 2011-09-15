@@ -4,18 +4,18 @@ import com.manymonkeys.core.algo.Recommender;
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.core.ii.IiDao;
 import com.manymonkeys.model.cinema.*;
-import com.manymonkeys.service.cinema.KeywordService;
 import com.manymonkeys.service.cinema.MovieService;
 import com.manymonkeys.service.cinema.PersonService;
+import com.manymonkeys.service.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import sun.java2d.loops.GeneralRenderer;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.manymonkeys.service.cinema.util.Utils.itemWithMeta;
 
 /**
  * @author Anton Chebotaev
@@ -33,28 +33,26 @@ public class MovieServiceImpl implements MovieService {
     @Autowired
     protected PersonService personService;
 
+    @Autowired
+    private Double initialKeywordWeight;
+    @Autowired
+    private Double initialGenreWeight;
+    @Autowired
+    private Double initialPersonWeight;
+
+    private Map<Role, Double> initialRoleWeight = new HashMap<Role, Double>();
+
     private static final String CLASS_MARK_KEY = MovieServiceImpl.class.getName();
     private static final String CLASS_MARK_VALUE = "#";
 
     private static final String META_KEY_YEAR = CLASS_MARK_KEY + ".YEAR";
     private static final String META_KEY_NAME = CLASS_MARK_KEY + ".NAME";
     private static final String META_KEY_PLOT = CLASS_MARK_KEY + ".PLOT";
+    private static final String META_SERVICE_KEY = CLASS_MARK_KEY + ".EXTERNAL_ID.";
 
-    private static final String EXTERNAL_ID_KEY = CLASS_MARK_KEY + ".EXTERNAL_ID.";
-    private static final String SIMPLE_NAME = MovieServiceImpl.class.getName() + ".SIMPLE_NAME";
+    private static final String SIMPLE_NAME     = CLASS_MARK_KEY + ".SIMPLE_NAME";
     private final Pattern simplifyPatter = Pattern.compile("(a |the |, a|, the|,|\\.|\\s|'|\"|:|-|!|#|)");
 
-    //Todo Anton Chebotaev - Move to configuration files (take a look at resources/ii-service.properties)
-    private double initialKeywordWeight = 15;
-    private double initialGenreWeight = 50;
-    private double initialPersonWeight = 25;
-
-    private Map<Role, Double> initialRoleWeight = new HashMap<Role, Double>();
-
-    @Override
-    public Movie loadByName(String name) {
-        return toDomainClass(retrieveByName(name));
-    }
 
     @Override
     public Movie createMovie(Movie movie) {
@@ -62,34 +60,39 @@ public class MovieServiceImpl implements MovieService {
         dao.setUnindexedMeta(movieIi, CLASS_MARK_KEY, CLASS_MARK_VALUE);
 
         dao.setMeta(movieIi, META_KEY_NAME, movie.getName());
-        dao.setMeta(movieIi, META_KEY_YEAR, Long.toString(movie.getYear()));
-        dao.setUnindexedMeta(movieIi, SIMPLE_NAME, simplifyName(movie.getName()));
-        return toDomainClass(movieIi);
+        dao.setUnindexedMeta(movieIi, META_KEY_YEAR, Long.toString(movie.getYear()));
+        dao.setUnindexedMeta(movieIi, SIMPLE_NAME, simpleName(movie.getName(), movie.getYear()));
+        return toMovie(movieIi);
     }
 
     @Override
-    public Map<Movie, Double> getMostLike(Movie movie) {
-        return toDomainClass(recommender.getMostLike(retrieve(movie), dao));
+    public Movie load(String name, Long year) throws NotFoundException {
+        return toMovie(retrieve(name, year));
     }
 
     @Override
-    public Movie createOrUpdateDescription(Movie movie, String description) {
-        return toDomainClass(dao.setMeta(retrieve(movie), META_KEY_PLOT, description));
-    }
-
-    @Override
-    public Movie loadByExternalId(String service, String externalId) {
-        try {
-            //Todo Anton Chebotaev - Method should be rewriteen to return "null" without catching exception
-            //add "if" block with iterator.hasNext if necessary
-            return toDomainClass(dao.load(EXTERNAL_ID_KEY + service, externalId).iterator().next());
-        } catch (NoSuchElementException e) {
-            return null;
+    public Movie load(String service, String externalId) throws NotFoundException {
+        Collection<Ii> items = dao.load(META_SERVICE_KEY + service, externalId);
+        if (items.isEmpty()) {
+            throw new NotFoundException(String.format("%s@%s", externalId, service));
+        } else {
+            return toMovie(items.iterator().next());
         }
     }
 
     @Override
-    public Movie addPerson(Movie movie, Person person, Role role) {
+    public Map<Movie, Double> getMostLike(Movie movie) throws NotFoundException {
+        return toMovie(recommender.getMostLike(movieToIi(movie), dao));
+    }
+
+    @Override
+    public Movie setDescription(Movie movie, String description) throws NotFoundException {
+        return toMovie(dao.setMeta(movieToIi(movie), META_KEY_PLOT, description));
+    }
+
+
+    @Override
+    public Movie addPerson(Movie movie, Person person, Role role) throws NotFoundException {
         double weight;
         if (role == null || initialRoleWeight.containsKey(role)) {
             weight = initialPersonWeight;
@@ -99,22 +102,20 @@ public class MovieServiceImpl implements MovieService {
 
         /* Note force type casting, not sure how to elegantly avoid this trick,
          * feel free to change */
-        return toDomainClass(
-                dao.setComponentWeight(retrieve(movie),
+        return toMovie(
+                dao.setComponentWeight(movieToIi(movie),
                         ((PersonServiceImpl) personService).retrieve(person),
                         weight));
     }
 
     @Override
-    public Boolean hasKeyword(Movie movie, Keyword keyword) {
-        return retrieve(movie).getComponentWeight(retrieve(keyword)) != null;
+    public Boolean hasKeyword(Movie movie, Keyword keyword) throws NotFoundException {
+        return movieToIi(movie).getComponentWeight(keywordToIi(keyword)) != null;
     }
 
     @Override
-    public Movie addKeyword(Movie movie, Keyword keyword) {
-        return toDomainClass(dao.setComponentWeight(retrieve(movie),
-                retrieve(keyword),
-                initialKeywordWeight));
+    public Movie addKeyword(Movie movie, Keyword keyword) throws NotFoundException {
+        return toMovie(dao.setComponentWeight(movieToIi(movie), keywordToIi(keyword), initialKeywordWeight));
     }
 
     @Override
@@ -123,64 +124,59 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public Movie addAkaName(Movie movie, String akaName, Boolean index) {
+    public Movie setAkaName(Movie movie, String akaName, Boolean index) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Movie addTranslateName(Movie movie, String translateName, Boolean index) {
+    public Movie setTranslateName(Movie movie, String translateName, Boolean index) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Genre genreKeyword(Keyword keyword){
-        return new Genre(keyword.getName());
+    public Movie addGenre(Movie movie, Genre genre) throws NotFoundException {
+        Ii item = dao.setComponentWeight(movieToIi(movie), genreToIi(genre), initialGenreWeight);
+        return toMovie(item);
     }
 
     @Override
-    public Movie addGenre(Movie movie, Genre genre) {
-        return toDomainClass(
-                dao.setComponentWeight(retrieve(movie),
-                        retrieve(genre),
-                        initialGenreWeight));
-    }
-
-    @Override
-    public Movie addExternalId(Movie movie, String service, String externalId) {
-        return toDomainClass(
-                dao.setUnindexedMeta(
-                        retrieve(movie),
-                        EXTERNAL_ID_KEY + service,
-                        externalId));
+    public Movie setExternalId(Movie movie, String service, String externalId) throws NotFoundException {
+        Ii item = dao.setUnindexedMeta(movieToIi(movie), META_SERVICE_KEY + service, externalId);
+        return toMovie(item);
     }
 
     /*-- - - - - - - - -\
     |   P R I V A T E   |
     \__________________*/
 
-    private Ii retrieve(Movie movie) {
-        return retrieveByName(movie.getName());
-    }
-
-    private Ii retrieve(Keyword keyword) {
-        //Todo Impt Anton Chebotaev - Implemente
-        return null;
-    }
-
-    private Ii retrieve(Genre genre) {
-        //Todo Impt Anton Chebotaev - Implemente
-        return null;
-    }
-
-    private Ii retrieveByName(String name) {
-        Collection<Ii> blankItems = dao.load(SIMPLE_NAME, simplifyName(name));
-        if (blankItems.isEmpty()) {
-            return null;
+    private Ii movieToIi(Movie movie) throws NotFoundException {
+        if (movie.getUuid() != null) {
+            Ii item = dao.load(movie.getUuid());
+            if (item != null) {
+                return item;
+            } else {
+                throw new NotFoundException(String.format("%s (%s)", movie.getName(), movie.getYear()));
+            }
+        } else {
+            return retrieve(movie.getName(), movie.getYear());
         }
-        return dao.loadMetadata(blankItems).iterator().next();
     }
 
-    private String simplifyName(String name) {
+    private Ii retrieve(String name, Long year) throws NotFoundException {
+        Collection<Ii> rawItems = dao.load(SIMPLE_NAME, simpleName(name, year));
+        Collection<Ii> items = dao.loadMetadata(rawItems);
+        if (items.isEmpty()) {
+            throw new NotFoundException(String.format("%s (%s)", name, year));
+        }
+        for (Ii item : items) {
+            if(Long.parseLong(item.getMeta(META_KEY_YEAR)) == year) {
+                return item;
+            }
+        }
+        throw new NotFoundException(String.format("%s (%s)", name, year));
+    }
+
+    private String simpleName(String name, Long year) {
         String unromanized = name
                 //Todo Anton Chebotaev - put all this into configuration string, and parse later on on "create"
                 //method invocation
@@ -200,37 +196,25 @@ public class MovieServiceImpl implements MovieService {
         while (matcher.find())
             matcher.appendReplacement(sb, "");
         matcher.appendTail(sb);
+        sb.append(year);
         return sb.toString();
 
     }
 
-    private Movie toDomainClass(Ii movieIi) {
-        return new Movie(getName(movieIi),
-                getYear(movieIi),
-                getDescription(movieIi));
+    private Movie toMovie(Ii movieIi) {
+        Ii meta = itemWithMeta(dao, movieIi);
+        return new Movie(movieIi.getUUID(),
+                meta.getMeta(META_KEY_NAME),
+                Long.parseLong(meta.getMeta(META_KEY_YEAR)),
+                meta.getMeta(META_KEY_PLOT));
     }
 
-    private Map<Movie, Double> toDomainClass(Map<Ii, Double> iiMap) {
+    private Map<Movie, Double> toMovie(Map<Ii, Double> iiMap) {
         Map<Movie, Double> result = new HashMap<Movie, Double>();
         for (Ii key : iiMap.keySet()) {
-            result.put(toDomainClass(key), iiMap.get(key));
+            result.put(toMovie(key), iiMap.get(key));
         }
         return result;
-    }
-
-    private String getName(Ii movieIi) {
-        //Todo Impt Anton Chebotaev - implemente
-        return null;
-    }
-
-    private Long getYear(Ii movieIi) {
-        //Todo Impt Anton Chebotaev - Implemente
-        return null;
-    }
-
-    private String getDescription(Ii movieIi) {
-        //Todo Impt Anton Chebotaev - Implemente
-        return null;
     }
 
     /*-- - - - - - - - - - - - - - - - -\

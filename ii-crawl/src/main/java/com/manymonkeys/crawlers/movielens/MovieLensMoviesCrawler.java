@@ -70,12 +70,12 @@ public class MovieLensMoviesCrawler {
 
             Movie movie = movieService.createMovie(new Movie(name, Long.parseLong(year), null));
 
-            movieService.addExternalId(movie, SERVICE_NAME, id);
+            movieService.setExternalId(movie, SERVICE_NAME, id);
             if (aka != null) {
-                movieService.addAkaName(movie, aka, true);
+                movieService.setAkaName(movie, aka, true);
             }
             if (nameTranslate != null) {
-                movieService.addTranslateName(movie, nameTranslate, true);
+                movieService.setTranslateName(movie, nameTranslate, true);
             }
 
             watch.tick(log, 250, "Crawling movielens.", "movies");

@@ -1,6 +1,7 @@
 package com.manymonkeys.service.cinema;
 
 import com.manymonkeys.model.cinema.Keyword;
+import com.manymonkeys.service.exception.NotFoundException;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,7 +20,6 @@ public interface KeywordService {
 
     List<Keyword> listKeywords();
 
-    Keyword updateName(Keyword keyword, String name);
+    Keyword update(Keyword keyword) throws NotFoundException;
 
-    Boolean isKeyword(Keyword keyword);
 }

@@ -133,8 +133,9 @@ public class MovieServiceImpl implements MovieService {
 
         Ii movieIi = movieToIi(dao, movie);
         Ii personIi = PersonServiceImpl.personToIi(dao, person);
+        movieIi = dao.setComponentWeight(movieIi, personIi, weight);
 
-        return iiToMovie(dao, dao.setComponentWeight(movieIi, personIi, weight));
+        return iiToMovie(dao, movieIi);
     }
 
     @Override

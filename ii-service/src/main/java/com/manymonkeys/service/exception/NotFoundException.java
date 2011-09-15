@@ -7,7 +7,14 @@ package com.manymonkeys.service.exception;
 
 public class NotFoundException extends Exception {
 
-    public NotFoundException(String s) {
-        super(String.format("Requested object %s was not found", s));
+    private final String id;
+
+    public NotFoundException(String id) {
+        super(String.format("Requested object %s was not found", id));
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
     }
 }

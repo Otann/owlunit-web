@@ -60,7 +60,7 @@ public class ImdbPlotCrawler extends CassandraCrawler {
                 Matcher matcher;
                 if ((matcher = MOVIE_NAME.matcher(line)).matches()) {
                     if (movieItem != null) {
-                        movieService.createOrUpdateDescription(movieItem, buffer.toString());
+                        movieService.setDescription(movieItem, buffer.toString());
                         buffer = new StringBuffer();
                     }
 
@@ -92,7 +92,7 @@ public class ImdbPlotCrawler extends CassandraCrawler {
         }
 
         if (movieItem != null) {
-            movieService.createOrUpdateDescription(movieItem, buffer.toString());
+            movieService.setDescription(movieItem, buffer.toString());
         }
     }
 

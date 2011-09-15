@@ -35,7 +35,7 @@ public class ImdbKeywordsCrawler extends CassandraCrawler {
     final Logger logger = LoggerFactory.getLogger(ImdbKeywordsCrawler.class);
 
     static final Pattern keywordCounter = Pattern.compile("([^\\s]+ \\(\\d+\\))");
-    static final Pattern keywordLine = Pattern.compile("^([^\\t]+) \\(\\d+\\)\\s+([^\\s]+)$");
+    static final Pattern keywordLine = Pattern.compile("^([^\\t]+) \\((\\d+\\))\\s+([^\\s]+)$");
 
 
     final double MIN_WEIGHT = Double.parseDouble(PropertyManager.get(PropertyManager.Property.IMDB_WEIGHT_KEYWORD_MIN));
@@ -127,11 +127,12 @@ public class ImdbKeywordsCrawler extends CassandraCrawler {
                 }
 
                 String movieName = matcher.group(1);
-                String keywordName = matcher.group(2);
+                long year = Long.parseLong(matcher.group(2));
+                String keywordName = matcher.group(3);
 
                 if (!movieName.equals(oldMovieName)) {
                     oldMovieName = movieName;
-                    movie = movieService.loadByName(movieName);
+                    movie = movieService.loadByName(movieName, year);
                 } else if (movie == null) {
                     // this means movie was not found previously
                     continue;

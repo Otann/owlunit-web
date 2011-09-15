@@ -75,6 +75,15 @@ public class KeywordServiceImpl implements KeywordService {
     }
 
     @Override
+    public Keyword loadOrCreateKeyword(String name) {
+        try {
+            return loadByName(name);
+        } catch (NotFoundException e) {
+            return createKeyword(name);
+        }
+    }
+
+    @Override
     public List<Keyword> listKeywords() {
         Collection<Ii> blankItems = dao.load(CLASS_MARK_KEY, CLASS_MARK_VALUE);
         return iisToKeywords(dao.loadMetadata(blankItems));

@@ -106,14 +106,6 @@ public class PersonServiceImpl implements PersonService {
         return personIi;
     }
 
-//    private Collection<Ii> getPersons(String name, String surname) {
-//        Collection<Ii> blankItems = dao.loadByName(META_KEY_NAME_ID, nameId(name, surname));
-//        if (blankItems.isEmpty()) {
-//            return null;
-//        }
-//        return dao.loadMetadata(blankItems);
-//    }
-
     private Ii addRole(Ii item, Role role) {
         Ii meta = itemWithMeta(dao, item);
         Set<Role> roles = unpackRoles(meta.getMeta(META_KEY_ROLES));

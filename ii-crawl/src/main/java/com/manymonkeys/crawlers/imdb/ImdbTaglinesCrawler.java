@@ -4,6 +4,7 @@ import com.manymonkeys.crawlers.common.CassandraCrawler;
 import com.manymonkeys.crawlers.common.TimeWatch;
 import com.manymonkeys.model.cinema.Movie;
 import com.manymonkeys.service.cinema.MovieService;
+import com.manymonkeys.service.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class ImdbTaglinesCrawler extends CassandraCrawler {
     @Autowired
     MovieService movieService;
 
-    static final Pattern MOVIE_NAME = Pattern.compile("^# (.+) \\(\\d+\\)$");
+    static final Pattern MOVIE_NAME = Pattern.compile("^# (.+) \\((\\d+\\))$");
     static final Pattern TAGLINE = Pattern.compile("^\t(.+)$");
 
     private String filePath;
@@ -72,7 +73,8 @@ public class ImdbTaglinesCrawler extends CassandraCrawler {
                     }
 
                     String movieName = matcher.group(1);
-                    movieItem = movieService.loadByName(movieName);
+                    long year = Long.parseLong(matcher.group(2));
+                    movieItem = movieService.loadByName(movieName, year);
                 } else if ((matcher = TAGLINE.matcher(line)).matches()) {
                     if (movieItem == null)
                         continue;
@@ -92,7 +94,11 @@ public class ImdbTaglinesCrawler extends CassandraCrawler {
         }
 
         if (movieItem != null) {
-            movieService.addTagline(movieItem, buffer.toString());
+            try {
+                movieService.addTagline(movieItem, buffer.toString());
+            } catch (NotFoundException e) {
+                log.error("Loaded object can't be found for update, %s", movieItem.toString());
+            }
         }
     }
 

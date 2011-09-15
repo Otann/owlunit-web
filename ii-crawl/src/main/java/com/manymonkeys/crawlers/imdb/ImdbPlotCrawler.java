@@ -4,6 +4,7 @@ import com.manymonkeys.crawlers.common.CassandraCrawler;
 import com.manymonkeys.crawlers.common.TimeWatch;
 import com.manymonkeys.model.cinema.Movie;
 import com.manymonkeys.service.cinema.MovieService;
+import com.manymonkeys.service.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class ImdbPlotCrawler extends CassandraCrawler {
     @Autowired
     MovieService movieService;
 
-    static final Pattern MOVIE_NAME = Pattern.compile("^MV: (.+) \\(\\d+\\).*$");
+    static final Pattern MOVIE_NAME = Pattern.compile("^MV: (.+) \\((\\d+\\)).*$");
     static final Pattern PLOT_LINE = Pattern.compile("PL: (.+)$");
 
     private String filePath;
@@ -65,7 +66,8 @@ public class ImdbPlotCrawler extends CassandraCrawler {
                     }
 
                     String movieName = matcher.group(1);
-                    movieItem = movieService.loadByName(movieName);
+                    long year = Long.parseLong(matcher.group(2));
+                    movieItem = movieService.loadByName(movieName, year);
                 } else if ((matcher = PLOT_LINE.matcher(line)).matches()) {
                     if (movieItem == null)
                         continue;
@@ -92,7 +94,11 @@ public class ImdbPlotCrawler extends CassandraCrawler {
         }
 
         if (movieItem != null) {
-            movieService.setDescription(movieItem, buffer.toString());
+            try {
+                movieService.setDescription(movieItem, buffer.toString());
+            } catch (NotFoundException e) {
+                log.error(String.format("Loaded object can't be updated, %s", movieItem.toString()));
+            }
         }
     }
 

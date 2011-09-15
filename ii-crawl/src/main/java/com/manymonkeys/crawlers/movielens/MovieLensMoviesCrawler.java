@@ -5,6 +5,7 @@ import com.manymonkeys.model.cinema.Keyword;
 import com.manymonkeys.model.cinema.Movie;
 import com.manymonkeys.service.cinema.KeywordService;
 import com.manymonkeys.service.cinema.MovieService;
+import com.manymonkeys.service.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,25 +70,23 @@ public class MovieLensMoviesCrawler {
             String[] genres = line.substring(lastSemicolon + 1, line.length()).split("\\|");
 
             Movie movie = movieService.createMovie(new Movie(null, name, Long.parseLong(year), null));
-
-            movieService.setExternalId(movie, SERVICE_NAME, id);
-            if (aka != null) {
-                movieService.setAkaName(movie, aka, true);
-            }
-            if (nameTranslate != null) {
-                movieService.setTranslateName(movie, nameTranslate, true);
+            try {
+                movieService.setExternalId(movie, SERVICE_NAME, id);
+                if (aka != null) {
+                    movieService.setAkaName(movie, aka);
+                }
+                if (nameTranslate != null) {
+                    movieService.setTranslateName(movie, nameTranslate);
+                }
+                for (String genre : genres) {
+                    Keyword tag = keywordService.loadOrCreateKeyword(genre);
+                    movieService.addKeyword(movie, tag);
+                }
+            } catch (NotFoundException e) {
+                log.error("Can't find object" + movie.toString());
             }
 
             watch.tick(log, 250, "Crawling movielens.", "movies");
-
-            for (String genre : genres) {
-                Keyword tag = keywordService.loadByName(genre);
-                if (tag == null) {
-                    tag = keywordService.createKeyword(genre);
-                }
-                movieService.addKeyword(movie, tag);
-            }
-
             line = fileReader.readLine();
 
         }

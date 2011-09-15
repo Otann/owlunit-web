@@ -29,7 +29,6 @@ public class ImdbPersonCrawler extends CassandraCrawler {
 
     private final String filePath;
     private final String role;
-    private final double INITIAL_PERSON_WEIGHT;
 
     @Autowired
     MovieServiceImpl movieService;
@@ -43,7 +42,6 @@ public class ImdbPersonCrawler extends CassandraCrawler {
     public ImdbPersonCrawler(String filePath, double initialWeight, String role) {
         this.filePath = filePath;
         this.role = role;
-        this.INITIAL_PERSON_WEIGHT = initialWeight;
     }
 
     public static void main(String[] args) {
@@ -55,8 +53,9 @@ public class ImdbPersonCrawler extends CassandraCrawler {
         BufferedReader fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "windows-1250"));
         String line = fileReader.readLine();
 
-        String name = null;
-        String movie;
+        String personName = null;
+        String movieName;
+        long year = 0;
 
         String oldName = null;
         String oldMovie = null;
@@ -76,30 +75,31 @@ public class ImdbPersonCrawler extends CassandraCrawler {
                 Matcher movieMatcher;
 
                 if ((personMovieMatcher = PERSON_MOVIE_PATTERN.matcher(line)).matches()) {
-                    name = personMovieMatcher.group(1).trim();
+                    personName = personMovieMatcher.group(1).trim();
                     person = null;
-
-                    movie = cropMovieName(personMovieMatcher.group(2));
+                    movieName = cropMovieName(personMovieMatcher.group(2));
+                    year = Long.parseLong(personMovieMatcher.group(3));
                 } else if ((movieMatcher = MOVIE_PATTERN.matcher(line)).matches()) {
-                    movie = cropMovieName(movieMatcher.group(1)).trim();
+                    movieName = cropMovieName(movieMatcher.group(1)).trim();
+                    year = Long.parseLong(personMovieMatcher.group(2));
                 } else {
                     continue;
                 }
 
-                if (movie.equals(oldMovie) && name.equals(oldName)) {
+                if (movieName.equals(oldMovie) && personName.equals(oldName)) {
                     continue;
                 } else {
-                    oldMovie = movie;
-                    oldName = name;
+                    oldMovie = movieName;
+                    oldName = personName;
                 }
 
-                Movie movieItem = movieService.loadByName(movie);
+                Movie movieItem = movieService.loadByName(movieName, year);
                 if (movieItem == null)
                     continue;
 
                 if (person == null) {
-                    String[] fullname = splitName(name);
-                    person = personService.findOrCreate(new Person(fullname[0], fullname[1], null, null), Role.valueOf(role));
+                    String[] fullname = splitName(personName);
+                    person = personService.findOrCreate(new Person(null, fullname[0], fullname[1], null), Role.valueOf(role));
                     actorsCount++;
                 }
 

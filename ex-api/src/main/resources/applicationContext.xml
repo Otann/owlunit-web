@@ -74,6 +74,11 @@
         <property name="weightThreshold" value="2.1"/>
     </bean>
 
+    <bean id="userService" class="com.manymonkeys.service.impl.UserServiceImpl">
+        <property name="dao" ref="cassandraDao"/>
+        <property name="recommender" ref="plainRecommender"/>
+    </bean>
+
     <bean id="movieService" class="com.manymonkeys.service.impl.MovieServiceImpl">
         <property name="dao" ref="cassandraDao"/>
         <property name="recommender" ref="plainRecommender"/>

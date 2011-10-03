@@ -76,12 +76,16 @@
 
     <bean id="userService" class="com.manymonkeys.service.impl.UserServiceImpl">
         <property name="dao" ref="cassandraDao"/>
-        <property name="recommender" ref="plainRecommender"/>
     </bean>
 
     <bean id="movieService" class="com.manymonkeys.service.impl.MovieServiceImpl">
         <property name="dao" ref="cassandraDao"/>
         <property name="recommender" ref="plainRecommender"/>
+
+        <!-- Todo NB: move to one place configuration, should be done before first release -->
+        <property name="initialKeywordWeight" value="15"/>
+        <property name="initialGenreWeight" value="50"/>
+        <property name="initialPersonWeight" value="25"/>
     </bean>
 
     <bean id="personService" class="com.manymonkeys.service.impl.PersonServiceImpl">

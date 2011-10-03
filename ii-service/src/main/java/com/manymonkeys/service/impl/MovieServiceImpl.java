@@ -28,13 +28,8 @@ public class MovieServiceImpl implements MovieService {
     @Autowired
     protected Recommender recommender;
 
-    @Autowired
     private Double initialKeywordWeight;
-
-    @Autowired
     private Double initialGenreWeight;
-
-    @Autowired
     private Double initialPersonWeight;
 
     private Map<Role, Double> initialRoleWeight = new HashMap<Role, Double>();

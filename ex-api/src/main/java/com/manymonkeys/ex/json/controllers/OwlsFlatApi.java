@@ -6,5 +6,7 @@ package com.manymonkeys.ex.json.controllers;
  */
 public interface OwlsFlatApi extends OwlsMovieApi, OwlsUserApi, OwlsRecommenderApi {
 
+    String version();
+
     // mva-ha-ha !
 }

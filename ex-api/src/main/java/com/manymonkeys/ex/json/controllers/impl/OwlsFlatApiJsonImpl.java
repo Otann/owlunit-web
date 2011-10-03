@@ -28,6 +28,8 @@ import java.util.Map;
 @RequestMapping(value = "/flatapi")
 public class OwlsFlatApiJsonImpl implements OwlsFlatApi {
 
+    public static final String VERSION = "V1";
+
     @Autowired
     UserServiceImpl userService;
 
@@ -135,6 +137,12 @@ public class OwlsFlatApiJsonImpl implements OwlsFlatApi {
         } catch (NotFoundException e) {
             throw new ObjectNotFoundException(e);
         }
+    }
+
+    @Override
+    @RequestMapping(value = "/version", method = RequestMethod.GET)
+    public String version() {
+        return VERSION;
     }
 
 }

@@ -5,6 +5,9 @@ import com.manymonkeys.ex.json.exceptions.ObjectNotFoundException;
 import com.manymonkeys.model.cinema.Movie;
 import com.manymonkeys.model.cinema.Person;
 import com.manymonkeys.model.cinema.Role;
+import com.manymonkeys.service.auth.UserService;
+import com.manymonkeys.service.cinema.MovieService;
+import com.manymonkeys.service.cinema.PersonService;
 import com.manymonkeys.service.exception.NotFoundException;
 import com.manymonkeys.service.impl.MovieServiceImpl;
 import com.manymonkeys.service.impl.PersonServiceImpl;
@@ -31,13 +34,13 @@ public class OwlsFlatApiJsonImpl implements OwlsFlatApi {
     public static final String VERSION = "V1";
 
     @Autowired
-    UserServiceImpl userService;
+    UserService userService;
 
     @Autowired
-    MovieServiceImpl movieService;
+    MovieService movieService;
 
     @Autowired
-    PersonServiceImpl personService;
+    PersonService personService;
 
     @Override
     @RequestMapping(value = "/addmovie", method = RequestMethod.POST)

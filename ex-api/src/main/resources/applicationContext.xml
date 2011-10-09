@@ -64,33 +64,7 @@
     |  O W L S   B E A N S  |
     \=====================-->
 
-    <bean id="cassandraDao" class="com.manymonkeys.core.ii.impl.cassandra.CassandraIiDaoImpl">
-        <constructor-arg name="keyspace" ref="keyspace"/>
-    </bean>
-
-    <bean id="plainRecommender" class="com.manymonkeys.core.algo.impl.RecommenderPlainImpl">
-        <property name="componentsLimit" value="75"/>
-        <property name="parentsLimit" value="100"/>
-        <property name="weightThreshold" value="2.1"/>
-    </bean>
-
-    <bean id="userService" class="com.manymonkeys.service.impl.UserServiceImpl">
-        <property name="dao" ref="cassandraDao"/>
-    </bean>
-
-    <bean id="movieService" class="com.manymonkeys.service.impl.MovieServiceImpl">
-        <property name="dao" ref="cassandraDao"/>
-        <property name="recommender" ref="plainRecommender"/>
-
-        <!-- Todo NB: move to one place configuration, should be done before first release -->
-        <property name="initialKeywordWeight" value="15"/>
-        <property name="initialGenreWeight" value="50"/>
-        <property name="initialPersonWeight" value="25"/>
-    </bean>
-
-    <bean id="personService" class="com.manymonkeys.service.impl.PersonServiceImpl">
-        <property name="dao" ref="cassandraDao"/>
-    </bean>
+    <import resource="owlbeans/mock-owl-beans.xml" />
 
     <!-- - - - - - -
     |   S H I R O   |

@@ -13,10 +13,9 @@ import com.manymonkeys.service.impl.MovieServiceImpl;
 import com.manymonkeys.service.impl.PersonServiceImpl;
 import com.manymonkeys.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -44,6 +43,7 @@ public class OwlsFlatApiJsonImpl implements OwlsFlatApi {
 
     @Override
     @RequestMapping(value = "/addmovie", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
     public void addMovie(@RequestParam("name") String name,
                          @RequestParam("year") Long year,
                          @RequestParam("description") String description,
@@ -65,11 +65,12 @@ public class OwlsFlatApiJsonImpl implements OwlsFlatApi {
 
     @Override
     @RequestMapping(value = "/getsimilarmovie", method = RequestMethod.GET)
+    @ResponseBody
     public Map<Movie, Double> getSimilarMovies(@RequestParam("login") String login,
                                                @RequestParam("movieName") String movieName,
-                                               @RequestParam("movieName") Long year,
-                                               @RequestParam("userId") Long amount,
-                                               @RequestParam("userId") boolean showReasons) {
+                                               @RequestParam("year") Long year,
+                                               @RequestParam("amount") Long amount,
+                                               @RequestParam("showReasons") boolean showReasons) {
         try {
             Movie movie = movieService.loadByName(movieName, year);
             return movieService.getMostLike(movie);
@@ -81,6 +82,7 @@ public class OwlsFlatApiJsonImpl implements OwlsFlatApi {
 
     @Override
     @RequestMapping(value = "/getrecommendations", method = RequestMethod.GET)
+    @ResponseBody
     public Map<Movie, Double> getRecommendations(@RequestParam("login") String login,
                                                  @RequestParam("amount") Long amount,
                                                  @RequestParam("showreasons") boolean showReasons) {
@@ -90,6 +92,7 @@ public class OwlsFlatApiJsonImpl implements OwlsFlatApi {
 
     @Override
     @RequestMapping(value = "/rate", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
     public void rate(@RequestParam("login") String login,
                      @RequestParam("movieName") String movieName,
                      @RequestParam("movieYear") Long movieYear,
@@ -105,6 +108,7 @@ public class OwlsFlatApiJsonImpl implements OwlsFlatApi {
 
     @Override
     @RequestMapping(value = "/like", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
     public void like(@RequestParam("login") String login,
                      @RequestParam("movieName") String movieName,
                      @RequestParam("movieYear") Long movieYear,
@@ -120,6 +124,7 @@ public class OwlsFlatApiJsonImpl implements OwlsFlatApi {
 
     @Override
     @RequestMapping(value = "/follow", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
     public void follow(@RequestParam("followerlogin") String followerLogin,
                        @RequestParam("followedlogin") String followedLogin) {
         try {
@@ -132,6 +137,7 @@ public class OwlsFlatApiJsonImpl implements OwlsFlatApi {
 
     @Override
     @RequestMapping(value = "/unfollow", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
     public void unfollow(@RequestParam("followerlogin") String followerLogin,
                          @RequestParam("followedlogin") String followedLogin) {
         try {
@@ -144,6 +150,7 @@ public class OwlsFlatApiJsonImpl implements OwlsFlatApi {
 
     @Override
     @RequestMapping(value = "/version", method = RequestMethod.GET)
+    @ResponseBody
     public String version() {
         return VERSION;
     }

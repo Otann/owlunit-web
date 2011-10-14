@@ -48,7 +48,7 @@
             <param name="parse.greeting"  value="Crawling IMDB actors"/>
             <param name="parse.classname" value="com.manymonkeys.crawlers.imdb.ImdbPersonCrawler"/>
             <param name="parse.filename"  value="${imdb.file.actors}" />
-            <param name="parse.weight"    value="${imdb.weight.actor}"/>
+            <param name="parse.weight"    value="${imdb.weight.person}"/>
             <param name="parse.role"      value="${imdb.role.actor}"/>
         </antcall>
     </target>

@@ -7,6 +7,7 @@ import com.manymonkeys.model.cinema.Person;
 import com.manymonkeys.model.cinema.Role;
 import com.manymonkeys.service.cinema.MovieService;
 import com.manymonkeys.service.cinema.PersonService;
+import com.manymonkeys.service.exception.NotFoundException;
 import com.manymonkeys.service.impl.MovieServiceImpl;
 import com.manymonkeys.service.impl.PersonServiceImpl;
 import org.slf4j.Logger;
@@ -82,7 +83,7 @@ public class ImdbPersonCrawler extends CassandraCrawler {
                     year = Long.parseLong(personMovieMatcher.group(3));
                 } else if ((movieMatcher = MOVIE_PATTERN.matcher(line)).matches()) {
                     movieName = cropMovieName(movieMatcher.group(1)).trim();
-                    year = Long.parseLong(personMovieMatcher.group(2));
+                    year = Long.parseLong(movieMatcher.group(2));
                 } else {
                     continue;
                 }
@@ -94,9 +95,12 @@ public class ImdbPersonCrawler extends CassandraCrawler {
                     oldName = personName;
                 }
 
-                Movie movieItem = movieService.loadByName(movieName, year);
-                if (movieItem == null)
+                Movie movieItem;
+                try {
+                    movieItem = movieService.loadByName(movieName, year);
+                } catch (NotFoundException e) {
                     continue;
+                }
 
                 if (person == null) {
                     String[] fullname = splitName(personName);

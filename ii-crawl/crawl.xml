@@ -12,7 +12,7 @@
 
     <target name="crawl-movielens">
         <antcall target="crawl-movielens-movies"/>
-        <antcall target="crawl-movielens-tags"/>
+        <!--<antcall target="crawl-movielens-tags"/>-->
     </target>
 
     <target name="crawl-movielens-movies">

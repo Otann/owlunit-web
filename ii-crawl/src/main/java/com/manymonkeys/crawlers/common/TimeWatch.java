@@ -41,7 +41,7 @@ public class TimeWatch {
         counter++;
         if (counter % limit == 0) {
             double speed = ((double) limit) * 1000 / time();
-            logger.trace(String.format("%s Processed %d %s at speed %.3f per second.", message, counter, items, speed));
+            logger.debug(String.format("%s Processed %d %s at speed %.3f per second.", message, counter, items, speed));
             reset();
         }
 

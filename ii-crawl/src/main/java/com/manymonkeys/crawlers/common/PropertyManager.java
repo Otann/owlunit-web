@@ -14,16 +14,7 @@ public class PropertyManager {
     public static enum Property {
         CASSANDRA_CLUSTER("cassandra.cluster"),
         CASSANDRA_HOST("cassandra.address"),
-        CASSANDRA_KEYSPACE("cassandra.keyspace"),
-
-        MOVIELENS_GENRE_WEIGHT_INITIAL("movielens.weight.genre.initial"),
-        MOVIELENS_TAG_WEIGHT_INITIAL("movielens.weight.tag.initial"),
-        MOVIELENS_TAG_WEIGHT_ADDITIONAL("movielens.weight.tag.additional"),
-
-        IMDB_WEIGHT_KEYWORD_MIN("imdb.weight.keyword.min"),
-        IMDB_WEIGHT_KEYWORD_MAX("imdb.weight.keyword.max"),
-        IMDB_KEYWORD_COUNT_MAX("imdb.keyword.count.max"),
-        IMDB_KEYWORD_COUNT_THRESHOLD("imdb.keyword.count.threshold");
+        CASSANDRA_KEYSPACE("cassandra.keyspace");
 
         String value;
 

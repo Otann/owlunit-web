@@ -35,14 +35,6 @@ public class ImdbKeywordsCrawler extends CassandraCrawler {
     static final Pattern keywordCounter = Pattern.compile("([^\\s]+ \\(\\d+\\))");
     static final Pattern keywordLine = Pattern.compile("^([^\\t]+) \\((\\d+\\))\\s+([^\\s]+)$");
 
-
-    final double MIN_WEIGHT = Double.parseDouble(PropertyManager.get(PropertyManager.Property.IMDB_WEIGHT_KEYWORD_MIN));
-    final double MAX_WEIGHT = Double.parseDouble(PropertyManager.get(PropertyManager.Property.IMDB_WEIGHT_KEYWORD_MAX));
-    final double WEIGHT_RANGE = MAX_WEIGHT - MIN_WEIGHT;
-
-    final int MAX_COUNT = Integer.parseInt(PropertyManager.get(PropertyManager.Property.IMDB_KEYWORD_COUNT_MAX));
-    final int COUNT_THRESHOLD = Integer.parseInt(PropertyManager.get(PropertyManager.Property.IMDB_KEYWORD_COUNT_THRESHOLD));
-
     String filePath;
 
     public ImdbKeywordsCrawler(String filePath) {
@@ -84,8 +76,6 @@ public class ImdbKeywordsCrawler extends CassandraCrawler {
                     String match = matcher.group();
                     String name = match.substring(0, match.indexOf(' '));
                     int value = Integer.parseInt(match.substring(match.lastIndexOf('(') + 1, match.lastIndexOf(')')));
-                    if (value < COUNT_THRESHOLD)
-                        continue;
                     result.put(name, value);
                 }
 
@@ -151,7 +141,7 @@ public class ImdbKeywordsCrawler extends CassandraCrawler {
                 if (count == null) {
                     continue;
                 }
-                double frequency = 1d * count / MAX_COUNT;
+//                double frequency = 1d * count / MAX_COUNT;
                 movieService.addKeyword(movie, keyword);
 
             } catch (Exception e) {

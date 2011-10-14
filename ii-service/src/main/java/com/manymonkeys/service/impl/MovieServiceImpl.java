@@ -29,7 +29,6 @@ public class MovieServiceImpl implements MovieService {
     protected Recommender recommender;
 
     private Double initialKeywordWeight;
-    private Double initialGenreWeight;
     private Double initialPersonWeight;
 
     private Map<Role, Double> initialRoleWeight = new HashMap<Role, Double>();
@@ -274,10 +273,6 @@ public class MovieServiceImpl implements MovieService {
 
     public void setInitialKeywordWeight(double initialKeywordWeight) {
         this.initialKeywordWeight = initialKeywordWeight;
-    }
-
-    public void setInitialGenreWeight(double initialGenreWeight) {
-        this.initialGenreWeight = initialGenreWeight;
     }
 
     public void setInitialPersonWeight(double initialPersonWeight) {

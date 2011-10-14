@@ -9,6 +9,7 @@ import com.manymonkeys.service.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -25,11 +26,9 @@ public class MovieLensMoviesCrawler {
 
     final Logger log = LoggerFactory.getLogger(MovieLensMoviesCrawler.class);
 
-    @Autowired
-    MovieService movieService;
-
-    @Autowired
-    KeywordService keywordService;
+    ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
+    MovieService movieService = (MovieService) ctx.getBean("movieService");
+    KeywordService keywordService = (KeywordService) ctx.getBean("keywordService");
 
     public static final String SERVICE_NAME = "movielens";
     private static final String A_K_A = "a.k.a.";

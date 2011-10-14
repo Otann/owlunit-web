@@ -118,9 +118,9 @@
             <version>2.5.6</version>
         </dependency>
         <dependency>
-            <groupId>${groupId}</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>ii-security</artifactId>
-            <version>[${version},]</version>
+            <version>[${project.version},]</version>
         </dependency>
 
 

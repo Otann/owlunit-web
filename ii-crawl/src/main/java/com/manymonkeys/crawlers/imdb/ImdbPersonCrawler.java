@@ -5,11 +5,14 @@ import com.manymonkeys.crawlers.common.TimeWatch;
 import com.manymonkeys.model.cinema.Movie;
 import com.manymonkeys.model.cinema.Person;
 import com.manymonkeys.model.cinema.Role;
+import com.manymonkeys.service.cinema.MovieService;
+import com.manymonkeys.service.cinema.PersonService;
 import com.manymonkeys.service.impl.MovieServiceImpl;
 import com.manymonkeys.service.impl.PersonServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.*;
 import java.util.regex.Matcher;
@@ -30,11 +33,9 @@ public class ImdbPersonCrawler extends CassandraCrawler {
     private final String filePath;
     private final String role;
 
-    @Autowired
-    MovieServiceImpl movieService;
-
-    @Autowired
-    PersonServiceImpl personService;
+    ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
+    MovieService movieService = (MovieService) ctx.getBean("movieService");
+    PersonService personService = (PersonService) ctx.getBean("personService");
 
     Pattern PERSON_MOVIE_PATTERN = Pattern.compile("^([^\\t]+)\\t+(.+)\\((\\d+)\\).*$");
     Pattern MOVIE_PATTERN = Pattern.compile("^\\t\\t\\t(.+)\\((\\d+)\\).*$");

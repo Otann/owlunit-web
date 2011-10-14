@@ -8,6 +8,7 @@ import com.manymonkeys.service.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.*;
 import java.util.regex.Matcher;
@@ -22,8 +23,8 @@ public class ImdbPlotCrawler extends CassandraCrawler {
 
     final Logger log = LoggerFactory.getLogger(ImdbPlotCrawler.class);
 
-    @Autowired
-    MovieService movieService;
+    ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
+    MovieService movieService = (MovieService) ctx.getBean("movieService");
 
     static final Pattern MOVIE_NAME = Pattern.compile("^MV: (.+) \\((\\d+\\)).*$");
     static final Pattern PLOT_LINE = Pattern.compile("PL: (.+)$");

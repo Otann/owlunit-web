@@ -9,7 +9,7 @@ import com.manymonkeys.service.cinema.KeywordService;
 import com.manymonkeys.service.cinema.MovieService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.*;
 import java.util.HashMap;
@@ -26,11 +26,9 @@ import java.util.regex.Pattern;
  */
 public class ImdbKeywordsCrawler extends CassandraCrawler {
 
-    @Autowired
-    MovieService movieService;
-
-    @Autowired
-    KeywordService keywordService;
+    ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
+    MovieService movieService = (MovieService) ctx.getBean("movieService");
+    KeywordService keywordService = (KeywordService) ctx.getBean("keywordService");
 
     final Logger logger = LoggerFactory.getLogger(ImdbKeywordsCrawler.class);
 

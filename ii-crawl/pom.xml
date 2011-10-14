@@ -20,14 +20,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>${groupId}</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>ii-core</artifactId>
-            <version>[${version},]</version>
+            <version>[${project.version},]</version>
         </dependency>
         <dependency>
-            <groupId>${groupId}</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>ii-service</artifactId>
-            <version>[${version},]</version>
+            <version>[${project.version},]</version>
         </dependency>
 
         <dependency>

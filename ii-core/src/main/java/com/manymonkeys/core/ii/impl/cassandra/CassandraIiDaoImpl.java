@@ -532,6 +532,10 @@ public class CassandraIiDaoImpl implements IiDao {
         query.setName(key);
 
         QueryResult<HColumn<String, String>> queryResult = query.execute();
-        return queryResult.get().getValue();
+        if (queryResult.get() == null) {
+            return null;
+        } else {
+            return queryResult.get().getValue();
+        }
     }
 }

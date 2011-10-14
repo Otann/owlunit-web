@@ -8,6 +8,7 @@ import com.manymonkeys.service.cinema.MovieService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.*;
 import java.util.HashMap;
@@ -26,11 +27,9 @@ public class MovieLensTagsCrawler {
 
     final Logger log = LoggerFactory.getLogger(MovieLensTagsCrawler.class);
 
-    @Autowired
-    MovieService movieService;
-
-    @Autowired
-    KeywordService tagService;
+    ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
+    MovieService movieService = (MovieService) ctx.getBean("movieService");
+    KeywordService keywordService = (KeywordService) ctx.getBean("keywordService");
 
     public static void main(String[] args) throws IOException {
         new MovieLensTagsCrawler().run(args[0]);
@@ -68,7 +67,7 @@ public class MovieLensTagsCrawler {
 
                 Keyword keyword = keywordLocalCache.get(tagName);
                 if (keyword == null) {
-                    keyword = tagService.createKeyword(tagName);
+                    keyword = keywordService.createKeyword(tagName);
                     keywordLocalCache.put(tagName, keyword);
                 }
 

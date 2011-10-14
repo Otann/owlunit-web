@@ -1,6 +1,5 @@
 package com.manymonkeys.core.ii.impl.cassandra;
 
-import com.google.common.collect.ImmutableMap;
 import com.manymonkeys.core.ii.Ii;
 
 import java.util.HashMap;
@@ -15,9 +14,9 @@ import java.util.UUID;
 public class CassandraIiImpl implements Ii, Comparable<Ii> {
 
     UUID uuid;
-    Map<String, String> meta = new HashMap<String, String>();
-    Map<Ii, Double> components = new HashMap<Ii, Double>();
-    Map<Ii, Double> parents = new HashMap<Ii, Double>();
+    Map<String, String> meta;
+    Map<Ii, Double> components;
+    Map<Ii, Double> parents;
 
     CassandraIiImpl(UUID uuid) {
         this.uuid = uuid;
@@ -37,7 +36,7 @@ public class CassandraIiImpl implements Ii, Comparable<Ii> {
 
     @Override
     public Map<String, String> getMetaMap() {
-        return ImmutableMap.copyOf(meta);
+        return meta;
     }
 
     @Override

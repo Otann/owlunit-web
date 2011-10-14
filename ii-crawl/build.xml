@@ -48,7 +48,6 @@
             <param name="parse.greeting"  value="Crawling IMDB actors"/>
             <param name="parse.classname" value="com.manymonkeys.crawlers.imdb.ImdbPersonCrawler"/>
             <param name="parse.filename"  value="${imdb.file.actors}" />
-            <param name="parse.weight"    value="${imdb.weight.person}"/>
             <param name="parse.role"      value="${imdb.role.actor}"/>
         </antcall>
     </target>
@@ -58,8 +57,7 @@
             <param name="parse.greeting"  value="Crawling IMDB actress"/>
             <param name="parse.classname" value="com.manymonkeys.crawlers.imdb.ImdbPersonCrawler"/>
             <param name="parse.filename"  value="${imdb.file.actress}" />
-            <param name="parse.weight"    value="${imdb.weight.actress}"/>
-            <param name="parse.role"      value="${imdb.role.actress}"/>
+            <param name="parse.role"      value="${imdb.role.actor}"/>
         </antcall>
     </target>
 
@@ -68,7 +66,6 @@
             <param name="parse.greeting"  value="Crawling IMDB producers"/>
             <param name="parse.classname" value="com.manymonkeys.crawlers.imdb.ImdbPersonCrawler"/>
             <param name="parse.filename"  value="${imdb.file.producers}" />
-            <param name="parse.weight"    value="${imdb.weight.producer}"/>
             <param name="parse.role"      value="${imdb.role.producer}"/>
         </antcall>
     </target>
@@ -78,7 +75,6 @@
             <param name="parse.greeting"  value="Crawling IMDB directors"/>
             <param name="parse.classname" value="com.manymonkeys.crawlers.imdb.ImdbPersonCrawler"/>
             <param name="parse.filename"  value="${imdb.file.directors}" />
-            <param name="parse.weight"    value="${imdb.weight.producer}"/>
             <param name="parse.role"      value="${imdb.role.director}"/>
         </antcall>
     </target>
@@ -121,7 +117,6 @@
             </classpath>
 
             <arg value="${parse.filename}" />
-            <arg value="${parse.weight}" />
             <arg value="${parse.role}" />
         </java>
 

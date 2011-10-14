@@ -40,13 +40,13 @@ public class ImdbPersonCrawler extends CassandraCrawler {
     Pattern PERSON_MOVIE_PATTERN = Pattern.compile("^([^\\t]+)\\t+(.+)\\((\\d+)\\).*$");
     Pattern MOVIE_PATTERN = Pattern.compile("^\\t\\t\\t(.+)\\((\\d+)\\).*$");
 
-    public ImdbPersonCrawler(String filePath, double initialWeight, String role) {
+    public ImdbPersonCrawler(String filePath, String role) {
         this.filePath = filePath;
         this.role = role;
     }
 
     public static void main(String[] args) {
-        new ImdbPersonCrawler(args[0], Double.parseDouble(args[1]), args[2]).crawl();
+        new ImdbPersonCrawler(args[0], args[1]).crawl();
     }
 
     public void run() throws Exception {

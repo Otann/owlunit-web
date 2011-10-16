@@ -34,6 +34,7 @@ renderSimilar = (movies) ->
 
 onMovieLoaded = () ->
     movieName = document.querySelector("#content .movie-card h2.page-title .translation")?.innerText
+    movieName ?= document.querySelector("#content .movie-card h2.page-title")?.innerText
     if !movieName? then return
     metaTable = document.querySelector("#content .movie-card .content-main table.meta-list")
     if !metaTable? then return

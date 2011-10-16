@@ -1,8 +1,4 @@
-if module? # node.js
-    this.XMLHttpRequest = require("node-XMLHttpRequest").XMLHttpRequest
-    jwhen = require("when.js")
-else
-    jwhen = this.when
+jwhen = this.when
 
 urlEncodeArgs = (args) ->
     urlencodedArgs = for own k, v of args
@@ -42,7 +38,6 @@ iiService = class iiService
         return d.promise
 
 
-global = exports ? this
-global.iiService = iiService
-global.iiApiUrl = iiApiUrl
+this.iiService = iiService
+this.iiApiUrl = iiApiUrl
 

@@ -1,8 +1,15 @@
-create keyspace InformationItems;
-use InformationItems;
+create keyspace INFORMATION_ITEMS;
+use INFORMATION_ITEMS;
 
 create column family META with comparator = UTF8Type;
 create column family META_INDEX with comparator = TimeUUIDType;
 create column family META_PREFIX with comparator = TimeUUIDType;
+
 create column family COMPONENTS with comparator = TimeUUIDType;
 create column family PARENTS with comparator = TimeUUIDType;
+
+create column family DIRECT-2 with comparator = TimeUUIDType;
+create column family DIRECT-3 with comparator = TimeUUIDType;
+create column family INDIRECT with comparator = TimeUUIDType;
+
+create column family CACHE-TYPE-MOVIE with comparator = TimeUUIDType;

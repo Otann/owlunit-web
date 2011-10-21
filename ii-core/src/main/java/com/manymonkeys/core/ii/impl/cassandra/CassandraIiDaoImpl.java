@@ -52,15 +52,19 @@ public class CassandraIiDaoImpl implements IiDao {
 
     /**
      * Each item has mark of it's creator
-     * THis is done because each item has to have at leas some meta information to be persisted
+     * This is done because each item has to have at leas some meta information to be persisted
      * Otherwise we can not distinct non-existent item from item with no data
      */
     private static final String META_KEY_CREATOR = "CREATED BY";
 
-    // Column families constants
+    /////////////////////
+    // Column Families
+    /////////////////////
+
     private static final String CF_META = "META";
     private static final String CF_META_INDEX = "META_INDEX";
     private static final String CF_META_PREFIX = "META_PREFIX";
+
     private static final String CF_COMPONENTS = "COMPONENTS";
     private static final String CF_PARENTS = "PARENTS";
 

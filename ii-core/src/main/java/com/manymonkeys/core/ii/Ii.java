@@ -63,4 +63,5 @@ public interface Ii {
      * @return weight of connection to that parent. Null if there is no such parent
      */
     Double getParentWeight(Ii parent);
+
 }

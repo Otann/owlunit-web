@@ -1,1 +1,1 @@
-drop keyspace InformationItems;
+drop keyspace INFORMATION_ITEMS;

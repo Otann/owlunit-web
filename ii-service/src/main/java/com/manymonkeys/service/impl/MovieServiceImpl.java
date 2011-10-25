@@ -72,9 +72,9 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public Movie createMovie(Movie movie) {
         Ii movieIi = dao.createInformationItem();
-        dao.setUnindexedMeta(movieIi, CLASS_MARK_KEY, CLASS_MARK_VALUE);
-        dao.setUnindexedMeta(movieIi, META_KEY_YEAR, Long.toString(movie.getYear()));
-        dao.setUnindexedMeta(movieIi, SIMPLE_NAME, simpleName(movie.getName(), movie.getYear()));
+        dao.setMetaUnindexed(movieIi, CLASS_MARK_KEY, CLASS_MARK_VALUE);
+        dao.setMetaUnindexed(movieIi, META_KEY_YEAR, Long.toString(movie.getYear()));
+        dao.setMetaUnindexed(movieIi, SIMPLE_NAME, simpleName(movie.getName(), movie.getYear()));
         dao.setMeta(movieIi, META_KEY_NAME, movie.getName());
         return iiToMovie(dao, movieIi);
     }
@@ -182,7 +182,7 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public Movie setExternalId(Movie movie, String service, String externalId) throws NotFoundException {
         Ii item = movieToIi(dao, movie);
-        item = dao.setUnindexedMeta(item, META_SERVICE_KEY + service, externalId);
+        item = dao.setMetaUnindexed(item, META_SERVICE_KEY + service, externalId);
         return iiToMovie(dao, item);
     }
 

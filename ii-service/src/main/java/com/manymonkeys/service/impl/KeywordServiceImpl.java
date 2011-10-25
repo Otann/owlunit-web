@@ -48,7 +48,7 @@ public class KeywordServiceImpl implements KeywordService {
     @Override
     public Keyword createKeyword(String name) {
         Ii item = dao.createInformationItem();
-        dao.setUnindexedMeta(item, CLASS_MARK_KEY, CLASS_MARK_VALUE);
+        dao.setMetaUnindexed(item, CLASS_MARK_KEY, CLASS_MARK_VALUE);
         dao.setMeta(item, META_KEY_NAME, name);
         return iiToKeyword(dao, item);
     }

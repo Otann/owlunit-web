@@ -76,6 +76,14 @@ public interface IiDao {
      */
     Collection<Ii> loadMetadata(Collection<Ii> items);
 
+    /**
+     * Removes metadata from item
+     *
+     * @param item original item
+     * @param key of metadata
+     * @return updated item
+     */
+    Ii removeMeta(Ii item, String key);
 
     /**
      * Updates components links for item.
@@ -124,6 +132,8 @@ public interface IiDao {
      * @param key of metadata
      * @param prefix that metadata value should start from
      * @return map of uuids and full meta values
+     *
+     * @deprecated wrong competence
      */
     Map<UUID, String> search(String key, String prefix);
 
@@ -149,7 +159,7 @@ public interface IiDao {
 
     /**
      * Updates or creates metadata of Ii
-     * @see #setUnindexedMeta(Ii, String, String)
+     * @see #setMetaUnindexed(Ii, String, String)
      *
      * @param item original item
      * @param key of metadata
@@ -168,15 +178,6 @@ public interface IiDao {
      * @param value of metadata
      * @return updated Ii
      */
-    Ii setUnindexedMeta(Ii item, String key, String value);
-
-    /**
-     * Removes metadata from item
-     *
-     * @param item original item
-     * @param key of metadata
-     * @return updated item
-     */
-    Ii removeMeta(Ii item, String key);
+    Ii setMetaUnindexed(Ii item, String key, String value);
 
 }

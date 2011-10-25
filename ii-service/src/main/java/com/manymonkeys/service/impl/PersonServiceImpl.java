@@ -97,8 +97,8 @@ public class PersonServiceImpl implements PersonService {
 
     public Ii create(Person person) {
         Ii personIi = dao.createInformationItem();
-        dao.setUnindexedMeta(personIi, CLASS_MARK_KEY, CLASS_MARK_VALUE);
-        dao.setUnindexedMeta(personIi, META_KEY_NAME_ID, nameId(person.getName(), person.getSurname()));
+        dao.setMetaUnindexed(personIi, CLASS_MARK_KEY, CLASS_MARK_VALUE);
+        dao.setMetaUnindexed(personIi, META_KEY_NAME_ID, nameId(person.getName(), person.getSurname()));
 
         dao.setMeta(personIi, META_KEY_NAME, person.getName());
         dao.setMeta(personIi, META_KEY_SURNAME, person.getSurname());

@@ -64,9 +64,9 @@ public class UserServiceImpl implements UserService {
     public User createUser(User user) {
         //TODO Ilya Pimenov - validate login name to be alphanumeric
         Ii userIi = dao.createInformationItem();
-        dao.setUnindexedMeta(userIi, CLASS_MARK_KEY, CLASS_MARK_VALUE);
-        dao.setUnindexedMeta(userIi, META_KEY_LOGIN, user.getLogin());
-        dao.setUnindexedMeta(userIi, META_KEY_PASSWORD, getPasswordHash(user.getPassword()));
+        dao.setMetaUnindexed(userIi, CLASS_MARK_KEY, CLASS_MARK_VALUE);
+        dao.setMetaUnindexed(userIi, META_KEY_LOGIN, user.getLogin());
+        dao.setMetaUnindexed(userIi, META_KEY_PASSWORD, getPasswordHash(user.getPassword()));
         return iiToUser(dao, userIi);
     }
 

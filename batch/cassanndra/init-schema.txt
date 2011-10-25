@@ -2,9 +2,6 @@ create keyspace INFORMATION_ITEMS;
 use INFORMATION_ITEMS;
 
 create column family META with comparator = UTF8Type;
-create column family META_INDEX with comparator = TimeUUIDType;
-create column family META_PREFIX with comparator = TimeUUIDType;
-
 create column family COMPONENTS with comparator = TimeUUIDType;
 create column family PARENTS with comparator = TimeUUIDType;
 

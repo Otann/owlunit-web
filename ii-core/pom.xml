@@ -26,6 +26,15 @@
             <url>http://mvn.riptano.com/content/repositories/public</url>
         </repository>
 
+        <repository>
+            <id>maven.scale7.org</id>
+            <name>Scale7 Maven Repo</name>
+            <url>https://github.com/s7/mvnrepo/raw/master</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+
     </repositories>
 
     <dependencies>
@@ -54,23 +63,16 @@
             <version>r08</version>
         </dependency>
 
-        <!-- Neo4j -->
-        <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j</artifactId>
-            <version>1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j-index</artifactId>
-            <version>1.2-1.2</version>
-        </dependency>
-
         <!-- Cassandra adapter -->
         <dependency>
             <groupId>me.prettyprint</groupId>
-            <artifactId>hector</artifactId>
-            <version>0.7.0-20</version>
+            <artifactId>hector-core</artifactId>
+            <version>0.8.0-2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scale7</groupId>
+            <artifactId>scale7-pelops</artifactId>
+            <version>1.3-1.0.x-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.safehaus.jug</groupId>

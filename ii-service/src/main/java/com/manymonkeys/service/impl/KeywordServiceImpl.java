@@ -69,7 +69,7 @@ public class KeywordServiceImpl implements KeywordService {
         if (blankItems.isEmpty()) {
             throw new NotFoundException(String.format("Keyword(%s)", name));
         } else {
-            Ii meta = dao.loadMetadata(blankItems.iterator().next());
+            Ii meta = dao.loadMeta(blankItems.iterator().next());
             return iiToKeyword(dao, meta);
         }
     }
@@ -86,7 +86,7 @@ public class KeywordServiceImpl implements KeywordService {
     @Override
     public List<Keyword> listKeywords() {
         Collection<Ii> blankItems = dao.load(CLASS_MARK_KEY, CLASS_MARK_VALUE);
-        return iisToKeywords(dao.loadMetadata(blankItems));
+        return iisToKeywords(dao.loadMeta(blankItems));
     }
 
     @Override

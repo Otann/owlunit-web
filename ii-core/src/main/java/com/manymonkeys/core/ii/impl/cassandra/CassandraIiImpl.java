@@ -2,7 +2,6 @@ package com.manymonkeys.core.ii.impl.cassandra;
 
 import com.manymonkeys.core.ii.Ii;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -13,17 +12,17 @@ import java.util.UUID;
  */
 public class CassandraIiImpl implements Ii, Comparable<Ii> {
 
-    UUID uuid;
+    UUID id;
     Map<String, String> meta;
     Map<Ii, Double> components;
     Map<Ii, Double> parents;
 
     CassandraIiImpl(UUID uuid) {
-        this.uuid = uuid;
+        this.id = uuid;
     }
 
     CassandraIiImpl(CassandraIiImpl item) {
-        this.uuid = item.uuid;
+        this.id = item.id;
         this.meta = item.meta;
         this.parents = item.parents;
         this.components = item.components;
@@ -31,7 +30,7 @@ public class CassandraIiImpl implements Ii, Comparable<Ii> {
 
     @Override
     public UUID getUUID() {
-        return uuid;
+        return id;
     }
 
     @Override
@@ -67,14 +66,14 @@ public class CassandraIiImpl implements Ii, Comparable<Ii> {
 
     @Override
     public int hashCode() {
-        return uuid.hashCode();
+        return id.hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Ii) {
             Ii local = (Ii) obj;
-            return uuid.equals(local.getUUID());
+            return id.equals(local.getUUID());
         } else {
             return false;
         }
@@ -82,11 +81,11 @@ public class CassandraIiImpl implements Ii, Comparable<Ii> {
 
     @Override
     public int compareTo(Ii item) {
-        return uuid.compareTo(item.getUUID());
+        return id.compareTo(item.getUUID());
     }
 
     @Override
     public String toString() {
-        return uuid.toString();
+        return id.toString();
     }
 }

@@ -196,7 +196,7 @@ public class MovieServiceImpl implements MovieService {
 
     private Ii retrieve(String name, Long year) throws NotFoundException {
         Collection<Ii> rawItems = dao.load(SIMPLE_NAME, simpleName(name, year));
-        Collection<Ii> items = dao.loadMetadata(rawItems);
+        Collection<Ii> items = dao.loadMeta(rawItems);
         if (items.isEmpty()) {
             throw new NotFoundException(String.format("%s (%s)", name, year));
         }

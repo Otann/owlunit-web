@@ -10,6 +10,10 @@ import java.util.UUID;
  */
 public interface IiDao {
 
+    ////////////////////////////////////////////////
+    ////////////////    Create / Delete / Load
+    ////////////////////////////////////////////////
+
     /**
      * Creates new blank Ii object with valid uuid
      *
@@ -27,7 +31,7 @@ public interface IiDao {
     /**
      * Loads Ii from datastore if such Ii exists.
      * Loaded Ii is blank and has only uuid.
-     * @see #loadMetadata(java.util.Collection)
+     * @see #loadMeta(java.util.Collection)
      * @see #loadComponents(java.util.Collection)
      * @see #loadParents(java.util.Collection)
      *
@@ -46,6 +50,21 @@ public interface IiDao {
      */
     Collection<Ii> load(Collection<UUID> uuids);
 
+    ////////////////////////////////////////////////
+    ////////////////    Meta
+    ////////////////////////////////////////////////
+
+    /**
+     * Updates or creates metadata of Ii
+     * @see #setMetaUnindexed(Ii, String, String)
+     *
+     * @param item original item
+     * @param key of metadata
+     * @param value of metadata
+     * @return updated Ii
+     */
+    Ii setMeta(Ii item, String key, String value);
+
     /**
      * Loads items that has provided key-value pair in metadata.
      * Loaded items is blank, have only uuid.
@@ -58,6 +77,18 @@ public interface IiDao {
     Collection<Ii> load(String key, String value);
 
     /**
+     * Updates or creates metadata of Ii
+     * This metadata will not be indexed for search through {@link #search(String, String)}
+     * @see #setMeta(Ii, String, String)
+     *
+     * @param item to update
+     * @param key of metadata
+     * @param value of metadata
+     * @return updated Ii
+     */
+    Ii setMetaUnindexed(Ii item, String key, String value);
+
+    /**
      * Updates metadata for item
      * @see #loadComponents(Ii)
      * @see #loadParents(Ii)
@@ -65,16 +96,16 @@ public interface IiDao {
      * @param item original item
      * @return copy of original item with updated metadata
      */
-    Ii loadMetadata(Ii item);
+    Ii loadMeta(Ii item);
 
     /**
-     * Collection-based version of {@link #loadMetadata(Ii)}
+     * Collection-based version of {@link #loadMeta(Ii)}
      * Queries performed in parallel
      *
      * @param items original items
      * @return copy of original items with updated metadata
      */
-    Collection<Ii> loadMetadata(Collection<Ii> items);
+    Collection<Ii> loadMeta(Collection<Ii> items);
 
     /**
      * Removes metadata from item
@@ -85,10 +116,14 @@ public interface IiDao {
      */
     Ii removeMeta(Ii item, String key);
 
+    ////////////////////////////////////////////////
+    ////////////////    Tree operations
+    ////////////////////////////////////////////////
+
     /**
      * Updates components links for item.
      * New components loaded blank, with uuid only, old components are same as original
-     * @see #loadMetadata(Ii)
+     * @see #loadMeta(Ii)
      * @see #loadParents(Ii)
      *
      * @param item original item
@@ -108,7 +143,7 @@ public interface IiDao {
     /**
      * Updates parents links for item.
      * New parents loaded blank, with uuid only, old parents are same as original
-     * @see #loadMetadata(Ii)
+     * @see #loadMeta(Ii)
      * @see #loadComponents(Ii)
      *
      * @param item original item
@@ -158,26 +193,11 @@ public interface IiDao {
     Ii removeComponent(Ii item, Ii component);
 
     /**
-     * Updates or creates metadata of Ii
-     * @see #setMetaUnindexed(Ii, String, String)
+     * Loads subtree three-level deep with indirect weights
      *
-     * @param item original item
-     * @param key of metadata
-     * @param value of metadata
-     * @return updated Ii
+     * @param item root item of subtree
+     * @return map of subtree items with indirect weights
      */
-    Ii setMeta(Ii item, String key, String value);
-
-    /**
-     * Updates or creates metadata of Ii
-     * This metadata will not be indexed for search through {@link #search(String, String)}
-     * @see #setMeta(Ii, String, String)
-     *
-     * @param item to update
-     * @param key of metadata
-     * @param value of metadata
-     * @return updated Ii
-     */
-    Ii setMetaUnindexed(Ii item, String key, String value);
+    Map<Ii, Double> getIndirectComponents(Ii item);
 
 }

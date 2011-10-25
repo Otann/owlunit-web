@@ -11,7 +11,7 @@
     |  O W L S   B E A N S  |
     \=====================-->
 
-    <bean id="cassandraDao" class="com.manymonkeys.core.ii.impl.cassandra.CassandraIiDaoImpl">
+    <bean id="cassandraDao" class="com.manymonkeys.core.ii.impl.cassandra.CassandraIiDaoHectorImpl">
         <constructor-arg name="keyspace" ref="keyspace"/>
     </bean>
 

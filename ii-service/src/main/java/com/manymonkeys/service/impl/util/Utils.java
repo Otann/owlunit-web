@@ -12,7 +12,7 @@ public class Utils {
 
     public static Ii itemWithMeta(IiDao dao, Ii item) {
         if (item.getMetaMap() == null) {
-            return dao.loadMetadata(item);
+            return dao.loadMeta(item);
         } else {
             return item;
         }

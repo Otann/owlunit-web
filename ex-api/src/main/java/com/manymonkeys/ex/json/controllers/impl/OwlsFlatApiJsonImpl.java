@@ -160,9 +160,10 @@ public class OwlsFlatApiJsonImpl implements OwlsFlatApi {
     @Override
     @RequestMapping(value = "/getposter", method = RequestMethod.GET)
     @ResponseBody
-    public URL getPoster(String movieName, Long movieYear) {
+    public String getPoster(@RequestParam("movieName") String movieName,
+                         @RequestParam("movieYear") Long movieYear) {
         try {
-            return posterService.getPosterUrl(movieService.loadByName(movieName, movieYear));
+            return posterService.getPosterUrl(movieService.loadByName(movieName, movieYear)).toExternalForm();
         } catch (NotFoundException e) {
             throw new ObjectNotFoundException(e);
         }

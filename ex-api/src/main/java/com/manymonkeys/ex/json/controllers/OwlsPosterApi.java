@@ -14,5 +14,5 @@ public interface OwlsPosterApi {
      * @param movieName of the movie
      * @param movieYear of the movie
      */
-    URL getPoster(String movieName, Long movieYear);
+    String getPoster(String movieName, Long movieYear);
 }

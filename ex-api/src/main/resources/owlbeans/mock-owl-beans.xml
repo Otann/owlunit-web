@@ -21,7 +21,7 @@
         <constructor-arg index="0" value="http"/>
         <constructor-arg index="1" value="tytoalba.ru"/>
         <constructor-arg index="2" value="8080"/>
-        <constructor-arg index="3" value="ex-api-1.0"/>
+        <constructor-arg index="3" value="/ex-api-1.0"/>
     </bean>
 
 </beans>

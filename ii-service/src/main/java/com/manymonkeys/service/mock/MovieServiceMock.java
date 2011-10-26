@@ -21,19 +21,19 @@ public class MovieServiceMock implements MovieService {
 
 
     //package visibility is important to use in PosterServiceMock class
-    static Movie BIG_LEBOWSKI_MOVIE = new Movie(new UUID(3, 3),
+    static Movie BIG_LEBOWSKI_MOVIE = new Movie(new UUID(1298, 21312),
             "Big Lebowski",
             1998,
             "From dood's to all the doods and doodeses");
-    static Movie R_N_G_A_D_MOVIE = new Movie(new UUID(3, 3),
+    static Movie R_N_G_A_D_MOVIE = new Movie(new UUID(23123, 321313),
             "Rosencrantz And Guildenstern Are Dead",
             1990,
             "Directed by Tom Stoppard himself, a different look at classic Shakespeare play");
-    static Movie WITHNAIL_N_I_MOVIE = new Movie(new UUID(3, 3),
+    static Movie WITHNAIL_N_I_MOVIE = new Movie(new UUID(21321, 354565),
             "Withnail & I",
             1986,
             "Written and directed by Bruce Robinson and is based on his life in London in the late 1960s");
-    static Movie THE_DUELLISTS = new Movie(new UUID(3, 3),
+    static Movie THE_DUELLISTS = new Movie(new UUID(9876, 21324),
             "The Duellists",
             1977,
             "Historical drama film that was Ridley Scott's first feature film as a director");

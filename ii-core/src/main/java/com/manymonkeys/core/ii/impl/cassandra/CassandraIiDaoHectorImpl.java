@@ -95,7 +95,32 @@ public class CassandraIiDaoHectorImpl implements IiDao {
 
     @Override
     public void deleteInformationItem(Ii ii) {
-        //TODO Anton Chebotaev - implement
+        CassandraIiImpl item = checkImpl(loadMeta(ii)); //query 1
+
+        List<UUID> invalidateItems = getRowKeys(keyspace, CF_PARENTS, item.id); //query 2
+
+        Mutator<String> stringMutator = HFactory.createMutator(keyspace, HectorUtils.ss);
+        for(String key : item.meta.keySet()) {
+            String value = item.meta.get(key);
+            String rowKey = String.format(META_INDEX_FORMAT, key, value);
+            stringMutator.addDeletion(rowKey, CF_META_INDEX);
+        }
+        stringMutator.execute();
+
+        Mutator<UUID> mutator = HFactory.createMutator(keyspace, HectorUtils.us);
+        mutator.addDeletion(item.id, CF_META)
+                .addDeletion(item.id, CF_COMPONENTS)
+                .addDeletion(item.id, CF_PARENTS)
+                .addDeletion(item.id, CF_OLDIES)
+                .addDeletion(item.id, CF_DIRECT_2)
+                .addDeletion(item.id, CF_DIRECT_3)
+                .addDeletion(item.id, CF_INDIRECT)
+                .execute();
+
+        // Invalidate
+        for (UUID id : invalidateItems) { //TODO Anton Chebotaev - check
+            updateDirectReferences(id, item.id, Priority.HIGH);
+        }
     }
 
     @OwledMethod
@@ -360,7 +385,8 @@ public class CassandraIiDaoHectorImpl implements IiDao {
         // Update DIRECT_2
         List<UUID> itemParents = getRowKeys(keyspace, CF_PARENTS, item); //query 5
         for(UUID parent : itemParents) {
-            mutator.addInsertion(parent, CF_DIRECT_3, itemSuperColumn);
+            mutator.addInsertion(parent, CF_DIRECT_2, itemSuperColumn);
+            mutator.addInsertion(component, CF_OLDIES, HFactory.createColumn(parent, 0D, HectorUtils.us, HectorUtils.ds));
         }
 
         // Update DIRECT_3
@@ -382,9 +408,9 @@ public class CassandraIiDaoHectorImpl implements IiDao {
 
     //TODO Ilya Pimenov - apply JMS here
     private void updateIndirectReferences(UUID item, Priority priority) {
-        Map<UUID, Double> components = getRow(keyspace, CF_COMPONENTS, item);
-        Map<UUID, Map<UUID, Double>> direct2 = getSuperRow(keyspace, CF_DIRECT_2, item);
-        Map<UUID, Map<UUID, Double>> direct3 = getSuperRow(keyspace, CF_DIRECT_3, item);
+        Map<UUID, Double> components = getRow(keyspace, CF_COMPONENTS, item); //query 1
+        Map<UUID, Map<UUID, Double>> direct2 = getSuperRow(keyspace, CF_DIRECT_2, item); //query 2
+        Map<UUID, Map<UUID, Double>> direct3 = getSuperRow(keyspace, CF_DIRECT_3, item); //query 3
 
         Map<UUID, Double> indirect = new HashMap<UUID, Double>(components);
 

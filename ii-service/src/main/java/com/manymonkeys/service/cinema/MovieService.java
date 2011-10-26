@@ -1,6 +1,9 @@
 package com.manymonkeys.service.cinema;
 
-import com.manymonkeys.model.cinema.*;
+import com.manymonkeys.model.cinema.Keyword;
+import com.manymonkeys.model.cinema.Movie;
+import com.manymonkeys.model.cinema.Person;
+import com.manymonkeys.model.cinema.Role;
 import com.manymonkeys.service.exception.NotFoundException;
 
 import java.util.Map;

@@ -11,10 +11,17 @@
     |  M O C K E D  O W L S   B E A N S   |
     \===================================-->
 
-    <bean id="userService" class="com.manymonkeys.service.mock.UserServiceMock" />
+    <bean id="userService" class="com.manymonkeys.service.mock.UserServiceMock"/>
 
-    <bean id="movieService" class="com.manymonkeys.service.mock.MovieServiceMock" />
+    <bean id="movieService" class="com.manymonkeys.service.mock.MovieServiceMock"/>
 
-    <bean id="personService" class="com.manymonkeys.service.mock.PersonServiceMock" />
+    <bean id="personService" class="com.manymonkeys.service.mock.PersonServiceMock"/>
+
+    <bean id="posterService" class="com.manymonkeys.service.mock.PosterServiceMock">
+        <constructor-arg index="0" value="http"/>
+        <constructor-arg index="1" value="tytoalba.ru"/>
+        <constructor-arg index="2" value="8080"/>
+        <constructor-arg index="3" value="ex-api-1.0"/>
+    </bean>
 
 </beans>

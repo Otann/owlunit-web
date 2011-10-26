@@ -45,6 +45,17 @@ public class MovieServiceMock implements MovieService {
 
     @Override
     public Movie loadByName(String name, Long year) throws NotFoundException {
+        if (name.equals(BIG_LEBOWSKI_MOVIE.getName())){
+            return BIG_LEBOWSKI_MOVIE;
+        }else if (name.equals(R_N_G_A_D_MOVIE.getName())){
+            return R_N_G_A_D_MOVIE;
+        }else if (name.equals(WITHNAIL_N_I_MOVIE.getName())){
+            return WITHNAIL_N_I_MOVIE;
+        }else if (name.equals(THE_DUELLISTS.getName())){
+            return THE_DUELLISTS;
+        }
+
+        /* Dood goes as a default */
         return BIG_LEBOWSKI_MOVIE;
     }
 

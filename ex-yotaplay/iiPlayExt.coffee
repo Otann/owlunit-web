@@ -48,6 +48,6 @@ applyPanelTemplate = (body, title) ->
     "<div class=\"panel\"><header class=\"clear\"><h3>#{title}</h3></header>"+
         "<div class=\"content\">#{body}</div></div>"
 applySimilarTemplate = (list) ->
-    '<ul>' + (list.map((s)->"<li>"+s+"</li>").join()) + '</ul>'
+    '<ul>' + (list.map((s)->"<li>"+s+"</li>").join("")) + '</ul>'
 applyMovieTemplate = (movie) ->
-    "<strong>#{movie.name}</strong>, #{movie.year}"
+    "<a href=\"http://yotaplay.ru/search/#{movie.name}\"><strong>#{movie.name}</strong></a>, #{movie.year}"

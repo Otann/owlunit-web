@@ -16,7 +16,7 @@ headNode.appendChild(scriptNode)
 service = new iiService(iiApiUrl)
 
 showSimilarMovies = (similar) ->
-    parse = /^Movie\(([0-9-]+),([^,]+),(\d+),([^,]+)\)$/
+    parse = /^Movie\(([0-9a-f\-]+),([^,]+),(\d+),([^)]+)\)$/
     movies = []
     for own movie, weight of similar
         p = parse.exec(movie)

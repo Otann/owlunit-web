@@ -21,6 +21,58 @@
         <module>ex-api</module>
     </modules>
 
+    <properties>
+        <org.springframework.version>3.0.5.RELEASE</org.springframework.version>
+        <slf4j.version>1.6.2</slf4j.version>
+        <logback.version>0.9.29</logback.version>
+    </properties>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\
+    |  PLEASE NOTE THAT THIS IS ONLY "DEPENDENCY MANAGEMENT",                   |
+    |  THIS ENTRIES SPECIFY ONLY VERSION TO USE IN LATER ANNOUNCEMENTS,         |
+    |  THESE ARTIFACTS WON'T BE INCLUDED AS DIRECT DEPENDENCIES TO ALL CHILDREN |
+    \=========================================================================-->
+    <dependencyManagement>
+        <dependencies>
+
+            <!-- - - - - - - - - - - - - - - - \
+            |  ALL THE LOGGING STUFF REQUIRED  |
+            \================================-->
+
+            <!-- slf4j -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <!-- logback -->
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <!-- slf4j / logback implementation -->
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <!-- slf4j / commons logging bridge (to make spring use slf4j instead) -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <!-- slf4j / to user sql4j instead of log4j -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>log4j-over-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
     <build>
         <plugins>
             <plugin>

@@ -21,6 +21,9 @@ iiService = class iiService
     getRecommendations: (login, amount, showReasons) ->
         @query("getrecommendations", { login: login, amount: amount, showReasons: showReasons }, true)
 
+    getPoster: (movieName, movieYear) ->
+        @query("getposter", { movieName: movieName, movieYear: movieYear }, false)
+
     query: (method, args, json) ->
         d = jwhen.defer()
         q = @serviceUrl + method + "?" + urlEncodeArgs(args)

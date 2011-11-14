@@ -8,15 +8,14 @@ import com.manymonkeys.model.cinema.Role;
 import com.manymonkeys.service.auth.UserService;
 import com.manymonkeys.service.cinema.MovieService;
 import com.manymonkeys.service.cinema.PersonService;
+import com.manymonkeys.service.cinema.PosterService;
 import com.manymonkeys.service.exception.NotFoundException;
-import com.manymonkeys.service.impl.MovieServiceImpl;
-import com.manymonkeys.service.impl.PersonServiceImpl;
-import com.manymonkeys.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +39,9 @@ public class OwlsFlatApiJsonImpl implements OwlsFlatApi {
 
     @Autowired
     PersonService personService;
+
+    @Autowired
+    PosterService posterService;
 
     @Override
     @RequestMapping(value = "/addmovie", method = RequestMethod.POST)
@@ -155,4 +157,15 @@ public class OwlsFlatApiJsonImpl implements OwlsFlatApi {
         return VERSION;
     }
 
+    @Override
+    @RequestMapping(value = "/getposter", method = RequestMethod.GET)
+    @ResponseBody
+    public String getPoster(@RequestParam("movieName") String movieName,
+                         @RequestParam("movieYear") Long movieYear) {
+        try {
+            return posterService.getPosterUrl(movieService.loadByName(movieName, movieYear)).toExternalForm();
+        } catch (NotFoundException e) {
+            throw new ObjectNotFoundException(e);
+        }
+    }
 }

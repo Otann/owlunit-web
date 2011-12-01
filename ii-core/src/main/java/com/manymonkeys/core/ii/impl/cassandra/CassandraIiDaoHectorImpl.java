@@ -50,8 +50,8 @@ public class CassandraIiDaoHectorImpl implements IiDao {
     static final String CF_OLDIES     = "OLDIES";
     // Tree direct links down
     static final String CF_COMPONENTS = "COMPONENTS";
-    static final String CF_DIRECT_2 = "DIRECT-2";
-    static final String CF_DIRECT_3 = "DIRECT-3";
+    static final String CF_DIRECT_2 = "DIRECT_2";
+    static final String CF_DIRECT_3 = "DIRECT_3";
     // Tree indirect links
     static final String CF_INDIRECT = "INDIRECT";
 
@@ -74,6 +74,7 @@ public class CassandraIiDaoHectorImpl implements IiDao {
                 CF_META,
                 UUIDSerializer.get(),
                 StringSerializer.get());
+
         cfMetaIndex = new ThriftColumnFamilyTemplate<String, UUID>(this.keyspace,
                 CF_META_INDEX,
                 StringSerializer.get(),
@@ -194,8 +195,6 @@ public class CassandraIiDaoHectorImpl implements IiDao {
     @Override
     public Ii removeMeta(Ii ii, String key) {
         CassandraIiImpl item = checkImpl(ii);
-
-        Mutator<String> stringMutator = HFactory.createMutator(keyspace, HectorUtils.ss);
 
         // Index
         String oldValue = getMeta(item.id, key);

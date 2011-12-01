@@ -13,13 +13,13 @@
         <constructor-arg ref="cassandraHostConfigurator"/>
     </bean>
     <bean id="keyspace" class="me.prettyprint.hector.api.factory.HFactory" factory-method="createKeyspace">
-        <constructor-arg value="InformationItems"/>
+        <constructor-arg value="INFORMATION_ITEMS"/>
         <constructor-arg ref="cluster"/>
     </bean>
 
-    <bean id="iiRecommender" class="com.manymonkeys.core.algo.impl.RecommenderPlainImpl">
-        <property name="componentsLimit" value="20"/>
-        <property name="parentsLimit" value="20"/>
+
+    <bean id="iiDao" class="com.manymonkeys.core.ii.impl.cassandra.CassandraIiDaoHectorImpl">
+        <constructor-arg ref="keyspace"/>
     </bean>
 
 </beans>

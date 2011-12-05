@@ -9,8 +9,12 @@ import me.prettyprint.cassandra.serializers.UUIDSerializer;
 import me.prettyprint.cassandra.service.template.*;
 import me.prettyprint.hector.api.beans.HColumn;
 import me.prettyprint.hector.api.beans.HSuperColumn;
+import me.prettyprint.hector.api.beans.Row;
+import me.prettyprint.hector.api.beans.Rows;
 import me.prettyprint.hector.api.factory.HFactory;
 import me.prettyprint.hector.api.mutation.Mutator;
+import me.prettyprint.hector.api.query.MultigetSliceQuery;
+import me.prettyprint.hector.api.query.QueryResult;
 import org.safehaus.uuid.UUIDGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -138,10 +142,17 @@ public class CassandraIiDaoHectorImpl implements IiDao {
     @Override
     public Collection<Ii> load(@OwledArgument Collection<UUID> uuids) {
 
+        MultigetSliceQuery<UUID, String, String> multigetSliceQuery = HFactory.createMultigetSliceQuery(keyspace, us, ss, ss);
+        multigetSliceQuery.setColumnFamily(CF_META);
+        multigetSliceQuery.setKeys(uuids);
+        multigetSliceQuery.setRange(null, null, false, 1);
+
+        QueryResult<Rows<UUID, String, String>> queryResult = multigetSliceQuery.execute();
+        Rows<UUID, String, String> rows = queryResult.get();
+
         List<Ii> result = new LinkedList<Ii>();
-        ColumnFamilyResult<UUID, String> query = cfMeta.queryColumns(uuids);
-        while (query.hasNext()) {
-            result.add(new CassandraIiImpl(query.next().getKey()));
+        for (Row<UUID, String, String> row : rows) {
+            result.add(new CassandraIiImpl(row.getKey()));
         }
 
         return result;
@@ -364,6 +375,7 @@ public class CassandraIiDaoHectorImpl implements IiDao {
         List<HColumn<UUID, Double>> componentChildren = getColumns(keyspace, CF_COMPONENTS, component); //query 1
         HSuperColumn<UUID, UUID, Double> componentSuperColumn = HFactory.createSuperColumn(component, componentChildren, us, us, ds);
 
+
         // Update CF_DIRECT_2
         mutator.addInsertion(item, CF_DIRECT_2, componentSuperColumn);
 
@@ -407,7 +419,7 @@ public class CassandraIiDaoHectorImpl implements IiDao {
 
     //TODO Ilya Pimenov - apply JMS here
     private void updateIndirectReferences(UUID item, Priority priority) {
-        Map<UUID, Double> components = getRow(keyspace, CF_COMPONENTS, item); //query 1
+        Map<UUID, Double> components = getRow(keyspace, CF_COMPONENTS, item);            //query 1
         Map<UUID, Map<UUID, Double>> direct2 = getSuperRow(keyspace, CF_DIRECT_2, item); //query 2
         Map<UUID, Map<UUID, Double>> direct3 = getSuperRow(keyspace, CF_DIRECT_3, item); //query 3
 
@@ -415,13 +427,21 @@ public class CassandraIiDaoHectorImpl implements IiDao {
 
         for(UUID componentId : components.keySet()) {
             Double componentWeight = components.get(componentId);
-            incrementMapEntry(indirect, componentId, componentWeight);
-            for (UUID direct2id : direct2.get(componentId).keySet()) {
-                Double direct2weight = direct2.get(componentId).get(direct2id);
-                incrementMapEntry(indirect, direct2id, (componentWeight + direct2weight) * 0.25);
-                for (UUID direct3id : direct3.get(direct2id).keySet()) {
-                    Double direct3weight = direct3.get(direct2id).get(direct3id);
-                    incrementMapEntry(indirect, direct3id, (componentWeight + direct2weight + direct3weight) * 0.125);
+            increaseMapEntry(indirect, componentId, componentWeight);
+
+            if (direct2.get(componentId) != null) {
+                for (UUID direct2id : direct2.get(componentId).keySet()) {
+
+                    Double direct2weight = direct2.get(componentId).get(direct2id);
+                    increaseMapEntry(indirect, direct2id, (componentWeight + direct2weight) * 0.25);
+
+                    if (direct3.get(direct2id) != null) {
+                        for (UUID direct3id : direct3.get(direct2id).keySet()) {
+
+                            Double direct3weight = direct3.get(direct2id).get(direct3id);
+                            increaseMapEntry(indirect, direct3id, (componentWeight + direct2weight + direct3weight) * 0.125);
+                        }
+                    }
                 }
             }
         }
@@ -434,7 +454,7 @@ public class CassandraIiDaoHectorImpl implements IiDao {
         mutator.execute();
     }
 
-    private static void  incrementMapEntry(Map<UUID, Double> map, UUID key, Double value) {
+    private static void increaseMapEntry(Map<UUID, Double> map, UUID key, Double value) {
         if (map.containsKey(key)) {
             Double oldValue = map.get(key);
             map.put(key, oldValue + value);
@@ -448,6 +468,7 @@ public class CassandraIiDaoHectorImpl implements IiDao {
     ////////////////////////////////////////////////
 
     @Override
+    @Deprecated
     public Map<UUID, String> search(String key, String prefix) {
         throw new UnsupportedOperationException();
     }

@@ -170,6 +170,7 @@ public interface IiDao {
      *
      * @deprecated wrong competence
      */
+    @Deprecated
     Map<UUID, String> search(String key, String prefix);
 
     /**

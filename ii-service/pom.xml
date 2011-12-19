@@ -110,11 +110,13 @@
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
             <version>${scala.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.scalaj</groupId>
             <artifactId>scalaj-collection_${scala.version}</artifactId>
             <version>1.2</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

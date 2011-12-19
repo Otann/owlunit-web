@@ -1,0 +1,260 @@
+@font-face {
+  font-family: BebasNeue-webfont;
+  src: url("../assets/BebasNeue-webfont.ttf");
+}
+
+body {
+	background-color: #b6ca99;
+	margin: 20px;
+	font-family: BebasNeue-webfont;
+	letter-spacing: 5px;
+	color: #ffffff;
+}
+
+.content {
+	width: 1280px;
+	text-align: left;
+}
+
+.clear {
+	clear: both;
+}
+
+.bodyText {
+	font-size: 13px;
+	letter-spacing: 5px;
+}
+
+.text-ocre {
+	color: #c76d15;
+}
+
+.text-ocre .inverse {
+	background-color: #c76d15;
+	color: #ffffff;
+	padding: 1px 0px 1px 2px;
+}
+
+.text-green {
+	color: #779262;
+}
+
+.text-green .inverse {
+	background-color: #779262;
+	color: #ffffff;
+	padding: 1px 0px 1px 2px;
+}
+
+.text-blue {
+	color: #3c5a7e;
+}
+
+.text-blue .inverse {
+	background-color: #3c5a7e;
+	color: #ffffff;
+	padding: 1px 0px 1px 2px;
+}
+
+/*-- grid lines --*/
+.hr-all {
+	border-top: 1px solid #ffffff;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+/*-- todays-date and title styles --*/
+.todays-date {
+	border-right: 1px solid #ffffff;
+	width: 150px;
+	padding-bottom: 10px;
+	float: left;
+}
+
+.logo-large {
+	font-size: 55px;
+	line-height: 55px;
+	float: left;
+	margin-left: 20px;
+	color: #c76d15;
+	letter-spacing: 10px;
+}
+
+/*-- arb charts and stats area --*/
+.charts-content {
+	float: left;
+	width: 780px;
+	height: 500px;
+	margin: 10px 10px 10px 10px;
+	border-right: 1px solid #ffffff;
+}
+
+.stats-content {
+	float: left;
+	width: 450px;
+	margin: 10px 10px 10px 5px;
+}
+
+/*-- arb count area styles --*/
+.area-todaysArbCount {
+	
+}
+
+.arbCountArea {
+	float: left;
+	border-right: 1px solid #ffffff;
+	width: 150px;
+	margin-bottom: 5px;
+}
+.arbCount {
+	font-size: 150px;
+	line-height: 120px;
+}
+
+.arbCount-info {
+	letter-spacing: 3px;
+	line-height: 23px;
+	font-size: 14px;
+	float: left;
+	margin-left: 10px;
+	width: 285px;
+}
+
+/*-- earnings count area styles --*/
+.area-todaysEarningsCount {
+	
+}
+
+.earningsCountArea {
+	float: left;
+	border-right: 1px solid #ffffff;
+	width: 150px;
+	margin-bottom: 5px;
+	margin-top: 5px;
+}
+.earningsCount {
+	font-size: 55px;
+	line-height: 50px;
+	color: #779262;
+}
+
+.lostCount {
+	font-size: 55px;
+	line-height: 50px;
+	margin-top: 5px;
+}
+
+.earningsCount-info {
+	letter-spacing: 3px;
+	line-height: 23px;
+	font-size: 14px;
+	float: left;
+	margin-left: 10px;
+	width: 285px;
+}
+
+/*-- personal details --*/
+.photoArea {
+	float: left;
+	border-right: 1px solid #ffffff;
+	width: 150px;
+}
+
+.photoArea .name {
+	padding-top: 10px;
+}
+
+/*-- arb charts --*/
+.arbModuleContainer {
+	
+}
+
+.summaryBar .inPlay {
+	border-right: 1px solid #FFFFFF;
+    float: left;
+    width: 140px;
+}
+
+.summaryBar .topInfo {
+	float: left;
+	margin-left: 10px;
+}
+
+.pusher {
+	float: right;
+	position: relative;
+	top: -15px;
+	right: 15px;
+	cursor: pointer;
+	*cursor: hand;
+}
+
+.runners {
+	font-size: 11px;
+	letter-spacing: 4px;
+	float: left;
+	margin-left: 10px;
+	padding-top: 5px;
+}
+
+.chartContainer {
+	margin-top: 10px;
+	margin-right: 10px;
+}
+
+.chartContainer .arbChart {
+	border-collapse: collapse;
+	font-size: 11px;
+	cellspacing: 0px;
+	cellpadding: 0px;
+}
+
+.mover {
+	margin-bottom: 20px;
+}
+
+.oddsNumbers {
+	border-right: 1px solid white;
+	width: 138px;
+	text-align: right;
+}
+
+.whiteBarBottom {
+	background-color: #ffffff;
+	height: 12px;
+}
+
+.densityContainer {
+	width: 15px;
+	background-color: #a9bb8f;
+	border-right: 1px solid white;
+}
+
+.prePlay {
+	border-right: 1px solid #ffffff;
+	border-bottom: 1px solid #cdd9ba;
+}
+
+.goingInPlay {
+	background-color: #a9bb8f;
+	border-bottom: 1px solid #cdd9ba;
+	width: 20%;
+}
+
+.top {
+	border-top: 1px solid #ffffff;
+}
+
+.incrementTime {
+	position: relative;
+	right: 9px;
+	top: -1px;
+}
+
+.count {
+	color: #d1d9e0;
+	position: relative;
+	top: -10px;
+	font-size: 12px;
+}
+
+	

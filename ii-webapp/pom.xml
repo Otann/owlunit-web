@@ -17,6 +17,7 @@
     <properties>
         <shiro.version>1.1.0</shiro.version>
         <aspectj.version>1.6.10</aspectj.version>
+        <apache.click.version>2.3.0</apache.click.version>
         <org.springframework.version>3.0.5.RELEASE</org.springframework.version>
     </properties>
 
@@ -35,7 +36,7 @@
                     <reload>automatic</reload>
                     <!-- make sure Jetty also finds the widgetset -->
                     <webAppConfig>
-                        <contextPath>/ex-api</contextPath>
+                        <contextPath>/ii-weapp</contextPath>
                         <baseResource implementation="org.mortbay.resource.ResourceCollection">
                             <!-- Workaround for Maven/Jetty issue http://jira.codehaus.org/browse/JETTY-680 -->
                             <!-- <resources>src/main/webapp,${project.build.directory}/${project.build.finalName}</resources> -->
@@ -56,6 +57,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>ii-service</artifactId>
+            <version>[${project.version},]</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>ii-security</artifactId>
             <version>[${project.version},]</version>
         </dependency>
 
@@ -80,6 +86,23 @@
             <version>${org.springframework.version}</version>
         </dependency>
 
+        <!-- - - - - - - - - - - - - - - |
+        |  C L I C K  F R A M E W O R K  |
+        \==============================-->
+        <dependency>
+            <groupId>org.apache.click</groupId>
+            <artifactId>click-nodeps</artifactId>
+            <version>${apache.click.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.click</groupId>
+            <artifactId>click-extras</artifactId>
+            <version>${apache.click.version}</version>
+        </dependency>
+
+        <!-- - - - - - - - -
+        |   L O G G I N G   |
+        \=================-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -104,11 +127,6 @@
         <!-- - - - - - -
         |   S H I R O   |
         \=============-->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>ii-security</artifactId>
-            <version>[${project.version},]</version>
-        </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-spring</artifactId>

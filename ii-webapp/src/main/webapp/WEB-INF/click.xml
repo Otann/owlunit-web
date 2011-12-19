@@ -1,0 +1,5 @@
+<click-app>
+    <pages package="com.manymonkeys.web"/>
+
+    <mode value="debug"/>
+</click-app>

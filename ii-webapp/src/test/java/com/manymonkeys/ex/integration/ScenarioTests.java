@@ -2,7 +2,6 @@ package com.manymonkeys.ex.integration;
 
 import com.manymonkeys.ex.json.controllers.OwlsFlatApi;
 import com.manymonkeys.model.cinema.Movie;
-import com.manymonkeys.service.cinema.MovieService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +20,7 @@ import static junit.framework.Assert.assertNotNull;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
         locations = {
-                "/applicationContext.xml"
+                "/context.xml"
         }
 )
 public class ScenarioTests {

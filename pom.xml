@@ -17,7 +17,7 @@
         <module>ii-impex</module>
         <!--<module>ii-frontend</module>-->
         <!--<module>rd-aspects</module>-->
-        <module>ex-api</module>
+        <module>ii-webapp</module>
     </modules>
 
     <properties>

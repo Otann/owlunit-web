@@ -9,10 +9,10 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>ex-api</artifactId>
+    <artifactId>ii-webapp</artifactId>
     <packaging>war</packaging>
     <version>1.0</version>
-    <name>External API</name>
+    <name>Owl Web Application</name>
 
     <properties>
         <shiro.version>1.1.0</shiro.version>

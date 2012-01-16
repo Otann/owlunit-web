@@ -11,14 +11,16 @@
     |  C A S S A N D R A    |
     \=====================-->
     <bean id="cassandraHostConfigurator" class="me.prettyprint.cassandra.service.CassandraHostConfigurator">
-        <constructor-arg value="home.chebotaev.ru:9160"/>
+        <constructor-arg value="localhost:9160"/>
     </bean>
+
     <bean id="cluster" class="me.prettyprint.cassandra.service.ThriftCluster">
         <constructor-arg value="Test Cluster"/>
         <constructor-arg ref="cassandraHostConfigurator"/>
     </bean>
+
     <bean id="keyspace" class="me.prettyprint.hector.api.factory.HFactory" factory-method="createKeyspace">
-        <constructor-arg value="InformationItems"/>
+        <constructor-arg value="INFORMATION_ITEMS"/>
         <constructor-arg ref="cluster"/>
     </bean>
 

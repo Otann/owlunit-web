@@ -1,4 +1,4 @@
-package com.manymonkeys.web;
+package com.manymonkeys.web.page;
 
 import org.apache.click.Page;
 

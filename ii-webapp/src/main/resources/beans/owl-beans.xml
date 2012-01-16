@@ -31,7 +31,6 @@
 
         <!-- Todo NB: move to one place configuration, should be done before first release -->
         <property name="initialKeywordWeight" value="15"/>
-        <property name="initialGenreWeight" value="50"/>
         <property name="initialPersonWeight" value="25"/>
     </bean>
 

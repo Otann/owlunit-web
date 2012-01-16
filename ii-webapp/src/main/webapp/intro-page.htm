@@ -1,12 +1,28 @@
-<p>Currently most similiar movies to java's <span style="color: blue;">null</span> are&nbsp;&#151; </p>
-<table>
-    <tr>
-        #foreach( $movie in $movies )
-        <td style="border: solid 1px #f5f5f5;">$movie.uuid<p><span style="color: red;">$movie.name</span></p>
+<div class="container">
 
-            <p>$movie.year</p>
+    <section id=movies>
+        <div class="page-header">
+            <h1>$title <small>$time</small></h1>
+        </div>
+        <div class="row">
+            <div class="span16">
+                <p>Currently most similiar movies to java's <span class="label notice">NULL</span> are</p>
 
-            <p>$movie.description</p></td>
-        #end
-    </tr>
-</table>
+                <div class="row">
+                    #foreach( $movie in $movies )
+                    <div class="span4">
+                        <h4>
+                            $movie.name
+                            <small>$movie.year</small>
+                        </h4>
+                        <span class="label">$movie.uuid</span>
+                        <p>$movie.description</p>
+                    </div>
+                    #end
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+</div>

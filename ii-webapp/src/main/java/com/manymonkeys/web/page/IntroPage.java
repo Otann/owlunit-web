@@ -1,4 +1,4 @@
-package com.manymonkeys.web;
+package com.manymonkeys.web.page;
 
 import com.manymonkeys.model.cinema.Movie;
 import com.manymonkeys.service.cinema.MovieService;

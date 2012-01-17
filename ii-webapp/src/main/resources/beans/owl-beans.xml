@@ -38,4 +38,7 @@
         <property name="dao" ref="cassandraDao"/>
     </bean>
 
+    <bean id="posterService" class="com.manymonkeys.service.impl.PosterServiceImpl">
+    </bean>
+
 </beans>

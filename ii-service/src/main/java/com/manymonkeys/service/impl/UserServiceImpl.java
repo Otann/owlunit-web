@@ -134,8 +134,7 @@ public class UserServiceImpl implements UserService {
             return hash.toString(HASH_LENGTH);
         } catch (NoSuchAlgorithmException e) {
             // Well, there is
-            //Todo Anton Chebotaev - "well, there is" what, my ass? Add exception handling here
-            //introduce specific "ApplicationException" class, with appropriate subclasses
+            //TODO introduce specific "ApplicationException" class, with appropriate subclasses
             return null;
         }
     }

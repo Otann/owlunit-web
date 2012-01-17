@@ -19,7 +19,6 @@ public class CrudPage extends TemplatePage {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    @Qualifier("cassandraDao")
     IiDao dao;
 
     public String title = "OWL CRUD";

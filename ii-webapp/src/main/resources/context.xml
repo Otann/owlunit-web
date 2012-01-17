@@ -20,15 +20,16 @@
     <!-- - - - - - - - - - -
     |  C A S S A N D R A    |
     \=====================-->
+    <!--<import resource="beans/spring-local-cassandra.xml"/>-->
     <import resource="beans/spring-cassandra.xml"/>
 
     <!-- - - - - - - - - - -
     |  O W L S   B E A N S  |
     \=====================-->
 
-    <import resource="beans/anton-mock-owl-beans.xml"/>
+    <!--<import resource="beans/anton-mock-owl-beans.xml"/>-->
     <!--<import resource="beans/mock-owl-beans.xml"/>-->
-    <!--<import resource="beans/owl-beans.xml"/>-->
+    <import resource="beans/owl-beans.xml"/>
 
     <!-- - - - - - -
     |   S H I R O   |

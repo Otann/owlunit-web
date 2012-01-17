@@ -11,4 +11,5 @@ import java.net.URL;
 public interface PosterService {
 
     URL getPosterUrl(Movie movie);
+
 }

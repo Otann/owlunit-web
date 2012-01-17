@@ -64,7 +64,6 @@ class AppTest extends TestCase("app") {
       }
       */
 
-      //TODO Anton Chebotaev - checks for well-formed xml in template files
 //      if (file.isFile && file.exists && handledXHtml(file.getName)) {
 //        PCDataXmlParser(new _root_.java.io.FileInputStream(file.getAbsolutePath)) match {
 //          case Full(_) => // file is ok

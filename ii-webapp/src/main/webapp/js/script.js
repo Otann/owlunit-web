@@ -209,7 +209,7 @@ function processForm(form, event, noLoad) {
  */
 function createClickableUUID(uuid) {
     var a = $('<a/>', {href:'#', text: uuid});
-    var url = '/ii-weapp/crud-page.htm';
+    var url = '';
     var data = 'form_name=loadByUUIDForm&uuid=' + uuid + '&loadByUUIDForm=1&load=Load';
     a.click(function(){
         $.post(url, data, function(response) {

@@ -22,7 +22,7 @@
     |  C A S S A N D R A    |
     \=====================-->
     <bean id="cassandraHostConfigurator" class="me.prettyprint.cassandra.service.CassandraHostConfigurator">
-        <constructor-arg value="localhost:9160"/>
+        <constructor-arg value="tytoalba.ru:9160"/>
     </bean>
     <bean id="cluster" class="me.prettyprint.cassandra.service.ThriftCluster">
         <constructor-arg value="Test Cluster"/>

@@ -24,7 +24,6 @@ import static com.manymonkeys.service.impl.util.Utils.itemWithMeta;
 public class MovieServiceImpl implements MovieService {
 
     @Autowired
-    @Qualifier("cassandraDao")
     protected IiDao dao;
 
     @Autowired

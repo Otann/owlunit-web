@@ -5,7 +5,7 @@ function scrollToPlace(place) {
             scrollTop: place.offset().top + 1
         },
         {
-            duration: 1000,
+            duration: 500,
             easing: "easeInOutQuart"
         }
     );
@@ -47,19 +47,32 @@ function hideItems() {
 function loadItems(items) {
     $('#items').show();
 
-    var table = $('#items-body');
-    table.html('');
+    if ($.isEmptyObject(items)) {
+        $('#items-empty').show();
+        $('#items-content').hide();
+        addMessage('No items was found', 'info');
+    } else {
+        $('#items-content').show();
+        $('#items-empty').hide();
+        var table = $('#items-body');
+        table.html('');
 
-    for (var i = 0; i < items.length; i++) {
-        var item = items[i];
-        var metaContent = '';
-        for (key in item.meta) {
-            metaContent += '<strong>' + key + ': </strong>' + item.meta[key]  + '<br/>';
+        for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            var metaContent = '';
+            for (key in item.meta) {
+                metaContent += '<strong>' + key + ': </strong>' + item.meta[key]  + '<br/>';
+            }
+            var a = $('<th>').append(createClickableUUID(item.id));
+            var meta = '<td>' + metaContent + '</td>';
+            var row = $('<tr>').append(a).append(meta);
+            table.append(row);
         }
-        var content = '<th>' + item.id + '</th><td>' + metaContent + '</td>';
-        var row = $('<tr>').html(content);
-        table.append(row);
+
+        var pluralized = items.length % 2 == 1 ? ' item' : ' items';
+        addMessage('Loaded ' + items.length + pluralized, 'info');
     }
+
 }
 
 function hideItem() {
@@ -125,8 +138,9 @@ function reloadComponents(item) {
             table.html('');
 
             for (id in item.components) {
-                var content = '<th>' + id + '</th><td>' + item.components[id] + '</td>';
-                var row = $('<tr>').html(content);
+                var component = $('<th>').append(createClickableUUID(id));
+                var value = '<td>' + item.components[id] + '</td>';
+                var row = $('<tr>').append(component).append(value);
                 table.append(row);
             }
         }
@@ -150,6 +164,7 @@ function processResult(response, target, noUpdate) {
     }
     if (response.data != null && !noUpdate) {
         var data = JSON.parse(response.data);
+        $('#results-intro').hide();
         if (data.id != null) {
             hideItems();
             loadItem(data);
@@ -186,6 +201,22 @@ function processForm(form, event, noLoad) {
     });
 
     return false;
+}
+
+/**
+ * Creates anchor that loads item when clicked
+ * @param uuid
+ */
+function createClickableUUID(uuid) {
+    var a = $('<a/>', {href:'#', text: uuid});
+    var url = '/ii-weapp/crud-page.htm';
+    var data = 'form_name=loadByUUIDForm&uuid=' + uuid + '&loadByUUIDForm=1&load=Load';
+    a.click(function(){
+        $.post(url, data, function(response) {
+            processResult(response);
+        })
+    });
+    return a;
 }
 
 $(document).ready(function() {

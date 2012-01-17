@@ -69,6 +69,7 @@ public class MovieLensMoviesCrawler {
             String[] genres = line.substring(lastSemicolon + 1, line.length()).split("\\|");
 
             Movie movie = movieService.createMovie(new Movie(null, name, Long.parseLong(year), null));
+            log.debug("Created movie with name " + movie.getName() + " and uuid " + movie.getUuid().toString());
             try {
                 movieService.setExternalId(movie, SERVICE_NAME, id);
                 if (aka != null) {

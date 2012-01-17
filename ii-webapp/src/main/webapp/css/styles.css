@@ -3,18 +3,27 @@
     src: url("../assets/BebasNeue-webfont.ttf");
 }
 
-.container section:first-child {
+.container-fluid section:first-child,
+.container section:first-child{
     margin-top: 60px;
 }
 
-.container section {
+.container-fluid section,
+.container section{
     margin-top: 30px;
 }
 
 #msg {
     position: fixed;
-    bottom: 20px;
-    right: 10%;
-    width: 80%;
-    /*z-index: -1;*/
+    top: 50px;
+    right: 10px;
+    width: 500px;
+    z-index: 100;
+}
+
+/*#results,*/
+#item-meta,
+#item-components,
+#items {
+    display: none;
 }

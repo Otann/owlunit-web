@@ -7,6 +7,7 @@ import com.manymonkeys.model.cinema.*;
 import com.manymonkeys.service.cinema.MovieService;
 import com.manymonkeys.service.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -23,6 +24,7 @@ import static com.manymonkeys.service.impl.util.Utils.itemWithMeta;
 public class MovieServiceImpl implements MovieService {
 
     @Autowired
+    @Qualifier("cassandraDao")
     protected IiDao dao;
 
     @Autowired
@@ -36,18 +38,18 @@ public class MovieServiceImpl implements MovieService {
     private static final String CLASS_MARK_KEY = MovieServiceImpl.class.getName();
     private static final String CLASS_MARK_VALUE = "#";
 
-    private static final String META_KEY_YEAR = CLASS_MARK_KEY + ".YEAR";
-    private static final String META_KEY_NAME = CLASS_MARK_KEY + ".NAME";
-    private static final String META_KEY_PLOT = CLASS_MARK_KEY + ".PLOT";
-    private static final String META_KEY_AKA_NAME = CLASS_MARK_KEY + ".AKA_NAME";
+    private static final String META_KEY_YEAR           = CLASS_MARK_KEY + ".YEAR";
+    private static final String META_KEY_NAME           = CLASS_MARK_KEY + ".NAME";
+    private static final String META_KEY_PLOT           = CLASS_MARK_KEY + ".PLOT";
+    private static final String META_KEY_AKA_NAME       = CLASS_MARK_KEY + ".AKA_NAME";
     private static final String META_KEY_TRANSLATE_NAME = CLASS_MARK_KEY + ".TRANSLATE_NAME";
-    private static final String META_SERVICE_KEY = CLASS_MARK_KEY + ".EXTERNAL_ID.";
-    private static final String META_KEY_TAGLINES = CLASS_MARK_KEY + ".TAGLINES";
-
-    private static final String TAGLINES_DELIMETED = "###";
+    private static final String META_SERVICE_KEY        = CLASS_MARK_KEY + ".EXTERNAL_ID.";
+    private static final String META_KEY_TAGLINES       = CLASS_MARK_KEY + ".TAGLINES";
 
     private static final String SIMPLE_NAME     = CLASS_MARK_KEY + ".SIMPLE_NAME";
     private final Pattern simplifyPatter = Pattern.compile("(a |the |, a|, the|,|\\.|\\s|'|\"|:|-|!|#|)");
+
+    private static final String TAGLINES_DELIMETED = "###";
 
     static Movie iiToMovie(IiDao dao, Ii item) {
         Ii meta = itemWithMeta(dao, item);
@@ -74,7 +76,7 @@ public class MovieServiceImpl implements MovieService {
         Ii movieIi = dao.createInformationItem();
         dao.setMetaUnindexed(movieIi, CLASS_MARK_KEY, CLASS_MARK_VALUE);
         dao.setMetaUnindexed(movieIi, META_KEY_YEAR, Long.toString(movie.getYear()));
-        dao.setMetaUnindexed(movieIi, SIMPLE_NAME, simpleName(movie.getName(), movie.getYear()));
+        dao.setMeta(movieIi, SIMPLE_NAME, simpleName(movie.getName(), movie.getYear()));
         dao.setMeta(movieIi, META_KEY_NAME, movie.getName());
         return iiToMovie(dao, movieIi);
     }
@@ -182,7 +184,7 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public Movie setExternalId(Movie movie, String service, String externalId) throws NotFoundException {
         Ii item = movieToIi(dao, movie);
-        item = dao.setMetaUnindexed(item, META_SERVICE_KEY + service, externalId);
+        item = dao.setMeta(item, META_SERVICE_KEY + service, externalId);
         return iiToMovie(dao, item);
     }
 

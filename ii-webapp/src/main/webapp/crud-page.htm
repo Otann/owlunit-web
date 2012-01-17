@@ -3,6 +3,7 @@
         <div class="container">
             <h3><a href="#">OWL Crud</a></h3>
             <ul class="nav">
+                <li><a href="#results">Results</a></li>
                 <li><a href="#crud-create">Create</a></li>
                 <li><a href="#crud-read">Read</a></li>
                 <li><a href="#crud-update">Update</a></li>
@@ -16,6 +17,84 @@
 </div>
 
 <div class="container">
+
+    <section id="results">
+        <div class="page-header">
+            <h1>Last Results</h1>
+        </div>
+        <div class="row" id="results-intro">
+            <div class="span-one-third offset-one-third">
+                <p><span class="label success">Do something to get results here</span></p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span16" id="item-meta">
+                <h2>Item's metadata</h2>
+                <table class="condensed-table zebra-striped" id="item-meta-content">
+                    <thead>
+                    <tr>
+                        <th>Meta Key</th>
+                        <th>Meta Value</th>
+                    </tr>
+                    </thead>
+                    <tbody id="item-meta-body">
+                    <tr>
+                        <td>KEY</td>
+                        <th>value</th>
+                    </tr>
+                    </tbody>
+                </table>
+                <span class="label warning" id="item-meta-null">Item metadata was not loaded</span>
+                <span class="label error" id="item-meta-empty">Item has no metadata</span>
+            </div>
+
+            <div class="span16" id="item-components">
+                <h2>Item's components</h2>
+                <table class="condensed-table zebra-striped" id="item-components-content">
+                    <thead>
+                    <tr>
+                        <th>Component UUID</th>
+                        <th>Connection weight</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <tbody id="item-components-body">
+                    <tr>
+                        <th>UUID</th>
+                        <td>value</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <span class="label warning" id="item-components-null">Item components was not loaded</span>
+                <span class="label" id="item-components-empty">Item has no components</span>
+            </div>
+
+            <div class="span16" id="items">
+                <table class="condensed-table zebra-striped" id="items-content">
+                    <thead>
+                    <tr>
+                        <th>Item UUID</th>
+                        <th>Item's metadata</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <tbody id="items-body">
+                    <tr>
+                        <th>UUID</th>
+                        <td>value</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="row" id="items-empty">
+                    <div class="span-one-third offset-one-third">
+                        <p><span class="label warning">No items was found</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <section id="crud-create">
         <div class="page-header">
@@ -53,67 +132,6 @@
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="span16" id="item-meta" style="display: none;">
-                        <table class="condensed-table zebra-striped" id="item-meta-content">
-                            <thead>
-                            <tr>
-                                <th>Meta Key</th>
-                                <th>Meta Value</th>
-                            </tr>
-                            </thead>
-                            <tbody id="item-meta-body">
-                            <tr>
-                                <td>KEY</td>
-                                <th>value</th>
-                            </tr>
-                            </tbody>
-                        </table>
-                        <span class="label warning" id="item-meta-null">Item metadata was not loaded</span>
-                        <span class="label error" id="item-meta-empty">Item has no metadata</span>
-                    </div>
-
-                    <div class="span16" id="item-components" style="display: none;">
-                        <table class="condensed-table zebra-striped" id="item-components-content">
-                            <thead>
-                            <tr>
-                                <th>Component UUID</th>
-                                <th>Connection weight</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-
-                            <tbody id="item-components-body">
-                            <tr>
-                                <th>UUID</th>
-                                <td>value</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                        <span class="label warning" id="item-components-null">Item components was not loaded</span>
-                        <span class="label" id="item-components-empty">Item has no components</span>
-                    </div>
-
-                    <div class="span16" id="items" style="display: none;">
-                        <table class="condensed-table zebra-striped" id="items-content">
-                            <thead>
-                            <tr>
-                                <th>Component UUID</th>
-                                <th>Connection weight</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-
-                            <tbody id="items-body">
-                            <tr>
-                                <th>UUID</th>
-                                <td>value</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
             </div>
         </div>
     </section>
@@ -143,7 +161,7 @@
         </div>
     </section>
 
-    <div id="msg">
+    <div id="msg" class="">
     </div>
 
 </div>

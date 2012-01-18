@@ -8,10 +8,7 @@ import com.manymonkeys.service.cinema.PersonService;
 import com.manymonkeys.service.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 import static com.manymonkeys.service.impl.util.Utils.itemWithMeta;
 
@@ -37,6 +34,9 @@ public class PersonServiceImpl implements PersonService {
     private static final String NAME_ID_DELIMITER = "###";
 
     static Person iiToPerson(IiDao dao, Ii item) {
+        if (!isPerson(dao, item)) {
+            throw new IllegalArgumentException("This is not a person");
+        }
         Ii meta = itemWithMeta(dao, item);
         return new Person(
                 item.getUUID(),
@@ -47,7 +47,9 @@ public class PersonServiceImpl implements PersonService {
     }
 
     static Ii personToIi(IiDao dao, Person person) throws NotFoundException {
-        assert(person.getUuid() != null);
+        if (person.getUuid() == null) {
+            throw new IllegalArgumentException("You have to create person first");
+        }
         Ii item = dao.load(person.getUuid());
         if (item == null) {
             throw new NotFoundException(String.format("Person(%s)", person.getUuid().toString()));
@@ -71,39 +73,44 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public Person findOrCreate(Person person) {
         Ii item;
-        try {
-            item = personToIi(dao, person);
-        } catch (NotFoundException e) {
+        if (person.getUuid() == null) {
             item = create(person);
+        } else {
+            try {
+                item = loadByName(person.getName(), person.getSurname());
+            } catch (NotFoundException e) {
+                item = create(person);
+            }
         }
         return iiToPerson(dao, item);
-    }
-
-    @Override
-    public Person findOrCreate(Person person, Role role) {
-        Person existingPerson = findOrCreate(person);
-        if (existingPerson.getRoles().contains(role)) {
-            return existingPerson;
-        } else {
-            Ii item = dao.load(existingPerson.getUuid());
-            item = addRole(item, role);
-            return iiToPerson(dao, item);
-        }
     }
 
     /*-- - - - - - - - -\
     |   P R I V A T E   |
     \__________________*/
 
-    public Ii create(Person person) {
+    private Ii create(Person person) {
         Ii personIi = dao.createInformationItem();
         dao.setMetaUnindexed(personIi, CLASS_MARK_KEY, CLASS_MARK_VALUE);
         dao.setMetaUnindexed(personIi, META_KEY_NAME_ID, nameId(person.getName(), person.getSurname()));
+        dao.setMetaUnindexed(personIi, META_KEY_ROLES, packRoles(person.getRoles()));
 
         dao.setMeta(personIi, META_KEY_NAME, person.getName());
         dao.setMeta(personIi, META_KEY_SURNAME, person.getSurname());
-        dao.setMeta(personIi, META_KEY_ROLES, packRoles(person.getRoles()));
         return personIi;
+    }
+    
+    private Ii loadByName(String name, String surname) throws NotFoundException {
+        if (name == null || name.equals("") || surname == null || surname.equals("")) {
+            throw new IllegalArgumentException();
+        }
+
+        Collection<Ii> persons = dao.load(META_KEY_NAME_ID, nameId(name, surname));
+        if (persons.isEmpty()) {
+            throw new NotFoundException(name + " " + surname);
+        } else {
+            return persons.iterator().next();
+        }
     }
 
     private Ii addRole(Ii item, Role role) {
@@ -117,7 +124,14 @@ public class PersonServiceImpl implements PersonService {
         }
     }
 
+    private static boolean isPerson(IiDao dao, Ii item) {
+        return itemWithMeta(dao, item).getMeta(CLASS_MARK_KEY) != null;
+    }
+
     private static String packRoles(Collection<Role> roles) {
+        if (roles == null || roles.isEmpty()) {
+            return "";
+        }
         StringBuilder buffer = new StringBuilder();
         Iterator<Role> iterator = roles.iterator();
         while (iterator.hasNext()) {
@@ -131,6 +145,9 @@ public class PersonServiceImpl implements PersonService {
     }
 
     private static Set<Role> unpackRoles(String rolesRaw) {
+        if (rolesRaw == null || rolesRaw.equals("")) {
+            return new HashSet<Role>();
+        }
         String[] roles = rolesRaw.split(ROLES_DELIMITER);
         Set<Role> result = new HashSet<Role>();
         for (String role : roles) {

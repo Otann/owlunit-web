@@ -5,6 +5,7 @@ import com.manymonkeys.model.cinema.Keyword;
 import com.manymonkeys.model.cinema.Movie;
 import com.manymonkeys.service.cinema.KeywordService;
 import com.manymonkeys.service.cinema.MovieService;
+import com.manymonkeys.service.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +60,11 @@ public class MovieLensTagsCrawler {
 
                 Movie movie = movieLocalCache.get(externalId);
                 if (movie == null) {
-                    movie = movieService.loadByExternalId(MovieLensMoviesCrawler.SERVICE_NAME, externalId);
+                    try {
+                        movie = movieService.loadByExternalId(MovieLensMoviesCrawler.SERVICE_NAME, externalId);
+                    } catch (NotFoundException e) {
+                        movie = null;
+                    }
                     movieLocalCache.put(externalId, movie);
                 }
 

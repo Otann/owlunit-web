@@ -100,6 +100,8 @@ public class CassandraIiDaoHectorImpl implements IiDao {
 
     @Override
     public void deleteInformationItem(Ii ii) {
+        checkNull(ii);
+
         CassandraIiImpl item = checkImpl(loadMeta(ii)); //query 1
 
         List<UUID> invalidateItems = getRowKeys(keyspace, CF_PARENTS, item.id); //query 2
@@ -131,6 +133,8 @@ public class CassandraIiDaoHectorImpl implements IiDao {
     @OwledMethod
     @Override
     public Ii load(UUID uuid) {
+        checkNull(uuid);
+
         if (getMeta(uuid, META_KEY_CREATOR) == null) {
             return null;
         } else {
@@ -141,6 +145,7 @@ public class CassandraIiDaoHectorImpl implements IiDao {
     @OwledMethod
     @Override
     public Collection<Ii> load(@OwledArgument Collection<UUID> uuids) {
+        checkNull(uuids);
 
         MultigetSliceQuery<UUID, String, String> multigetSliceQuery = HFactory.createMultigetSliceQuery(keyspace, us, ss, ss);
         multigetSliceQuery.setColumnFamily(CF_META);
@@ -173,6 +178,8 @@ public class CassandraIiDaoHectorImpl implements IiDao {
     }
 
     private Ii setMetaExtended(Ii ii, String key, String value, boolean isIndexed) {
+        checkNull(ii);
+        checkNull(key);
         CassandraIiImpl item = checkImpl(ii);
 
         // Update index
@@ -205,6 +212,7 @@ public class CassandraIiDaoHectorImpl implements IiDao {
 
     @Override
     public Ii removeMeta(Ii ii, String key) {
+        checkNull(ii);
         CassandraIiImpl item = checkImpl(ii);
 
         // Index
@@ -230,6 +238,8 @@ public class CassandraIiDaoHectorImpl implements IiDao {
 
     @Override
     public Collection<Ii> load(String key, String value) {
+        checkNull(key);
+
         String queryKey = String.format(META_INDEX_FORMAT, key, value);
         ColumnFamilyResult<String, UUID> query = cfMetaIndex.queryColumns(queryKey);
         return load(query.getColumnNames());
@@ -237,6 +247,8 @@ public class CassandraIiDaoHectorImpl implements IiDao {
 
     @Override
     public Ii loadMeta(Ii ii) {
+        checkNull(ii);
+
         CassandraIiImpl item = checkImpl(ii);
         ColumnFamilyResult<UUID, String> queryResult = cfMeta.queryColumns(item.id);
         return forceUpdateMetadata(item, queryResult);
@@ -244,6 +256,8 @@ public class CassandraIiDaoHectorImpl implements IiDao {
 
     @Override
     public Collection<Ii> loadMeta(Collection<Ii> items) {
+        checkNull(items);
+        
         if (items.isEmpty())
             return items;
 
@@ -266,11 +280,15 @@ public class CassandraIiDaoHectorImpl implements IiDao {
 
     @Override
     public Ii loadComponents(Ii item) {
+        checkNull(item);
+        
         return forceUpdateComponents(item, getRow(keyspace, CF_COMPONENTS, item.getUUID()));
     }
 
     @Override
     public Collection<Ii> loadComponents(Collection<Ii> items) {
+        checkNull(items);
+
         Collection<Ii> result = new LinkedList<Ii>();
         Map<UUID,Map<UUID, Double>> queryResult = multigetRows(keyspace, CF_COMPONENTS, getIds(items));
         for (Ii item : items) {
@@ -283,12 +301,16 @@ public class CassandraIiDaoHectorImpl implements IiDao {
 
     @Override
     public Ii loadParents(Ii item) {
+        checkNull(item);
+
         return forceUpdateParents(item, getRow(keyspace, CF_PARENTS, item.getUUID()));
     }
 
     @OwledMethod
     @Override
     public Collection<Ii> loadParents(@OwledArgument Collection<Ii> items) {
+        checkNull(items);
+
         Collection<Ii> result = new LinkedList<Ii>();
         Map<UUID,Map<UUID, Double>> queryResult = multigetRows(keyspace, CF_PARENTS, getIds(items));
         for (Ii item : items) {
@@ -301,6 +323,8 @@ public class CassandraIiDaoHectorImpl implements IiDao {
 
     @Override
     public Ii setComponentWeight(Ii itemIi, Ii componentIi, Double weight) {
+        checkNull(itemIi);
+        checkNull(componentIi);
         CassandraIiImpl item = checkImpl(itemIi);
         CassandraIiImpl component = checkImpl(componentIi);
 
@@ -325,6 +349,8 @@ public class CassandraIiDaoHectorImpl implements IiDao {
 
     @Override
     public Ii removeComponent(Ii itemIi, Ii componentIi) {
+        checkNull(itemIi);
+        checkNull(componentIi);
         CassandraIiImpl item = checkImpl(itemIi);
         CassandraIiImpl component = checkImpl(componentIi);
 
@@ -348,6 +374,7 @@ public class CassandraIiDaoHectorImpl implements IiDao {
 
     @Override
     public Map<Ii, Double> getIndirectComponents(Ii ii) {
+        checkNull(ii);
         CassandraIiImpl item = checkImpl(ii);
         Map<Ii, Double> result = new HashMap<Ii, Double>();
 
@@ -476,6 +503,36 @@ public class CassandraIiDaoHectorImpl implements IiDao {
     ////////////////////////////////////////////////
     ////////////////    Private
     ////////////////////////////////////////////////
+    
+    private static void checkNull(UUID uuid) {
+        if (uuid == null) {
+            throw new IllegalArgumentException("UUID can not be null");
+        }
+    }
+    private static void checkNull(String uuid) {
+        if (uuid == null) {
+            throw new IllegalArgumentException("String can not be null");
+        }
+    }
+    private static void checkNull(Ii item) {
+        if (item.getUUID() == null) {
+            throw new IllegalArgumentException("Item's uuid can not be null");
+        }
+    }
+    private static void checkNull(Collection items) {
+        if (items == null) {
+            throw new IllegalArgumentException();
+        }
+        for (Object o : items) {
+            if (o instanceof Ii) {
+                checkNull((Ii) o);
+            }
+            if (o instanceof UUID) {
+                checkNull((UUID) o);
+            }
+        }
+    }
+    
 
     private static CassandraIiImpl checkImpl(Ii item) {
         if (item instanceof CassandraIiImpl) {

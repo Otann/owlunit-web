@@ -52,6 +52,9 @@ public class MovieServiceImpl implements MovieService {
 
     static Movie iiToMovie(IiDao dao, Ii item) {
         Ii meta = itemWithMeta(dao, item);
+        if (!isMovie(dao, meta)) {
+            throw new IllegalArgumentException("This is not a movie");
+        }
         return new Movie(
                 item.getUUID(),
                 meta.getMeta(META_KEY_NAME),
@@ -61,7 +64,9 @@ public class MovieServiceImpl implements MovieService {
     }
 
     static Ii movieToIi(IiDao dao, Movie movie) throws NotFoundException {
-        assert(movie.getUuid() != null);
+        if (movie.getUuid() == null) {
+            throw new IllegalArgumentException("You have to create movie first");
+        }
         Ii item = dao.load(movie.getUuid());
         if (item != null) {
             return item;
@@ -75,6 +80,7 @@ public class MovieServiceImpl implements MovieService {
         Ii movieIi = dao.createInformationItem();
         dao.setMetaUnindexed(movieIi, CLASS_MARK_KEY, CLASS_MARK_VALUE);
         dao.setMetaUnindexed(movieIi, META_KEY_YEAR, Long.toString(movie.getYear()));
+
         dao.setMeta(movieIi, SIMPLE_NAME, simpleName(movie.getName(), movie.getYear()));
         dao.setMeta(movieIi, META_KEY_NAME, movie.getName());
         return iiToMovie(dao, movieIi);
@@ -102,7 +108,7 @@ public class MovieServiceImpl implements MovieService {
         Map<Movie, Double> result = new HashMap<Movie, Double>();
         Map<Ii, Double> rawResults = recommender.getMostLike(item, dao);
         for (Ii recommendation : rawResults.keySet()) {
-            if (isMovie(recommendation)) {
+            if (isMovie(dao, recommendation)) {
                 result.put(iiToMovie(dao, recommendation), rawResults.get(recommendation));
             }
         }
@@ -120,7 +126,7 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public Movie addPerson(Movie movie, Person person, Role role) throws NotFoundException {
         double weight;
-        if (role == null || initialRoleWeight.containsKey(role)) {
+        if (role == null || !initialRoleWeight.containsKey(role)) {
             weight = initialPersonWeight;
         } else {
             weight = initialRoleWeight.get(role);
@@ -191,22 +197,13 @@ public class MovieServiceImpl implements MovieService {
     |   P R I V A T E   |
     \__________________*/
 
-    private boolean isMovie(Ii item) {
-        return itemWithMeta(dao, item).getMeta(CLASS_MARK_KEY) != null;
-    }
-
     private Ii retrieve(String name, Long year) throws NotFoundException {
         Collection<Ii> rawItems = dao.load(SIMPLE_NAME, simpleName(name, year));
         Collection<Ii> items = dao.loadMeta(rawItems);
         if (items.isEmpty()) {
             throw new NotFoundException(String.format("%s (%s)", name, year));
         }
-        for (Ii item : items) {
-            if(Long.parseLong(item.getMeta(META_KEY_YEAR)) == year) {
-                return item;
-            }
-        }
-        throw new NotFoundException(String.format("%s (%s)", name, year));
+        return items.iterator().next();
     }
 
     private String simpleName(String name, Long year) {
@@ -242,7 +239,14 @@ public class MovieServiceImpl implements MovieService {
         return result;
     }
 
+    private static boolean isMovie(IiDao dao, Ii item) {
+        return itemWithMeta(dao, item).getMeta(CLASS_MARK_KEY) != null;
+    }
+
     private static String packTaglines(Collection<String> taglines) {
+        if (taglines == null || taglines.isEmpty()) {
+            return "";
+        }
         StringBuilder buffer = new StringBuilder();
         Iterator<String> iterator = taglines.iterator();
         while (iterator.hasNext()) {
@@ -255,6 +259,9 @@ public class MovieServiceImpl implements MovieService {
     }
 
     private static Set<String> unpackTaglines(String taglinesRaw) {
+        if (taglinesRaw == null || taglinesRaw.equals("")) {
+            return new HashSet<String>();
+        }
         String[] taglines = taglinesRaw.split(TAGLINES_DELIMETED);
         return new HashSet<String>(Arrays.asList(taglines));
     }

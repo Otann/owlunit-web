@@ -27,7 +27,7 @@ public class ImdbTaglinesCrawler extends CassandraCrawler {
     ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
     MovieService movieService = (MovieService) ctx.getBean("movieService");
 
-    static final Pattern MOVIE_NAME = Pattern.compile("^# (.+) \\((\\d+\\))$");
+    static final Pattern MOVIE_NAME = Pattern.compile("^# (.+) \\((\\d+)\\)$");
     static final Pattern TAGLINE = Pattern.compile("^\t(.+)$");
 
     private String filePath;
@@ -64,7 +64,7 @@ public class ImdbTaglinesCrawler extends CassandraCrawler {
         while (line != null) {
             try {
 
-                watch.tick(log, 100000, "Processing taglines", "lines");
+                watch.tick(log, 100000, "Processing taglines.", "lines");
 
                 Matcher matcher;
                 if ((matcher = MOVIE_NAME.matcher(line)).matches()) {
@@ -75,7 +75,11 @@ public class ImdbTaglinesCrawler extends CassandraCrawler {
 
                     String movieName = matcher.group(1);
                     long year = Long.parseLong(matcher.group(2));
-                    movieItem = movieService.loadByName(movieName, year);
+                    try {
+                        movieItem = movieService.loadByName(movieName, year);
+                    } catch (NotFoundException e) {
+                        movieItem = null;
+                    }
                 } else if ((matcher = TAGLINE.matcher(line)).matches()) {
                     if (movieItem == null)
                         continue;

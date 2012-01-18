@@ -30,6 +30,9 @@ public class KeywordServiceImpl implements KeywordService {
 
     static Keyword iiToKeyword(IiDao dao, Ii item) {
         Ii meta = itemWithMeta(dao, item);
+        if (!meta.getMeta(CLASS_MARK_KEY).equals(CLASS_MARK_VALUE)) {
+            throw new IllegalArgumentException("This is not a keyword");
+        }
         return new Keyword(
                 item.getUUID(),
                 meta.getMeta(META_KEY_NAME)
@@ -37,6 +40,9 @@ public class KeywordServiceImpl implements KeywordService {
     }
 
     static Ii keywordToIi(IiDao dao, Keyword keyword) throws NotFoundException {
+        if (keyword.getUuid() == null) {
+            throw new IllegalArgumentException("You have to create keyword first");
+        }
         Ii item = dao.load(keyword.getUuid());
         if (item == null) {
             throw new NotFoundException(String.format("Keyword(%s)", keyword.getName()));
@@ -47,6 +53,10 @@ public class KeywordServiceImpl implements KeywordService {
 
     @Override
     public Keyword createKeyword(String name) {
+        if (name == null || "".equals(name)) {
+            throw new IllegalArgumentException("Can not create keyword with empty or null name");
+        }
+
         Ii item = dao.createInformationItem();
         dao.setMetaUnindexed(item, CLASS_MARK_KEY, CLASS_MARK_VALUE);
         dao.setMeta(item, META_KEY_NAME, name);
@@ -65,6 +75,10 @@ public class KeywordServiceImpl implements KeywordService {
 
     @Override
     public Keyword loadByName(String name) throws NotFoundException {
+        if (name == null || "".equals(name)) {
+            throw new IllegalArgumentException("Can not load keyword with empty or null name");
+        }
+
         Collection<Ii> blankItems = dao.load(META_KEY_NAME, name);
         if (blankItems.isEmpty()) {
             throw new NotFoundException(String.format("Keyword(%s)", name));

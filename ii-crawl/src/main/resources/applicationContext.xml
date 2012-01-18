@@ -22,20 +22,23 @@
     |  C A S S A N D R A    |
     \=====================-->
     <bean id="cassandraHostConfigurator" class="me.prettyprint.cassandra.service.CassandraHostConfigurator">
-        <constructor-arg value="tytoalba.ru:9160"/>
+        <constructor-arg value="${cassandra.address}"/>
+        <!-- update your hosts file for local development -->
     </bean>
     <bean id="cluster" class="me.prettyprint.cassandra.service.ThriftCluster">
-        <constructor-arg value="Test Cluster"/>
+        <constructor-arg value="${cassandra.cluster}"/>
         <constructor-arg ref="cassandraHostConfigurator"/>
     </bean>
     <bean id="keyspace" class="me.prettyprint.hector.api.factory.HFactory" factory-method="createKeyspace">
-        <constructor-arg value="INFORMATION_ITEMS"/>
+        <constructor-arg value="${cassandra.keyspace}"/>
         <constructor-arg ref="cluster"/>
     </bean>
 
     <!-- - - - - - - - - - -
     |  O W L S   B E A N S  |
     \=====================-->
+
+    <!-- TODO Anton Chebotaev - set properties from crawl.properties -->
 
     <bean id="cassandraDao" class="com.manymonkeys.core.ii.impl.cassandra.CassandraIiDaoHectorImpl">
         <constructor-arg name="keyspace" ref="keyspace"/>
@@ -52,6 +55,7 @@
         <property name="recommender" ref="plainRecommender"/>
         <property name="initialKeywordWeight" value="${imdb.weight.keyword}"/>
         <property name="initialPersonWeight" value="${imdb.weight.person}"/>
+        <!-- TODO Anton Chebotaev - set roles properties -->
     </bean>
 
     <bean id="keywordService" class="com.manymonkeys.service.impl.KeywordServiceImpl">

@@ -8,14 +8,12 @@ import com.manymonkeys.model.cinema.Role;
 import com.manymonkeys.service.cinema.MovieService;
 import com.manymonkeys.service.cinema.PersonService;
 import com.manymonkeys.service.exception.NotFoundException;
-import com.manymonkeys.service.impl.MovieServiceImpl;
-import com.manymonkeys.service.impl.PersonServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.*;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,6 +39,8 @@ public class ImdbPersonCrawler extends CassandraCrawler {
     Pattern PERSON_MOVIE_PATTERN = Pattern.compile("^([^\\t]+)\\t+(.+)\\((\\d+)\\).*$");
     Pattern MOVIE_PATTERN = Pattern.compile("^\\t\\t\\t(.+)\\((\\d+)\\).*$");
 
+    int actorsCount = 0;
+
     public ImdbPersonCrawler(String filePath, String role) {
         this.filePath = filePath;
         this.role = role;
@@ -57,28 +57,31 @@ public class ImdbPersonCrawler extends CassandraCrawler {
 
         String personName = null;
         String movieName;
-        long year = 0;
+        long year;
 
-        String oldName = null;
-        String oldMovie = null;
+        List<Movie> movies = new ArrayList<Movie>();
 
-        Person person = null;
-
-        int actorsCount = 0;
         TimeWatch timer = TimeWatch.start();
 
         while (line != null) {
             try {
                 timer.tick(log, 10000, String.format("Found %d persons in file %s.", actorsCount, filePath), "lines");
 
-                if ("".equals(line)) continue;
+                if ("".equals(line)) {
+                    continue;
+                }
 
                 Matcher personMovieMatcher;
                 Matcher movieMatcher;
 
                 if ((personMovieMatcher = PERSON_MOVIE_PATTERN.matcher(line)).matches()) {
+                    // Means we found new person, so store everything for old person
+                    flushMoviesForPerson(personName, movies);
+                    if (!movies.isEmpty()) {
+                        movies = new LinkedList<Movie>();
+                    }
+
                     personName = personMovieMatcher.group(1).trim();
-                    person = null;
                     movieName = cropMovieName(personMovieMatcher.group(2));
                     year = Long.parseLong(personMovieMatcher.group(3));
                 } else if ((movieMatcher = MOVIE_PATTERN.matcher(line)).matches()) {
@@ -88,27 +91,13 @@ public class ImdbPersonCrawler extends CassandraCrawler {
                     continue;
                 }
 
-                if (movieName.equals(oldMovie) && personName.equals(oldName)) {
-                    continue;
-                } else {
-                    oldMovie = movieName;
-                    oldName = personName;
-                }
-
-                Movie movieItem;
                 try {
-                    movieItem = movieService.loadByName(movieName, year);
+                    Movie movie = movieService.loadByName(movieName, year);
+                    movies.add(movie);
                 } catch (NotFoundException e) {
+                    //noinspection UnnecessaryContinue
                     continue;
                 }
-
-                if (person == null) {
-                    String[] fullname = splitName(personName);
-                    person = personService.findOrCreate(new Person(null, fullname[0], fullname[1], null), Role.valueOf(role));
-                    actorsCount++;
-                }
-
-                movieService.addPerson(movieItem, person, Role.valueOf(role));
 
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();
@@ -119,7 +108,22 @@ public class ImdbPersonCrawler extends CassandraCrawler {
                 line = fileReader.readLine();
             }
         }
-        log.info(String.format("Processed %d persons all-in-all", actorsCount));
+
+        log.info(String.format("Processed %d persons all-in-all.", actorsCount));
+    }
+
+    private void flushMoviesForPerson(String personName, Collection<Movie> movies) throws NotFoundException {
+        if (personName != null && movies != null && !movies.isEmpty()) {
+            String[] fullName = splitName(personName);
+            Person person = personService.findOrCreate(new Person(null, fullName[0], fullName[1], null));
+            if (!person.getRoles().contains(Role.valueOf(role))) {
+                personService.addRole(person, Role.valueOf(role));
+            }
+            actorsCount++;
+            for (Movie movie : movies) {
+                movieService.addPerson(movie, person, Role.valueOf(role));
+            }
+        }
     }
 
     private String[] splitName(String fullname) {

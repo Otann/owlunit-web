@@ -1,12 +1,12 @@
 package com.manymonkeys.crawlers.imdb;
 
 import com.manymonkeys.crawlers.common.CassandraCrawler;
-import com.manymonkeys.crawlers.common.PropertyManager;
 import com.manymonkeys.crawlers.common.TimeWatch;
 import com.manymonkeys.model.cinema.Keyword;
 import com.manymonkeys.model.cinema.Movie;
 import com.manymonkeys.service.cinema.KeywordService;
 import com.manymonkeys.service.cinema.MovieService;
+import com.manymonkeys.service.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -33,7 +33,7 @@ public class ImdbKeywordsCrawler extends CassandraCrawler {
     final Logger logger = LoggerFactory.getLogger(ImdbKeywordsCrawler.class);
 
     static final Pattern keywordCounter = Pattern.compile("([^\\s]+ \\(\\d+\\))");
-    static final Pattern keywordLine = Pattern.compile("^([^\\t]+) \\((\\d+\\))\\s+([^\\s]+)$");
+    static final Pattern keywordLine = Pattern.compile("^([^\\t]+) \\((\\d+)\\)\\s+([^\\s]+)$");
 
     String filePath;
 
@@ -120,7 +120,11 @@ public class ImdbKeywordsCrawler extends CassandraCrawler {
 
                 if (!movieName.equals(oldMovieName)) {
                     oldMovieName = movieName;
-                    movie = movieService.loadByName(movieName, year);
+                    try {
+                        movie = movieService.loadByName(movieName, year);
+                    } catch (NotFoundException e) {
+                        movie = null;
+                    }
                 } else if (movie == null) {
                     // this means movie was not found previously
                     continue;
@@ -131,7 +135,11 @@ public class ImdbKeywordsCrawler extends CassandraCrawler {
 
                 Keyword keyword = null;
                 if (localCache.containsKey(keywordName)) {
-                    keyword = keywordService.loadByUUID(localCache.get(keywordName));
+                    try {
+                        keyword = keywordService.loadByUUID(localCache.get(keywordName));
+                    } catch (NotFoundException e) {
+                        keyword = null;
+                    }
                 } else {
                     keyword = keywordService.createKeyword(keywordName);
                     localCache.put(keywordName, keyword.getUuid());

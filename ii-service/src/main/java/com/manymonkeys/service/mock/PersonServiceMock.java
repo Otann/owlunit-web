@@ -30,9 +30,4 @@ public class PersonServiceMock implements PersonService{
     public Person findOrCreate(Person person) {
         return PERSON_DOOD;
     }
-
-    @Override
-    public Person findOrCreate(Person person, Role role) {
-        return PERSON_DOOD;
-    }
 }

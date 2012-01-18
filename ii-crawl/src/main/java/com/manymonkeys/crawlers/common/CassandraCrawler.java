@@ -16,20 +16,14 @@ public abstract class CassandraCrawler {
     public abstract void run() throws Exception;
 
     protected void crawl() {
-        Cluster cluster = HFactory.getOrCreateCluster(
-                PropertyManager.get(PropertyManager.Property.CASSANDRA_CLUSTER),
-                PropertyManager.get(PropertyManager.Property.CASSANDRA_HOST));
-        Keyspace keyspace = HFactory.createKeyspace(PropertyManager.get(PropertyManager.Property.CASSANDRA_KEYSPACE), cluster);
-
         try {
             run();
 
             System.out.println("All done");
         } catch (Exception e) {
             System.out.println("Shit happened: " + e.getMessage());
-        } finally {
-            cluster.getConnectionManager().shutdown();
         }
+
     }
 
 }

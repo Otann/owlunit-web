@@ -40,6 +40,16 @@
     |  S P R I N G  A P A C H E  C L I C K  I N T E G R A T I O N  |
     \============================================================-->
     <servlet>
+        <servlet-name>Spring MVC Dispatcher Servlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath*:context.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
         <servlet-name>ClickServlet</servlet-name>
         <servlet-class>org.apache.click.extras.spring.SpringClickServlet</servlet-class>
         <init-param>
@@ -48,6 +58,11 @@
         </init-param>
         <load-on-startup>0</load-on-startup>
     </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Spring MVC Dispatcher Servlet</servlet-name>
+        <url-pattern>/flatapi/*</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>ClickServlet</servlet-name>

@@ -76,11 +76,15 @@ function loadItems(items) {
 }
 
 function hideItem() {
+    setHash('');
     $('#item-meta').hide();
     $('#item-components').hide();
 }
 
 function loadItem(item) {
+    console.log("loading item");
+
+    setHash(item.id);
     addMessage('Loaded item with id = <strong>' + item.id + '</strong>', 'info');
     $('#loadByUUIDForm_uuid').val(item.id);
     $('#updateMetaForm_uuid').val(item.id);
@@ -89,8 +93,6 @@ function loadItem(item) {
 
     reloadMeta(item);
     reloadComponents(item);
-
-    console.log(item);
 }
 
 function reloadMeta(item) {
@@ -159,6 +161,7 @@ function reloadComponents(item) {
  * @param noUpdate don't load item data to page components
  */
 function processResult(response, target, noUpdate) {
+    console.log("processing result");
     if (target != null && response.html != null) {
         target.replaceWith(response.html);
     }
@@ -196,11 +199,20 @@ function processForm(form, event, noLoad) {
     console.log('formData: '+formData);
 
     $.post(url, formData, function(response) {
-        console.log(response);
+        console.log("received response for form");
         processResult(response, form, noLoad);
     });
 
     return false;
+}
+
+function loadItemByUUID(uuid) {
+    var url = '';
+    var data = 'form_name=loadByUUIDForm&uuid=' + uuid + '&loadByUUIDForm=1&load=Load';
+    $.post(url, data, function(response) {
+        console.log("received response for function");
+        processResult(response);
+    });
 }
 
 /**
@@ -208,15 +220,21 @@ function processForm(form, event, noLoad) {
  * @param uuid
  */
 function createClickableUUID(uuid) {
-    var a = $('<a/>', {href:'#', text: uuid});
-    var url = '';
-    var data = 'form_name=loadByUUIDForm&uuid=' + uuid + '&loadByUUIDForm=1&load=Load';
-    a.click(function(){
-        $.post(url, data, function(response) {
-            processResult(response);
-        })
-    });
-    return a;
+    return $('<a/>', {href:'#' + uuid, text:uuid});
+}
+
+function onHashChange() {
+    console.log("onHashChange");
+    var hash = window.location.hash;
+    if (hash != null && hash != '#') {
+        loadItemByUUID(hash.substring(1));
+    }
+}
+
+function setHash(hash) {
+    if (window.location.hash != hash && window.location.hash.substring(1) != hash) {
+        window.location.hash = hash;
+    }
 }
 
 $(document).ready(function() {
@@ -242,7 +260,8 @@ $(document).ready(function() {
 
 
     $('#loadByUUIDForm_load').live('click', function(event) {
-        return processForm($('#loadByUUIDForm'), event);
+        setHash($('#loadByUUIDForm_uuid').val());
+        return false;
     });
 
     $('#loadByMetaForm_load').live('click', function(event) {
@@ -268,5 +287,8 @@ $(document).ready(function() {
     $('#deleteForm_delete').live('click', function(event) {
         return processForm($('#deleteForm'), event);
     });
+
+    $(window).bind('hashchange', onHashChange);
+    onHashChange();
 
 });

@@ -93,6 +93,7 @@ public class MovieLensTagsCrawler {
 
         }
         log.info("All done.");
+        ctx.close();
     }
 
 }

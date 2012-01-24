@@ -24,7 +24,6 @@ public class ImdbTaglinesCrawler extends CassandraCrawler {
 
     final Logger log = LoggerFactory.getLogger(ImdbTaglinesCrawler.class);
 
-    ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
     MovieService movieService = (MovieService) ctx.getBean("movieService");
 
     static final Pattern MOVIE_NAME = Pattern.compile("^# (.+) \\((\\d+)\\)$");

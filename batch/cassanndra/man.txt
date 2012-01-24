@@ -1,2 +1,2 @@
-bin\cassandra-cli.bat -host localhost -port 9160 -f <path to repository>\batch\cassanndra\init-schema.txt
+bin/cassandra-cli -host localhost -port 9160 -f <path to repository>/batch/cassanndra/init-schema.txt
 

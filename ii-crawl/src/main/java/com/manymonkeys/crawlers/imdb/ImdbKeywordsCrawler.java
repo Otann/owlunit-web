@@ -26,7 +26,6 @@ import java.util.regex.Pattern;
  */
 public class ImdbKeywordsCrawler extends CassandraCrawler {
 
-    ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
     MovieService movieService = (MovieService) ctx.getBean("movieService");
     KeywordService keywordService = (KeywordService) ctx.getBean("keywordService");
 

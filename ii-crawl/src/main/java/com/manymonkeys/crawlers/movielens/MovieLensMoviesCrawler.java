@@ -90,6 +90,8 @@ public class MovieLensMoviesCrawler {
 
         }
         log.info("All done");
+
+        ctx.close();
     }
 
 }

@@ -23,7 +23,6 @@ public class ImdbPlotCrawler extends CassandraCrawler {
 
     final Logger log = LoggerFactory.getLogger(ImdbPlotCrawler.class);
 
-    ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
     MovieService movieService = (MovieService) ctx.getBean("movieService");
 
     static final Pattern MOVIE_NAME = Pattern.compile("^MV: (.+) \\((\\d+)\\).*$");

@@ -32,7 +32,6 @@ public class ImdbPersonCrawler extends CassandraCrawler {
     private final String filePath;
     private final String role;
 
-    ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
     MovieService movieService = (MovieService) ctx.getBean("movieService");
     PersonService personService = (PersonService) ctx.getBean("personService");
 

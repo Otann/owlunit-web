@@ -76,7 +76,7 @@ public class UpdateMetaForm extends ItemForm {
 
         try {
 
-            UUID id = UUID.fromString(uuidField.getValue());
+            long id = Long.parseLong(uuidField.getValue());
             Ii item = getDao().load(id);
 
             if (item == null) {

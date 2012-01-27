@@ -39,7 +39,7 @@ public class PersonServiceImpl implements PersonService {
         }
         Ii meta = itemWithMeta(dao, item);
         return new Person(
-                item.getUUID(),
+                item.getId(),
                 meta.getMeta(META_KEY_NAME),
                 meta.getMeta(META_KEY_SURNAME),
                 unpackRoles(meta.getMeta(META_KEY_ROLES))
@@ -47,12 +47,9 @@ public class PersonServiceImpl implements PersonService {
     }
 
     static Ii personToIi(IiDao dao, Person person) throws NotFoundException {
-        if (person.getUuid() == null) {
-            throw new IllegalArgumentException("You have to create person first");
-        }
-        Ii item = dao.load(person.getUuid());
+        Ii item = dao.load(person.getId());
         if (item == null) {
-            throw new NotFoundException(String.format("Person(%s)", person.getUuid().toString()));
+            throw new NotFoundException(String.format("Person(%d)", person.getId()));
         } else {
             return item;
         }
@@ -73,7 +70,7 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public Person findOrCreate(Person person) {
         Ii item;
-        if (person.getUuid() == null) {
+        if (person.getId() == 0) {
             item = create(person);
         } else {
             try {

@@ -67,7 +67,7 @@ public class DemoPage extends TemplatePage {
     public boolean onCreateIiClick() {
         Ii item = dao.createInformationItem();
         addModel("item", item);
-        addModel("uuid", item.getUUID());
+        addModel("uuid", item.getId());
         return true;
     }
 

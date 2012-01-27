@@ -114,7 +114,7 @@ public class ImdbPersonCrawler extends CassandraCrawler {
     private void flushMoviesForPerson(String personName, Collection<Movie> movies) throws NotFoundException {
         if (personName != null && movies != null && !movies.isEmpty()) {
             String[] fullName = splitName(personName);
-            Person person = personService.findOrCreate(new Person(null, fullName[0], fullName[1], null));
+            Person person = personService.findOrCreate(new Person(0, fullName[0], fullName[1], null));
             if (!person.getRoles().contains(Role.valueOf(role))) {
                 personService.addRole(person, Role.valueOf(role));
             }

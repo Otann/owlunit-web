@@ -27,7 +27,7 @@ class Item {
 //    ".ii-tag *" #> item.getComponents.map({case (i, w) => (i, w.doubleValue())}).toSeq.sortWith(_._2 > _._2).map({case (i, w) => tag(i, w)})
 //
 //  def tag(item: Ii, weight: Double) : CssSel =
-//    ".name [href]" #> ("/item/" + item.getUUID.toString) &
+//    ".name [href]" #> ("/item/" + item.getId) &
 //    ".name *" #> item.getMeta(TagService.NAME) &
 //    ".weight *" #> "%1.1f".format(weight)
 

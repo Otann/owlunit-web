@@ -8,5 +8,5 @@ import java.util.UUID
  * Owl Proprietary
  */
 
-case class Genre (@BeanProperty var uuid: UUID,
-                  @BeanProperty var name: String = "pulp fiction") { }
+case class Genre (@BeanProperty var id: Long,
+                  @BeanProperty var name: String = "") { }

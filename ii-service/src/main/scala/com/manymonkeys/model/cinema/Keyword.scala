@@ -8,5 +8,5 @@ import java.util.UUID
  *         Owl Proprietary
  */
 
-case class Keyword(@BeanProperty var uuid: UUID,
-                   @BeanProperty var name: String = "howl") { }
+case class Keyword(@BeanProperty var id: Long,
+                   @BeanProperty var name: String = "") { }

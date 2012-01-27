@@ -34,16 +34,13 @@ public class KeywordServiceImpl implements KeywordService {
             throw new IllegalArgumentException("This is not a keyword");
         }
         return new Keyword(
-                item.getUUID(),
+                item.getId(),
                 meta.getMeta(META_KEY_NAME)
         );
     }
 
     static Ii keywordToIi(IiDao dao, Keyword keyword) throws NotFoundException {
-        if (keyword.getUuid() == null) {
-            throw new IllegalArgumentException("You have to create keyword first");
-        }
-        Ii item = dao.load(keyword.getUuid());
+        Ii item = dao.load(keyword.getId());
         if (item == null) {
             throw new NotFoundException(String.format("Keyword(%s)", keyword.getName()));
         } else {
@@ -64,10 +61,10 @@ public class KeywordServiceImpl implements KeywordService {
     }
 
     @Override
-    public Keyword loadByUUID(UUID uuid) throws NotFoundException {
-        Ii item = dao.load(uuid);
+    public Keyword loadById(Long id) throws NotFoundException {
+        Ii item = dao.load(id);
         if (item == null) {
-            throw new NotFoundException(String.format("Keyword(%s)", uuid.toString()));
+            throw new NotFoundException(String.format("Keyword(%d)", id));
         } else {
             return iiToKeyword(dao, item);
         }

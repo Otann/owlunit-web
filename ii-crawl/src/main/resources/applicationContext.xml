@@ -2,8 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
-       xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+       xsi:schemaLocation="
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
@@ -34,15 +33,34 @@
         <constructor-arg ref="cluster"/>
     </bean>
 
+
+    <!-- - - - - - - - - - -
+    |  N E O 4 J            |
+    \=====================-->
+    <!--<bean id="configuration" class="org.neo4j.kernel.EmbeddedGraphDatabase" factory-method="loadConfigurations">-->
+        <!--<constructor-arg value="neo4j.properties"/>-->
+    <!--</bean>-->
+
+    <bean id="graphDbService" class="org.neo4j.kernel.EmbeddedGraphDatabase" destroy-method="shutdown">
+        <constructor-arg index="0" value="${neo4j.path}"/>
+        <!--<constructor-arg index="1" ref="configuration"  />-->
+    </bean>
+
+
     <!-- - - - - - - - - - -
     |  O W L S   B E A N S  |
     \=====================-->
 
-    <!-- TODO Anton Chebotaev - set properties from crawl.properties -->
+    <alias name="neoDao" alias="dao"/>
 
     <bean id="cassandraDao" class="com.manymonkeys.core.ii.impl.cassandra.CassandraIiDaoHectorImpl">
         <constructor-arg name="keyspace" ref="keyspace"/>
     </bean>
+
+    <bean id="neoDao" class="com.manymonkeys.core.ii.impl.neo4j.NeoIiDaoImpl" scope="singleton">
+        <constructor-arg ref="graphDbService"/>
+    </bean>
+
 
     <bean id="plainRecommender" class="com.manymonkeys.core.algo.impl.RecommenderPlainImpl">
         <property name="componentsLimit" value="75"/>
@@ -51,7 +69,7 @@
     </bean>
 
     <bean id="movieService" class="com.manymonkeys.service.impl.MovieServiceImpl">
-        <property name="dao" ref="cassandraDao"/>
+        <property name="dao" ref="dao"/>
         <property name="recommender" ref="plainRecommender"/>
         <property name="initialKeywordWeight" value="${imdb.weight.keyword}"/>
         <property name="initialPersonWeight" value="${imdb.weight.person}"/>
@@ -59,11 +77,11 @@
     </bean>
 
     <bean id="keywordService" class="com.manymonkeys.service.impl.KeywordServiceImpl">
-        <property name="dao" ref="cassandraDao"/>
+        <property name="dao" ref="dao"/>
     </bean>
 
     <bean id="personService" class="com.manymonkeys.service.impl.PersonServiceImpl">
-        <property name="dao" ref="cassandraDao"/>
+        <property name="dao" ref="dao"/>
     </bean>
 
     <!-- - - - - - -

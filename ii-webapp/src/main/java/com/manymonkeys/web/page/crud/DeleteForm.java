@@ -2,7 +2,6 @@ package com.manymonkeys.web.page.crud;
 
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.core.ii.IiDao;
-import me.prettyprint.hector.api.exceptions.HectorException;
 import org.apache.click.ActionResult;
 import org.apache.click.Control;
 import org.apache.click.ajax.DefaultAjaxBehavior;
@@ -55,7 +54,7 @@ public class DeleteForm extends ItemForm {
         
         try {
 
-            UUID id = UUID.fromString(uuidField.getValue());
+            long id = Long.parseLong(uuidField.getValue());
             Ii item = getDao().load(id);
             if (item == null) {
                 uuidField.setError("Unable to find item with this uuid");
@@ -64,7 +63,7 @@ public class DeleteForm extends ItemForm {
             
             getDao().deleteInformationItem(item);
 
-            return createMessageResult("Item with uuid <strong>" + item.getUUID().toString() + "</strong> deleted", Result.WARN);
+            return createMessageResult("Item with uuid <strong>" + item.getId() + "</strong> deleted", Result.WARN);
 
         } catch (IllegalArgumentException e) {
             uuidField.setError("this is not valid UUID");

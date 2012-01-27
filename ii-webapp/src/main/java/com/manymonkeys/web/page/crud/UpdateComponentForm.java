@@ -80,7 +80,7 @@ public class UpdateComponentForm extends ItemForm {
             Ii component = null;
 
             try {
-                UUID id = UUID.fromString(itemField.getValue());
+                long id = Long.parseLong(itemField.getValue());
                 item = getDao().load(id);
                 if (item == null) {
                     itemField.setError("can not find item with this uuid");
@@ -89,7 +89,7 @@ public class UpdateComponentForm extends ItemForm {
                 itemField.setError("this is not valid UUID");
             }
             try {
-                UUID id = UUID.fromString(componentField.getValue());
+                long id = Long.parseLong(componentField.getValue());
                 component = getDao().load(id);
                 if (component == null) {
                     itemField.setError("can not find item with this uuid");

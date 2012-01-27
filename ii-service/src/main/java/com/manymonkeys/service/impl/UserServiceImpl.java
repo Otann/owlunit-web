@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
     public static final int HASH_LENGTH = 16;
 
     static Ii userToIi(IiDao dao, User user) throws NotFoundException {
-        Ii item = dao.load(user.getUuid());
+        Ii item = dao.load(user.getId());
         if (item == null) {
             throw new NotFoundException(String.format("User(%s)", user.getLogin()));
         } else {
@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
     static User iiToUser(IiDao dao, Ii item) {
         Ii meta = itemWithMeta(dao, item);
         return new User(
-                item.getUUID(),
+                item.getId(),
                 meta.getMeta(META_KEY_LOGIN),
                 meta.getMeta(META_KEY_PASSWORD)
         );

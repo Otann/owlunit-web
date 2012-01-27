@@ -9,12 +9,10 @@ import com.manymonkeys.service.cinema.MovieService;
 import com.manymonkeys.service.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -98,7 +96,7 @@ public class ImdbKeywordsCrawler extends CassandraCrawler {
 
         TimeWatch watch = TimeWatch.start();
 
-        Map<String, UUID> localCache = new HashMap<String, UUID>();
+        Map<String, Long> localCache = new HashMap<String, Long>();
 
         String line = reader.readLine();
         String oldMovieName = null;
@@ -135,13 +133,13 @@ public class ImdbKeywordsCrawler extends CassandraCrawler {
                 Keyword keyword = null;
                 if (localCache.containsKey(keywordName)) {
                     try {
-                        keyword = keywordService.loadByUUID(localCache.get(keywordName));
+                        keyword = keywordService.loadById(localCache.get(keywordName));
                     } catch (NotFoundException e) {
                         keyword = null;
                     }
                 } else {
                     keyword = keywordService.createKeyword(keywordName);
-                    localCache.put(keywordName, keyword.getUuid());
+                    localCache.put(keywordName, keyword.getId());
                 }
 
                 Integer count = keywordsCounts.get(keywordName);

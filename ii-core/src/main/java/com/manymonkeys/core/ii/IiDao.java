@@ -2,7 +2,6 @@ package com.manymonkeys.core.ii;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * @author Anton Chebotaev
@@ -15,7 +14,7 @@ public interface IiDao {
     ////////////////////////////////////////////////
 
     /**
-     * Creates new blank Ii object with valid uuid
+     * Creates new blank Ii object with valid id
      *
      * @return InformationItem
      */
@@ -30,25 +29,25 @@ public interface IiDao {
 
     /**
      * Loads Ii from datastore if such Ii exists.
-     * Loaded Ii is blank and has only uuid.
+     * Loaded Ii is blank and has only id.
      * @see #loadMeta(java.util.Collection)
      * @see #loadComponents(java.util.Collection)
      * @see #loadParents(java.util.Collection)
      *
-     * @param uuid of Ii
+     * @param id of Ii
      * @return loaded Ii with metadata only
      */
-    Ii load(UUID uuid);
+    Ii load(long id);
 
     /**
-     * Multiget version of {@link #load(java.util.UUID)} method.
+     * Multiget version of {@link #load(long)} method.
      * Queries should be performed in parallel
-     * @see #load(java.util.UUID)
+     * @see #load(long)
      *
-     * @param uuids set of uuids of items
+     * @param ids set of ids of items
      * @return collection of items with metadata only
      */
-    Collection<Ii> load(Collection<UUID> uuids);
+    Collection<Ii> load(Collection<Long> ids);
 
     ////////////////////////////////////////////////
     ////////////////    Meta
@@ -67,8 +66,8 @@ public interface IiDao {
 
     /**
      * Loads items that has provided key-value pair in metadata.
-     * Loaded items is blank, have only uuid.
-     * @see #load(java.util.UUID)
+     * Loaded items is blank, have only id.
+     * @see #load(long)
      *
      * @param key   of metadata
      * @param value of metadata
@@ -122,7 +121,7 @@ public interface IiDao {
 
     /**
      * Updates components links for item.
-     * New components loaded blank, with uuid only, old components are same as original
+     * New components loaded blank, with id only, old components are same as original
      * @see #loadMeta(Ii)
      * @see #loadParents(Ii)
      *
@@ -142,7 +141,7 @@ public interface IiDao {
 
     /**
      * Updates parents links for item.
-     * New parents loaded blank, with uuid only, old parents are same as original
+     * New parents loaded blank, with id only, old parents are same as original
      * @see #loadMeta(Ii)
      * @see #loadComponents(Ii)
      *
@@ -166,12 +165,12 @@ public interface IiDao {
      *
      * @param key of metadata
      * @param prefix that metadata value should start from
-     * @return map of uuids and full meta values
+     * @return map of ids and full meta values
      *
      * @deprecated wrong competence
      */
     @Deprecated
-    Map<UUID, String> search(String key, String prefix);
+    Collection<Ii> search(String key, String prefix);
 
     /**
      * Sets weight of relation between components.

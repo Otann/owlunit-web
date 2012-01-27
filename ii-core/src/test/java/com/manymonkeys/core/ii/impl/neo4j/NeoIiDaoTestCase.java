@@ -1,7 +1,8 @@
-package com.manymonkeys.core.ii.impl.cassandra;
+package com.manymonkeys.core.ii.impl.neo4j;
 
 import com.manymonkeys.core.ii.Ii;
-import com.manymonkeys.core.ii.IiDao;
+import com.manymonkeys.core.ii.exception.NotFoundException;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,23 +13,22 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Many Monkeys
- *
  * @author Anton Chebotaev
+ *         Owls Proprietary
  */
-public class IiDaoTestCase extends AbstractDependencyInjectionSpringContextTests {
 
-    final Logger log = LoggerFactory.getLogger(IiDaoTestCase.class);
+public class NeoIiDaoTestCase extends AbstractDependencyInjectionSpringContextTests {
+
+    @SuppressWarnings("UnusedDeclaration")
+    final Logger log = LoggerFactory.getLogger(NeoIiDaoTestCase.class);
 
     @Autowired
-    IiDao dao;
+    NeoIiDaoImpl dao;
+
+    GraphDatabaseService graphDb;
 
     protected String[] getConfigLocations() {
-        return new String[]{findConfigPath()};
-    }
-
-    private String findConfigPath() {
-        return "beans/applicationContext.xml";
+        return new String[]{"beans/applicationContext.xml"};
     }
 
     @Override
@@ -36,25 +36,34 @@ public class IiDaoTestCase extends AbstractDependencyInjectionSpringContextTests
         super.onSetUp();
     }
 
+    @Override
     public void onTearDown() throws Exception {
         super.onTearDown();
     }
 
-    public IiDao getDao() {
+    public NeoIiDaoImpl getDao() {
         return dao;
     }
 
-    public void setDao(IiDao dao) {
+    public void setDao(NeoIiDaoImpl dao) {
         this.dao = dao;
     }
 
-    public void testCreateDeleteLoadIi() throws Exception {
-        Ii item = dao.createInformationItem();
-        assertNotNull("Can not create Ii", item);
+    public void testCreateLoadDeleteIi() throws Exception {
+        Ii createdItem = dao.createInformationItem();
+        assertNotNull("Can not create Ii", createdItem);
+        long id = createdItem.getId();
+        
+        Ii loadedItem = dao.load(id);
+        assertEquals(createdItem, loadedItem);
 
-        UUID id = item.getUUID();
-        dao.deleteInformationItem(item);
-        assertNull("Can not delete Ii", dao.load(id));
+        dao.deleteInformationItem(loadedItem);
+        try {
+            dao.load(id);
+        } catch (NotFoundException e) {
+            return;
+        }
+        fail("Exception should be thrown");
     }
 
     public void testSetLoadMeta() throws Exception {
@@ -115,12 +124,11 @@ public class IiDaoTestCase extends AbstractDependencyInjectionSpringContextTests
         dao.setComponentWeight(grandchild, grand2child, 1.0);
 
         Map<Ii, Double> indirect = dao.getIndirectComponents(parent);
-        
+
         assertEquals("Wrong indirect weight to grandchild", indirect.get(grandchild), 0.5);
         assertEquals("Wrong indirect weight to grandgrandchild", indirect.get(grand2child), 0.375);
 
         dao.deleteInformationItem(parent);
         dao.deleteInformationItem(child);
         dao.deleteInformationItem(grandchild);
-    }
-}
+    }}

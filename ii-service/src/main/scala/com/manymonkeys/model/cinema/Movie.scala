@@ -8,7 +8,7 @@ import java.util.UUID
  *         Owl Proprietary
  */
 
-case class Movie(@BeanProperty var uuid: UUID,
-                 @BeanProperty var name: String = "Big Lebowski",
-                 @BeanProperty var year: Long = 1987,
+case class Movie(@BeanProperty var id: Long,
+                 @BeanProperty var name: String = "",
+                 @BeanProperty var year: Long = 0,
                  @BeanProperty var description: String) { }

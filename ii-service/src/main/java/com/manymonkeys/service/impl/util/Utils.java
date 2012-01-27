@@ -11,7 +11,7 @@ import com.manymonkeys.core.ii.IiDao;
 public class Utils {
 
     public static Ii itemWithMeta(IiDao dao, Ii item) {
-        if (item.getMetaMap() == null) {
+        if (Ii.NOT_LOADED.equals(item.getMetaMap())) {
             return dao.loadMeta(item);
         } else {
             return item;

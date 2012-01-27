@@ -9,7 +9,7 @@ public class ExMovieModel {
     /**
      * id in Owls database
      */
-    private UUID uuid;
+    private Long id;
 
     /**
      * DTO used to provide id in external service (f. e. YotaPlay)
@@ -21,18 +21,18 @@ public class ExMovieModel {
      */
     private String name;
 
-    public ExMovieModel(UUID uuid, Long externalId, String name) {
-        this.uuid = uuid;
+    public ExMovieModel(Long id, Long externalId, String name) {
+        this.id = id;
         this.externalId = externalId;
         this.name = name;
     }
 
-    public UUID getUuid() {
-        return uuid;
+    public Long getId() {
+        return id;
     }
 
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
+    public void setUuid(Long id) {
+        this.id = id;
     }
 
     public Long getExternalId() {
@@ -56,7 +56,7 @@ public class ExMovieModel {
 
     public String toString() {
         return new ToStringCreator(this)
-                .append("uuid", uuid)
+                .append("id", id)
                 .append("externalId", externalId)
                 .append("name", name)
                 .toString();

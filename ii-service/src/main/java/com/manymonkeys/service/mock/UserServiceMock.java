@@ -13,7 +13,7 @@ import java.util.UUID;
  */
 public class UserServiceMock implements UserService {
 
-    User USER_BOB = new User(new UUID(3, 3), "bob", "bobspassword");
+    User USER_BOB = new User(201, "bob", "bobspassword");
 
     @Override
     public User createUser(User user) {

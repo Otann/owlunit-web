@@ -1,0 +1,19 @@
+create keyspace INFORMATION_ITEMS;
+use INFORMATION_ITEMS;
+
+create column family COUNTERS with default_validation_class=CounterColumnType and key_validation_class=UTF8Type and comparator=UTF8Type;
+incr COUNTERS['ii']['ii'];
+
+create column family META with comparator = UTF8Type;
+create column family META_INDEX with comparator = UTF8Type;
+
+create column family COMPONENTS with comparator = LongType;
+create column family DIRECT_2 with comparator = LongType and column_type = 'Super' and subcomparator = LongType;
+create column family DIRECT_3 with comparator = LongType and column_type = 'Super' and subcomparator = LongType;
+
+create column family PARENTS with comparator = LongType;
+create column family OLDIES with comparator = LongType;
+
+create column family INDIRECT with comparator = LongType;
+
+create column family CACHE_TYPE_MOVIE with comparator = LongType;

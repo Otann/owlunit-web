@@ -11,7 +11,7 @@ import java.util.UUID;
  */
 public class IiMock implements Ii {
 
-    private UUID uuid;
+    private long id;
     private Map<String, String> meta = new HashMap<String, String>();
     private Map<Ii, Double> components = new HashMap<Ii, Double>();
     private Map<Ii, Double> parents    = new HashMap<Ii, Double>();
@@ -36,7 +36,7 @@ public class IiMock implements Ii {
 
     private static IiMock generateItem(String type, long id) {
         IiMock item = new IiMock();
-        item.uuid = generateFromString(String.format("%s-%d", type, id));
+        item.id = id + type.hashCode();
         item.meta.put("NAME", String.format("Item %d of %s", id, type));
         return item;
     }
@@ -50,8 +50,8 @@ public class IiMock implements Ii {
     }
 
     @Override
-    public UUID getUUID() {
-        return uuid;
+    public long getId() {
+        return id;
     }
 
     @Override

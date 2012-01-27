@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd ">
 
-    <!-- Database -->
+    <!-- Cassandra -->
 
     <bean id="cassandraHostConfigurator" class="me.prettyprint.cassandra.service.CassandraHostConfigurator">
         <constructor-arg value="localhost:9160"/>
@@ -17,9 +18,24 @@
         <constructor-arg ref="cluster"/>
     </bean>
 
-
-    <bean id="iiDao" class="com.manymonkeys.core.ii.impl.cassandra.CassandraIiDaoHectorImpl">
+    <bean id="iiCassandraDao" class="com.manymonkeys.core.ii.impl.cassandra.CassandraIiDaoHectorImpl">
         <constructor-arg ref="keyspace"/>
     </bean>
+
+    <!-- Neo4j -->
+
+    <!--<bean id="configuration" class="org.neo4j.kernel.EmbeddedGraphDatabase" factory-method="loadConfigurations">-->
+    <!--<constructor-arg value="neo4j_config.props"/>-->
+    <!--</bean>-->
+
+    <bean id="graphDbService" class="org.neo4j.kernel.EmbeddedGraphDatabase" destroy-method="shutdown">
+        <constructor-arg index="0" value="target/data/neo4j-db"/>
+        <!--<constructor-arg index="1" ref="configuration"  />-->
+    </bean>
+
+    <bean id="iiNeoDao" class="com.manymonkeys.core.ii.impl.neo4j.NeoIiDaoImpl" scope="singleton">
+        <constructor-arg ref="graphDbService"/>
+    </bean>
+
 
 </beans>

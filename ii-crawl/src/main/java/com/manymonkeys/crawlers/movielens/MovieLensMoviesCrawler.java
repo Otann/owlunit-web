@@ -68,7 +68,7 @@ public class MovieLensMoviesCrawler {
             String year = line.substring(lastSemicolon - 6, lastSemicolon - 2);
             String[] genres = line.substring(lastSemicolon + 1, line.length()).split("\\|");
 
-            Movie movie = movieService.createMovie(new Movie(null, name, Long.parseLong(year), null));
+            Movie movie = movieService.createMovie(new Movie(0, name, Long.parseLong(year), null));
             try {
                 movieService.setExternalId(movie, SERVICE_NAME, id);
                 if (aka != null) {
@@ -85,7 +85,7 @@ public class MovieLensMoviesCrawler {
                 log.error("Can't find object" + movie.toString());
             }
 
-            watch.tick(log, 250, "Crawling movielens.", "movies");
+            watch.tick(log, 100, "Crawling movielens.", "movies");
             line = fileReader.readLine();
 
         }

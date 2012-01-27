@@ -1,7 +1,8 @@
 package com.manymonkeys.core.ii;
 
+import com.manymonkeys.core.ii.impl.utils.AlwaysEmptyMap;
+
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Ii stands for InformationItem
@@ -12,11 +13,16 @@ import java.util.UUID;
 public interface Ii {
 
     /**
+     * This value is returned when you do not need item's data
+     */
+    public static final Map NOT_LOADED = new AlwaysEmptyMap();
+
+    /**
      * Each ii has it's own identifier which is unique across implementation package
      *
      * @return unique identifier
      */
-    UUID getUUID();
+    long getId();
 
     /**
      * InformationItems holds simple meta information like names, dates, or urls

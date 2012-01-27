@@ -14,7 +14,7 @@ import java.util.UUID;
  */
 public class PersonServiceMock implements PersonService{
 
-    Person PERSON_DOOD = new Person(new UUID(3, 3), "Dood", "Lebowski", Collections.singleton(Role.ACTOR));
+    Person PERSON_DOOD = new Person(101, "Dood", "Lebowski", Collections.singleton(Role.ACTOR));
 
     @Override
     public Person createPerson(Person person) {

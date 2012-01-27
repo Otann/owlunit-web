@@ -8,6 +8,6 @@ import java.util.UUID
  * Owl Proprietary
  */
 
-case class User(@BeanProperty var uuid: UUID,
+case class User(@BeanProperty var id: Long,
                 @BeanProperty var login: String = "joe",
                 @BeanProperty var password: String = "*******") {}

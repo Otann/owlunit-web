@@ -7,7 +7,6 @@ import org.apache.click.ActionResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import static com.manymonkeys.web.page.crud.Utils.*;
@@ -45,7 +44,7 @@ public class CrudPage extends TemplatePage {
             } else {
                 item = dao.loadMeta(item);
                 item = dao.loadComponents(item);
-                return createObjectResult(null, item, "Created Ii with uuid <strong>" + item.getUUID().toString() + "</strong>", Result.SUCCESS);
+                return createObjectResult(null, item, "Created Ii with uuid <strong>" + item.getId() + "</strong>", Result.SUCCESS);
             }
         } catch (Exception e) {
             return createMessageResult(e.getMessage(), Result.ERROR);

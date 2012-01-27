@@ -7,7 +7,6 @@ import com.manymonkeys.model.cinema.*;
 import com.manymonkeys.service.cinema.MovieService;
 import com.manymonkeys.service.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -56,7 +55,7 @@ public class MovieServiceImpl implements MovieService {
             throw new IllegalArgumentException("This is not a movie");
         }
         return new Movie(
-                item.getUUID(),
+                item.getId(),
                 meta.getMeta(META_KEY_NAME),
                 Long.parseLong(meta.getMeta(META_KEY_YEAR)),
                 meta.getMeta(META_KEY_PLOT)
@@ -64,10 +63,7 @@ public class MovieServiceImpl implements MovieService {
     }
 
     static Ii movieToIi(IiDao dao, Movie movie) throws NotFoundException {
-        if (movie.getUuid() == null) {
-            throw new IllegalArgumentException("You have to create movie first");
-        }
-        Ii item = dao.load(movie.getUuid());
+        Ii item = dao.load(movie.getId());
         if (item != null) {
             return item;
         } else {

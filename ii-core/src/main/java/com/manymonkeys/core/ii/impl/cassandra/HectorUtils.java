@@ -2,8 +2,8 @@ package com.manymonkeys.core.ii.impl.cassandra;
 
 import com.manymonkeys.core.ii.Ii;
 import me.prettyprint.cassandra.serializers.DoubleSerializer;
+import me.prettyprint.cassandra.serializers.LongSerializer;
 import me.prettyprint.cassandra.serializers.StringSerializer;
-import me.prettyprint.cassandra.serializers.UUIDSerializer;
 import me.prettyprint.hector.api.Keyspace;
 import me.prettyprint.hector.api.beans.*;
 import me.prettyprint.hector.api.factory.HFactory;
@@ -21,7 +21,7 @@ import java.util.*;
 
 public class HectorUtils {
 
-    static final UUIDSerializer   us = UUIDSerializer.get();
+    static final LongSerializer ls = LongSerializer.get();
     static final DoubleSerializer ds = DoubleSerializer.get();
     static final StringSerializer ss = StringSerializer.get();
 
@@ -32,112 +32,112 @@ public class HectorUtils {
      */
     public static final int MULTIGET_COUNT = 10000;
 
-    static List<UUID> getRowKeys(Keyspace keyspace, String columnFamily, UUID key) {
-        List<UUID> result = new LinkedList<UUID>();
+    static List<Long> getRowKeys(Keyspace keyspace, String columnFamily, Long key) {
+        List<Long> result = new LinkedList<Long>();
 
-        SliceQuery<UUID, UUID, Double> query = HFactory.createSliceQuery(keyspace, us, us, ds);
+        SliceQuery<Long, Long, Double> query = HFactory.createSliceQuery(keyspace, ls, ls, ds);
         query.setColumnFamily(columnFamily);
         query.setKey(key);
         query.setRange(null, null, false, MULTIGET_COUNT);
 
-        QueryResult<ColumnSlice<UUID, Double>> queryResult = query.execute();
-        ColumnSlice<UUID, Double> slice = queryResult.get();
+        QueryResult<ColumnSlice<Long, Double>> queryResult = query.execute();
+        ColumnSlice<Long, Double> slice = queryResult.get();
 
-        for (HColumn<UUID, Double> column : slice.getColumns()) {
+        for (HColumn<Long, Double> column : slice.getColumns()) {
             result.add(column.getName());
         }
 
         return result;
     }
 
-    static List<UUID> getSuperRowKeys(Keyspace keyspace, String columnFamily, UUID key) {
-        List<UUID> result = new LinkedList<UUID>();
+    static List<Long> getSuperRowKeys(Keyspace keyspace, String columnFamily, Long key) {
+        List<Long> result = new LinkedList<Long>();
 
-        SuperSliceQuery<UUID, UUID, UUID, Double> query = HFactory.createSuperSliceQuery(keyspace, us, us, us, ds);
+        SuperSliceQuery<Long, Long, Long, Double> query = HFactory.createSuperSliceQuery(keyspace, ls, ls, ls, ds);
         query.setColumnFamily(columnFamily);
         query.setKey(key);
         query.setRange(null, null, false, MULTIGET_COUNT);
 
-        QueryResult<SuperSlice<UUID, UUID, Double>> queryResult = query.execute();
-        SuperSlice<UUID, UUID, Double> slice = queryResult.get();
+        QueryResult<SuperSlice<Long, Long, Double>> queryResult = query.execute();
+        SuperSlice<Long, Long, Double> slice = queryResult.get();
 
-        for (HSuperColumn<UUID, UUID, Double> column : slice.getSuperColumns()) {
+        for (HSuperColumn<Long, Long, Double> column : slice.getSuperColumns()) {
             result.add(column.getName());
         }
 
         return result;
     }
 
-    static List<HColumn<UUID, Double>> getColumns(Keyspace keyspace, String columnFamily, UUID key) {
+    static List<HColumn<Long, Double>> getColumns(Keyspace keyspace, String columnFamily, Long key) {
 
-        SliceQuery<UUID, UUID, Double> query = HFactory.createSliceQuery(keyspace, us, us, ds);
+        SliceQuery<Long, Long, Double> query = HFactory.createSliceQuery(keyspace, ls, ls, ds);
         query.setColumnFamily(columnFamily);
         query.setKey(key);
         query.setRange(null, null, false, MULTIGET_COUNT);
 
-        QueryResult<ColumnSlice<UUID, Double>> queryResult = query.execute();
-        ColumnSlice<UUID, Double> slice = queryResult.get();
+        QueryResult<ColumnSlice<Long, Double>> queryResult = query.execute();
+        ColumnSlice<Long, Double> slice = queryResult.get();
 
         return slice.getColumns();
     }
 
-    static Map<UUID, Double> getRow(Keyspace keyspace, String columnFamily, UUID key) {
+    static Map<Long, Double> getRow(Keyspace keyspace, String columnFamily, Long key) {
         return columnsToMap(getColumns(keyspace, columnFamily, key));
     }
 
-    static Map<UUID, Double> columnsToMap(Collection<HColumn<UUID, Double>> columns) {
-        Map<UUID, Double> result = new HashMap<UUID, Double>();
+    static Map<Long, Double> columnsToMap(Collection<HColumn<Long, Double>> columns) {
+        Map<Long, Double> result = new HashMap<Long, Double>();
 
-        for (HColumn<UUID, Double> column : columns) {
+        for (HColumn<Long, Double> column : columns) {
             result.put(column.getName(), column.getValue());
         }
 
         return result;
     }
 
-    static List<HSuperColumn<UUID, UUID, Double>> getSuperColumns(Keyspace keyspace, String columnFamily, UUID key) {
+    static List<HSuperColumn<Long, Long, Double>> getSuperColumns(Keyspace keyspace, String columnFamily, Long key) {
 
-        SuperSliceQuery<UUID, UUID, UUID, Double> query = HFactory.createSuperSliceQuery(keyspace, us, us, us, ds);
+        SuperSliceQuery<Long, Long, Long, Double> query = HFactory.createSuperSliceQuery(keyspace, ls, ls, ls, ds);
         query.setColumnFamily(columnFamily);
         query.setKey(key);
         query.setRange(null, null, false, MULTIGET_COUNT);
 
-        QueryResult<SuperSlice<UUID, UUID, Double>> queryResult = query.execute();
-        SuperSlice<UUID, UUID, Double> slice = queryResult.get();
+        QueryResult<SuperSlice<Long, Long, Double>> queryResult = query.execute();
+        SuperSlice<Long, Long, Double> slice = queryResult.get();
 
         return slice.getSuperColumns();
     }
 
-    static Map<UUID,Map<UUID, Double>> getSuperRow(Keyspace keyspace, String columnFamily, UUID key) {
+    static Map<Long,Map<Long, Double>> getSuperRow(Keyspace keyspace, String columnFamily, Long key) {
 
-        List<HSuperColumn<UUID, UUID, Double>> superColumns = getSuperColumns(keyspace, columnFamily, key);
+        List<HSuperColumn<Long, Long, Double>> superColumns = getSuperColumns(keyspace, columnFamily, key);
 
-        Map<UUID,Map<UUID, Double>> result = new HashMap<UUID, Map<UUID, Double>>();
-        for(HSuperColumn<UUID, UUID, Double> sColumn : superColumns) {
+        Map<Long,Map<Long, Double>> result = new HashMap<Long, Map<Long, Double>>();
+        for(HSuperColumn<Long, Long, Double> sColumn : superColumns) {
             result.put(sColumn.getName(), columnsToMap(sColumn.getColumns()));
         }
 
         return result;
     }
 
-    static Collection<UUID> getIds(Collection<Ii> items) {
-        List<UUID> result = new LinkedList<UUID>();
+    static Collection<Long> getIds(Collection<Ii> items) {
+        List<Long> result = new LinkedList<Long>();
         for (Ii item : items) {
-            result.add(item.getUUID());
+            result.add(item.getId());
         }
         return result;
     }
 
-    static Map<UUID,Map<UUID, Double>> multigetRows(Keyspace keyspace, String columnFamily, Collection<UUID> ids) {
-        MultigetSliceQuery<UUID, UUID, Double> query = HFactory.createMultigetSliceQuery(keyspace, us, us, ds);
+    static Map<Long,Map<Long, Double>> multigetRows(Keyspace keyspace, String columnFamily, Collection<Long> ids) {
+        MultigetSliceQuery<Long, Long, Double> query = HFactory.createMultigetSliceQuery(keyspace, ls, ls, ds);
         query.setColumnFamily(columnFamily);
         query.setKeys(ids);
         query.setRange(null, null, false, MULTIGET_COUNT);
 
-        QueryResult<Rows<UUID, UUID, Double>> queryResult = query.execute();
+        QueryResult<Rows<Long, Long, Double>> queryResult = query.execute();
 
-        Map<UUID,Map<UUID, Double>> result = new HashMap<UUID, Map<UUID, Double>>();
-        for(Row<UUID, UUID, Double> row : queryResult.get()) {
+        Map<Long,Map<Long, Double>> result = new HashMap<Long, Map<Long, Double>>();
+        for(Row<Long, Long, Double> row : queryResult.get()) {
             result.put(row.getKey(), columnsToMap(row.getColumnSlice().getColumns()));
         }
 

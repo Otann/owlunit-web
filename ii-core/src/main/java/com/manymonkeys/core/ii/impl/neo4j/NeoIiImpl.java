@@ -1,28 +1,31 @@
-package com.manymonkeys.core.ii.impl.cassandra;
+package com.manymonkeys.core.ii.impl.neo4j;
 
 import com.manymonkeys.core.ii.Ii;
 import com.manymonkeys.core.ii.impl.utils.AlwaysEmptyMap;
+import org.neo4j.graphdb.Node;
 
 import java.util.Map;
 
 /**
- * Many Monkeys
- *
  * @author Anton Chebotaev
+ *         Owls Proprietary
  */
-public class CassandraIiImpl implements Ii, Comparable<Ii> {
 
-    long id;
+public class NeoIiImpl implements Ii {
+
+    Node node;
     Map<String, String> meta;
     Map<Ii, Double> components;
     Map<Ii, Double> parents;
-    
+
     @SuppressWarnings("unchecked")
-    CassandraIiImpl(long uuid) {
-        this.id = uuid;
-        this.meta = NOT_LOADED;
-        this.parents = NOT_LOADED;
-        this.components = NOT_LOADED;
+    NeoIiImpl(Node node) {
+        assert node != null;
+        this.node = node;
+
+        meta = NOT_LOADED;
+        parents = NOT_LOADED;
+        components = NOT_LOADED;
     }
 
     /**
@@ -30,8 +33,9 @@ public class CassandraIiImpl implements Ii, Comparable<Ii> {
      * IiDao is responsible for creation of new instances of the fields with new values
      * @param item another item
      */
-    CassandraIiImpl(CassandraIiImpl item) {
-        this.id = item.id;
+    NeoIiImpl(NeoIiImpl item) {
+        this.node = item.node;
+
         this.meta = item.meta;
         this.parents = item.parents;
         this.components = item.components;
@@ -39,7 +43,7 @@ public class CassandraIiImpl implements Ii, Comparable<Ii> {
 
     @Override
     public long getId() {
-        return id;
+        return node.getId();
     }
 
     @Override
@@ -72,34 +76,23 @@ public class CassandraIiImpl implements Ii, Comparable<Ii> {
         return parents.get(parent);
     }
 
+    @Override
+    @SuppressWarnings("SimplifiableIfStatement")
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        return this.node.equals(((NeoIiImpl) o).node);
+    }
 
     @Override
     public int hashCode() {
-        return (int) id;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Ii) {
-            Ii local = (Ii) obj;
-            return id == local.getId();
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public int compareTo(Ii item) {
-        if (id == item.getId()) {
-            return 0;
-        } else {
-            return id > item.getId() ? 1 : -1; 
-        }
+        return node.hashCode();
     }
 
     @Override
     public String toString() {
-        return String.format("Ii#%d", id);
+        return String.format("Ii#%d", node.getId());
     }
 
 }

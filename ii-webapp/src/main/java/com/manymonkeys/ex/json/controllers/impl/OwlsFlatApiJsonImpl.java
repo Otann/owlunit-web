@@ -51,7 +51,7 @@ public class OwlsFlatApiJsonImpl implements OwlsFlatApi {
                          @RequestParam("description") String description,
                          //Todo Ilya Pimenov - Move "persons" to @RequestBody
                          @RequestParam("persons") List<Person> persons) {
-        Movie movie = new Movie(null, name, year, null);
+        Movie movie = new Movie(0, name, year, null);
         try {
             movie = movieService.createMovie(movie);
             movieService.setDescription(movie, description);
@@ -89,7 +89,7 @@ public class OwlsFlatApiJsonImpl implements OwlsFlatApi {
                                                  @RequestParam("amount") Long amount,
                                                  @RequestParam("showreasons") boolean showReasons) {
         //Todo This is stub imp
-        return Collections.singletonMap(new Movie(null, "Big Lebowski", 1987, "White russian"), 666.0d);
+        return Collections.singletonMap(new Movie(0, "Big Lebowski", 1987, "White russian"), 666.0d);
     }
 
     @Override

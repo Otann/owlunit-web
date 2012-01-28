@@ -13,7 +13,8 @@ import java.util.Map;
 
 public class NeoIiImpl implements Ii {
 
-    Node node;
+    transient Node node;
+    long id;
     Map<String, String> meta;
     Map<Ii, Double> components;
     Map<Ii, Double> parents;
@@ -22,6 +23,7 @@ public class NeoIiImpl implements Ii {
     NeoIiImpl(Node node) {
         assert node != null;
         this.node = node;
+        this.id = node.getId();
 
         meta = NOT_LOADED;
         parents = NOT_LOADED;
@@ -35,6 +37,7 @@ public class NeoIiImpl implements Ii {
      */
     NeoIiImpl(NeoIiImpl item) {
         this.node = item.node;
+        this.id = node.getId();
 
         this.meta = item.meta;
         this.parents = item.parents;
@@ -43,7 +46,7 @@ public class NeoIiImpl implements Ii {
 
     @Override
     public long getId() {
-        return node.getId();
+        return id;
     }
 
     @Override
@@ -92,7 +95,7 @@ public class NeoIiImpl implements Ii {
 
     @Override
     public String toString() {
-        return String.format("Ii#%d", node.getId());
+        return String.format("Ii-%d", node.getId());
     }
 
 }

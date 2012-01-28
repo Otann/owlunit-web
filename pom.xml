@@ -15,7 +15,6 @@
         <module>ii-service</module>
         <module>ii-crawl</module>
         <module>ii-impex</module>
-        <!--<module>ii-frontend</module>-->
         <!--<module>rd-aspects</module>-->
         <module>ii-webapp</module>
     </modules>

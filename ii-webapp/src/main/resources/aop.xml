@@ -8,4 +8,5 @@
         <include within="com.manymonkeys.security.shiro.aspectj.*"/>
         <include within="com.manymonkeys.core.ii.impl.cassandra.*"/>
     </weaver>
+
 </aspectj>

@@ -1,3 +1,15 @@
+////////////////////////////////////////////
+////// Common CRUD functions
+////////////////////////////////////////////
+
+$(document).ready(function() {
+    eventHandlers();
+    $('body > .topbar').scrollSpy();
+
+    onHashChange();
+
+});
+
 //scroll the page whenever needed
 function scrollToPlace(place) {
     $('html,body').animate(
@@ -17,7 +29,54 @@ function eventHandlers() {
         scrollToPlace($(destination));
         return false;
 
-    })
+    });
+
+    $('#create-load-ii-button').click(function(event) {
+        var url = '';
+        var extraData = 'pageAction=onCreateIiClick';
+        $.getJSON(url, extraData, function(response) {
+            processResult(response);
+        });
+        return false;
+    });
+    $('#create-ii-button').click(function(event) {
+        var url = '';
+        var extraData = 'pageAction=onCreateIiClick';
+        $.getJSON(url, extraData, function(response) {
+            processResult(response, null, true);
+        });
+        return false;
+    });
+
+    $('#loadByUUIDForm_load').live('click', function(event) {
+        return processForm($('#loadByUUIDForm'), event);
+    });
+
+    $('#loadByMetaForm_load').live('click', function(event) {
+        return processForm($('#loadByMetaForm'), event);
+    });
+
+    $('#updateMetaForm_updateAndLoad').live('click', function(event) {
+        return processForm($('#updateMetaForm'), event);
+    });
+
+    $('#updateMetaForm_update').live('click', function(event) {
+        return processForm($('#updateMetaForm'), event, true);
+    });
+
+    $('#updateComponentForm_updateAndLoad').live('click', function(event) {
+        return processForm($('#updateComponentForm'), event);
+    });
+
+    $('#updateComponentForm_update').live('click', function(event) {
+        return processForm($('#updateComponentForm'), event, true);
+    });
+
+    $('#deleteForm_delete').live('click', function(event) {
+        return processForm($('#deleteForm'), event);
+    });
+
+    $(window).bind('hashchange', onHashChange);
 }
 
 /**
@@ -40,13 +99,111 @@ function addMessage(text, type) {
     $('#msg').append(msg);
 }
 
+/**
+ * Creates anchor that loads item when clicked
+ * @param item
+ */
+function createClickableUUID(item) {
+    var id = '';
+    if (typeof item == 'number') {
+        id = item;
+    } else {
+        id = item.substring(3);
+    }
+    return $('<a/>', {href:'#' + id, text:id});
+}
+
+function onHashChange() {
+    var hash = window.location.hash;
+    if (hash != null && hash != '#') {
+        loadItemByUUID(hash.substring(1));
+    } else {
+        hideItem();
+    }
+}
+
+function setHash(hash) {
+    if (window.location.hash != hash && window.location.hash.substring(1) != hash) {
+        window.location.hash = hash;
+    }
+}
+
+////////////////////////////////////////////
+////// Handling response from server
+////////////////////////////////////////////
+
+/**
+ * Processes AJAX result from page
+ * @param response raw string from server
+ * @param target target object to be replaced
+ * @param noUpdate don't load item data to page components
+ */
+function processResult(response, target, noUpdate) {
+    if (target != null && response.html != null) {
+        target.replaceWith(response.html);
+    }
+    if (response.data != null && !noUpdate) {
+        var data = JSON.parse(response.data);
+
+        $('#results .page-header h1').html('');
+        $('#results-intro').hide();
+        hideItem();
+        hideItems();
+
+        if (data.id != null) {
+            loadItem(data);
+        } else if (data.length == 1 ) {
+            console.log(data.length);
+            loadItem(data[0]);
+        } else {
+            loadItems(data);
+        }
+
+    }
+    if (response.text != null) {
+        addMessage(response.text, response.type);
+    }
+}
+
+/**
+ * Processes AJAX result for forms
+ * @param form target form
+ * @param event event from callback
+ */
+function processForm(form, event, noLoad) {
+    var submit = $(event.currentTarget);
+
+    var url = form.attr('action');
+    var formData = form.serialize();
+    formData+='&'+form.attr('id')+'=1';
+    formData+='&'+submit.attr('name')+'='+submit.attr('value');
+
+    $.post(url, formData, function(response) {
+        processResult(response, form, noLoad);
+    });
+
+    return false;
+}
+
+function loadItemByUUID(uuid) {
+    var url = '';
+    var data = 'form_name=loadByUUIDForm&uuid=' + uuid + '&loadByUUIDForm=1&load=Load';
+    $.post(url, data, function(response) {
+        processResult(response);
+    });
+}
+
+////////////////////////////////////////////
+////// Processing received data
+////////////////////////////////////////////
+
 function hideItems() {
     $('#items').hide();
     $('#results-items').hide();
 }
 
 function loadItems(items) {
-    $('#results-items').show();
+    $('#results .page-header h1').html('Results for ' + items.length + ' items');
     $('#items').show();
 
     if ($.isEmptyObject(items)) {
@@ -73,19 +230,18 @@ function loadItems(items) {
 
         var pluralized = items.length % 2 == 1 ? ' item' : ' items';
         addMessage('Loaded ' + items.length + pluralized, 'info');
+        setHash('');
     }
 
 }
 
 function hideItem() {
-    $('#results-item').hide();
     $('#item-meta').hide();
     $('#item-components').hide();
 }
 
 function loadItem(item) {
-    $('#results-item').show();
-    $('#results-item').html(item.id);
+    $('#results .page-header h1').html('Item #' + item.id);
 
     setHash(item.id);
     addMessage('Loaded item with id = <strong>' + item.id + '</strong>', 'info');
@@ -156,137 +312,3 @@ function reloadComponents(item) {
     }
 
 }
-
-/**
- * Processes AJAX result from page
- * @param response raw string from server
- * @param target target object to be replaced
- * @param noUpdate don't load item data to page components
- */
-function processResult(response, target, noUpdate) {
-    hideItem();
-    hideItems();
-
-    if (target != null && response.html != null) {
-        target.replaceWith(response.html);
-    }
-    if (response.data != null && !noUpdate) {
-        var data = JSON.parse(response.data);
-        $('#results-intro').hide();
-        if (data.id != null) {
-            loadItem(data);
-        } else {
-            loadItems(data);
-        }
-
-    }
-    if (response.text != null) {
-        addMessage(response.text, response.type);
-    }
-}
-
-/**
- * Processes AJAX result for forms
- * @param form target form
- * @param event event from callback
- */
-function processForm(form, event, noLoad) {
-    var submit = $(event.currentTarget);
-
-    var url = form.attr('action');
-    var formData = form.serialize();
-    formData+='&'+form.attr('id')+'=1';
-    formData+='&'+submit.attr('name')+'='+submit.attr('value');
-
-    $.post(url, formData, function(response) {
-        processResult(response, form, noLoad);
-    });
-
-    return false;
-}
-
-function loadItemByUUID(uuid) {
-    var url = '';
-    var data = 'form_name=loadByUUIDForm&uuid=' + uuid + '&loadByUUIDForm=1&load=Load';
-    $.post(url, data, function(response) {
-        processResult(response);
-    });
-}
-
-/**
- * Creates anchor that loads item when clicked
- * @param uuid
- */
-function createClickableUUID(uuid) {
-    return $('<a/>', {href:'#' + uuid, text:uuid});
-}
-
-function onHashChange() {
-    var hash = window.location.hash;
-    if (hash != null && hash != '#') {
-        loadItemByUUID(hash.substring(1));
-    } else {
-        hideItem();
-    }
-}
-
-function setHash(hash) {
-    if (window.location.hash != hash && window.location.hash.substring(1) != hash) {
-        window.location.hash = hash;
-    }
-}
-
-$(document).ready(function() {
-    eventHandlers();
-    $('body > .topbar').scrollSpy();
-
-    $('#create-load-ii-button').click(function(event) {
-        var url = '';
-        var extraData = 'pageAction=onCreateIiClick';
-        $.getJSON(url, extraData, function(response) {
-            processResult(response);
-        });
-        return false;
-    });
-    $('#create-ii-button').click(function(event) {
-        var url = '';
-        var extraData = 'pageAction=onCreateIiClick';
-        $.getJSON(url, extraData, function(response) {
-            processResult(response, null, true);
-        });
-        return false;
-    });
-
-
-    $('#loadByUUIDForm_load').live('click', function(event) {
-        return processForm($('#loadByUUIDForm'), event);
-    });
-
-    $('#loadByMetaForm_load').live('click', function(event) {
-        return processForm($('#loadByMetaForm'), event);
-    });
-
-    $('#updateMetaForm_updateAndLoad').live('click', function(event) {
-        return processForm($('#updateMetaForm'), event);
-    });
-
-    $('#updateMetaForm_update').live('click', function(event) {
-        return processForm($('#updateMetaForm'), event, true);
-    });
-
-    $('#updateComponentForm_updateAndLoad').live('click', function(event) {
-        return processForm($('#updateComponentForm'), event);
-    });
-
-    $('#updateComponentForm_update').live('click', function(event) {
-        return processForm($('#updateComponentForm'), event, true);
-    });
-
-    $('#deleteForm_delete').live('click', function(event) {
-        return processForm($('#deleteForm'), event);
-    });
-
-    $(window).bind('hashchange', onHashChange);
-    onHashChange();
-
-});

@@ -24,19 +24,6 @@ public class NeoIiDaoImpl implements IiDao {
     private static String INDEX_NAME = "ITEMS";
     private static String PROPERTY_NAME_WEIGHT = "weight";
 
-    private Evaluator depthEvaluator = new Evaluator() {
-        @Override
-        public Evaluation evaluate(Path path) {
-            if (path.length() == depth) {
-                return Evaluation.INCLUDE_AND_PRUNE;
-            } else if (path.length() < depth) {
-                return Evaluation.INCLUDE_AND_CONTINUE;
-            } else {
-                return Evaluation.EXCLUDE_AND_PRUNE;
-            }
-        }
-    };
-
     public NeoIiDaoImpl(GraphDatabaseService db) {
         this.db = db;
     }
@@ -65,6 +52,16 @@ public class NeoIiDaoImpl implements IiDao {
         try {
 
             NeoIiImpl item = checkImpl(ii);
+
+            Traverser traverser = Traversal.description()
+                    .breadthFirst()
+                    .relationships(RelTypes.CONNECTED, Direction.BOTH)
+                    .evaluator(Evaluators.atDepth(1))
+                    .traverse(item.node);
+            for (Path p : traverser) {
+                p.lastRelationship().delete();
+            }
+
             item.node.delete();
             tx.success();
 
@@ -330,7 +327,7 @@ public class NeoIiDaoImpl implements IiDao {
                 .relationships(RelTypes.CONNECTED, Direction.OUTGOING)
                 .uniqueness(Uniqueness.NODE_PATH)
                 .evaluator(Evaluators.excludeStartPosition())
-                .evaluator(depthEvaluator)
+                .evaluator(Evaluators.toDepth(depth))
                 .traverse(item.node);
 
         // Process each path

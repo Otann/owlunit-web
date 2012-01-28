@@ -41,7 +41,7 @@
         <!--<constructor-arg value="neo4j.properties"/>-->
     <!--</bean>-->
 
-    <bean id="graphDbService" class="org.neo4j.kernel.EmbeddedGraphDatabase" destroy-method="shutdown">
+    <bean id="graphDbService" class="org.neo4j.kernel.EmbeddedGraphDatabase" destroy-method="shutdown" scope="singleton">
         <constructor-arg index="0" value="${neo4j.path}"/>
         <!--<constructor-arg index="1" ref="configuration"  />-->
     </bean>
@@ -57,7 +57,7 @@
         <constructor-arg name="keyspace" ref="keyspace"/>
     </bean>
 
-    <bean id="neoDao" class="com.manymonkeys.core.ii.impl.neo4j.NeoIiDaoImpl" scope="singleton">
+    <bean id="neoDao" class="com.manymonkeys.core.ii.impl.neo4j.NeoIiDaoImpl">
         <constructor-arg ref="graphDbService"/>
     </bean>
 

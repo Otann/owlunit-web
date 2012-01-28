@@ -11,7 +11,7 @@ import java.util.Map;
  *         <p/>
  *         import static com.manymonkeys.util.MapUtils.*;
  *         ...
- *         Map<String, Integer> map = asMap(e("fuck", 1), e("collections", 2), e("framework", 3));
+ *         Map<String, Integer> map = asMap(e("screw", 1), e("collections", 2), e("framework", 3));
  */
 public class MapUtils {
 

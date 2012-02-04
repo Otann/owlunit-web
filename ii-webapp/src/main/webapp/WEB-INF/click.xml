@@ -1,5 +1,13 @@
 <click-app>
-    <pages package="com.manymonkeys.web.page"/>
+
+    <pages automapping="false">
+        <!-- Application -->
+        <page path="/htm/application/intro-page.htm" classname="com.manymonkeys.web.application.page.IntroPage"/>
+
+        <!-- Crud -->
+        <page path="/htm/crud/crud-page.htm" classname="com.manymonkeys.web.crud.page.CrudPage"/>
+        <page path="/htm/crud/demo-page.htm" classname="com.manymonkeys.web.crud.page.DemoPage"/>
+    </pages>
 
     <mode value="debug"/>
 </click-app>

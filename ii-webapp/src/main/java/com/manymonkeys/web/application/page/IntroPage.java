@@ -41,6 +41,11 @@ public class IntroPage extends BorderTemplate {
     @Override
     public void onInit() {
         try {
+
+            if (log.isDebugEnabled()) {
+                log.debug(String.format("Going to make a call to movieService from %s", this.getClass()));
+            }
+
             Map<Movie, Double> mostLikeMoviesToNull = movieService.getMostLike(null);
 
             List<Movie> movies = new ArrayList<Movie>();

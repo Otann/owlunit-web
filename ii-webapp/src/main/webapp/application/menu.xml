@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<menu>
+    <menu label="Home" path="/application/page/intro-page.htm"/>
+    <menu label="Community" path="/application/page/community-page.htm"/>
+    <menu label="Prev.Searches" path="/application/page/prev-searches-page.htm"/>
+    <menu label="Inspiration" path="/application/page/inspiration-page.htm"/>
+</menu>

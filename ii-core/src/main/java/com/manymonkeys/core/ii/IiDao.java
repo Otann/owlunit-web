@@ -166,10 +166,7 @@ public interface IiDao {
      * @param key of metadata
      * @param prefix that metadata value should start from
      * @return map of ids and full meta values
-     *
-     * @deprecated wrong competence
      */
-    @Deprecated
     Collection<Ii> search(String key, String prefix);
 
     /**

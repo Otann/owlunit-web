@@ -48,12 +48,16 @@ function eventHandlers() {
         return false;
     });
 
-    $('#loadByUUIDForm_load').live('click', function(event) {
-        return processForm($('#loadByUUIDForm'), event);
+    $('#loadByIdForm_load').live('click', function(event) {
+        return processForm($('#loadByIdForm'), event);
     });
 
     $('#loadByMetaForm_load').live('click', function(event) {
         return processForm($('#loadByMetaForm'), event);
+    });
+
+    $('#searchByMetaForm_load').live('click', function(event) {
+        return processForm($('#searchByMetaForm'), event);
     });
 
     $('#updateMetaForm_updateAndLoad').live('click', function(event) {
@@ -103,7 +107,7 @@ function addMessage(text, type) {
  * Creates anchor that loads item when clicked
  * @param item
  */
-function createClickableUUID(item) {
+function createClickableId(item) {
     var id = '';
     if (typeof item == 'number') {
         id = item;
@@ -116,7 +120,7 @@ function createClickableUUID(item) {
 function onHashChange() {
     var hash = window.location.hash;
     if (hash != null && hash != '#') {
-        loadItemByUUID(hash.substring(1));
+        loadItemById(hash.substring(1));
     } else {
         hideItem();
     }
@@ -141,6 +145,7 @@ function setHash(hash) {
 function processResult(response, target, noUpdate) {
     if (target != null && response.html != null) {
         target.replaceWith(response.html);
+        target.find('.alert-message').alert();
     }
     if (response.data != null && !noUpdate) {
         var data = JSON.parse(response.data);
@@ -172,22 +177,21 @@ function processResult(response, target, noUpdate) {
  */
 function processForm(form, event, noLoad) {
     var submit = $(event.currentTarget);
-
     var url = form.attr('action');
     var formData = form.serialize();
     formData+='&'+form.attr('id')+'=1';
+
     formData+='&'+submit.attr('name')+'='+submit.attr('value');
 
     $.post(url, formData, function(response) {
         processResult(response, form, noLoad);
     });
-
     return false;
 }
 
-function loadItemByUUID(uuid) {
+function loadItemById(Id) {
     var url = '';
-    var data = 'form_name=loadByUUIDForm&uuid=' + uuid + '&loadByUUIDForm=1&load=Load';
+    var data = 'form_name=loadByIdForm&Id=' + Id + '&loadByIdForm=1&load=Load';
     $.post(url, data, function(response) {
         processResult(response);
     });
@@ -205,6 +209,7 @@ function hideItems() {
 function loadItems(items) {
     $('#results .page-header h1').html('Results for ' + items.length + ' items');
     $('#items').show();
+    setHash('');
 
     if ($.isEmptyObject(items)) {
         $('#items-empty').show();
@@ -222,7 +227,7 @@ function loadItems(items) {
             for (key in item.meta) {
                 metaContent += '<strong>' + key + ': </strong>' + item.meta[key]  + '<br/>';
             }
-            var a = $('<th>').append(createClickableUUID(item.id));
+            var a = $('<th>').append(createClickableId(item.id));
             var meta = '<td>' + metaContent + '</td>';
             var row = $('<tr>').append(a).append(meta);
             table.append(row);
@@ -230,7 +235,6 @@ function loadItems(items) {
 
         var pluralized = items.length % 2 == 1 ? ' item' : ' items';
         addMessage('Loaded ' + items.length + pluralized, 'info');
-        setHash('');
     }
 
 }
@@ -245,9 +249,9 @@ function loadItem(item) {
 
     setHash(item.id);
     addMessage('Loaded item with id = <strong>' + item.id + '</strong>', 'info');
-    $('#loadByUUIDForm_uuid').val(item.id);
-    $('#updateMetaForm_uuid').val(item.id);
-    $('#deleteForm_uuid').val(item.id);
+    $('#loadByIdForm_Id').val(item.id);
+    $('#updateMetaForm_Id').val(item.id);
+    $('#deleteForm_Id').val(item.id);
     $('#updateComponentForm_item').val(item.id);
 
     reloadMeta(item);
@@ -299,7 +303,7 @@ function reloadComponents(item) {
             table.html('');
 
             for (id in item.components) {
-                var component = $('<th>').append(createClickableUUID(id));
+                var component = $('<th>').append(createClickableId(id));
                 var value = '<td>' + item.components[id] + '</td>';
                 var row = $('<tr>').append(component).append(value);
                 table.append(row);

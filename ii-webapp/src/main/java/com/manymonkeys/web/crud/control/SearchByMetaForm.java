@@ -10,35 +10,42 @@ import org.apache.click.control.Label;
 import org.apache.click.control.Submit;
 import org.apache.click.control.TextField;
 
+import java.util.Collection;
+
 /**
  * @author Anton Chebotaev
  *         Owls Proprietary
  */
 
-public class LoadByUUIDForm extends ItemForm {
+public class SearchByMetaForm extends ItemForm {
 
-    private TextField uuidField;
+    private TextField keyField;
+    private TextField prefixField;
 
-    public LoadByUUIDForm(IiDao dao) {
-        super("loadByUUIDForm", dao);
+    public SearchByMetaForm(IiDao dao) {
+        super("searchByMetaForm", dao);
     }
 
     @Override
     public void onInit() {
         super.onInit();
 
-        this.add(new Label("Load by UUID"));
+        this.add(new Label("Search by Meta"));
 
-        uuidField = new TextField("uuid");
-        uuidField.addStyleClass("span7");
-        uuidField.setRequired(true);
-        this.add(uuidField);
+        keyField = new TextField("key");
+        keyField.setRequired(true);
+        keyField.addStyleClass("span7");
+        this.add(keyField);
+
+        prefixField = new TextField("prefix");
+        prefixField.addStyleClass("span7");
+        this.add(prefixField);
 
         Submit submit = new Submit("load", "Load");
         submit.addBehavior(new DefaultAjaxBehavior() {
             @Override
             public ActionResult onAction(Control source) {
-                return onLoadByUUID();
+                return onSearchByMeta();
             }
         });
         this.add(submit);
@@ -46,29 +53,22 @@ public class LoadByUUIDForm extends ItemForm {
         this.addBehavior(new DefaultAjaxBehavior());
     }
 
-    private ActionResult onLoadByUUID() {
+    private ActionResult onSearchByMeta() {
         if (!this.isValid()) {
             return emptyResult();
         }
 
         try {
-            long id = Long.parseLong(uuidField.getValue());
-            Ii item = getDao().load(id);
+            String key = keyField.getValue();
+            String prefix = prefixField.getValue();
+            Collection<Ii> rawItems = getDao().search(key, prefix);
+            Collection<Ii> itemsWithMeta = getDao().loadMeta(rawItems);
 
-            if (item != null) {
-                return itemResult(reloadItem(item));
-            } else {
-                uuidField.setError("Unable to find item with this uuid");
-                return emptyResult();
-            }
+            return itemsResult(itemsWithMeta);
 
-        } catch (IllegalArgumentException e) {
-            uuidField.setError("this is not valid UUID");
-            return emptyResult();
         } catch (HectorException e) {
             this.setError(e.getMessage());
             return emptyResult();
         }
     }
-
 }

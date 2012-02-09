@@ -22,8 +22,9 @@ public class CrudPage extends Template {
 
     @Override
     public void onInit() {
-        addControl(new LoadByUUIDForm(dao));
+        addControl(new LoadByIdForm(dao));
         addControl(new LoadByMetaForm(dao));
+        addControl(new SearchByMetaForm(dao));
         addControl(new UpdateMetaForm(dao));
         addControl(new UpdateComponentForm(dao));
         addControl(new DeleteForm(dao));

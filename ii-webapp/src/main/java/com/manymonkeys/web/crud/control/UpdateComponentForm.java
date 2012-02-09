@@ -32,12 +32,12 @@ public class UpdateComponentForm extends ItemForm {
 
         this.add(new Label("Update item's components"));
 
-        itemField = new TextField("item", "Item's uuid");
+        itemField = new TextField("item", "Item's id");
         itemField.addStyleClass("span7");
         itemField.setRequired(true);
         this.add(itemField);
 
-        componentField = new TextField("component", "Component's uuid");
+        componentField = new TextField("component", "Component's id");
         componentField.setRequired(true);
         componentField.addStyleClass("span7");
         this.add(componentField);
@@ -81,19 +81,19 @@ public class UpdateComponentForm extends ItemForm {
                 long id = Long.parseLong(itemField.getValue());
                 item = getDao().load(id);
                 if (item == null) {
-                    itemField.setError("can not find item with this uuid");
+                    itemField.setError("can not find item with this id");
                 }
             }  catch (IllegalArgumentException e) {
-                itemField.setError("this is not valid UUID");
+                itemField.setError("this is not valid Id");
             }
             try {
                 long id = Long.parseLong(componentField.getValue());
                 component = getDao().load(id);
                 if (component == null) {
-                    itemField.setError("can not find item with this uuid");
+                    itemField.setError("can not find item with this id");
                 }
             }  catch (IllegalArgumentException e) {
-                componentField.setError("this is not valid UUID");
+                componentField.setError("this is not valid Id");
             }
             
             if (item == null || component == null) {

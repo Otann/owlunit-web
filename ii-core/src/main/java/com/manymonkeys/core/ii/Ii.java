@@ -1,7 +1,6 @@
 package com.manymonkeys.core.ii;
 
-import com.manymonkeys.core.ii.impl.utils.AlwaysEmptyMap;
-
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -15,7 +14,7 @@ public interface Ii {
     /**
      * This value is returned when you do not need item's data
      */
-    public static final Map NOT_LOADED = new AlwaysEmptyMap();
+    public static final Map NOT_LOADED = Collections.emptyMap();
 
     /**
      * Each ii has it's own identifier which is unique across implementation package

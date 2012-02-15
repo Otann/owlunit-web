@@ -1,7 +1,6 @@
 package com.manymonkeys.core.ii.impl.neo4j;
 
 import com.manymonkeys.core.ii.Ii;
-import com.manymonkeys.core.ii.impl.utils.AlwaysEmptyMap;
 import org.neo4j.graphdb.Node;
 
 import java.util.Map;
@@ -33,6 +32,7 @@ public class NeoIiImpl implements Ii {
     /**
      * Copying constructor mirrors all fields to decrease memory usage
      * IiDao is responsible for creation of new instances of the fields with new values
+     *
      * @param item another item
      */
     NeoIiImpl(NeoIiImpl item) {

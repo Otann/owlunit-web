@@ -1,7 +1,6 @@
 package com.manymonkeys.core.ii.impl.cassandra;
 
 import com.manymonkeys.core.ii.Ii;
-import com.manymonkeys.core.ii.impl.utils.AlwaysEmptyMap;
 
 import java.util.Map;
 
@@ -16,7 +15,7 @@ public class CassandraIiImpl implements Ii, Comparable<Ii> {
     Map<String, String> meta;
     Map<Ii, Double> components;
     Map<Ii, Double> parents;
-    
+
     @SuppressWarnings("unchecked")
     CassandraIiImpl(long uuid) {
         this.id = uuid;
@@ -28,6 +27,7 @@ public class CassandraIiImpl implements Ii, Comparable<Ii> {
     /**
      * Copying constructor mirrors all fields to decrease memory usage
      * IiDao is responsible for creation of new instances of the fields with new values
+     *
      * @param item another item
      */
     CassandraIiImpl(CassandraIiImpl item) {
@@ -93,7 +93,7 @@ public class CassandraIiImpl implements Ii, Comparable<Ii> {
         if (id == item.getId()) {
             return 0;
         } else {
-            return id > item.getId() ? 1 : -1; 
+            return id > item.getId() ? 1 : -1;
         }
     }
 

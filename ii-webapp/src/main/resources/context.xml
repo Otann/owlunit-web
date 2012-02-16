@@ -19,8 +19,8 @@
     <!-- - - - - - - - - - - -\
     |  P E R S I S T E N C E  |
     \=======================-->
-    <!--<import resource="beans/spring-cassandra.xml"/>-->
-    <!--<import resource="beans/spring-neo4j.xml"/>-->
+    <!--<import resource="beans/owl-cassandra.xml"/>-->
+    <!--<import resource="beans/owl-neo4j.xml"/>-->
 
     <!-- - - - - - - - - \
     |  O W L  B E A N S  |

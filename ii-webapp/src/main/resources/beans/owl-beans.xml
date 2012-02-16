@@ -24,6 +24,10 @@
         <property name="dao" ref="dao"/>
     </bean>
 
+    <bean id="invitedUserService" class="com.manymonkeys.moviesstory.service.InvitedUserServiceImpl">
+        <property name="dao" ref="dao"/>
+    </bean>
+
     <bean id="movieService" class="com.manymonkeys.service.impl.MovieServiceImpl">
         <property name="dao" ref="dao"/>
         <property name="recommender" ref="plainRecommender"/>

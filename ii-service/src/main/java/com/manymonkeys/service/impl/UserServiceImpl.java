@@ -25,24 +25,24 @@ import static com.manymonkeys.service.impl.util.Utils.itemWithMeta;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private IiDao dao;
+    protected IiDao dao;
 
     public double defaultFollowerWeight = 10d;
     public double defaultLikeWeight = 10d;
     public double defaultRatingsMultiplicator = 5d;
 
-    private static final String CLASS_MARK_KEY = UserServiceImpl.class.getName();
-    private static final String CLASS_MARK_VALUE = "#";
+    protected static final String CLASS_MARK_KEY = UserServiceImpl.class.getName();
+    protected static final String CLASS_MARK_VALUE = "#";
 
-    private static final String META_KEY_LOGIN = CLASS_MARK_KEY + ".LOGIN";
-    private static final String META_KEY_PASSWORD = CLASS_MARK_KEY + ".PASSWORD";
-    private static final String SALT = "Humpty Dumpty sat on a wall, Humpty Dumpty had a great fall";
+    protected static final String META_KEY_LOGIN = CLASS_MARK_KEY + ".LOGIN";
+    protected static final String META_KEY_PASSWORD = CLASS_MARK_KEY + ".PASSWORD";
+    protected static final String SALT = "Humpty Dumpty sat on a wall, Humpty Dumpty had a great fall";
 
     //Todo Anton Chebotaev - Move to ii-service.properties
     public static final String HASH_ALGORITHM = "MD5";
     public static final int HASH_LENGTH = 16;
 
-    static Ii userToIi(IiDao dao, User user) throws NotFoundException {
+    protected static Ii userToIi(IiDao dao, User user) throws NotFoundException {
         Ii item = dao.load(user.getId());
         if (item == null) {
             throw new NotFoundException(String.format("User(%s)", user.getLogin()));
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    static User iiToUser(IiDao dao, Ii item) {
+    protected static User iiToUser(IiDao dao, Ii item) {
         Ii meta = itemWithMeta(dao, item);
         return new User(
                 item.getId(),
@@ -59,15 +59,20 @@ public class UserServiceImpl implements UserService {
                 meta.getMeta(META_KEY_PASSWORD)
         );
     }
-
-    @Override
-    public User createUser(User user) {
-        //TODO Ilya Pimenov - validate login name to be alphanumeric
+    
+    protected Ii createUserIi(User user){
         Ii userIi = dao.createInformationItem();
         dao.setMetaUnindexed(userIi, CLASS_MARK_KEY, CLASS_MARK_VALUE);
         dao.setMetaUnindexed(userIi, META_KEY_LOGIN, user.getLogin());
         dao.setMetaUnindexed(userIi, META_KEY_PASSWORD, getPasswordHash(user.getPassword()));
-        return iiToUser(dao, userIi);
+        return userIi;
+    }
+    
+
+    @Override
+    public User createUser(User user) {
+        //TODO Ilya Pimenov - validate login name to be alphanumeric
+        return iiToUser(dao, createUserIi(user));
     }
 
     @Override

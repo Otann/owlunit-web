@@ -21,12 +21,12 @@ public class InvitedUser extends User {
     public static class InvitedUserExtendedData {
 
         /* used in validation against invite-squatters-scum */
-        private String invitedUserInviteKey;
+        private String inviteKey;
 
         private List<String> predefinedKeywordNames;
 
-        public InvitedUserExtendedData(String invitedUserInviteKey, List<String> predefinedKeywordNames) {
-            this.invitedUserInviteKey = invitedUserInviteKey;
+        public InvitedUserExtendedData(String inviteKey, List<String> predefinedKeywordNames) {
+            this.inviteKey = inviteKey;
             this.predefinedKeywordNames = predefinedKeywordNames;
         }
 
@@ -38,12 +38,12 @@ public class InvitedUser extends User {
             this.predefinedKeywordNames = predefinedKeywordNames;
         }
 
-        public String getInvitedUserInviteKey() {
-            return invitedUserInviteKey;
+        public String getInviteKey() {
+            return inviteKey;
         }
 
-        public void setInvitedUserInviteKey(String invitedUserInviteKey) {
-            this.invitedUserInviteKey = invitedUserInviteKey;
+        public void setInviteKey(String inviteKey) {
+            this.inviteKey = inviteKey;
         }
 
         /*-------------------------------------\

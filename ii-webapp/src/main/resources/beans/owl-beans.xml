@@ -7,7 +7,7 @@
     <alias name="neoDao" alias="dao"/>
 
     <!--<bean id="cassandraDao" class="com.manymonkeys.core.ii.impl.cassandra.CassandraIiDaoHectorImpl">-->
-        <!--<constructor-arg name="keyspace" ref="keyspace"/>-->
+    <!--<constructor-arg name="keyspace" ref="keyspace"/>-->
     <!--</bean>-->
 
     <bean id="neoDao" class="com.manymonkeys.core.ii.impl.neo4j.NeoIiDaoImpl">
@@ -26,6 +26,12 @@
 
     <bean id="invitedUserService" class="com.manymonkeys.moviesstory.service.InvitedUserServiceImpl">
         <property name="dao" ref="dao"/>
+    </bean>
+
+    <bean id="facebookIntegrationService" class="com.manymonkeys.moviesstory.service.FacebookIntegrationServiceImpl">
+        <constructor-arg index="0" value="171270759653943"/>
+        <constructor-arg index="1" value="fec810ed9d22d311ce60323e583e2eae"/>
+        <constructor-arg index="2" value="http://tempowl.com:8080/ii-weapp/application/page/invite-landing-page.htm"/>
     </bean>
 
     <bean id="movieService" class="com.manymonkeys.service.impl.MovieServiceImpl">

@@ -1,33 +1,21 @@
 package com.manymonkeys.moviesstory.service;
 
 import com.manymonkeys.moviesstory.model.FacebookMovies;
+import org.junit.Test;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * @author Ilya Pimenov
  *         Owl Proprietary
  */
-public class FacebookIntegrationServiceMock implements FacebookIntegrationService {
+public class FacebookIntegrationTests {
 
-    @Override
-    public String constructApplicationAuthenticaionUrl() throws UnsupportedEncodingException {
-        /*
-        This will allow to get back at invite page, in the same manner as facebook does, suplying "code" in response arguments
-         */
-        return "http://localhost:8080/ii-weapp/application/page/invite-landing-page.htm?code=CORRECTMOCKCODE";
-    }
-
-    @Override
-    public String retrieveAccessToken(String code) throws Exception {
-        return "CORRECTUSERTOKENMOCK";
-    }
-
-    @Override
-    public FacebookMovies retrieveFacebookMovies(String userAccessToken) throws IOException {
-        return FacebookMovies.deserialize(
-                "{\n" +
+    @Test
+    public void testFacebookMoviesSerialization() {
+        assertTrue(
+                FacebookMovies.deserialize("" +
+                        "{\n" +
                         "   \"data\": [\n" +
                         "      {\n" +
                         "         \"name\": \"The Duellists\",\n" +
@@ -63,9 +51,7 @@ public class FacebookIntegrationServiceMock implements FacebookIntegrationServic
                         "   \"paging\": {\n" +
                         "      \"next\": \"https://graph.facebook.com/me/movies?access_token=AAAAAAITEghMBAIGeiDskYEDRZCigTTUDSZC2ZBpNsHyrC6h5qKF3z24fPDKz50ZBGcRzLt8FWGWam4YUH5p5WWFAwW0ZAPq3giWYQWd8ZA0Jsrhol8SFqD&limit=5000&offset=5000&__after_id=109619395730981\"\n" +
                         "   }\n" +
-                        "}"
+                        "}").getData().size() == 5
         );
-
     }
-
 }

@@ -1,5 +1,12 @@
 3) Time to get nasty together with your <a href="$facebookAuthenticationLink">facebook</a>!
 
 #if ($token)
-<p style="color:green;">You are authored with $token token
+<p style="color:green;">You are authored with $token token</p>
+#end
+
+#if ($yourMoviesImportedFromFacebook)
+<p>List of your movies imported from facebook&nbsp;&#151; $$yourMoviesImportedFromFacebook</p>
+
+$okLink
+
 #end

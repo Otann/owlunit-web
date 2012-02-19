@@ -9,6 +9,11 @@
 
     <bean id="facebookIntegrationService" class="com.manymonkeys.moviesstory.service.FacebookIntegrationServiceMock"/>
 
+    <bean id="moviesstoryService" class="com.manymonkeys.moviesstory.service.MoviesstoryServiceImpl">
+        <constructor-arg index="0" ref="facebookIntegrationService"/>
+        <constructor-arg index="1" ref="movieService"/>
+    </bean>
+
     <bean id="movieService" class="com.manymonkeys.service.mock.MovieServiceMock"/>
 
     <bean id="personService" class="com.manymonkeys.service.mock.PersonServiceMock"/>

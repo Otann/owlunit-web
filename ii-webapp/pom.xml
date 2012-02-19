@@ -158,6 +158,15 @@
             <version>${aspectj.version}</version>
         </dependency>
 
+        <!-- - - - - - - - - - - - - - - - - - - - - - - - -
+        |  D E E P  F A C E B O O K  I N T E G R A T I O N  |
+        \=================================================-->
+        <dependency>
+            <groupId>com.restfb</groupId>
+            <artifactId>restfb</artifactId>
+            <version>1.6.9</version>
+        </dependency>
+
         <!-- - - - - - - - -
         |   S E R V L E T   |
         \=================-->

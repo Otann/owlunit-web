@@ -3,8 +3,10 @@ package com.manymonkeys.web.application.page;
 import com.manymonkeys.moviesstory.model.InvitedUser;
 import com.manymonkeys.moviesstory.service.FacebookIntegrationService;
 import com.manymonkeys.moviesstory.service.InvitedUserService;
+import com.manymonkeys.moviesstory.service.MoviesstoryService;
 import com.manymonkeys.service.exception.NotFoundException;
 import org.apache.click.Page;
+import org.apache.click.control.ActionLink;
 import org.apache.click.control.Panel;
 import org.apache.click.extras.panel.ListPanel;
 import org.apache.click.util.Bindable;
@@ -35,11 +37,16 @@ public class InviteLandingPage extends Page {
     @Autowired
     FacebookIntegrationService facebookIntegrationService;
 
+    @Autowired
+    MoviesstoryService moviestoryService;
+
     public String title = "Invite Landing Page";
 
     /* Page controls */
 
     private ListPanel inviteInformationPanelList = new ListPanel("inviteInformationPanelList");
+
+    public ActionLink okLink = new ActionLink(this, "onOkClick");
 
     /**
      * With this enum we would control interaction between states for current page
@@ -90,11 +97,15 @@ public class InviteLandingPage extends Page {
 
                     getContext().setSessionAttribute("token", token);
                     addModel("token", token);
+
+                    addModel("yourMoviesImportedFromFacebook", moviestoryService.importUserFacebookMovies(token));
                 }
                 break;
 
                 case STATE3_FINISH_STATE: {
-
+                    /* We will encounter ourselves in this state,
+                       if user will try to open invite link from the letter again */
+                    onOkClick();
                 }
                 break;
             }
@@ -105,6 +116,12 @@ public class InviteLandingPage extends Page {
         } catch (Exception e) {
             error(e);
         }
+    }
+
+    public boolean onOkClick() {
+        //Todo should lead to the Profile page
+        setRedirect(InspirationPage.class);
+        return false;
     }
 
     private void error(Exception e) {

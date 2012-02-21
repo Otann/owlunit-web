@@ -77,6 +77,10 @@ public class InviteLandingPage extends Page {
 
     @Override
     public void onInit() {
+
+        /* Hit —
+         http://localhost:8080/ii-weapp/application/page/invite-landing-page.htm?login=hemingway&inviteKey=DUMMYINVITEKEY
+         to start from the first state */
         try {
             switch (retrieveState()) {
                 case STATE1_FIRST_VISIT: {

@@ -1,9 +1,10 @@
 package com.manymonkeys.web.application.page;
 
 import com.manymonkeys.moviesstory.model.InvitedUser;
+import com.manymonkeys.moviesstory.model.MoviesStoryUser;
 import com.manymonkeys.moviesstory.service.FacebookIntegrationService;
-import com.manymonkeys.moviesstory.service.InvitedUserService;
-import com.manymonkeys.moviesstory.service.MoviesstoryService;
+import com.manymonkeys.moviesstory.service.MoviesStoryService;
+import com.manymonkeys.moviesstory.service.MoviesStoryUserService;
 import com.manymonkeys.service.exception.NotFoundException;
 import org.apache.click.Page;
 import org.apache.click.control.ActionLink;
@@ -32,13 +33,13 @@ public class InviteLandingPage extends Page {
     /* Required services */
 
     @Autowired
-    InvitedUserService invitedUserService;
+    MoviesStoryUserService moviesStoryUserService;
 
     @Autowired
     FacebookIntegrationService facebookIntegrationService;
 
     @Autowired
-    MoviesstoryService moviestoryService;
+    MoviesStoryService moviestoryService;
 
     public String title = "Invite Landing Page";
 
@@ -80,7 +81,7 @@ public class InviteLandingPage extends Page {
             switch (retrieveState()) {
                 case STATE1_FIRST_VISIT: {
                     if (login != null) {
-                        InvitedUser invitedUser = invitedUserService.getInvitedUser(login);
+                        InvitedUser invitedUser = moviesStoryUserService.getInvitedUser(login);
 
                         if (invitedUser.getInvitedUserExtendedData().getInviteKey().equals(inviteKey)) {
                             addModel("predefinedKeywords", invitedUser.getInvitedUserExtendedData().getPredefinedKeywordNames());
@@ -88,6 +89,8 @@ public class InviteLandingPage extends Page {
                         } else {
                             error(null);
                         }
+                    } else {
+                        error(null);
                     }
                 }
                 break;
@@ -99,6 +102,10 @@ public class InviteLandingPage extends Page {
                     addModel("token", token);
 
                     addModel("yourMoviesImportedFromFacebook", moviestoryService.importUserFacebookMovies(token));
+
+                    /* Set this user in the session, it is a good practice to use class names, as most of the time, there can be
+                      only one valid instance of the certain class */
+                    getContext().setSessionAttribute(MoviesStoryUser.class.getCanonicalName(), moviestoryService.importUserFacebookData(token));
                 }
                 break;
 
@@ -119,8 +126,7 @@ public class InviteLandingPage extends Page {
     }
 
     public boolean onOkClick() {
-        //Todo should lead to the Profile page
-        setRedirect(InspirationPage.class);
+        setRedirect(ProfilePage.class);
         return false;
     }
 

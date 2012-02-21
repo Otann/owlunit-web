@@ -1,7 +1,7 @@
 package com.manymonkeys.moviesstory.environment;
 
 import com.manymonkeys.moviesstory.model.InvitedUser;
-import com.manymonkeys.moviesstory.service.InvitedUserServiceImpl;
+import com.manymonkeys.moviesstory.service.MoviesstoryUserServiceImpl;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +21,7 @@ import java.util.Arrays;
 public class EnvironmentTests {
 
     @Autowired
-    InvitedUserServiceImpl invitedUserService;
+    MoviesstoryUserServiceImpl invitedUserService;
 
     @Test
     public void inviteHemingwayToOwlMoviesService() {

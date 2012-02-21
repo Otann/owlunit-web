@@ -5,13 +5,14 @@
 
     <bean id="userService" class="com.manymonkeys.service.mock.UserServiceMock"/>
 
-    <bean id="invitedUserService" class="com.manymonkeys.moviesstory.service.InvitedUserServiceMock"/>
+    <bean id="moviesStoryUserService" class="com.manymonkeys.moviesstory.service.MoviesStoryUserServiceMock"/>
 
     <bean id="facebookIntegrationService" class="com.manymonkeys.moviesstory.service.FacebookIntegrationServiceMock"/>
 
-    <bean id="moviesstoryService" class="com.manymonkeys.moviesstory.service.MoviesstoryServiceImpl">
+    <bean id="moviesstoryService" class="com.manymonkeys.moviesstory.service.MoviesStoryServiceImpl">
         <constructor-arg index="0" ref="facebookIntegrationService"/>
         <constructor-arg index="1" ref="movieService"/>
+        <constructor-arg index="2" ref="moviesStoryUserService"/>
     </bean>
 
     <bean id="movieService" class="com.manymonkeys.service.mock.MovieServiceMock"/>

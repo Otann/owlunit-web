@@ -40,7 +40,7 @@ public class OwlSearchPanel extends AbstractControl implements Stateful {
         buffer.appendAttribute("id", getId());
         buffer.elementEnd();
 
-        buffer.append("<span class=\"owl\" style=\"color: red;\">bla-bla-bla</span>");
+        buffer.append("<span class=\"owl\" style=\"color: blue;\">OwlSearchControl</span>");
 
         buffer.elementEnd(getTag());
     }

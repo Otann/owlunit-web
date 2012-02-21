@@ -24,7 +24,7 @@
         <property name="dao" ref="dao"/>
     </bean>
 
-    <bean id="invitedUserService" class="com.manymonkeys.moviesstory.service.InvitedUserServiceImpl">
+    <bean id="moviesstoryUserService" class="com.manymonkeys.moviesstory.service.MoviesstoryUserServiceImpl">
         <property name="dao" ref="dao"/>
     </bean>
 

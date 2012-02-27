@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>owls</groupId>
+    <groupId>owlunit</groupId>
     <artifactId>ii</artifactId>
     <version>1.0</version>
 
@@ -10,12 +10,9 @@
     <name>Information Items Applications Set</name>
 
     <modules>
-        <module>ii-security</module>
         <module>ii-core</module>
         <module>ii-service</module>
         <module>ii-crawl</module>
-        <module>ii-impex</module>
-        <!--<module>rd-aspects</module>-->
         <module>ii-webapp</module>
     </modules>
 
@@ -25,17 +22,18 @@
         <logback.version>0.9.29</logback.version>
     </properties>
 
-    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\
-    |  PLEASE NOTE THAT THIS IS ONLY "DEPENDENCY MANAGEMENT",                   |
-    |  THIS ENTRIES SPECIFY ONLY VERSION TO USE IN LATER ANNOUNCEMENTS,         |
-    |  THESE ARTIFACTS WON'T BE INCLUDED AS DIRECT DEPENDENCIES TO ALL CHILDREN |
-    \=========================================================================-->
+    <!-- ======================================================================== -->
+    <!-- PLEASE NOTE THAT THIS IS ONLY "DEPENDENCY MANAGEMENT",                   -->
+    <!-- THIS ENTRIES SPECIFY ONLY VERSION TO USE IN LATER ANNOUNCEMENTS,         -->
+    <!-- THESE ARTIFACTS WON'T BE INCLUDED AS DIRECT DEPENDENCIES TO ALL CHILDREN -->
+    <!-- ======================================================================== -->
+
     <dependencyManagement>
         <dependencies>
 
-            <!-- - - - - - - - - - - - - - - - \
-            |  ALL THE LOGGING STUFF REQUIRED  |
-            \================================-->
+            <!-- ======= -->
+            <!-- LOGGING -->
+            <!-- ======= -->
 
             <!-- slf4j -->
             <dependency>

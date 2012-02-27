@@ -1,6 +1,6 @@
 <click-app>
 
-    <pages package="com.manymonkeys.web"/>
+    <pages package="com.owlunit.web"/>
 
     <mode value="debug"/>
 

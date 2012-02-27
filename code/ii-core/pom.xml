@@ -2,12 +2,14 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <groupId>owls</groupId>
+        <groupId>owlunit</groupId>
         <artifactId>ii</artifactId>
         <version>1.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
+
     <artifactId>ii-core</artifactId>
     <packaging>jar</packaging>
     <version>1.0</version>
@@ -19,13 +21,13 @@
     </properties>
 
     <repositories>
+
         <!-- Cassandra adapter repository -->
         <repository>
             <id>riptano</id>
             <name>riptano</name>
             <url>http://mvn.riptano.com/content/repositories/public</url>
         </repository>
-
         <repository>
             <id>maven.scale7.org</id>
             <name>Scale7 Maven Repo</name>
@@ -47,15 +49,19 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+
     </repositories>
 
     <dependencies>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.4</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -75,13 +81,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>log4j-over-slf4j</artifactId>
-        </dependency>
-
-        <!-- Google collections is here -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>r08</version>
         </dependency>
 
         <!-- Cassandra adapter -->
@@ -125,49 +124,12 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- - - - - - -
-        | A S P E C T J |
-        \=============-->
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjrt</artifactId>
-            <version>${aspectj.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjweaver</artifactId>
-            <version>${aspectj.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
-            <version>2.5.6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aspects</artifactId>
-            <version>2.5.6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aop</artifactId>
-            <version>2.5.6</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>ii-security</artifactId>
-            <version>[${project.version},]</version>
-        </dependency>
-
-
     </dependencies>
 
     <build>
         <plugins>
-            <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - \
-            |  D O  N O T  E X E C U T E  T E S T S  B Y  D E F A U L T  |
-            \==========================================================-->
+
+            <!-- DO NOT EXECUTE TESTS BY DEFAULT -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -176,58 +138,13 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>6</source>
-                    <target>6</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>aspectj-maven-plugin</artifactId>
-                <version>1.0</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.aspectj</groupId>
-                        <artifactId>aspectjrt</artifactId>
-                        <version>1.6.3</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.aspectj</groupId>
-                        <artifactId>aspectjtools</artifactId>
-                        <version>1.6.3</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                            <goal>test-compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <aspectLibraries>
-                        <aspectLibrary>
-                            <groupId>org.springframework</groupId>
-                            <artifactId>spring-aspects</artifactId>
-                        </aspectLibrary>
-                    </aspectLibraries>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
     <profiles>
-        <!-- - - - - - - - - - - - - - - - - - - \
-        |  P R O F I L E  T O  R U N  T E S T S  |
-        \======================================-->
+        <!-- Profile to run tests -->
         <!-- "mvn -Ptests test" to run -->
+
         <profile>
             <id>tests</id>
             <build>

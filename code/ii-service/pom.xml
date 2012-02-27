@@ -1,14 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <groupId>owls</groupId>
+        <groupId>owlunit</groupId>
         <artifactId>ii</artifactId>
         <version>1.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
+
     <artifactId>ii-service</artifactId>
     <packaging>jar</packaging>
     <version>1.0</version>
@@ -37,53 +38,8 @@
         </pluginRepository>
     </pluginRepositories>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.scala-tools</groupId>
-                <artifactId>maven-scala-plugin</artifactId>
-                <version>2.15.0</version>
-                <executions>
-                    <execution>
-                        <id>compile</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>test-compile</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <!--<configuration>-->
-                <!--<scalaVersion>${scala.version}</scalaVersion>-->
-                <!--<args>-->
-                <!--<arg>-make:transitive</arg>-->
-                <!--<arg>-dependencyfile</arg>-->
-                <!--<arg>${project.build.directory}/.scala_dependencies</arg>-->
-                <!--</args>-->
-                <!--<launchers>-->
-                <!--<launcher>-->
-                <!--<id>myLauncher</id> &lt;!&ndash; TODO replace &ndash;&gt;-->
-                <!--<mainClass>owls.App</mainClass>-->
-                <!--</launcher>-->
-                <!--</launchers>-->
-                <!--</configuration>-->
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
+
         <dependency>
             <groupId>${groupId}</groupId>
             <artifactId>ii-core</artifactId>
@@ -118,6 +74,39 @@
             <version>1.2</version>
             <scope>compile</scope>
         </dependency>
+
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.scala-tools</groupId>
+                <artifactId>maven-scala-plugin</artifactId>
+                <version>2.15.0</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

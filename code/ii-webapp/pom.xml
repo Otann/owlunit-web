@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>owls</groupId>
+        <groupId>owlunit</groupId>
         <artifactId>ii</artifactId>
         <version>1.0</version>
         <relativePath>../pom.xml</relativePath>
@@ -51,9 +51,10 @@
 
     <dependencies>
 
-        <!-- - - - - - - - - - - - - - - - - - -
-        |   O W L S   D E P E N D E N C I E S   |
-        \=====================================-->
+        <!-- ======== -->
+        <!-- OWL UNIT -->
+        <!-- ======== -->
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>ii-service</artifactId>
@@ -65,9 +66,9 @@
             <version>[${project.version},]</version>
         </dependency>
 
-        <!-- - - - - - - -
-        |   S P R I N G   |
-        \===============-->
+        <!-- ====== -->
+        <!-- SPRING -->
+        <!-- ====== -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
@@ -86,9 +87,9 @@
             <version>${org.springframework.version}</version>
         </dependency>
 
-        <!-- - - - - - - - - - - - - - - |
-        |  C L I C K  F R A M E W O R K  |
-        \==============================-->
+        <!-- =============== -->
+        <!-- CLICK FRAMEWORK -->
+        <!-- =============== -->
         <dependency>
             <groupId>org.apache.click</groupId>
             <artifactId>click-nodeps</artifactId>
@@ -111,9 +112,9 @@
             <version>1.6</version>
         </dependency>
 
-        <!-- - - - - - - - -
-        |   L O G G I N G   |
-        \=================-->
+        <!-- ======= -->
+        <!-- LOGGING -->
+        <!-- ======= -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -135,41 +136,18 @@
             <artifactId>log4j-over-slf4j</artifactId>
         </dependency>
 
-        <!-- - - - - - -
-        |   S H I R O   |
-        \=============-->
-        <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-spring</artifactId>
-            <version>1.1.0</version>
-        </dependency>
-
-        <!-- - - - - - - - -
-        |   A S P E C T J   |
-        \=================-->
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjrt</artifactId>
-            <version>${aspectj.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjweaver</artifactId>
-            <version>${aspectj.version}</version>
-        </dependency>
-
-        <!-- - - - - - - - - - - - - - - - - - - - - - - - -
-        |  D E E P  F A C E B O O K  I N T E G R A T I O N  |
-        \=================================================-->
+        <!-- ==================== -->
+        <!-- FACEBOOK INTEGRATION -->
+        <!-- ==================== -->
         <dependency>
             <groupId>com.restfb</groupId>
             <artifactId>restfb</artifactId>
             <version>1.6.9</version>
         </dependency>
 
-        <!-- - - - - - - - -
-        |   S E R V L E T   |
-        \=================-->
+        <!-- ========= -->
+        <!-- Servlet?! -->
+        <!-- ========= -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
@@ -188,9 +166,9 @@
             <version>1.2</version>
         </dependency>
 
-        <!-- - - - - - - - -
-        |   T E S T I N G   |
-        \=================-->
+        <!-- ======= -->
+        <!-- Testing -->
+        <!-- ======= -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>

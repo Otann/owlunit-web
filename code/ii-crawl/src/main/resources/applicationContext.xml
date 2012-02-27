@@ -53,22 +53,22 @@
 
     <alias name="neoDao" alias="dao"/>
 
-    <bean id="cassandraDao" class="com.manymonkeys.core.ii.impl.cassandra.CassandraIiDaoHectorImpl">
+    <bean id="cassandraDao" class="com.owlunit.core.ii.impl.cassandra.CassandraIiDaoHectorImpl">
         <constructor-arg name="keyspace" ref="keyspace"/>
     </bean>
 
-    <bean id="neoDao" class="com.manymonkeys.core.ii.impl.neo4j.NeoIiDaoImpl">
+    <bean id="neoDao" class="com.owlunit.core.ii.impl.neo4j.NeoIiDaoImpl">
         <constructor-arg ref="graphDbService"/>
     </bean>
 
 
-    <bean id="plainRecommender" class="com.manymonkeys.core.algo.impl.RecommenderPlainImpl">
+    <bean id="plainRecommender" class="com.owlunit.core.algo.impl.RecommenderPlainImpl">
         <property name="componentsLimit" value="75"/>
         <property name="parentsLimit" value="100"/>
         <property name="weightThreshold" value="2.1"/>
     </bean>
 
-    <bean id="movieService" class="com.manymonkeys.service.impl.MovieServiceImpl">
+    <bean id="movieService" class="com.owlunit.service.impl.MovieServiceImpl">
         <property name="dao" ref="dao"/>
         <property name="recommender" ref="plainRecommender"/>
         <property name="initialKeywordWeight" value="${imdb.weight.keyword}"/>
@@ -76,11 +76,11 @@
         <!-- TODO Anton Chebotaev - set roles properties -->
     </bean>
 
-    <bean id="keywordService" class="com.manymonkeys.service.impl.KeywordServiceImpl">
+    <bean id="keywordService" class="com.owlunit.service.impl.KeywordServiceImpl">
         <property name="dao" ref="dao"/>
     </bean>
 
-    <bean id="personService" class="com.manymonkeys.service.impl.PersonServiceImpl">
+    <bean id="personService" class="com.owlunit.service.impl.PersonServiceImpl">
         <property name="dao" ref="dao"/>
     </bean>
 

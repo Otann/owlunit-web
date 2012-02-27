@@ -3,23 +3,23 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-    <bean id="userService" class="com.manymonkeys.service.mock.UserServiceMock"/>
+    <bean id="userService" class="com.owlunit.service.mock.UserServiceMock"/>
 
-    <bean id="moviesStoryUserService" class="com.manymonkeys.moviesstory.service.MoviesStoryUserServiceMock"/>
+    <bean id="moviesStoryUserService" class="com.owlunit.moviesstory.service.MoviesStoryUserServiceMock"/>
 
-    <bean id="facebookIntegrationService" class="com.manymonkeys.moviesstory.service.FacebookIntegrationServiceMock"/>
+    <bean id="facebookIntegrationService" class="com.owlunit.moviesstory.service.FacebookIntegrationServiceMock"/>
 
-    <bean id="moviesstoryService" class="com.manymonkeys.moviesstory.service.MoviesStoryServiceImpl">
+    <bean id="moviesstoryService" class="com.owlunit.moviesstory.service.MoviesStoryServiceImpl">
         <constructor-arg index="0" ref="facebookIntegrationService"/>
         <constructor-arg index="1" ref="movieService"/>
         <constructor-arg index="2" ref="moviesStoryUserService"/>
     </bean>
 
-    <bean id="movieService" class="com.manymonkeys.service.mock.MovieServiceMock"/>
+    <bean id="movieService" class="com.owlunit.service.mock.MovieServiceMock"/>
 
-    <bean id="personService" class="com.manymonkeys.service.mock.PersonServiceMock"/>
+    <bean id="personService" class="com.owlunit.service.mock.PersonServiceMock"/>
 
-    <bean id="posterService" class="com.manymonkeys.service.mock.PosterServiceMock">
+    <bean id="posterService" class="com.owlunit.service.mock.PosterServiceMock">
         <constructor-arg index="0" value="http"/>
         <constructor-arg index="1" value="nest1"/>
         <constructor-arg index="2" value="8080"/>

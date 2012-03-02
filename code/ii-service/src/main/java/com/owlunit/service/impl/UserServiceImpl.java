@@ -6,7 +6,6 @@ import com.owlunit.model.auth.User;
 import com.owlunit.model.cinema.Movie;
 import com.owlunit.service.auth.UserService;
 import com.owlunit.service.exception.NotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -24,7 +23,6 @@ import static com.owlunit.service.impl.util.Utils.itemWithMeta;
  */
 public class UserServiceImpl implements UserService {
 
-    @Autowired
     protected IiDao dao;
 
     public double defaultFollowerWeight = 10d;

@@ -6,7 +6,6 @@ import com.owlunit.model.cinema.Keyword;
 import com.owlunit.service.cinema.KeywordService;
 import com.owlunit.service.exception.NotFoundException;
 import com.owlunit.service.impl.util.Utils;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,7 +17,6 @@ import java.util.List;
  */
 public class KeywordServiceImpl implements KeywordService {
 
-    @Autowired
     protected IiDao dao;
 
     private static final String CLASS_MARK_KEY = KeywordServiceImpl.class.getName();

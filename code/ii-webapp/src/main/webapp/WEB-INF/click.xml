@@ -1,7 +1,0 @@
-<click-app>
-
-    <pages package="com.owlunit.web"/>
-
-    <mode value="debug"/>
-
-</click-app>

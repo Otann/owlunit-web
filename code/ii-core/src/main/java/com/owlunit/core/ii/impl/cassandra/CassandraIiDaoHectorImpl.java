@@ -18,9 +18,7 @@ import me.prettyprint.hector.api.*;
 
 import java.util.*;
 
-import static com.owlunit.core.ii.impl.cassandra.HectorUtils.ls;
-import static com.owlunit.core.ii.impl.cassandra.HectorUtils.ss;
-import static com.owlunit.core.ii.impl.cassandra.HectorUtils.ds;
+import static com.owlunit.core.ii.impl.cassandra.HectorUtils.*;
 
 /**
  * Many Monkeys
@@ -294,9 +292,8 @@ public class CassandraIiDaoHectorImpl implements IiDao {
         return forceUpdateParents(item, getRow(keyspace, CF_PARENTS, item.getId()));
     }
 
-    @OwledMethod
     @Override
-    public Collection<Ii> loadParents(@OwledArgument Collection<Ii> items) {
+    public Collection<Ii> loadParents(Collection<Ii> items) {
         checkNull(items);
 
         Collection<Ii> result = new ArrayList<Ii>();

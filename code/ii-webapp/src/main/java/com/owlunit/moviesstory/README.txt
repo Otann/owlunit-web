@@ -1,1 +1,0 @@
-This package whatever is required on the bl level to support the "moviesstory". Later on Todo moved to a separate maven artifact

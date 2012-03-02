@@ -3,11 +3,13 @@ package com.owlunit.service.impl;
 import com.owlunit.core.algo.Recommender;
 import com.owlunit.core.ii.Ii;
 import com.owlunit.core.ii.IiDao;
+import com.owlunit.model.cinema.Keyword;
+import com.owlunit.model.cinema.Movie;
+import com.owlunit.model.cinema.Person;
 import com.owlunit.service.cinema.MovieService;
 import com.owlunit.service.exception.NotFoundException;
 import com.owlunit.model.cinema.Role;
 import com.owlunit.service.impl.util.Utils;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -20,10 +22,8 @@ import java.util.regex.Pattern;
  */
 public class MovieServiceImpl implements MovieService {
 
-    @Autowired
     protected IiDao dao;
 
-    @Autowired
     protected Recommender recommender;
 
     private Double initialKeywordWeight;

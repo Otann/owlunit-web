@@ -7,7 +7,6 @@ import com.owlunit.model.cinema.Role;
 import com.owlunit.service.cinema.PersonService;
 import com.owlunit.service.exception.NotFoundException;
 import com.owlunit.service.impl.util.Utils;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
@@ -18,7 +17,6 @@ import java.util.*;
  */
 public class PersonServiceImpl implements PersonService {
 
-    @Autowired
     private IiDao dao;
 
     private static final String CLASS_MARK_KEY = PersonServiceImpl.class.getName();

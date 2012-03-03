@@ -1,7 +1,9 @@
-package ii.project
+package ii
 
 import sbt._
 import Keys._
+import sbt.Package._
+import java.util.jar.Attributes.Name._
 import com.github.siasia.WebPlugin._
 
 object IiBuild extends Build {
@@ -15,9 +17,7 @@ object IiBuild extends Build {
   lazy val root = Project(
     id = "ii",
     base = file("."),
-    settings = defaultSettings ++ Seq(
-      libraryDependencies ++= Dependencies.jettyContainer
-    ),
+    settings = defaultSettings,
     aggregate = Seq(core, service, crawl)
   )
 
@@ -56,17 +56,19 @@ object IiBuild extends Build {
     id = "ii-web",
     base = file("ii-web"),
     settings = defaultSettings ++ webSettings ++ Seq(
-      libraryDependencies ++= Dependencies.lift
+      libraryDependencies ++= Dependencies.lift ++ Dependencies.webPlugin
     ),
     dependencies = Seq(core, service)
   )
-
 
   /////////////////////
   // Settings
   /////////////////////
 
   seq(webSettings: _*)
+
+  // For JRebel
+//  scanDirectories in Compile := Nil //WTF why this does not compile?
 
   override lazy val settings = super.settings ++ Seq(
   	shellPrompt := { s => Project.extract(s).currentProject.id + "> " }
@@ -92,7 +94,7 @@ object IiBuild extends Build {
     
     val lift = Seq(Dependency.liftMapper, Dependency.liftWebKit, Dependency.liftWizard)
 
-    val jettyContainer = Seq(Dependency.jetty % "container", Dependency.jettyServlet % "container")
+    val webPlugin = Seq(Dependency.jetty % "container", Dependency.servlet % "provided")
 
   }
 
@@ -116,8 +118,8 @@ object IiBuild extends Build {
     val liftMapper  = "net.liftweb"           %% "lift-mapper"        % V.Lift    % "compile->default"
     val liftWizard  = "net.liftweb"           %% "lift-wizard"        % V.Lift    % "compile->default"
 
-    val jetty         = "org.eclipse.jetty"   % "jetty-webapp"    % V.Jetty    // Eclipse license
-    val jettyServlet  = "org.eclipse.jetty"   % "jetty-servlet"   % V.Jetty    // Eclipse license
+    val jetty       = "org.eclipse.jetty"     % "jetty-webapp"        % V.Jetty
+    val servlet     = "javax.servlet"         % "servlet-api"         % "2.5"
 
   }
 

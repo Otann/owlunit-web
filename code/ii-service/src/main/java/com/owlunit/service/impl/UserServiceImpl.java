@@ -1,7 +1,7 @@
 package com.owlunit.service.impl;
 
-import com.owlunit.core.ii.Ii;
-import com.owlunit.core.ii.IiDao;
+import com.owlunit.core.orthodoxal.ii.Ii;
+import com.owlunit.core.orthodoxal.ii.IiDao;
 import com.owlunit.model.auth.User;
 import com.owlunit.model.cinema.Movie;
 import com.owlunit.service.auth.UserService;

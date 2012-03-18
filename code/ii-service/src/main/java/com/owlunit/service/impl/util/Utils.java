@@ -1,7 +1,7 @@
 package com.owlunit.service.impl.util;
 
-import com.owlunit.core.ii.Ii;
-import com.owlunit.core.ii.IiDao;
+import com.owlunit.core.orthodoxal.ii.Ii;
+import com.owlunit.core.orthodoxal.ii.IiDao;
 
 /**
  * @author Anton Chebotaev

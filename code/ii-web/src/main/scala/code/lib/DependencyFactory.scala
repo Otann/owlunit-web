@@ -15,6 +15,7 @@ import java.util.Date
  * stack basis.
  */
 object DependencyFactory extends Factory {
+
   implicit object time extends FactoryMaker(Helpers.now _)
 
   /**
@@ -26,14 +27,16 @@ object DependencyFactory extends Factory {
   private def init() {
     List(time)
   }
+
   init()
 }
 
-/*
+
 /**
  * Examples of changing the implementation
  */
 sealed abstract class Changer {
+
   def changeDefaultImplementation() {
     DependencyFactory.time.default.set(() => new Date())
   }
@@ -51,5 +54,6 @@ sealed abstract class Changer {
       // perform some calculations here
     }
   }
+
 }
-*/
+

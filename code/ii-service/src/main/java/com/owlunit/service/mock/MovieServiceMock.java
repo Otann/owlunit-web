@@ -3,7 +3,6 @@ package com.owlunit.service.mock;
 import com.owlunit.model.cinema.Keyword;
 import com.owlunit.model.cinema.Movie;
 import com.owlunit.model.cinema.Person;
-import com.owlunit.model.cinema.Role;
 import com.owlunit.service.cinema.MovieService;
 import com.owlunit.service.exception.NotFoundException;
 

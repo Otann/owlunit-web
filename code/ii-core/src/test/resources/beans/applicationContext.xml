@@ -18,7 +18,7 @@
         <constructor-arg ref="cluster"/>
     </bean>
 
-    <bean id="iiCassandraDao" class="com.owlunit.core.ii.impl.cassandra.CassandraIiDaoHectorImpl">
+    <bean id="iiCassandraDao" class="com.owlunit.core.orthodoxal.ii.impl.cassandra.CassandraIiDaoHectorImpl">
         <constructor-arg ref="keyspace"/>
     </bean>
 
@@ -33,7 +33,7 @@
         <!--<constructor-arg index="1" ref="configuration"  />-->
     </bean>
 
-    <bean id="iiNeoDao" class="com.owlunit.core.ii.impl.neo4j.NeoIiDaoImpl" scope="singleton">
+    <bean id="iiNeoDao" class="com.owlunit.core.orthodoxal.ii.impl.neo4j.NeoIiDaoImpl" scope="singleton">
         <constructor-arg ref="graphDbService"/>
     </bean>
 

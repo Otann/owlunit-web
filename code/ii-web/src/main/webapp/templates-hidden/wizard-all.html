@@ -1,4 +1,5 @@
-<div>
+<div xmlns:wizard="http://www.w3.org/1999/xhtml">
+
     <wizard:screen_info>
         <div>Page <wizard:screen_number></wizard:screen_number> of <wizard:total_screens></wizard:total_screens></div>
     </wizard:screen_info>
@@ -12,7 +13,13 @@
     </wizard:screen_top>
 
     <wizard:errors>
-        <div> <ul> <wizard:item> <li> <wizard:bind></wizard:bind> </li> </wizard:item> </ul> </div>
+        <div>
+            <ul>
+                <wizard:item>
+                    <li><wizard:bind></wizard:bind></li>
+                </wizard:item>
+            </ul>
+        </div>
     </wizard:errors>
 
     <div>
@@ -26,44 +33,45 @@
                                 <wizard:bind></wizard:bind>
                             </label>
                         </wizard:label>
+
                         <wizard:help>
-		  <span>
-		    <wizard:bind></wizard:bind>
-		  </span>
+                            <span>
+                                <wizard:bind></wizard:bind>
+                            </span>
                         </wizard:help>
+
                         <wizard:field_errors>
                             <ul>
                                 <wizard:error>
-                                    <li>
-                                        <wizard:bind></wizard:bind>
-                                    </li>
+                                    <li><wizard:bind></wizard:bind></li>
                                 </wizard:error>
                             </ul>
                         </wizard:field_errors>
                     </td>
+
                     <td>
-                        <wizard:form></wizard:form>
+                        <wizard:form>
+                        </wizard:form>
                     </td>
                 </tr>
                 </tbody>
             </table>
         </wizard:fields>
     </div>
+
     <div>
         <table>
             <tr>
-                <td>
-                    <wizard:prev></wizard:prev>
-                </td>
-                <td>
-                    <wizard:cancel></wizard:cancel>
-                </td>
-                <td>
-                    <wizard:next></wizard:next>
-                </td>
+                <td><wizard:prev></wizard:prev></td>
+                <td><wizard:cancel></wizard:cancel></td>
+                <td><wizard:next></wizard:next></td>
             </tr>
         </table>
     </div>
-    <wizard:screen_bottom> <div> <wizard:bind></wizard:bind> </div> </wizard:screen_bottom>
-    <wizard:wizard_bottom> <div> <wizard:bind></wizard:bind> </div> </wizard:wizard_bottom>
+    <wizard:screen_bottom>
+        <div><wizard:bind></wizard:bind></div>
+    </wizard:screen_bottom>
+    <wizard:wizard_bottom>
+        <div><wizard:bind></wizard:bind></div>
+    </wizard:wizard_bottom>
 </div>

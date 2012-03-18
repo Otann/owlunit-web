@@ -53,16 +53,16 @@
 
     <alias name="neoDao" alias="dao"/>
 
-    <bean id="cassandraDao" class="com.owlunit.core.ii.impl.cassandra.CassandraIiDaoHectorImpl">
+    <bean id="cassandraDao" class="com.owlunit.core.orthodoxal.ii.impl.cassandra.CassandraIiDaoHectorImpl">
         <constructor-arg name="keyspace" ref="keyspace"/>
     </bean>
 
-    <bean id="neoDao" class="com.owlunit.core.ii.impl.neo4j.NeoIiDaoImpl">
+    <bean id="neoDao" class="com.owlunit.core.orthodoxal.ii.impl.neo4j.NeoIiDaoImpl">
         <constructor-arg ref="graphDbService"/>
     </bean>
 
 
-    <bean id="plainRecommender" class="com.owlunit.core.algo.impl.RecommenderPlainImpl">
+    <bean id="plainRecommender" class="com.owlunit.core.orthodoxal.algo.impl.RecommenderPlainImpl">
         <property name="componentsLimit" value="75"/>
         <property name="parentsLimit" value="100"/>
         <property name="weightThreshold" value="2.1"/>

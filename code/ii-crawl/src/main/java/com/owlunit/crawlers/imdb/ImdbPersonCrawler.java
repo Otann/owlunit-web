@@ -4,7 +4,6 @@ import com.owlunit.crawlers.common.CassandraCrawler;
 import com.owlunit.crawlers.common.TimeWatch;
 import com.owlunit.model.cinema.Movie;
 import com.owlunit.model.cinema.Person;
-import com.owlunit.model.cinema.Role;
 import com.owlunit.service.cinema.MovieService;
 import com.owlunit.service.cinema.PersonService;
 import com.owlunit.service.exception.NotFoundException;

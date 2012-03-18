@@ -1,9 +1,8 @@
 package com.owlunit.service.impl;
 
-import com.owlunit.core.ii.Ii;
-import com.owlunit.core.ii.IiDao;
+import com.owlunit.core.orthodoxal.ii.Ii;
+import com.owlunit.core.orthodoxal.ii.IiDao;
 import com.owlunit.model.cinema.Person;
-import com.owlunit.model.cinema.Role;
 import com.owlunit.service.cinema.PersonService;
 import com.owlunit.service.exception.NotFoundException;
 import com.owlunit.service.impl.util.Utils;

@@ -1,7 +1,6 @@
 package com.owlunit.service.mock;
 
 import com.owlunit.model.cinema.Person;
-import com.owlunit.model.cinema.Role;
 import com.owlunit.service.cinema.PersonService;
 import com.owlunit.service.exception.NotFoundException;
 

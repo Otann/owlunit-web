@@ -21,11 +21,13 @@ class Boot {
 
   def boot() {
     if (!DB.jndiJdbcConnAvailable_?) {
-      val vendor =
-        new StandardDBVendor(
-          Props.get("db.driver") openOr "org.h2.Driver",
-          Props.get("db.url") openOr "jdbc:h2:lift_proto.db;AUTO_SERVER=TRUE",
-          Props.get("db.user"), Props.get("db.password"))
+
+      val vendor = new StandardDBVendor(
+        Props.get("db.driver") openOr "org.h2.Driver",
+        Props.get("db.url") openOr "jdbc:h2:lift_proto.db;AUTO_SERVER=TRUE",
+        Props.get("db.user"),
+        Props.get("db.password")
+      )
 
       LiftRules.unloadHooks.append(vendor.closeAllConnections_! _)
 
@@ -40,13 +42,20 @@ class Boot {
     // where to search snippet
     LiftRules.addToPackages("code")
 
+    val sitemap2 = List(
+      Menu("home") / "index",
+      Menu(Loc("Static", Link(List("static"), true, "/static/index"), "Static Content"))
+    ) ::: User.menus
+
     // Build SiteMap
     def sitemap = SiteMap(
-      Menu.i("Home") / "index" >> User.AddUserMenusAfter, // the simple way to declare a menu
+
+      Menu.i("Home") / "index",
 
       // more complex because this menu allows anything in the
       // /static path to be visible
       Menu(Loc("Static", Link(List("static"), true, "/static/index"), "Static Content"))
+
     )
 
     def sitemapMutators = User.sitemapMutator
@@ -75,5 +84,7 @@ class Boot {
 
     // Make a transaction span the whole HTTP request
     S.addAround(DB.buildLoanWrapper)
+
   }
+
 }

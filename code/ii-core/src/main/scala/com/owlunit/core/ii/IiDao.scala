@@ -1,9 +1,8 @@
 package com.owlunit.core.ii
 
-import com.owlunit.core.ii.adaptation.Ii.IiImpl.iiToIiImpl
+import com.owlunit.core.ii.Ii.IiImpl.iiToIiImpl
 import collection.mutable.ListBuffer
 import collection.mutable.{Map => MutableMap}
-import exception.{DAOException, NotFoundException}
 import org.neo4j.graphdb.{Direction, RelationshipType, Relationship, Node}
 import org.neo4j.graphdb.traversal.Evaluators
 import org.neo4j.kernel.{Uniqueness, Traversal, EmbeddedGraphDatabase}
@@ -16,11 +15,12 @@ import org.neo4j.kernel.{Uniqueness, Traversal, EmbeddedGraphDatabase}
 
 trait IiDao {
 
-  def createInformationItem: Ii
-  def deleteInformationItem(item: Ii)
+  def createIi: Ii
+  def deleteIi(item: Ii)
 
   def load(id: Long): Ii
   def load(key: String, value: String): Seq[Ii]
+  def search(key: String, queue: String): Seq[Ii]
 
   def setMeta(item: Ii, key: String, value: String): Ii
   def setMetaUnindexed(item: Ii, key: String, value: String): Ii
@@ -29,6 +29,7 @@ trait IiDao {
   def setComponentWeight(item: Ii, component: Ii, weight: Double): Ii
   def removeComponent(item: Ii, component: Ii): Ii
 
+  def loadMeta(item: Ii): Ii
   def loadComponents(item: Ii): Ii
   def loadParents(item: Ii): Ii
 
@@ -75,12 +76,12 @@ object IiDao {
     private val graph = new EmbeddedGraphDatabase(path)
     private val index = graph.index().forNodes(IiDaoImpl.IndexName)
 
-    def createInformationItem: Ii = withTx {
+    def createIi: Ii = withTx {
       val node = graph.createNode();
       Ii(node);
     }
 
-    def deleteInformationItem(item: Ii) {
+    def deleteIi(item: Ii) {
       withTx {
         val traverserIterator = Traversal.description()
           .breadthFirst()
@@ -116,6 +117,16 @@ object IiDao {
       result.toList
     }
 
+
+    def search(key: String, queue: String): Seq[Ii] = {
+      val result = ListBuffer[Ii]()
+      val iterator = index.query(key, queue).iterator()
+      while (iterator.hasNext)
+        result += Ii(iterator.next())
+
+      result.toList
+    }
+
     def setMeta(item: Ii, key: String, value: String) = setMetaExtended(item, key, value, true)
 
     def setMetaUnindexed(item: Ii, key: String, value: String) = setMetaExtended(item, key, value, false)
@@ -123,10 +134,20 @@ object IiDao {
     private def setMetaExtended(item: Ii,  key: String, value: String, isIndexed: Boolean):Ii = withTx {
       item.node.setProperty(key, value)
 
+      try {
+          index.remove(item.node, key);
+      } catch {
+        // That's ok, it possibly was unindexed
+        case e: org.neo4j.graphdb.NotFoundException =>
+      }
+
       if (isIndexed)
         index.add(item.node, key, value)
 
-      item.copy(meta = (item.meta + (key -> value)))
+      item.meta match {
+        case Some(x) => item.copy(meta = Some(x + (key -> value)))
+        case None => item
+      }
     }
 
     def removeMeta(item: Ii, key: String) = withTx {
@@ -134,7 +155,10 @@ object IiDao {
 
       index.remove(item.node, key)
 
-      item.copy(meta = (item.meta - key))
+      item.meta match {
+        case Some(x) => item.copy(meta = Some((x - key)))
+        case None => item
+      }
     }
 
     def setComponentWeight(item: Ii, component: Ii, weight: Double): Ii = withTx {
@@ -160,6 +184,24 @@ object IiDao {
         case Some(x) => item.copy(components = Some(x - component))
         case None => item
       }
+    }
+
+    def loadMeta(item: Ii): Ii = {
+      import scala.collection.JavaConverters._
+      
+      val meta = MutableMap[String, String]()
+      val metaIterator = item.node.getPropertyKeys.iterator()
+      
+      for (key <- item.node.getPropertyKeys.asScala)
+        yield (key -> item.node.getProperty(key).toString)
+
+      
+      while (metaIterator.hasNext) {
+        val key = metaIterator.next()
+        meta.put(key, item.node.getProperty(key).toString)
+      }
+
+      item.copy(meta = Some(meta.toMap))
     }
 
     def loadComponents(item: Ii): Ii = {

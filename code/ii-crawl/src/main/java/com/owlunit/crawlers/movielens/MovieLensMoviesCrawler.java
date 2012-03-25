@@ -1,11 +1,8 @@
 package com.owlunit.crawlers.movielens;
 
 import com.owlunit.crawlers.common.TimeWatch;
-import com.owlunit.model.cinema.Keyword;
-import com.owlunit.model.cinema.Movie;
 import com.owlunit.service.cinema.KeywordService;
 import com.owlunit.service.cinema.MovieService;
-import com.owlunit.service.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

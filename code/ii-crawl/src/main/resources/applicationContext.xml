@@ -68,7 +68,7 @@
         <property name="weightThreshold" value="2.1"/>
     </bean>
 
-    <bean id="movieService" class="com.owlunit.service.impl.MovieServiceImpl">
+    <bean id="movieService" class="com.owlunit.orthodoxal.service.impl.MovieServiceImpl">
         <property name="dao" ref="dao"/>
         <property name="recommender" ref="plainRecommender"/>
         <property name="initialKeywordWeight" value="${imdb.weight.keyword}"/>
@@ -76,11 +76,11 @@
         <!-- TODO Anton Chebotaev - set roles properties -->
     </bean>
 
-    <bean id="keywordService" class="com.owlunit.service.impl.KeywordServiceImpl">
+    <bean id="keywordService" class="com.owlunit.orthodoxal.service.impl.KeywordServiceImpl">
         <property name="dao" ref="dao"/>
     </bean>
 
-    <bean id="personService" class="com.owlunit.service.impl.PersonServiceImpl">
+    <bean id="personService" class="com.owlunit.orthodoxal.service.impl.PersonServiceImpl">
         <property name="dao" ref="dao"/>
     </bean>
 

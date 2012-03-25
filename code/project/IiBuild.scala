@@ -78,16 +78,23 @@ object IiBuild extends Build {
     organization := "com.owlunit",
     version := "0.1",
     scalaVersion := "2.9.1",
-    resolvers += ScalaToolsSnapshots,
+    resolvers ++= Seq(ScalaToolsSnapshots, Resolvers.logging),
     scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked"),
-    javacOptions ++= Seq("-Xlint:unchecked")
+    javacOptions ++= Seq("-Xlint:unchecked"),
+    libraryDependencies ++= Seq(Dependency.logging)
   )
 
 
   /////////////////////
   // Dependencies
   /////////////////////
-
+  
+  object Resolvers {
+    
+    val logging = "repo.codahale.com" at  "http://repo.codahale.com"
+    
+  }
+  
   object Dependencies {
 
     val db = Seq(Dependency.hector, Dependency.neo4j)
@@ -111,15 +118,18 @@ object IiBuild extends Build {
 
     // Compile
 
-    val neo4j       = "org.neo4j"             %  "neo4j"              % V.Neo4j
-    val hector      = "me.prettyprint"        %  "hector-core"        % V.Hector
-    val spring      = "org.springframework"   %  "spring-context"     % "3.0.5.RELEASE"
-    val liftWebKit  = "net.liftweb"           %% "lift-webkit"        % V.Lift    % "compile->default"
-    val liftMapper  = "net.liftweb"           %% "lift-mapper"        % V.Lift    % "compile->default"
-    val liftWizard  = "net.liftweb"           %% "lift-wizard"        % V.Lift    % "compile->default"
+    val neo4j       = "org.neo4j"                 %  "neo4j"              % V.Neo4j
+    val hector      = "me.prettyprint"            %  "hector-core"        % V.Hector
 
-    val jetty       = "org.eclipse.jetty"     % "jetty-webapp"        % V.Jetty
-    val servlet     = "javax.servlet"         % "servlet-api"         % "2.5"
+    val spring      = "org.springframework"       %  "spring-context"     % "3.0.5.RELEASE"
+
+    val liftWebKit  = "net.liftweb"               %% "lift-webkit"        % V.Lift    % "compile->default"
+    val liftMapper  = "net.liftweb"               %% "lift-mapper"        % V.Lift    % "compile->default"
+    val liftWizard  = "net.liftweb"               %% "lift-wizard"        % V.Lift    % "compile->default"
+
+    val jetty       = "org.eclipse.jetty"         %  "jetty-webapp"       % V.Jetty
+    val servlet     = "javax.servlet"             %  "servlet-api"        % "2.5"
+    val logging     = "com.codahale"              %% "logula"             % "2.1.3"
 
   }
 

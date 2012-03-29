@@ -7,7 +7,7 @@ import java.net.URL
  *         Owls Proprietary
  */
 
-object PosterService {
+trait PosterService {
 
   def getPosterUrl(movie: Movie):URL = new URL("http://placehold.it/200x300");
 

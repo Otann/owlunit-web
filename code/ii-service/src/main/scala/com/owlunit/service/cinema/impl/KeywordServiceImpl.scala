@@ -1,20 +1,15 @@
-package com.owlunit.service.cinema
+package com.owlunit.service.cinema.impl
 
 import com.owlunit.core.ii.{Ii, IiDao}
 import collection.mutable.ListBuffer
+import com.owlunit.service.cinema.{CinemaException, KeywordService, Keyword}
 
 /**
  * @author Anton Chebotaev
  *         Owls Proprietary
  */
 
-class Keyword(override val id: Long, val name: String) extends CinemaItem(id) {
-
-    def copy(id: Long) = new Keyword(id, this.name)
-
-}
-
-object KeywordService {
+object KeywordServiceImpl {
 
   private[cinema] val MetaKeyPrefix = this.getClass.getName
   private[cinema] val KeyName = MetaKeyPrefix + ".NAME"
@@ -29,15 +24,17 @@ object KeywordService {
       case None => None
       case Some(_) => Some(new Keyword(
         item.id,
-        item.metaValue(KeywordService.KeyName).get
+        item.metaValue(KeywordServiceImpl.KeyName).get
       ))
     }
   }
 
 }
 
-class KeywordService(dao: IiDao) {
-  import KeywordService._
+class KeywordServiceImpl(dao: IiDao) extends KeywordService {
+  import KeywordServiceImpl._
+
+  def create(name: String) = create(new Keyword(0, name))
 
   def create(sample: Keyword): Keyword = {
     val item = dao.createIi
@@ -73,3 +70,9 @@ class KeywordService(dao: IiDao) {
     result
   }
 }
+
+
+
+
+
+

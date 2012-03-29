@@ -1,4 +1,4 @@
-package com.owlunit.service
+package com.owlunit.service.cinema
 
 import com.owlunit.core.ii.{IiDao, Ii}
 
@@ -8,7 +8,7 @@ import com.owlunit.core.ii.{IiDao, Ii}
  *         Owls Proprietary
  */
 
-package object cinema {
+package object impl {
 
   def withMeta(dao: IiDao, item: Ii):Ii = item.meta match {
     case Some(_) => item
@@ -20,8 +20,9 @@ package object cinema {
     case None => dao.loadComponents(item)
   }
 
-  def simplifyComplexName(args: Any*):String =
-    args.mkString.toLowerCase.replaceAll("[\\W&&\\D]", "")
+  def simplifyComplexName(args: Any*):String = args.mkString.toLowerCase
+    .replaceAll("the |a |, the|, a", "")
+    .replaceAll("[\\W&&\\D]", "")
 
 }
 

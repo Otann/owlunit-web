@@ -6,6 +6,9 @@ import http._
 import util._
 import common._
 import java.util.Date
+import com.owlunit.core.ii.IiDao
+import com.owlunit.service.cinema.impl.{KeywordServiceImpl, PersonServiceImpl, MovieServiceImpl}
+import com.owlunit.service.cinema.{PersonServiceImpl, MovieServiceImpl, KeywordServiceImpl}
 
 /**
  * A factory for generating new instances of Date.  You can create
@@ -16,7 +19,16 @@ import java.util.Date
  */
 object DependencyFactory extends Factory {
 
+
+  val Neo4jPath = "/Users/anton/Dev/Owls/data"
+
   implicit object time extends FactoryMaker(Helpers.now _)
+
+  implicit object iiDao extends FactoryMaker(IiDao(Neo4jPath))
+
+  implicit object keywordService  extends FactoryMaker(KeywordServiceImpl(DependencyFactory.iiDao.vend))
+  implicit object personService   extends FactoryMaker(PersonServiceImpl(DependencyFactory.iiDao.vend))
+  implicit object movieService    extends FactoryMaker(MovieServiceImpl(DependencyFactory.iiDao.vend))
 
   /**
    * objects in Scala are lazily created.  The init()
@@ -25,7 +37,13 @@ object DependencyFactory extends Factory {
    * registering their types with the dependency injector
    */
   private def init() {
-    List(time)
+    List(
+      time,
+      iiDao,
+      keywordService,
+      personService,
+      movieService
+    )
   }
 
   init()

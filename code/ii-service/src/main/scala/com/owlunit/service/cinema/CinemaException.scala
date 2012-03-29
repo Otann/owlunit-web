@@ -11,9 +11,9 @@ class CinemaException(reason: String,  ex: Throwable) extends RuntimeException {
   def this(reason: String) = this(reason, null)
 }
 
-class NotFoundException(item: CinemaItem, ex: Throwable) 
+class NotFoundException(item: CinemaItem, ex: Throwable)
   extends CinemaException ("Item with(%d) was not found" format item.id) {
-  
+
   def this(item: CinemaItem) = this(item, null)
 }
 

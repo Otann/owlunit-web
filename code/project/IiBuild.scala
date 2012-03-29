@@ -5,6 +5,8 @@ import Keys._
 import sbt.Package._
 import java.util.jar.Attributes.Name._
 import com.github.siasia.WebPlugin._
+import com.github.siasia.PluginKeys._
+import com.typesafe.startscript.StartScriptPlugin
 
 object IiBuild extends Build {
 
@@ -46,17 +48,20 @@ object IiBuild extends Build {
   lazy val crawl = Project(
     id = "ii-crawl",
     base = file("ii-crawl"),
-    settings = defaultSettings ++ Seq(
-      libraryDependencies += Dependency.spring
+    settings = defaultSettings ++ StartScriptPlugin.startScriptForClassesSettings ++ Seq(
+      libraryDependencies += Dependency.spring,
+      mainClass in Compile := Some("com.owlunit.crawl.Crawler")
     ),
     dependencies = Seq(core, service)
+
   )
 
   lazy val web = Project(
     id = "ii-web",
     base = file("ii-web"),
     settings = defaultSettings ++ webSettings ++ Seq(
-      libraryDependencies ++= Dependencies.lift ++ Dependencies.webPlugin
+      libraryDependencies ++= Dependencies.lift ++ Dependencies.webPlugin,
+      scanDirectories in Compile := Nil
     ),
     dependencies = Seq(core, service)
   )
@@ -66,6 +71,7 @@ object IiBuild extends Build {
   /////////////////////
 
   seq(webSettings: _*)
+  seq(StartScriptPlugin.startScriptForClassesSettings: _*)
 
   // For JRebel
 //  scanDirectories in Compile := Nil //WTF why this does not compile?
@@ -81,7 +87,8 @@ object IiBuild extends Build {
     resolvers ++= Seq(ScalaToolsSnapshots, Resolvers.logging),
     scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked"),
     javacOptions ++= Seq("-Xlint:unchecked"),
-    libraryDependencies ++= Seq(Dependency.logging)
+    libraryDependencies ++= Seq(Dependency.logging),
+    StartScriptPlugin.stage in Compile := Unit
   )
 
 

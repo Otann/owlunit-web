@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="ii-crawl" basedir="." default="all"> <!-- default="crawl-movielens" -->
 
-    <property file="./src/main/resources/crawl.properties" />
+    <property file="crawl.properties" />
 
     <target name="all">
-        <antcall target="crawl-movielens"/>
-        <antcall target="crawl-imdb"/>
+        <!--<antcall target="crawl-movielens"/>-->
+        <!--<antcall target="crawl-imdb"/>-->
+
+        <antcall target="test" />
+    </target>
+
+    <target name="test">
+
+        <echo>"This is an ant test"</echo>
+
+        <exec dir=".." executable="ii-crawl/target/start">
+          <arg line="ARG"/>
+        </exec>
+
+        <echo>Fuck yeah!</echo>
     </target>
 
     <!-- Movielens -->

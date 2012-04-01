@@ -3,9 +3,8 @@ package com.owlunit.crawl.imdb
 import com.codahale.logula.Logging
 import io.Source
 import collection.mutable.{Map => MutableMap}
-import com.owlunit.service.cinema.impl.{KeywordServiceImpl, MovieServiceImpl}
-import com.owlunit.service.cinema.{KeywordServiceImpl, MovieServiceImpl}
 import com.owlunit.crawl.Counter
+import com.owlunit.service.cinema.{MovieService, KeywordService}
 
 /**
  * @author Anton Chebotaev
@@ -13,8 +12,8 @@ import com.owlunit.crawl.Counter
  */
 
 class KeywordsCrawler( sourcePath: String,
-                       movieService: MovieServiceImpl,
-                       keywordService: KeywordServiceImpl) extends  Logging {
+                       movieService: MovieService,
+                       keywordService: KeywordService) extends  Logging {
 
   val keywordsExtractor = """([^\s]+ \(\d+\))""".r
   val keywordExtractor = """([^\s]+) \((\d+)\)""".r

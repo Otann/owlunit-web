@@ -15,14 +15,13 @@ object MovieServiceImpl {
   private val MetaKeyPrefix = this.getClass.getName
   private[cinema] val KeyName         = MetaKeyPrefix + ".NAME"
   private[cinema] val KeyYear         = MetaKeyPrefix + ".YEAR"
+  private[cinema] val KeySearch       = MetaKeyPrefix + ".SEARCH"
   private[cinema] val KeySimpleName   = MetaKeyPrefix + ".SIMPLE_NAME"
   private[cinema] val KeyDescription  = MetaKeyPrefix + ".DESCRIPTION"
   private[cinema] val KeyPersonIds    = MetaKeyPrefix + ".PERSON"
 
   private[cinema] val PersonSeparator = "#"
   private[cinema] val RoleSeparator = "@"
-
-  def apply(dao: IiDao) = new MovieServiceImpl(dao)
 
   private[cinema] def extractOne(dao: IiDao, item: Ii): Option[Movie] = {
     val ii = withComponents(dao, withMeta(dao, item))
@@ -84,12 +83,14 @@ class MovieServiceImpl(dao: IiDao) extends MovieService {
     Role.Producer -> 60.0
   )
 
+  def create(name: String, year: Int): Movie = create(new Movie(0, name, year))
   def create(sample: Movie): Movie = {
     val item = dao.createIi
     dao.setMetaUnindexed(item, MetaKeyPrefix, "#")
 
-    dao.setMeta(item, KeyName, sample.name)
+    dao.setMeta(item, KeySearch, sample.name.toLowerCase)
     dao.setMeta(item, KeySimpleName, simplifyName(sample.name, sample.year))
+    dao.setMetaUnindexed(item, KeyName, sample.name)
     dao.setMetaUnindexed(item, KeyYear, sample.year.toString)
     dao.setMetaUnindexed(item, KeyDescription, sample.description)
 
@@ -106,7 +107,7 @@ class MovieServiceImpl(dao: IiDao) extends MovieService {
   }
 
   def search(query: String) = {
-    val items = dao.search(KeyName, "%s*" format query)
+    val items = dao.search(KeySearch, "%s*" format query.toLowerCase)
     val iterator = items.iterator
     val result = ListBuffer[Movie]()
     while (iterator.hasNext) {

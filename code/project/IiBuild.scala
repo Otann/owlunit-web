@@ -20,7 +20,7 @@ object IiBuild extends Build {
     id = "ii",
     base = file("."),
     settings = defaultSettings,
-    aggregate = Seq(core, service, crawl)
+    aggregate = Seq(core, service, crawl, web)
   )
 
   lazy val core = Project(
@@ -49,7 +49,7 @@ object IiBuild extends Build {
     id = "ii-crawl",
     base = file("ii-crawl"),
     settings = defaultSettings ++ StartScriptPlugin.startScriptForClassesSettings ++ Seq(
-      libraryDependencies += Dependency.spring,
+      libraryDependencies ++= Seq(Dependency.spring, Dependency.logging),
       mainClass in Compile := Some("com.owlunit.crawl.Crawler")
     ),
     dependencies = Seq(core, service)
@@ -59,9 +59,10 @@ object IiBuild extends Build {
   lazy val web = Project(
     id = "ii-web",
     base = file("ii-web"),
-    settings = defaultSettings ++ webSettings ++ Seq(
+    settings = defaultSettings ++ webSettings ++ StartScriptPlugin.startScriptForClassesSettings ++ Seq(
       libraryDependencies ++= Dependencies.lift ++ Dependencies.webPlugin,
-      scanDirectories in Compile := Nil
+      scanDirectories in Compile := Nil,
+      mainClass in Compile := Some("JettyLauncher")
     ),
     dependencies = Seq(core, service)
   )
@@ -82,12 +83,12 @@ object IiBuild extends Build {
 
   lazy val defaultSettings = Defaults.defaultSettings ++ Seq(
     organization := "com.owlunit",
-    version := "0.1",
+    version := "0.1-SNAPSHOT",
     scalaVersion := "2.9.1",
-    resolvers ++= Seq(ScalaToolsSnapshots, Resolvers.logging),
+    resolvers ++= Seq(ScalaToolsSnapshots, Resolvers.logging, Resolvers.owlUnitIvy, Resolvers.owlUnitM2),
     scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked"),
     javacOptions ++= Seq("-Xlint:unchecked"),
-    libraryDependencies ++= Seq(Dependency.logging),
+    publishTo := Some(Resolver.file("file",  new File( "/Users/anton/Dev/Owls/repo/owlunit.github.com/repo/ivy/" )) ),
     StartScriptPlugin.stage in Compile := Unit
   )
 
@@ -98,17 +99,25 @@ object IiBuild extends Build {
   
   object Resolvers {
     
-    val logging = "repo.codahale.com" at  "http://repo.codahale.com"
+    val logging = "repo.codahale.com" at "http://repo.codahale.com"
+
+    val owlUnitIvy = "OwlUnit Ivy Repo" at "http://owlunit.github.com/repo/ivy"
+    val owlUnitM2  = "OwlUnit Maven2 Repo" at "http://owlunit.github.com/repo/m2"
     
   }
   
   object Dependencies {
 
-    val db = Seq(Dependency.hector, Dependency.neo4j)
+    val db = Seq(Dependency.hector, Dependency.neo4j, Dependency.neo4jREST)
     
-    val lift = Seq(Dependency.liftMapper, Dependency.liftWebKit, Dependency.liftWizard)
+    val lift = Seq(Dependency.liftMapper, Dependency.liftWebKit, Dependency.liftWizard, Dependency.liftWidgets)
 
-    val webPlugin = Seq(Dependency.jetty % "container", Dependency.servlet % "provided")
+    val webPlugin = Seq(
+      Dependency.jettyWebapp % "container",
+      Dependency.jettyWebapp % "compile->default",
+      Dependency.jettyServer % "compile->default",
+      Dependency.servlet % "compile->default"
+    )
 
   }
 
@@ -120,22 +129,27 @@ object IiBuild extends Build {
       val Lift      = "2.4"
       val Neo4j     = "1.6"
       val Hector    = "0.8.0-2"
-      val Jetty     = "8.0.4.v20111024"
+      val Jetty     = "7.3.1.v20110307"
     }
 
     // Compile
 
     val neo4j       = "org.neo4j"                 %  "neo4j"              % V.Neo4j
+    val neo4jREST   = "org.neo4j"                 %  "neo4j-rest-graphdb" % "1.7-SNAPSHOT"
     val hector      = "me.prettyprint"            %  "hector-core"        % V.Hector
 
     val spring      = "org.springframework"       %  "spring-context"     % "3.0.5.RELEASE"
+    val dispatch    = "net.databinder"            %% "dispatch-http"      % "0.8.8"
 
     val liftWebKit  = "net.liftweb"               %% "lift-webkit"        % V.Lift    % "compile->default"
     val liftMapper  = "net.liftweb"               %% "lift-mapper"        % V.Lift    % "compile->default"
     val liftWizard  = "net.liftweb"               %% "lift-wizard"        % V.Lift    % "compile->default"
+    val liftWidgets = "net.liftweb"               %% "lift-widgets"       % V.Lift    % "compile->default"
+    val liftJson    = "net.liftweb"               %% "lift-json"          % V.Lift    % "compile->default"
 
-    val jetty       = "org.eclipse.jetty"         %  "jetty-webapp"       % V.Jetty
-    val servlet     = "javax.servlet"             %  "servlet-api"        % "2.5"
+    val jettyWebapp = "org.eclipse.jetty"         %  "jetty-webapp"       % V.Jetty
+    val jettyServer = "org.eclipse.jetty"         %  "jetty-server"       % V.Jetty
+    val servlet     = "org.eclipse.jetty"         %  "jetty-servlet"      % V.Jetty
     val logging     = "com.codahale"              %% "logula"             % "2.1.3"
 
   }

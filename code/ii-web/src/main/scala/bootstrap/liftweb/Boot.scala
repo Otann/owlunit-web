@@ -11,6 +11,8 @@ import Loc._
 import mapper._
 
 import code.model._
+import code.lib.DependencyFactory
+import widgets.autocomplete.AutoComplete
 
 
 /**
@@ -20,19 +22,20 @@ import code.model._
 class Boot {
 
   def boot() {
-    if (!DB.jndiJdbcConnAvailable_?) {
 
+    if (!DB.jndiJdbcConnAvailable_?) {
       val vendor = new StandardDBVendor(
         Props.get("db.driver") openOr "org.h2.Driver",
         Props.get("db.url") openOr "jdbc:h2:lift_proto.db;AUTO_SERVER=TRUE",
         Props.get("db.user"),
         Props.get("db.password")
       )
-
       LiftRules.unloadHooks.append(vendor.closeAllConnections_! _)
-
       DB.defineConnectionManager(DefaultConnectionIdentifier, vendor)
     }
+
+    LiftRules.unloadHooks.append(() => DependencyFactory.shutdown())
+    AutoComplete.init
 
     // Use Lift's Mapper ORM to populate the database
     // you don't need to use Mapper to use Lift... use
@@ -40,11 +43,12 @@ class Boot {
     Schemifier.schemify(true, Schemifier.infoF _, User)
 
     // where to search snippet
-    LiftRules.addToPackages("code")
+    LiftRules.addToPackages("com.owlunit.web")
 
     val sitemap2 = List(
       Menu("home") / "index",
-      Menu(Loc("Static", Link(List("static"), true, "/static/index"), "Static Content"))
+      Menu(Loc("Static", Link(List("static"), true, "/static/index"), "Static Content")),
+      Menu(Loc("Robots", Link(List("robots"), true, "/robots.txt"), "Static Content"))
     ) ::: User.menus
 
     // Build SiteMap

@@ -2,7 +2,7 @@ package com.owlunit.service.cinema.impl
 
 import com.owlunit.core.ii.{Ii, IiDao}
 import collection.mutable.ListBuffer
-import com.owlunit.service.cinema.{CinemaException, Person}
+import com.owlunit.service.cinema.{PersonService, CinemaException, Person}
 
 /**
  * @author Anton Chebotaev
@@ -16,9 +16,7 @@ object PersonServiceImpl {
   private[cinema] val KeyName       = MetaKeyPrefix + ".NAME"
   private[cinema] val KeySurname    = MetaKeyPrefix + ".SURNAME"
   private[cinema] val KeySimpleName = MetaKeyPrefix + ".SIMPLE_NAME"
-  private[cinema] val KeyFullName   = MetaKeyPrefix + ".FULL_NAME"
-
-  def apply(dao: IiDao) = new PersonServiceImpl(dao)
+  private[cinema] val KeySearch   = MetaKeyPrefix + ".FULL_NAME"
 
   private[cinema] def extract(dao: IiDao, items: Seq[Ii]): Seq[Person] = {
     val extracted = items.map(item => extractOne(dao, item))
@@ -40,14 +38,14 @@ object PersonServiceImpl {
   private def simplifyName(name: String,  surname: String) = simplifyComplexName(name, "##", surname)
 }
 
-class PersonServiceImpl(dao: IiDao) {
+class PersonServiceImpl(dao: IiDao) extends PersonService {
   import PersonServiceImpl._
 
   def create(sample: Person): Person = {
     val item = dao.createIi
     dao.setMetaUnindexed(item, MetaKeyPrefix, "#")
 
-    dao.setMeta(item, KeyFullName, "%s %s" format (sample.name, sample.surname))
+    dao.setMeta(item, KeySearch, "%s %s" format (sample.name.toLowerCase, sample.surname.toLowerCase))
     dao.setMetaUnindexed(item, KeyName, sample.name)
     dao.setMetaUnindexed(item, KeySurname, sample.surname)
     dao.setMetaUnindexed(item, KeySimpleName, simplifyName(sample.name, sample.surname))
@@ -70,7 +68,7 @@ class PersonServiceImpl(dao: IiDao) {
   }
 
   def search(prefix: String): Seq[Person] = {
-    val items = dao.search(KeyFullName, "%s*" format prefix)
+    val items = dao.search(KeySearch, "%s*" format prefix.toLowerCase)
     val iterator = items.iterator
     val result = ListBuffer[Person]()
     while (iterator.hasNext) {

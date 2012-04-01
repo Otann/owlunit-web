@@ -1,7 +1,6 @@
 package com.owlunit.service.cinema
 
-import com.owlunit.core.ii.{Ii, IiDao}
-import collection.mutable.ListBuffer
+import com.owlunit.core.ii.IiDao
 import impl.MovieServiceImpl
 
 /**
@@ -25,6 +24,8 @@ class Movie(override val id: Long,
     this.persons
   )
 
+  override def toString = "Movie(%d, %s/%d)" format (id, name, year)
+
 }
 
 object Role extends Enumeration {
@@ -37,6 +38,7 @@ object Role extends Enumeration {
 trait MovieService {
 
   def create(sample: Movie): Movie
+  def create(name: String, year: Int): Movie
   def load(name: String, year: Int): Option[Movie]
   def search(query: String): Seq[Movie]
   def addKeyword(movie: Movie, keyword: Keyword, startFrequency: Int): Movie
@@ -44,3 +46,8 @@ trait MovieService {
 
 }
 
+object MovieService {
+
+  def apply(dao: IiDao): MovieService = new MovieServiceImpl(dao)
+
+}

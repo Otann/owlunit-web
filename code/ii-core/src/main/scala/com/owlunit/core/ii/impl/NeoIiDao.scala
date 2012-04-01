@@ -2,13 +2,13 @@ package com.owlunit.core.ii.impl
 
 import collection.mutable.ListBuffer
 import collection.mutable.{Map => MutableMap}
-import org.neo4j.graphdb.{Direction, RelationshipType, Relationship, Node}
 import org.neo4j.graphdb.traversal.Evaluators
-import org.neo4j.kernel.{Uniqueness, Traversal, EmbeddedGraphDatabase}
 import sys.ShutdownHookThread
 
 import com.owlunit.core.ii.impl.NeoIi.iiToIiImpl
 import com.owlunit.core.ii.{NotFoundException, Ii, IiDao}
+import org.neo4j.kernel.{Uniqueness, Traversal}
+import org.neo4j.graphdb._
 
 /**
  * @author Anton Chebotaev
@@ -44,12 +44,13 @@ private[ii] object NeoIiDao {
 
 }
 
-private[ii] class NeoIiDao(path: String, depth: Int) extends IiDao {
+private[ii] class NeoIiDao(graph: GraphDatabaseService, depth: Int) extends IiDao {
 
-  private val graph = new EmbeddedGraphDatabase(path)
   private val index = graph.index().forNodes(NeoIiDao.IndexName)
 
-  ShutdownHookThread { graph.shutdown() }
+  def init() { ShutdownHookThread { shutdown() } }
+  def shutdown() { graph.shutdown() }
+
 
   def createIi: Ii = withTx {
     val node = graph.createNode();
@@ -188,7 +189,7 @@ private[ii] class NeoIiDao(path: String, depth: Int) extends IiDao {
       val n = rel.getEndNode
       val w = rel.getProperty(NeoIiDao.WeightPropertyName).asInstanceOf[Double]
 
-      items + (Ii(n) -> w)
+      items += (Ii(n) -> w)
     }
 
     item.copy(components = Some(items.toMap))

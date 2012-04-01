@@ -2,9 +2,8 @@ package com.owlunit.crawl.movielens
 
 import com.codahale.logula.Logging
 import io.Source
-import com.owlunit.service.cinema.impl.{KeywordServiceImpl, MovieServiceImpl}
-import com.owlunit.service.cinema.{KeywordServiceImpl, Movie, MovieServiceImpl}
 import com.owlunit.crawl.Counter
+import com.owlunit.service.cinema.{Movie, MovieService, KeywordService}
 
 /**
  * @author Anton Chebotaev
@@ -12,8 +11,8 @@ import com.owlunit.crawl.Counter
  */
 
 class MoviesCrawler( sourcePath: String,
-                     movieService: MovieServiceImpl,
-                     keywordService: KeywordServiceImpl) extends  Logging {
+                     movieService: MovieService,
+                     keywordService: KeywordService) extends  Logging {
 
   val Pattern = """(\d+)::(.+) \((\d+)\)::(.*)""".r
 

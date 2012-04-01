@@ -5,14 +5,46 @@
     <title>Home</title>
 </head>
 <body class="lift:content_id=main">
-<div id="main" class="lift:surround?with=default;at=content">
+<div id="main" class="lift:surround?with=default_new;at=content">
 
-    <h2>Welcome to your project!</h2>
-    <p>
-	<span class="lift:helloWorld.howdy">
-	  Welcome to your Lift app at <span id="time">Time goes here</span>
-	</span>
-    </p>
+    <div class="set-controls">
+        <div class="set-name">
+            <form action="">
+                <fieldset>
+                    <input value="" placeholder="Add name of the set here" type="text"/>
+                </fieldset>
+            </form>
+        </div>
+        <div class="set-add">
+            <a href="#">Save & Subscribe</a>
+        </div>
+    </div>
+
+    <ul class="movie-list" data-lift="Movies">
+
+        <!-- Movie -->
+        <li>
+            <div class="title">
+                <span class="ii" ii-helper="movie-name">Ocean's Twelve</span>
+                <ul class="actions">
+                    <li class="watch-toggler">Watched</li>
+                </ul>
+            </div>
+
+            <div class="ratingbar">
+                <div class="rating" ii-helper="percentage" style="width: 95%"></div>
+            </div>
+
+            <div class="poster" ii-helper="backdrop" style="background: url(/i/temp/poster.png)">
+            </div>
+
+            <ul class="tags clearfix">
+                <li class="tag" ii-helper="tag"><span class="ii">Sequel</span></li>
+                <li class="more"><a href="#">Full profile...</a></li>
+            </ul>
+        </li>
+
+    </ul>
 
 </div>
 </body>

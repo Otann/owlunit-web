@@ -12,6 +12,7 @@ import com.owlunit.service.cinema.{CinemaException, KeywordService, Keyword}
 object KeywordServiceImpl {
 
   private[cinema] val MetaKeyPrefix = this.getClass.getName
+  private[cinema] val KeySearch = MetaKeyPrefix + ".SEARCH"
   private[cinema] val KeyName = MetaKeyPrefix + ".NAME"
 
   private[cinema] def extract(dao: IiDao, items: Seq[Ii]): Seq[Keyword] = {
@@ -20,11 +21,12 @@ object KeywordServiceImpl {
   }
 
   private[cinema] def extractOne(dao: IiDao, item: Ii): Option[Keyword] = {
-    withMeta(dao, item).metaValue(MetaKeyPrefix) match {
+    val meta = withMeta(dao, item)
+    meta.metaValue(MetaKeyPrefix) match {
       case None => None
       case Some(_) => Some(new Keyword(
-        item.id,
-        item.metaValue(KeywordServiceImpl.KeyName).get
+        meta.id,
+        meta.metaValue(KeywordServiceImpl.KeyName).get
       ))
     }
   }
@@ -40,6 +42,7 @@ class KeywordServiceImpl(dao: IiDao) extends KeywordService {
     val item = dao.createIi
     dao.setMetaUnindexed(item, MetaKeyPrefix, "#")
     dao.setMeta(item, KeyName, sample.name)
+    dao.setMeta(item, KeySearch, sample.name.toLowerCase)
     sample.copy(id = item.id)
   }
 
@@ -58,7 +61,7 @@ class KeywordServiceImpl(dao: IiDao) extends KeywordService {
   }
 
   def search(prefix: String): Seq[Keyword] = {
-    val items = dao.search(KeyName, "%s*" format  prefix)
+    val items = dao.search(KeySearch, "%s*" format prefix.toLowerCase)
     val iterator = items.iterator
     val result = ListBuffer[Keyword]()
     while (iterator.hasNext) {

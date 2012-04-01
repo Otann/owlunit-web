@@ -1,13 +1,12 @@
 package com.owlunit.crawl
 
 import imdb.KeywordsCrawler
-import io.Source
 import com.owlunit.core.ii.IiDao
 import com.codahale.logula.Logging
 import movielens.MoviesCrawler
 import org.apache.log4j.Level
-import com.owlunit.service.cinema.impl.{KeywordServiceImpl, PersonServiceImpl, MovieServiceImpl}
-import com.owlunit.service.cinema.{Keyword, PersonServiceImpl, KeywordServiceImpl, MovieServiceImpl}
+import com.owlunit.service.cinema.{Keyword, PersonService, KeywordService, MovieService}
+import org.neo4j.rest.graphdb._
 
 /**
  * @author Anton Chebotaev
@@ -17,16 +16,15 @@ import com.owlunit.service.cinema.{Keyword, PersonServiceImpl, KeywordServiceImp
 
 object Crawler extends Logging {
 
-  val Neo4jPath = "/Users/anton/Dev/Owls/data"
+  val moviesPath      = "runtime/movielens/movies.dat"
+  val keywordsPath    = "runtime/imdb/keywords.list"
 
-  val moviesPath  = "runtime/movielens/movies.dat"
-  val keywordsPath  = "runtime/imdb/keywords.list"
+  val dao = IiDao.local("/Users/anton/Dev/Owls/data")
+//  val dao = IiDao.remote("http://04e118aa4.hosted.neo4j.org:7034/db/data/", "a9786d4e8", "b72321c25")
 
-  val dao = IiDao(Neo4jPath)
-
-  val keywordService = KeywordServiceImpl(dao)
-  val personService = PersonServiceImpl(dao)
-  val movieService = MovieServiceImpl(dao)
+  val keywordService = KeywordService(dao)
+  val personService = PersonService(dao)
+  val movieService = MovieService(dao)
 
   Logging.configure { log =>
     log.level = Level.INFO
@@ -40,9 +38,13 @@ object Crawler extends Logging {
   def main(args: Array[String]) {
 
     new MoviesCrawler(moviesPath, movieService, keywordService).run()
-
     new KeywordsCrawler(keywordsPath, movieService, keywordService).run()
 
+//    log.debug(keywordService.loadOrCreate("Drama 1").toString)
+//    log.debug(keywordService.loadOrCreate("Drama 2").toString)
+//    log.debug(keywordService.search("dra").mkString("\n", "\n", "\n"))
+    
+    dao.shutdown()
   }
 
 }

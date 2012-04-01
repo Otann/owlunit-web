@@ -22,7 +22,7 @@ public class RecommenderPlainImpl implements Recommender {
     private double weightThreshold = 1.5;
 
     /**
-     * I do know about java code style, but this thing comes from my study research
+     * I do know about java web style, but this thing comes from my study research
      * and to be understandable with that research, i use short names and underscores here.
      * And I'm sorry for that
      */

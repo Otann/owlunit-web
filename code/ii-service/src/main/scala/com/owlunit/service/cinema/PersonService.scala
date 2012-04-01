@@ -1,8 +1,7 @@
 package com.owlunit.service.cinema
 
-import com.owlunit.core.ii.{Ii, IiDao}
-import collection.mutable.ListBuffer
 import impl.PersonServiceImpl
+import com.owlunit.core.ii.IiDao
 
 /**
  * @author Anton Chebotaev
@@ -26,3 +25,8 @@ trait PersonService {
 
 }
 
+object PersonService {
+
+  def apply(dao: IiDao): PersonService = new PersonServiceImpl(dao)
+
+}

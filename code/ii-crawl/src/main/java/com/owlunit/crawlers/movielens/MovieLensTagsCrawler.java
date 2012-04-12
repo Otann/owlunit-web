@@ -1,8 +1,8 @@
 //package com.owlunit.crawlers.movielens;
 //
 //import com.owlunit.crawlers.common.TimeWatch;
-//import com.owlunit.model.cinema.Keyword;
-//import com.owlunit.model.cinema.Movie;
+//import com.owlunit.model.cinema.KeywordIi;
+//import com.owlunit.model.cinema.MovieIi;
 //import com.owlunit.orthodoxal.service.cinema.MovieServiceImpl;
 //import com.owlunit.orthodoxal.service.exception.NotFoundException;
 //import org.slf4j.Logger;
@@ -38,8 +38,8 @@
 //
 //        BufferedReader fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF8"));
 //
-//        Map<String, Keyword> keywordLocalCache = new HashMap<String, Keyword>();
-//        Map<String, Movie> movieLocalCache = new HashMap<String, Movie>();
+//        Map<String, KeywordIi> keywordLocalCache = new HashMap<String, KeywordIi>();
+//        Map<String, MovieIi> movieLocalCache = new HashMap<String, MovieIi>();
 //
 //        TimeWatch watch = TimeWatch.start();
 //
@@ -56,7 +56,7 @@
 //                String externalId = str.substring(0, str.indexOf(':'));
 //                String tagName = str.substring(str.lastIndexOf(':') + 1, str.length()).toLowerCase();
 //
-//                Movie movie = movieLocalCache.get(externalId);
+//                MovieIi movie = movieLocalCache.get(externalId);
 //                if (movie == null) {
 //                    try {
 //                        movie = movieService.loadByExternalId(MoviesCrawler.SERVICE_NAME, externalId);
@@ -68,7 +68,7 @@
 //
 //                watch.tick(log, 2000, "Processing movielens.", "tags");
 //
-//                Keyword keyword = keywordLocalCache.get(tagName);
+//                KeywordIi keyword = keywordLocalCache.get(tagName);
 //                if (keyword == null) {
 //                    keyword = keywordService.createKeyword(tagName);
 //                    keywordLocalCache.put(tagName, keyword);

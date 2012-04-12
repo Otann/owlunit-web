@@ -64,7 +64,7 @@
 //            String year = line.substring(lastSemicolon - 6, lastSemicolon - 2);
 //            String[] genres = line.substring(lastSemicolon + 1, line.length()).split("\\|");
 //
-//            Movie movie = movieService.createMovie(new Movie(0, name, Long.parseLong(year), null));
+//            MovieIi movie = movieService.createMovie(new MovieIi(0, name, Long.parseLong(year), null));
 //            try {
 //                movieService.setExternalId(movie, SERVICE_NAME, id);
 //                if (aka != null) {
@@ -74,7 +74,7 @@
 //                    movieService.setTranslateName(movie, nameTranslate);
 //                }
 //                for (String genre : genres) {
-//                    Keyword tag = keywordService.loadOrCreateKeyword(genre);
+//                    KeywordIi tag = keywordService.loadOrCreateKeyword(genre);
 //                    movieService.addKeyword(movie, tag);
 //                }
 //            } catch (NotFoundException e) {

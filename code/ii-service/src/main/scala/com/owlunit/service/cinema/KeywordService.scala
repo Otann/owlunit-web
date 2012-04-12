@@ -8,27 +8,20 @@ import impl.KeywordServiceImpl
  *         Owls Proprietary
  */
 
-class Keyword(override val id: Long, val name: String) extends CinemaItem(id) {
-
-  def copy(id: Long) = new Keyword(id, this.name)
-
-  override def toString = "Keyword(%d, %s)" format (id, name)
+class KeywordIi(override val id: Long, val name: String) extends CinemaIi(id, name) {
+  def copy(id: Long) = new KeywordIi(id, this.name)
+  override def toString = "KeywordIi(%d, %s)" format (id, name)
 }
 
 trait KeywordService {
 
-  def create(name: String): Keyword
-  def create(sample: Keyword): Keyword
+  def createKeyword(name: String): KeywordIi
+  def createKeyword(sample: KeywordIi): KeywordIi
 
-  def load(name: String): Option[Keyword]
-  def loadOrCreate(name: String): Keyword
+  def loadKeyword(id: Long): Option[KeywordIi]
+  def loadKeyword(name: String): Option[KeywordIi]
+  def loadOrCreateKeyword(name: String): KeywordIi
 
-  def search(prefix: String): Seq[Keyword]
-
-}
-
-object KeywordService {
-
-  def apply(dao: IiDao): KeywordService = new KeywordServiceImpl(dao)
+  def searchKeyword(prefix: String): Seq[KeywordIi]
 
 }

@@ -110,7 +110,14 @@ object IiBuild extends Build {
 
     val db = Seq(Dependency.hector, Dependency.neo4j, Dependency.neo4jREST)
     
-    val lift = Seq(Dependency.liftMapper, Dependency.liftWebKit, Dependency.liftWizard, Dependency.liftWidgets)
+    val lift = Seq(
+      Dependency.liftMapper,
+      Dependency.liftWebKit,
+      Dependency.liftWizard,
+      Dependency.liftWidgets,
+      Dependency.liftMongo,
+      Dependency.auth
+    )
 
     val webPlugin = Seq(
       Dependency.jettyWebapp % "container",
@@ -134,23 +141,26 @@ object IiBuild extends Build {
 
     // Compile
 
-    val neo4j       = "org.neo4j"                 %  "neo4j"              % V.Neo4j
-    val neo4jREST   = "org.neo4j"                 %  "neo4j-rest-graphdb" % "1.7-SNAPSHOT"
-    val hector      = "me.prettyprint"            %  "hector-core"        % V.Hector
+    val neo4j       = "org.neo4j"                 %  "neo4j"               % V.Neo4j
+    val neo4jREST   = "org.neo4j"                 %  "neo4j-rest-graphdb"  % "1.7-SNAPSHOT"
+    val hector      = "me.prettyprint"            %  "hector-core"         % V.Hector
 
-    val spring      = "org.springframework"       %  "spring-context"     % "3.0.5.RELEASE"
-    val dispatch    = "net.databinder"            %% "dispatch-http"      % "0.8.8"
+    val spring      = "org.springframework"       %  "spring-context"      % "3.0.5.RELEASE"
+    val dispatch    = "net.databinder"            %% "dispatch-http"       % "0.8.8"
 
-    val liftWebKit  = "net.liftweb"               %% "lift-webkit"        % V.Lift    % "compile->default"
-    val liftMapper  = "net.liftweb"               %% "lift-mapper"        % V.Lift    % "compile->default"
-    val liftWizard  = "net.liftweb"               %% "lift-wizard"        % V.Lift    % "compile->default"
-    val liftWidgets = "net.liftweb"               %% "lift-widgets"       % V.Lift    % "compile->default"
-    val liftJson    = "net.liftweb"               %% "lift-json"          % V.Lift    % "compile->default"
+    val liftWebKit  = "net.liftweb"               %% "lift-webkit"         % V.Lift    % "compile->default"
+    val liftMapper  = "net.liftweb"               %% "lift-mapper"         % V.Lift    % "compile->default"
+    val liftWizard  = "net.liftweb"               %% "lift-wizard"         % V.Lift    % "compile->default"
+    val liftWidgets = "net.liftweb"               %% "lift-widgets"        % V.Lift    % "compile->default"
+    val liftJson    = "net.liftweb"               %% "lift-json"           % V.Lift    % "compile->default"
+    val liftMongo   = "net.liftweb"               %% "lift-mongodb-record" % V.Lift    % "compile->default"
+    val rogue       = "com.foursquare"            %% "rogue"               % "1.1.6"   intransitive()
+    val auth        = "net.liftmodules"           %% "mongoauth"           % (V.Lift + "-0.3")
 
-    val jettyWebapp = "org.eclipse.jetty"         %  "jetty-webapp"       % V.Jetty
-    val jettyServer = "org.eclipse.jetty"         %  "jetty-server"       % V.Jetty
-    val servlet     = "org.eclipse.jetty"         %  "jetty-servlet"      % V.Jetty
-    val logging     = "com.codahale"              %% "logula"             % "2.1.3"
+    val jettyWebapp = "org.eclipse.jetty"         %  "jetty-webapp"        % V.Jetty
+    val jettyServer = "org.eclipse.jetty"         %  "jetty-server"        % V.Jetty
+    val servlet     = "org.eclipse.jetty"         %  "jetty-servlet"       % V.Jetty
+    val logging     = "com.codahale"              %% "logula"              % "2.1.3"
 
   }
 

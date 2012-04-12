@@ -2,8 +2,8 @@
 //
 //import com.owlunit.crawlers.common.CassandraCrawler;
 //import com.owlunit.crawlers.common.TimeWatch;
-//import com.owlunit.model.cinema.Movie;
-//import com.owlunit.model.cinema.Person;
+//import com.owlunit.model.cinema.MovieIi;
+//import com.owlunit.model.cinema.PersonIi;
 //import com.owlunit.orthodoxal.service.cinema.MovieServiceImpl;
 //import com.owlunit.orthodoxal.service.cinema.PersonServiceImpl;
 //import com.owlunit.orthodoxal.service.exception.NotFoundException;
@@ -16,11 +16,11 @@
 //import java.util.regex.Pattern;
 //
 ///**
-// * Rocket Science Software
-// *
-// * @author Ilya Pimenov
-// * @author Anton Chebotaev
-// */
+//* Rocket Science Software
+//*
+//* @author Ilya Pimenov
+//* @author Anton Chebotaev
+//*/
 //public class ImdbPersonCrawler extends CassandraCrawler {
 //
 //    public static final String DEFAULT_EMPTY_NAME = "";
@@ -56,7 +56,7 @@
 //        String movieName;
 //        long year;
 //
-//        List<Movie> movies = new ArrayList<Movie>();
+//        List<MovieIi> movies = new ArrayList<MovieIi>();
 //
 //        TimeWatch timer = TimeWatch.start();
 //
@@ -75,7 +75,7 @@
 //                    // Means we found new person, so store everything for old person
 //                    flushMoviesForPerson(personName, movies);
 //                    if (!movies.isEmpty()) {
-//                        movies = new LinkedList<Movie>();
+//                        movies = new LinkedList<MovieIi>();
 //                    }
 //
 //                    personName = personMovieMatcher.group(1).trim();
@@ -89,7 +89,7 @@
 //                }
 //
 //                try {
-//                    Movie movie = movieService.loadByName(movieName, year);
+//                    MovieIi movie = movieService.loadByName(movieName, year);
 //                    movies.add(movie);
 //                } catch (NotFoundException e) {
 //                    //noinspection UnnecessaryContinue
@@ -109,15 +109,15 @@
 //        log.info(String.format("Processed %d persons all-in-all.", actorsCount));
 //    }
 //
-//    private void flushMoviesForPerson(String personName, Collection<Movie> movies) throws NotFoundException {
+//    private void flushMoviesForPerson(String personName, Collection<MovieIi> movies) throws NotFoundException {
 //        if (personName != null && movies != null && !movies.isEmpty()) {
 //            String[] fullName = splitName(personName);
-//            Person person = personService.findOrCreate(new Person(0, fullName[0], fullName[1], null));
+//            PersonIi person = personService.findOrCreate(new PersonIi(0, fullName[0], fullName[1], null));
 //            if (!person.getRoles().contains(Role.valueOf(role))) {
 //                personService.addRole(person, Role.valueOf(role));
 //            }
 //            actorsCount++;
-//            for (Movie movie : movies) {
+//            for (MovieIi movie : movies) {
 //                movieService.addPerson(movie, person, Role.valueOf(role));
 //            }
 //        }

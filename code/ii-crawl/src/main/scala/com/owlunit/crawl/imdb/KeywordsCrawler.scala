@@ -4,16 +4,14 @@ import com.codahale.logula.Logging
 import io.Source
 import collection.mutable.{Map => MutableMap}
 import com.owlunit.crawl.Counter
-import com.owlunit.service.cinema.{MovieService, KeywordService}
+import com.owlunit.service.cinema.CinemaService
 
 /**
  * @author Anton Chebotaev
  *         Owls Proprietary
  */
 
-class KeywordsCrawler( sourcePath: String,
-                       movieService: MovieService,
-                       keywordService: KeywordService) extends  Logging {
+class KeywordsCrawler(sourcePath: String, cinemaService: CinemaService) extends  Logging {
 
   val keywordsExtractor = """([^\s]+ \(\d+\))""".r
   val keywordExtractor = """([^\s]+) \((\d+)\)""".r
@@ -55,11 +53,11 @@ class KeywordsCrawler( sourcePath: String,
       try {
 
         val keywordLine(name, yearRaw, keywordRaw) = line
-        val movie = movieService.load(name, yearRaw.toInt)
+        val movie = cinemaService.loadMovie(name, yearRaw.toInt)
 
         if (movie.isDefined) {
-          val keyword = keywordService.loadOrCreate(capitalizeKeyword(keywordRaw))
-          movieService.addKeyword(movie.get, keyword, frequencies(keywordRaw))
+          val keyword = cinemaService.loadOrCreateKeyword(capitalizeKeyword(keywordRaw))
+          cinemaService.addKeyword(movie.get, keyword, frequencies(keywordRaw))
           timer.tick(log, 50000, "movie-keyword relations")
         }
       } catch {
@@ -70,6 +68,5 @@ class KeywordsCrawler( sourcePath: String,
     }
 
   }
-
 
 }

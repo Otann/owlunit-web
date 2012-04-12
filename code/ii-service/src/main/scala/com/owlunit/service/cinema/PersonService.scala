@@ -8,25 +8,21 @@ import com.owlunit.core.ii.IiDao
  *         Owls Proprietary
  */
 
-class Person (override val id: Long,
+class PersonIi (override val id: Long,
               val name: String,
-              val surname: String) extends CinemaItem(id) {
+              val surname: String) extends CinemaIi(id, name + " " + surname) {
 
-  def copy(id: Long) = new Person(id, this.name, this.surname)
+  def copy(id: Long) = new PersonIi(id, this.name, this.surname)
 
+  override def toString = "PersonIi(%s %s)" format (name, surname)
 }
 
 trait PersonService {
 
-  def create(sample: Person): Person
-  def load(name: String, surname: String): Option[Person]
-  def loadOrCreate(name: String, surname: String): Person
-  def search(prefix: String): Seq[Person]
-
-}
-
-object PersonService {
-
-  def apply(dao: IiDao): PersonService = new PersonServiceImpl(dao)
+  def createPerson(sample: PersonIi): PersonIi
+  def loadPerson(id: Long): Option[PersonIi]
+  def loadPerson(name: String, surname: String): Option[PersonIi]
+  def loadOrCreatePerson(name: String, surname: String): PersonIi
+  def searchPerson(prefix: String): Seq[PersonIi]
 
 }

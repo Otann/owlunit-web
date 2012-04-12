@@ -8,23 +8,21 @@ import impl.MovieServiceImpl
  *         Owls Proprietary
  */
 
-class Movie(override val id: Long,
+class MovieIi(override val id: Long,
             val name: String,
             val year: Int,
-            val description: String = "",
-            val tags: Set[Keyword] = Set.empty,
-            val persons: Map[Role.Value, Set[Person]] = Map.empty) extends CinemaItem(id) {
+            val tags: Set[KeywordIi] = Set.empty,
+            val persons: Map[Role.Value, Set[PersonIi]] = Map.empty) extends CinemaIi(id, name) {
 
-  def copy(id: Long) = new Movie(
+  def copy(id: Long) = new MovieIi(
     id,
     this.name,
     this.year,
-    this.description,
     this.tags,
     this.persons
   )
 
-  override def toString = "Movie(%d, %s/%d)" format (id, name, year)
+  override def toString = "MovieIi(%d, %s/%d)" format (id, name, year)
 
 }
 
@@ -37,17 +35,13 @@ object Role extends Enumeration {
 
 trait MovieService {
 
-  def create(sample: Movie): Movie
-  def create(name: String, year: Int): Movie
-  def load(name: String, year: Int): Option[Movie]
-  def search(query: String): Seq[Movie]
-  def addKeyword(movie: Movie, keyword: Keyword, startFrequency: Int): Movie
-  def addPerson(movie: Movie, person: Person, newRole: Role.Value): Movie
+  def createMovie(sample: MovieIi): MovieIi
+  def createMovie(name: String, year: Int): MovieIi
+  def loadMovie(id: Long): Option[MovieIi]
+  def loadMovie(name: String, year: Int): Option[MovieIi]
+  def searchMovie(query: String): Seq[MovieIi]
 
-}
-
-object MovieService {
-
-  def apply(dao: IiDao): MovieService = new MovieServiceImpl(dao)
+  def addKeyword(movie: MovieIi, keyword: KeywordIi, startFrequency: Int): MovieIi
+  def addPerson(movie: MovieIi, person: PersonIi, newRole: Role.Value): MovieIi
 
 }

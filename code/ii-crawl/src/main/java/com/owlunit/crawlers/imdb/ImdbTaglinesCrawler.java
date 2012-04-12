@@ -2,7 +2,7 @@
 //
 //import com.owlunit.crawlers.common.CassandraCrawler;
 //import com.owlunit.crawlers.common.TimeWatch;
-//import com.owlunit.model.cinema.Movie;
+//import com.owlunit.model.cinema.MovieIi;
 //import com.owlunit.orthodoxal.service.cinema.MovieServiceImpl;
 //import com.owlunit.orthodoxal.service.exception.NotFoundException;
 //import org.slf4j.Logger;
@@ -55,7 +55,7 @@
 //        TimeWatch watch = TimeWatch.start();
 //
 //        String line = reader.readLine();
-//        Movie movieItem = null;
+//        MovieIi movieItem = null;
 //        StringBuffer buffer = new StringBuffer();
 //
 //        while (line != null) {

@@ -2,8 +2,8 @@
 //
 //import com.owlunit.crawlers.common.CassandraCrawler;
 //import com.owlunit.crawlers.common.TimeWatch;
-//import com.owlunit.model.cinema.Keyword;
-//import com.owlunit.model.cinema.Movie;
+//import com.owlunit.model.cinema.KeywordIi;
+//import com.owlunit.model.cinema.MovieIi;
 //import com.owlunit.orthodoxal.service.cinema.MovieServiceImpl;
 //import com.owlunit.orthodoxal.service.exception.NotFoundException;
 //import com.owlunit.service.cinema.KeywordServiceImpl;
@@ -101,7 +101,7 @@
 //
 //        String line = reader.readLine();
 //        String oldMovieName = null;
-//        Movie movie = null;
+//        MovieIi movie = null;
 //
 //        while (line != null) {
 //            try {
@@ -131,7 +131,7 @@
 //                if (movie == null)
 //                    continue;
 //
-//                Keyword keyword = null;
+//                KeywordIi keyword = null;
 //                if (localCache.containsKey(keywordName)) {
 //                    try {
 //                        keyword = keywordService.loadById(localCache.get(keywordName));

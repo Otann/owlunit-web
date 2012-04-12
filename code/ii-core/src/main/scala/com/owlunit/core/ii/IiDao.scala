@@ -34,6 +34,7 @@ trait IiDao {
   def loadParents(item: Ii): Ii
 
   def getIndirectComponents(item: Ii): Map[Ii, Double]
+  def recommender: Recommender //TODO for the lack of better ideas =(
 
   def init()
   def shutdown()
@@ -42,13 +43,6 @@ trait IiDao {
 object IiDao {
 
   val DefaultDepth = 3
-  private val instances = MutableMap[String, IiDao]()
-
-//  def apply(path: String, depth: Int = DefaultDepth): IiDao = synchronized {
-//    if (!instances.contains(path))
-//      instances(path) = new NeoIiDao(path, depth)
-//    instances(path)
-//  }
 
   def apply(graph: GraphDatabaseService, depth: Int = DefaultDepth): IiDao = new NeoIiDao(graph, depth)
 
@@ -61,5 +55,6 @@ object IiDao {
     new RestGraphDatabase(url, login, password),
     depth
   )
+
 
 }

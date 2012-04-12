@@ -49,4 +49,10 @@ private[ii] object NeoIi {
     else
       throw new IllegalArgumentException("This dao can not operate with item " + item.toString)
 
+  def unapply(item: Ii): Option[NeoIi] =
+    if (item.isInstanceOf[NeoIi])
+      Some(item.asInstanceOf[NeoIi])
+    else
+      None
+
 }

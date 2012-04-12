@@ -3,6 +3,7 @@ package com.owlunit.service.cinema.impl
 import com.owlunit.core.ii.{Ii, IiDao}
 import collection.mutable.ListBuffer
 import com.owlunit.service.cinema._
+import exception.CinemaException
 
 /**
  * @author Anton Chebotaev
@@ -12,18 +13,18 @@ import com.owlunit.service.cinema._
 object MovieServiceImpl {
 
 
-  private val MetaKeyPrefix = this.getClass.getName
+  private[cinema] val MetaKeyPrefix = this.getClass.getName
   private[cinema] val KeyName         = MetaKeyPrefix + ".NAME"
   private[cinema] val KeyYear         = MetaKeyPrefix + ".YEAR"
   private[cinema] val KeySearch       = MetaKeyPrefix + ".SEARCH"
-  private[cinema] val KeySimpleName   = MetaKeyPrefix + ".SIMPLE_NAME"
+  private[cinema] val KeyIndex        = MetaKeyPrefix + ".SIMPLE_NAME"
   private[cinema] val KeyDescription  = MetaKeyPrefix + ".DESCRIPTION"
   private[cinema] val KeyPersonIds    = MetaKeyPrefix + ".PERSON"
 
   private[cinema] val PersonSeparator = "#"
   private[cinema] val RoleSeparator = "@"
 
-  private[cinema] def extractOne(dao: IiDao, item: Ii): Option[Movie] = {
+  private[cinema] def extractOne(dao: IiDao, item: Ii): Option[MovieIi] = {
     val ii = withComponents(dao, withMeta(dao, item))
     ii.metaValue(MetaKeyPrefix) match {
       case None => None
@@ -36,11 +37,10 @@ object MovieServiceImpl {
         val personsRaw = for (role <- Role.values) yield
           role -> allPersons.filter(p => map.getOrElse(p.id, Set()).contains(role)).toSet
 
-        new Movie(
+        new MovieIi(
           id          = ii.id,
           name        = ii.metaValue(KeyName).get,
           year        = ii.metaValue(KeyYear).get.toInt,
-          description = ii.metaValue(KeyDescription).get,
           tags        = KeywordServiceImpl.extract(dao, components).toSet,
           persons     = personsRaw.toMap
         )
@@ -70,8 +70,10 @@ object MovieServiceImpl {
   private def simplifyName(title: String, year: Int) = simplifyComplexName(title, "##", year)
 }
 
-class MovieServiceImpl(dao: IiDao) extends MovieService {
+trait MovieServiceImpl extends MovieService {
   import MovieServiceImpl._
+
+  def dao: IiDao
 
   //TODO Anton Chebotaev - move to some other place
   val maxCounter = 1000;
@@ -83,22 +85,25 @@ class MovieServiceImpl(dao: IiDao) extends MovieService {
     Role.Producer -> 60.0
   )
 
-  def create(name: String, year: Int): Movie = create(new Movie(0, name, year))
-  def create(sample: Movie): Movie = {
+  def createMovie(name: String, year: Int): MovieIi = createMovie(new MovieIi(0, name, year))
+
+  def createMovie(sample: MovieIi): MovieIi = {
     val item = dao.createIi
     dao.setMetaUnindexed(item, MetaKeyPrefix, "#")
 
     dao.setMeta(item, KeySearch, sample.name.toLowerCase)
-    dao.setMeta(item, KeySimpleName, simplifyName(sample.name, sample.year))
+    dao.setMeta(item, CinemaServiceImpl.KeySearch, sample.name.toLowerCase)
+    dao.setMeta(item, KeyIndex, simplifyName(sample.name, sample.year))
     dao.setMetaUnindexed(item, KeyName, sample.name)
     dao.setMetaUnindexed(item, KeyYear, sample.year.toString)
-    dao.setMetaUnindexed(item, KeyDescription, sample.description)
 
     sample.copy(id = item.id)
   }
 
-  def load(name: String, year: Int): Option[Movie] = {
-    val items = dao.load(KeySimpleName, simplifyName(name, year))
+  def loadMovie(id: Long): Option[MovieIi] = extractOne(dao, dao.load(id))
+
+  def loadMovie(name: String, year: Int): Option[MovieIi] = {
+    val items = dao.load(KeyIndex, simplifyName(name, year))
     items.size match {
       case 0 => None
       case 1 => extractOne(dao, items.iterator.next())
@@ -106,10 +111,10 @@ class MovieServiceImpl(dao: IiDao) extends MovieService {
     }
   }
 
-  def search(query: String) = {
-    val items = dao.search(KeySearch, "%s*" format query.toLowerCase)
+  def searchMovie(query: String) = {
+    val items = dao.search(KeySearch, buildQuery(query))
     val iterator = items.iterator
-    val result = ListBuffer[Movie]()
+    val result = ListBuffer[MovieIi]()
     while (iterator.hasNext) {
       val k = extractOne(dao, iterator.next())
       if (k.isDefined)
@@ -119,7 +124,7 @@ class MovieServiceImpl(dao: IiDao) extends MovieService {
     result
   }
 
-  def addKeyword(movie: Movie, keyword: Keyword, startFrequency: Int): Movie = {
+  def addKeyword(movie: MovieIi, keyword: KeywordIi, startFrequency: Int): MovieIi = {
     val movieIi = dao.load(movie.id)
     val keywordIi = dao.load(keyword.id)
 
@@ -130,7 +135,7 @@ class MovieServiceImpl(dao: IiDao) extends MovieService {
     extractOne(dao, updated).get // TODO possible update here
   }
 
-  def addPerson(movie: Movie, person: Person, newRole: Role.Value): Movie = {
+  def addPerson(movie: MovieIi, person: PersonIi, newRole: Role.Value): MovieIi = {
 
     if (movie.persons(newRole).contains(person))
       return movie

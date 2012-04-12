@@ -15,38 +15,10 @@ import org.neo4j.graphdb._
  *         Owls Proprietary
  */
 
-
-private[ii] object NeoIiDao {
-
-  private val IndexName = "ITEMS_INDEX"
-  private val WeightPropertyName = "WEIGHT"
-
-  private object RelType extends RelationshipType {
-    def name() = "CONNECTED"
-  }
-
-  private def getRelation(a: Node, b: Node): Option[Relationship] = {
-    val aIter = a.getRelationships(RelType).iterator()
-    val bIter = b.getRelationships(RelType).iterator()
-
-    while (aIter.hasNext && bIter.hasNext) {
-      val aRel = aIter.next()
-      if (aRel.getEndNode == b)
-        return Some(aRel)
-
-      val bRel = bIter.next()
-      if (bRel.getEndNode == b)
-        return Some(bRel)
-    }
-
-    None
-  }
-
-}
-
-private[ii] class NeoIiDao(graph: GraphDatabaseService, depth: Int) extends IiDao {
+private[ii] class NeoIiDao(graph: GraphDatabaseService, defaultDepth: Int) extends IiDao {
 
   private val index = graph.index().forNodes(NeoIiDao.IndexName)
+  val recommender = new NeoRecommender(this)
 
   def init() { ShutdownHookThread { shutdown() } }
   def shutdown() { graph.shutdown() }
@@ -181,77 +153,72 @@ private[ii] class NeoIiDao(graph: GraphDatabaseService, depth: Int) extends IiDa
   }
 
   def loadComponents(item: Ii): Ii = {
-    val items = MutableMap[Ii, Double]()
-
-    val relsIterator = item.node.getRelationships(NeoIiDao.RelType, Direction.OUTGOING).iterator()
-    while (relsIterator.hasNext) {
-      val rel = relsIterator.next()
-      val n = rel.getEndNode
-      val w = rel.getProperty(NeoIiDao.WeightPropertyName).asInstanceOf[Double]
-
-      items += (Ii(n) -> w)
-    }
-
-    item.copy(components = Some(items.toMap))
+    val nodes = getNodes(item.node, Direction.OUTGOING, 1)
+    val items = nodes.map {case (n, w) => Ii(n) -> w}
+    item.copy(components = Some(items))
   }
 
 
   def loadParents(item: Ii): Ii = {
-    val items = MutableMap[Ii, Double]()
-
-    val relsIterator = item.node.getRelationships(NeoIiDao.RelType, Direction.INCOMING).iterator()
-    while (relsIterator.hasNext) {
-      val rel = relsIterator.next()
-      val n = rel.getEndNode
-      val w = rel.getProperty(NeoIiDao.WeightPropertyName).asInstanceOf[Double]
-
-      items + (Ii(n) -> w)
-    }
-
-    item.copy(parents = Some(items.toMap))
+    val nodes = getNodes(item.node, Direction.INCOMING, 1)
+    val items = nodes.map {case (n, w) => Ii(n) -> w}
+    item.copy(parents = Some(items))
   }
 
-  def getIndirectComponents(item: Ii) = {
+  def getIndirectComponents(item: Ii) = getIndirectNodes(item.node).map{case (n, w) => Ii(n) -> w}
+
+  private[ii] def getIndirectNodes(node: Node):Map[Node,  Double] = getNodes(node, Direction.OUTGOING, defaultDepth)
+
+  private[ii] def getNodes(start: Node, direction: Direction, depth: Int): Map[Node, Double] = {
+    
     val nodes = MutableMap[Node, Double]()
 
-    val traverserIterator = Traversal.description()
-      .breadthFirst()
-      .relationships(NeoIiDao.RelType, Direction.OUTGOING)
-      .uniqueness(Uniqueness.NODE_PATH)
-      .evaluator(Evaluators.excludeStartPosition())
-      .evaluator(Evaluators.toDepth(depth))
-      .traverse(item.node)
-      .iterator()
-
-    while (traverserIterator.hasNext) {
-      val path = traverserIterator.next()
-
-      var weight = 0.0
-      var qualifier = 1
-
-      val relIterator = path.relationships().iterator()
-      while (relIterator.hasNext) {
-        val rel = relIterator.next()
+    if (depth == 1) {
+      val relsIterator = start.getRelationships(NeoIiDao.RelType, direction).iterator()
+      while (relsIterator.hasNext) {
+        val rel = relsIterator.next()
+        val n = rel.getOtherNode(start)
         val w = rel.getProperty(NeoIiDao.WeightPropertyName).asInstanceOf[Double]
-        weight += w / qualifier
-        qualifier <<= 1
-      }
 
-      val node = path.endNode()
-      nodes get node match {
-        case Some(x) => nodes(node) = x + weight
-        case None => nodes(node) = weight
+        nodes += (n -> w)
       }
+    } else {
 
+      val traverserIterator = Traversal.description()
+        .breadthFirst()
+        .relationships(NeoIiDao.RelType, direction)
+        .uniqueness(Uniqueness.NODE_PATH)
+        .evaluator(Evaluators.excludeStartPosition())
+        .evaluator(Evaluators.toDepth(depth))
+        .traverse(start)
+        .iterator()
+
+      while (traverserIterator.hasNext) {
+        val path = traverserIterator.next()
+
+        var weight = 0.0
+        var qualifier = 1
+
+        val relIterator = path.relationships().iterator()
+        while (relIterator.hasNext) {
+          val rel = relIterator.next()
+          val w = rel.getProperty(NeoIiDao.WeightPropertyName).asInstanceOf[Double]
+          weight += w / qualifier
+          qualifier <<= 1
+        }
+
+        val node = path.endNode()
+        nodes get node match {
+          case Some(x) => nodes(node) = x + weight
+          case None => nodes(node) = weight
+        }
+
+      }
     }
 
-    val result = MutableMap[Ii, Double]()
-    for ((node, weight) <- nodes) {
-      result + (Ii(node) -> weight)
-    }
-
-    result.toMap
+    nodes.toMap
   }
+
 
   def withTx[T <: Any](operation: => T): T = {
     val tx = synchronized {
@@ -264,6 +231,34 @@ private[ii] class NeoIiDao(graph: GraphDatabaseService, depth: Int) extends IiDa
     } finally {
       tx.finish()
     }
+  }
+
+}
+
+private[ii] object NeoIiDao {
+
+  private val IndexName = "ITEMS_INDEX"
+  private val WeightPropertyName = "WEIGHT"
+
+  private object RelType extends RelationshipType {
+    def name() = "CONNECTED"
+  }
+
+  private def getRelation(a: Node, b: Node): Option[Relationship] = {
+    val aIter = a.getRelationships(RelType).iterator()
+    val bIter = b.getRelationships(RelType).iterator()
+
+    while (aIter.hasNext && bIter.hasNext) {
+      val aRel = aIter.next()
+      if (aRel.getEndNode == b)
+        return Some(aRel)
+
+      val bRel = bIter.next()
+      if (bRel.getEndNode == b)
+        return Some(bRel)
+    }
+
+    None
   }
 
 }

@@ -1,0 +1,31 @@
+<div id="main" class="lift:surround?with=default_bootstrap;at=content">
+
+    <div class="row-fluid crud">
+        <!--<img alt="" id="ajax-loader" style="position:absolute; top: 70px; right: 70px; display:none; margin-bottom: 0px; margin-left: 5px" src="/img/ajax-loader.gif">-->
+        <div class="span5 lift:admin.Crud.createKeyword">
+            <h2>Admin Section</h2>
+            <p>Use quick search at the top-right to easyly navigate through items </p>
+
+            <!-- Create keyword -->
+            <form class="lift:form.ajax well form-inline">
+
+                <h3>Create Keyword</h3>
+                <input type="text" placeholder="Name">
+                <button type="submit" class="btn">Create</button>
+            </form>
+
+        </div><!--/span-->
+
+        <div class="span4">
+            <lift:Msg id="admin"/>
+        </div><!--/span-->
+
+    </div><!--/row-->
+
+
+    <script type="text/javascript">
+        // fixes issue when lift clears class value on ajax-form
+        jq17(".crud form").addClass("well form-inline")
+    </script>
+
+</div>

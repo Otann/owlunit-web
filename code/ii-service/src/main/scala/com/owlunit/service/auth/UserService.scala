@@ -5,10 +5,11 @@ package com.owlunit.service.auth
  *         Owls Proprietary
  */
 
-case class User(id: Long,
-                login: String,
-                password: String) {}
+class User(id: Long, externalId: String) {}
 
-class UserService {
+trait UserService {
+
+  def createUser(externalId: String): User
+  
 
 }

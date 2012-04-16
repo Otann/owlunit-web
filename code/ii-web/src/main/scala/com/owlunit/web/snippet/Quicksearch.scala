@@ -28,14 +28,13 @@ class Quicksearch {
 
   //TODO: drag n drop - http://comments.gmane.org/gmane.comp.web.lift/32712
 
-  lazy val cinemaService = DependencyFactory.inject[CinemaService] openOr CinemaServiceStub
+  // Fallback - use DependencyFactory.cinemaService.make
+//  lazy val cinemaService = DependencyFactory.inject[CinemaService] openOr CinemaServiceStub
+  lazy val cinemaService = DependencyFactory.cinemaService.make openOr CinemaServiceStub
   lazy val log = Logger(this.getClass)
 
   val minChars = 3
-
-  val inputId = nextFuncName
   val resultsId = nextFuncName
-  val dropdowenId = nextFuncName
 
   def onChange = SHtml.onEvent(prefix => {
     if (prefix.length >= 3) {
@@ -58,11 +57,7 @@ class Quicksearch {
   }
 
   def render = {
-
-    "name=search [name]" #> inputId &
-      "name=search [id]" #> inputId &
       "name=search [oninput]" #> onChange &
-    //
       ".dropdown-menu [id]" #> resultsId &
       "form [class]" #> "navbar-search pull-right"
   }

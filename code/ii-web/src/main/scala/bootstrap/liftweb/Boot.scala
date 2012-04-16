@@ -31,10 +31,7 @@ class Boot {
 
     LiftRules.setSiteMapFunc(Site.sitemap _)
 
-    LiftRules.statefulRewrite.append {
-      case RewriteRequest(ParsePath("admin" :: "item" :: itemNo :: Nil,_,_,_),_,_) =>
-        RewriteResponse("admin" :: "item" :: Nil, Map("itemNo" -> itemNo))
-    }
+    LiftRules.statefulRewrite.append(Site.statefulRewrites)
 
     LiftRules.jsArtifacts = net.liftweb.http.js.jquery.JQuery14Artifacts
 
@@ -43,7 +40,7 @@ class Boot {
     LiftRules.ajaxEnd = Full(() => LiftRules.jsArtifacts.hide("ajax-loader").cmd)
 
     // Fade-out for notices
-    LiftRules.noticesAutoFadeOut.default.set((noticeType: NoticeType.Value) => Full(1 seconds, 2 seconds))
+//    LiftRules.noticesAutoFadeOut.default.set((noticeType: NoticeType.Value) => Full(1 seconds, 2 seconds))
 
     // Force the request to be UTF-8
     LiftRules.early.append(_.setCharacterEncoding("UTF-8"))

@@ -16,8 +16,18 @@
 
         </div><!--/span-->
 
+        <!--<div lift="register_screen"></div>-->
+
         <div class="span4">
-            <lift:Msg id="admin"/>
+            <span class="lift:test_cond.loggedin">
+                <h1>LOGGED IN DICK!</h1>
+            </span>
+            <span class="lift:test_cond.loggedout">
+                <h1>LOGGED OUT DICK!</h1>
+            </span>
+            <span class="lift:admin.Crud.two">TWO</span>
+            <div lift="admin.BootstrapAlerts.render?showall=true"></div>
+            <div lift="Msgs"></div>
         </div><!--/span-->
 
     </div><!--/row-->

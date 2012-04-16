@@ -4,8 +4,9 @@ import scala.xml._
 
 import net.liftweb._
 import common._
-import http.NoticeType
+import http.{S, NoticeType}
 import json._
+import sitemap.Menu
 import util.CssSel
 import util.Helpers._
 
@@ -65,14 +66,14 @@ trait AppHelpers {
     def asJValue: JValue = ("error" -> ("message" -> message) ~ ("level" -> level.title))
   }
   object JsonAlert {
-    def info(msg: String): JsonAlert = JsonAlert(msg, NoticeType.Notice)
-    def error(msg: String): JsonAlert = JsonAlert(msg, NoticeType.Error)
+    def info(msg: String):    JsonAlert = JsonAlert(msg, NoticeType.Notice)
+    def error(msg: String):   JsonAlert = JsonAlert(msg, NoticeType.Error)
     def warning(msg: String): JsonAlert = JsonAlert(msg, NoticeType.Warning)
   }
 
   object AsObjectId {
     def unapply(in: String): Option[ObjectId] = asObjectId(in)
-     private def asObjectId(in: String): Option[ObjectId] =
+    private def asObjectId(in: String): Option[ObjectId] =
       if (ObjectId.isValid(in)) Some(new ObjectId(in))
       else None
   }

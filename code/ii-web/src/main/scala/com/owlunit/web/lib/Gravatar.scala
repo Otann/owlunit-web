@@ -13,12 +13,10 @@ import net.liftweb.http.Factory
  */
 
 object Gravatar extends Factory with Loggable {
-  /*
-   * config
-   */
+
   val defaultRating = new FactoryMaker[String]("G") {}
-  val defaultSize = new FactoryMaker[Int](42) {}
-  val defaultImage = new FactoryMaker[String]("") {}
+  val defaultSize   = new FactoryMaker[Int](100) {}
+  val defaultImage  = new FactoryMaker[String]("") {}
 
   /**
    * @param email The email address of the recipient
@@ -32,7 +30,7 @@ object Gravatar extends Factory with Loggable {
                 default: String = defaultImage.vend
                 ): String = {
     val url = "http://www.gravatar.com/avatar/%s?s=%s&r=%s" format (getMD5(email), size.toString, rating)
-    if (default.length > 0) "%s&d=%s".format(url, Helpers.urlEncode(default)) else url
+    if (default.length > 0) "%s&d=%s" format (url, Helpers.urlEncode(default)) else url
   }
 
   def imgTag( email: String,

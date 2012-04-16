@@ -1,52 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
-    <title>Home</title>
-</head>
-<body class="lift:content_id=main">
-<div id="main" class="lift:surround?with=default_new;at=content">
+<div lift="surround?with=default;at=content">
 
-    <div class="set-controls">
-        <div class="set-name">
-            <form action="">
-                <fieldset>
-                    <input value="" placeholder="Add name of the set here" type="text"/>
-                </fieldset>
-            </form>
-        </div>
-        <div class="set-add">
-            <a href="#">Save & Subscribe</a>
-        </div>
-    </div>
+    <div lift="admin.BootstrapAlerts.render"></div>
 
-    <ul class="movie-list" data-lift="Movies">
+    <!--<div lift="TestScreen.button"></div>-->
+    <!--<div lift="TestScreen.render?ajax=true"></div>-->
 
-        <!-- MovieIi -->
-        <li>
-            <div class="title">
-                <span class="ii" ii-helper="movie-name">Ocean's Twelve</span>
-                <ul class="actions">
-                    <li class="watch-toggler">Watched</li>
-                </ul>
-            </div>
-
-            <div class="ratingbar">
-                <div class="rating" ii-helper="percentage" style="width: 95%"></div>
-            </div>
-
-            <div class="poster" ii-helper="backdrop" style="background: url(/i/temp/poster.png)">
-            </div>
-
-            <ul class="tags clearfix">
-                <li class="tag" ii-helper="tag"><span class="ii">Sequel</span></li>
-                <li class="more"><a href="#">Full profile...</a></li>
-            </ul>
-        </li>
-
-    </ul>
+    <div lift="admin.TestAdminScreen.modalButton"></div>
+    <div lift="admin.TestAdminScreen.render?ajax=true"></div>
 
 </div>
-</body>
-</html>
 

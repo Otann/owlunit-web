@@ -71,10 +71,7 @@ object User extends User with ProtoAuthUserMeta[User] with Loggable {
 
   def findByEmail(in: String): Box[User] = find(email.name, in)
   def findByUsername(in: String): Box[User] = find(username.name, in)
-
-  def findByStringId(id: String): Box[User] =
-    if (ObjectId.isValid(id)) find(new ObjectId(id))
-    else Empty
+  def findByStringId(id: String): Box[User] = if (ObjectId.isValid(id)) find(new ObjectId(id)) else Empty
 
   override def onLogIn: List[User => Unit] = List((user: User) => User.loginCredentials.remove())
   override def onLogOut: List[Box[User] => Unit] = List(
@@ -85,8 +82,6 @@ object User extends User with ProtoAuthUserMeta[User] with Loggable {
   /*
    * MongoAuth vars
    */
-  private lazy val siteName = MongoAuth.siteName.vend
-  private lazy val sysUsername = MongoAuth.systemUsername.vend
   private lazy val indexUrl = MongoAuth.indexUrl.vend
   private lazy val registerUrl = MongoAuth.registerUrl.vend
   private lazy val loginTokenAfterUrl = MongoAuth.loginTokenAfterUrl.vend
@@ -120,38 +115,10 @@ object User extends User with ProtoAuthUserMeta[User] with Loggable {
     Full(resp)
   }
 
-  // send an email to the user with a link for logging in
-  def sendLoginToken(user: User): Unit = {
-    import net.liftweb.util.Mailer._
-
-    val token = LoginToken.createForUserId(user.id.is)
-
-    val msgTxt =
-      """
-        |Someone requested a link to change your password on the %s website.
-        |
-        |If you did not request this, you can safely ignore it. It will expire 48 hours from the time this message was sent.
-        |
-        |Follow the link below or copy and paste it into your internet browser.
-        |
-        |%s
-        |
-        |Thanks,
-        |%s
-      """.format(siteName, token.url, sysUsername).stripMargin
-
-    sendMail(
-      From(MongoAuth.systemFancyEmail),
-      Subject("%s Password Help".format(siteName)),
-      To(user.fancyEmail),
-      PlainMailBodyType(msgTxt)
-    )
-  }
-
   /*
    * ExtSession
    */
-  def createExtSession(uid: ObjectId) = ExtSession.createExtSession(uid)
+  def createExtSession(uid: ObjectId) { ExtSession.createExtSession(uid) }
 
   /*
   * Test for active ExtSession.
@@ -176,4 +143,4 @@ object User extends User with ProtoAuthUserMeta[User] with Loggable {
   object regUser extends SessionVar[User](createRecord.email(loginCredentials.is.email).asInstanceOf[User])
 }
 
-case class LoginCredentials(email: String, isRememberMe: Boolean = false)
+case class LoginCredentials(email: String)

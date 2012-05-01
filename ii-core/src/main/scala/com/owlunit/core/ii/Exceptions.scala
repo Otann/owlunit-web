@@ -5,7 +5,6 @@ package com.owlunit.core.ii
  *         Owls Proprietary
  */
 
-
 class DAOException(reason: String, ex: Exception) extends RuntimeException(reason, ex) {
 
   def this(reason: String) = this(reason, null)

@@ -1,8 +1,5 @@
 package com.owlunit.core.ii
 
-import impl.{NeoRecommender, NeoIiDao}
-
-
 /**
   * @author Anton Chebotaev
   *         Owls Proprietary

@@ -1,6 +1,5 @@
 package com.owlunit.core.ii
 
-import impl.NeoIi
 import org.neo4j.graphdb.Node
 
 /**
@@ -13,18 +12,18 @@ trait Ii {
   def id: Long
 
   def meta: Option[Map[String, String]]
-  def metaValue(key: String) = meta.getOrElse(Map.empty).get(key)
+  def metaValue(key: String): Option[String]
 
   def components: Option[Map[Ii, Double]]
-  def componentWeight(component: Ii) = components.getOrElse(Map.empty).get(component)
+  def componentWeight(component: Ii): Option[Double]
 
   def parents: Option[Map[Ii, Double]]
-  def parentWeight(parent: Ii) = parents.getOrElse(Map.empty).get(parent)
+  def parentWeight(parent: Ii): Option[Double]
 
 }
 
 private[ii] object Ii {
 
-  private[ii] def apply(node: Node): Ii = new NeoIi(node, None, None, None)
+  private[ii] def apply(node: Node): Ii = new impl.immutable.NeoIi(node, None, None, None)
 
 }

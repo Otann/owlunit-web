@@ -1,9 +1,6 @@
 package com.owlunit.core.ii
 
-import impl.NeoIiDao
-import collection.mutable.{Map => MutableMap}
 import org.neo4j.graphdb.GraphDatabaseService
-import java.net.URI
 import org.neo4j.rest.graphdb.RestGraphDatabase
 import org.neo4j.kernel.EmbeddedGraphDatabase
 
@@ -44,7 +41,7 @@ object IiDao {
 
   val DefaultDepth = 3
 
-  def apply(graph: GraphDatabaseService, depth: Int = DefaultDepth): IiDao = new NeoIiDao(graph, depth)
+  def apply(graph: GraphDatabaseService, depth: Int = DefaultDepth): IiDao = new impl.immutable.NeoIiDao(graph, depth)
 
   def local(path: String, depth: Int = DefaultDepth): IiDao = apply(
     new EmbeddedGraphDatabase(path),

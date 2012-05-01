@@ -84,7 +84,7 @@ object OwlBuild extends Build {
   lazy val defaultSettings = Defaults.defaultSettings ++ Seq(
     organization := "com.owlunit",
     version := "0.1-SNAPSHOT",
-    scalaVersion := "2.9.0",
+    scalaVersion := "2.9.1",
     resolvers ++= Seq(ScalaToolsSnapshots, Resolvers.logging, Resolvers.owlUnitIvy, Resolvers.owlUnitM2),
     scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked"),
     javacOptions ++= Seq("-Xlint:unchecked"),

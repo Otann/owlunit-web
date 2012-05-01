@@ -1,4 +1,4 @@
-package com.owlunit.core.ii.impl
+package com.owlunit.core.ii.impl.immutable
 
 import com.owlunit.core.ii.Ii
 import org.neo4j.graphdb.Node
@@ -16,17 +16,15 @@ private[ii] class NeoIi ( val node: Node,
                           ) extends Ii {
 
   def id = node.getId
+  def metaValue(key: String) = meta.getOrElse(Map.empty).get(key)
+  def componentWeight(component: Ii) = components.getOrElse(Map.empty).get(component)
+  def parentWeight(parent: Ii) = parents.getOrElse(Map.empty).get(parent)
 
   override def hashCode() = node.hashCode()
 
-  override def equals(p: Any) =
-    if (p.isInstanceOf[NeoIi])
-      node == p.asInstanceOf[NeoIi].node
-    else
-      false
+  override def equals(p: Any) = p.isInstanceOf[NeoIi] && node == p.asInstanceOf[NeoIi].node
 
-  def copy(
-            meta: Option[Map[String, String]] = null,
+  def copy( meta: Option[Map[String, String]] = null,
             components: Option[Map[Ii, Double]] = null,
             parents: Option[Map[Ii,  Double]] = null): NeoIi =
 
@@ -35,7 +33,6 @@ private[ii] class NeoIi ( val node: Node,
       if (meta == null) this.meta else meta,
       if (components == null) this.components else components,
       if (parents == null) this.parents else parents
-
     )
 
   override def toString = "Ii(%d)" format id

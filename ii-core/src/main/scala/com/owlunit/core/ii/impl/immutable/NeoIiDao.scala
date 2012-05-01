@@ -1,11 +1,11 @@
-package com.owlunit.core.ii.impl
+package com.owlunit.core.ii.impl.immutable
 
 import collection.mutable.ListBuffer
 import collection.mutable.{Map => MutableMap}
 import org.neo4j.graphdb.traversal.Evaluators
 import sys.ShutdownHookThread
 
-import com.owlunit.core.ii.impl.NeoIi.iiToIiImpl
+import com.owlunit.core.ii.impl.immutable.NeoIi.iiToIiImpl
 import com.owlunit.core.ii.{NotFoundException, Ii, IiDao}
 import org.neo4j.kernel.{Uniqueness, Traversal}
 import org.neo4j.graphdb._

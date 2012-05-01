@@ -1,4 +1,4 @@
-package com.owlunit.core.ii.impl
+package com.owlunit.core.ii.impl.immutable
 
 import collection.mutable.{Set => MutableSet, Map => MutableMap}
 import org.neo4j.graphdb.{Direction, Node}

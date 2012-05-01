@@ -90,8 +90,8 @@
                             Account<b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu lift:test_cond.loggedout">
-                            <li><a data-toggle="modal" href="#sighInModal" >Sign In</a></li>
-                            <li><a data-toggle="modal" href="#sighUpModal" >Sign Up</a></li>
+                            <li><a data-toggle="modal" href="#sighUpModal" >Sign In</a></li>
+                            <li><a class="lift:admin.RegisterScreen.modalHref">Sign Up</a></li>
                         </ul>
                         <ul class="dropdown-menu lift:test_cond.loggedin">
                             <li class="lift:test_cond.loggedout">
@@ -171,9 +171,8 @@
     </div>
 </div>
 
+<div lift="admin.RegisterScreen.render?ajax=true"></div>
 
-<div class="modal fade" id="sighUpModal" style="display: none;" lift="user.Register.render">
-</div>
 
 <script type="text/javascript">
 
@@ -198,7 +197,12 @@
 
     // Bootstrap plugins
     //////////////////////////////////
-    jq17(".alert").alert()
+    jq17(".alert").alert();
+
+
+    // Style fixes
+    //////////////////////////////////
+    jq17(".modal-body form").addClass("form-horizontal");
 
 
 </script>

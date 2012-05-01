@@ -9,20 +9,24 @@
     </div>
 
     <div class="modal-body">
-    <fieldset>
-        <wizard:fields>
-            <wizard:line>
-                <div class="clearfix">
-                    <wizard:label><label wizard:for=""><wizard:bind></wizard:bind></label></wizard:label>
-                    <div class="input">
-                        <wizard:form></wizard:form>
-                        <wizard:help><span class="help-inline"><wizard:bind></wizard:bind></span></wizard:help>
-                        <wizard:field_errors><ul><wizard:error><li><wizard:bind></wizard:bind></li></wizard:error></ul></wizard:field_errors>
+
+        <lift:Msgs></lift:Msgs>
+
+        <fieldset>
+            <wizard:fields>
+                <wizard:line>
+                    <div class="control-group">
+                        <wizard:label><label class="control-label" wizard:for=""><wizard:bind></wizard:bind></label></wizard:label>
+                        <div class="controls">
+                            <wizard:form></wizard:form>
+                            <wizard:help><span class="help-inline"><wizard:bind></wizard:bind></span></wizard:help>
+                            <wizard:field_errors><ul><wizard:error><li><wizard:bind></wizard:bind></li></wizard:error></ul></wizard:field_errors>
+                        </div>
                     </div>
-                </div>
-            </wizard:line>
-        </wizard:fields>
-    </fieldset>
+                </wizard:line>
+            </wizard:fields>
+        </fieldset>
+
     </div>
 
     <div class="modal-footer">
@@ -32,42 +36,3 @@
         <wizard:wizard_bottom><div><wizard:bind></wizard:bind></div></wizard:wizard_bottom>
     </div>
 </div>
-
-<!--<div xmlns:wizard="http://liftweb.net/wizard">-->
-
-<!--<wizard:screen_info> <h2>Page <wizard:screen_number/> of <wizard:total_screens/> </h2> </wizard:screen_info>-->
-
-<!--<wizard:wizard_top> <wizard:bind/> </wizard:wizard_top>-->
-
-<!--<wizard:screen_top> <wizard:bind/>-->
-<!--</wizard:screen_top>-->
-
-<!--<wizard:errors> <div> <ul> <wizard:item> <li> <wizard:bind/> </li> </wizard:item> </ul> </div> </wizard:errors>-->
-<!--<div class="modal-body">-->
-<!--<form class="form-horizontal">-->
-<!--<wizard:fields>-->
-<!--<wizard:line>-->
-<!--<div class="control-group">-->
-<!--<wizard:label><label class="control-label" wizard:for=""><wizard:bind></wizard:bind></label></wizard:label>-->
-<!--<div class="controls"><wizard:form></wizard:form></div>-->
-<!--<wizard:help><p><wizard:bind/></p></wizard:help>-->
-<!--<wizard:field_errors><ul><wizard:error><li><wizard:bind/></li></wizard:error></ul></wizard:field_errors>-->
-<!--</div>-->
-<!--</wizard:line>-->
-<!--</wizard:fields>-->
-<!--</form>-->
-<!--</div>-->
-<!--<div class="modal-footer">-->
-<!--<wizard:next></wizard:next>-->
-<!--<a class="btn" data-dismiss="modal">Cancel</a>-->
-<!--</div>-->
-
-<!--<wizard:screen_bottom>-->
-<!--<div> <wizard:bind/> </div>-->
-<!--</wizard:screen_bottom>-->
-
-<!--<wizard:wizard_bottom>-->
-<!--<div> <wizard:bind/> </div>-->
-<!--</wizard:wizard_bottom>-->
-
-<!--</div>-->

@@ -6,7 +6,7 @@ import com.owlunit.web.model._
 import scala.xml._
 
 import net.liftweb._
-import common.{Full, Box}
+import common.{Empty, Failure, Full, Box}
 import http.js.JsCmd
 import http.js.JsCmds.Alert
 import http.{AbstractScreen, ScreenFieldInfo, LiftScreen, S}
@@ -32,41 +32,52 @@ trait AdminScreen extends LiftScreen {
   override def allTemplatePath = "templates-hidden" :: "modal-screen" :: Nil
   override protected def allTemplate = ("#modal_id [id]" #> divId)(super.allTemplate)
 
-  override val finishButton = <button class="btn btn-primary">{ finishCaption }</button>
+  override val finishButton = <button class="btn">{ finishCaption }</button>
   override val cancelButton = <button class="btn">{ cancelCaption }</button>
 
   protected def modalButton = <a class="btn" data-toggle="modal" href={ "#%s" format divId }>{ openCaption }</a>
 
   override def dispatch = {
+    case "modalHref"   => "* [href]" #> "#%s".format(divId) & "* [data-toggle]" #> "modal"
     case "modalButton" => "*" #> modalButton
     case other         => super.dispatch(other)
   }
 
+  def url(menu: Menu) = S.contextPath + menu.loc.calcDefaultHref
 
 }
 
-object TestAdminScreen extends AdminScreen {
+class RegisterScreen extends AdminScreen {
 
-  def url(menu: Menu) = S.contextPath + menu.loc.calcDefaultHref
+  override def screenTop = Full(<h3>{ "Welcome" }</h3>)
+  override def finishCaption = "Register"
+  override def cancelCaption = "Cancel"
 
-  val flavour = field("What's your favorite Ice cream flavor", "", trim, valMinLen(2, "Name too short"))
-  val sauce = field("Like chocolate sauce?", false)
+//  addFields(() => User.registerScreenFields)
+  val email = field(User.email)
+  val pass  = field(User.password)
 
   override def calcAjaxOnDone = {
-    println("Flavour = " + flavour.is)
-    Alert("Flavour = " + flavour.is)
-  }
-
-  override def screenTop = Full(<h3>{ "Test Admin Screem" }</h3>)
-
-  override def localSetup {
-    Referer(url(Site.home))
+    val email: String = field(User.email).is
+    val pass: String = field(User.password).is
+    User.findByEmail(email) match {
+      case Full(user) => S.error("User with this email already eists")
+      case Failure(msg, _, _) => S.error(msg)
+      case Empty => {
+        val user = User.createRecord
+        user.email(email).password(pass)
+        user.password.hashIt
+        user.save
+        User.logUserIn(user, true)
+        User.createExtSession(user.id.is)
+        S.notice("Thanks for signing up!")
+      }
+    }
+    Alert("asdads")
   }
 
   protected def finish() {
-    println("Done")
-    println("Flavour = " + flavour.is)
-    S.notice("Well done")
+    S.notice("Email = " + field(User.email).is)
+    Alert("asdads")
   }
-
 }

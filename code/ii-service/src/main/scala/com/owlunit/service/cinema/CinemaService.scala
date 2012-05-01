@@ -29,6 +29,7 @@ trait CinemaService extends MovieService with KeywordService with PersonService 
 
   def search(query: String): Seq[CinemaIi]
   def load(id: Long): Option[CinemaIi]
+
 }
 
 object CinemaService {

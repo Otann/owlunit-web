@@ -7,6 +7,8 @@ import sitemap._
 import sitemap.Loc._
 
 import net.liftmodules.mongoauth.Locs
+import sitemap.Menu.Menuable
+import com.owlunit.web.model.{Person, Movie, User}
 
 /**
  * @author Anton Chebotaev
@@ -16,12 +18,11 @@ import net.liftmodules.mongoauth.Locs
 object Site {
 
   object MenuGroup {
-    val Settings = LocGroup("settings")
     val TopBar   = LocGroup("topbar")
     val Account  = LocGroup("account")
     val Admin    = LocGroup("admin")
   }
-  
+
   object AuthLocs extends Locs {
     override protected def logoutLocParams =     MenuGroup.Account :: Hidden :: super.logoutLocParams
     override protected def loginTokenLocParams = MenuGroup.Account :: Hidden :: super.loginTokenLocParams
@@ -30,33 +31,36 @@ object Site {
   // locations (menu entries)
   val home = Menu("Home") / "index" >>
     MenuGroup.TopBar
-  
+
   val login = AuthLocs.buildLoginTokenMenu
   val logout = AuthLocs.buildLogoutMenu
 
-//  private val profileParamMenu = Menu.param[User]("User", "Profile",
-//    User.findByUsername _,
-//    _.username.is
-//  ) / "profile" >> Loc.CalcValue(() => User.currentUser) >> MenuGroup.Account
+  private val profileParamMenu = Menu.param[User]("User", "Profile",
+    User.findByUsername _,
+    _.username.is
+  ) / "profile" >> Loc.CalcValue(() => User.currentUser) >> MenuGroup.Account
+
+  private val adminMenus =
+    Menu("Admin") / "admin" / "index" submenus (
+      Menu("Movie")         / "admin" / "movie",
+      Menu("Person")        / "admin" / "person",
+      Menu("Create Movie")  / "admin" / "create" / "movie"  >> MenuGroup.Admin,
+      Menu("Create Person") / "admin" / "create" / "person" >> MenuGroup.Admin
+      )
 
   private def menus = List(
     home,
 
-    Menu.i("Register") / "register" >> AuthLocs.RequireNotLoggedIn,
     logout,
-//    profileParamMenu,
+    profileParamMenu,
 
-    Menu("Admin") / "admin" submenus (
-      Menu("Item") / "admin" / "item" >> Hidden
-      ) >> MenuGroup.TopBar,
+    adminMenus >> MenuGroup.TopBar,
 
     Menu("About")   / "about"    >> MenuGroup.TopBar,
-    Menu("Contact") / "contact"  >> MenuGroup.TopBar,
     Menu("Test")    / "test"     >> MenuGroup.TopBar,//  >> Snippet("TestAdminScreen", TestAdminScreen),
 
     Menu("Throw")   / "throw"    >> Hidden,
-    Menu("Error")   / "error"    >> Hidden,
-    Menu("404")     / "404"      >> Hidden
+    Menu("Error")   / "error"    >> Hidden
   )
 
   /*
@@ -68,6 +72,19 @@ object Site {
   * Return a URL rewrites
   */
   val statefulRewrites: LiftRules.RewritePF = {
-    case RewriteRequest(ParsePath("admin" :: "item" :: itemNo :: Nil,_,_,_),_,_) => RewriteResponse("admin" :: "item" :: Nil, Map("itemNo" -> itemNo))
+    case RewriteRequest(ParsePath("admin" :: "movie" :: id :: Nil,_,_,_),_,_) => {
+      if (Movie.findById(id).isDefined)
+        RewriteResponse("admin" :: "movie" :: Nil, Map("id" -> id))
+      else
+        RewriteResponse("404" :: Nil)
+    }
+
+    case RewriteRequest(ParsePath("admin" :: "person" :: id :: Nil,_,_,_),_,_) => {
+      if (Person.findById(id).isDefined)
+        RewriteResponse("admin" :: "person" :: Nil, Map("id" -> id))
+      else
+        RewriteResponse("404" :: Nil)
+    }
   }
+
 }

@@ -1,5 +1,4 @@
-<div class="modal fade" style="display: none;" id="modal_id">
-
+<div>
     <div class="modal-header">
         <a href="#" class="close" data-dismiss="modal">×</a>
         <wizard:screen_info> Page <wizard:screen_number/> of <wizard:total_screens/></wizard:screen_info>
@@ -20,7 +19,7 @@
                         <div class="controls">
                             <wizard:form></wizard:form>
                             <wizard:help><span class="help-inline"><wizard:bind></wizard:bind></span></wizard:help>
-                            <wizard:field_errors><ul><wizard:error><li><wizard:bind></wizard:bind></li></wizard:error></ul></wizard:field_errors>
+                            <wizard:field_errors><wizard:error><p><wizard:bind></wizard:bind></p></wizard:error></wizard:field_errors>
                         </div>
                     </div>
                 </wizard:line>
@@ -31,7 +30,8 @@
 
     <div class="modal-footer">
         <wizard:next></wizard:next/>
-        <wizard:cancel></wizard:cancel/>
+        <!--<wizard:cancel></wizard:cancel/>-->
+        <button class="btn" data-dismiss="modal">Cancel</button>
         <wizard:screen_bottom><div><wizard:bind></wizard:bind></div></wizard:screen_bottom>
         <wizard:wizard_bottom><div><wizard:bind></wizard:bind></div></wizard:wizard_bottom>
     </div>

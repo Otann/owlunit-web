@@ -11,7 +11,6 @@ import net.liftweb.http.{S, SHtml}
 import com.foursquare.rogue.Rogue._
 import com.owlunit.web.config.DependencyFactory
 import com.owlunit.core.ii.mutable.Ii
-import com.owlunit.service.cinema.MovieIi
 import net.liftweb.record.{Field, Record}
 import org.bson.types.ObjectId
 import net.liftweb.common.{Failure, Full, Box, Empty}
@@ -39,6 +38,17 @@ class Movie private extends MongoRecord[Movie] with ObjectIdPk[Movie] with IiHel
       super.apply(in)
     }
   }
+
+  def createFields = new FieldContainer { def allFields = List(name) }
+  def editFields = new FieldContainer { def allFields = List(name, iiId) }
+
+  override def toXHtml =
+    <span>
+      <i class="icon-play-circle"></i>
+      <a href={ url }>{ name.is }</a>
+    </span>
+
+  def url = "/admin/item/" + id //TODO reuse Site class
 
   override def save = {
     ii.map(_.save)

@@ -1,0 +1,32 @@
+<div>
+    <wizard:screen_info> Page <wizard:screen_number/> of <wizard:total_screens/></wizard:screen_info>
+    <wizard:wizard_top> <wizard:bind/> </wizard:wizard_top>
+    <wizard:screen_top> <wizard:bind/> </wizard:screen_top>
+    <wizard:errors>
+        <div class="alert">
+            <!--<a class="close" data-dismiss="alert">×</a>-->
+            <strong>Warning!</strong>
+            <wizard:item> <wizard:bind/> </wizard:item>
+        </div>
+    </wizard:errors>
+
+    <wizard:fields>
+        <wizard:line>
+
+            <label class="control-label" wizard:for="">
+                <wizard:label><wizard:bind></wizard:bind></wizard:label>
+                <wizard:field_errors><wizard:error><p><wizard:bind></wizard:bind></p></wizard:error></wizard:field_errors>
+            </label>
+            <wizard:form></wizard:form>
+            <wizard:help><span class="help-inline"><wizard:bind></wizard:bind></span></wizard:help>
+
+        </wizard:line>
+    </wizard:fields>
+
+    <wizard:next></wizard:next/>
+    <!--<wizard:cancel></wizard:cancel/>-->
+    <button class="btn" data-dismiss="modal">Cancel</button>
+    <wizard:screen_bottom><div><wizard:bind></wizard:bind></div></wizard:screen_bottom>
+    <wizard:wizard_bottom><div><wizard:bind></wizard:bind></div></wizard:wizard_bottom>
+
+</div>

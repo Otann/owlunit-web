@@ -2,7 +2,6 @@ package com.owlunit.crawl.movielens
 
 import io.Source
 import com.owlunit.crawl.Counter
-import com.owlunit.service.cinema.{CinemaService, MovieIi, MovieService, KeywordService}
 import com.weiglewilczek.slf4s.Logging
 
 /**
@@ -10,7 +9,7 @@ import com.weiglewilczek.slf4s.Logging
  *         Owls Proprietary
  */
 
-class MoviesCrawler(sourcePath: String, cinemaService: CinemaService) extends Logging {
+class MoviesCrawler(sourcePath: String) extends Logging {
 
   val Pattern = """(\d+)::([^\(]+) \((\d+)\)::(.*)""".r
 

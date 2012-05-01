@@ -33,10 +33,10 @@ object Crawler extends Logging {
 //    new MoviesCrawler(moviesPath, cinemaService).run()
 //    new KeywordsCrawler(keywordsPath, cinemaService).run()
 
-    new PersonsCrawler(actorsPath, cinemaService, Role.Actor, 12338129).run()
-    new PersonsCrawler(actressesPath, cinemaService, Role.Actor, 7243872).run()
-    new PersonsCrawler(directorsPath, cinemaService, Role.Director, 1724653).run()
-    new PersonsCrawler(producersPath, cinemaService, Role.Producer, 3719561).run()
+//    new PersonsCrawler(actorsPath, cinemaService, Role.Actor, 12338129).run()
+//    new PersonsCrawler(actressesPath, cinemaService, Role.Actor, 7243872).run()
+//    new PersonsCrawler(directorsPath, cinemaService, Role.Director, 1724653).run()
+//    new PersonsCrawler(producersPath, cinemaService, Role.Producer, 3719561).run()
 
 //    log.debug(keywordService.loadOrCreate("Drama 1").toString)
 //    log.debug(keywordService.loadOrCreate("Drama 2").toString)

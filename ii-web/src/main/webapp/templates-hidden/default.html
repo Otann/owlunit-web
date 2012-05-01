@@ -1,17 +1,67 @@
-<div lift="surround?with=default_bootstrap;at=content">
-  <lift:head>
-    <title lift="Menu.title">OWL UNIT: %*%</title>
-  </lift:head>
-  <div class="content">
-    <div class="page-header">
-      <h1>
-        <span lift="Menu.title"></span>
-        <div style="display:none; float:right;" id="ajax-spinner">
-          <img src="/img/spinner.gif" width="16" height="16"/>
-        </div>
-      </h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>-->
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"/>-->
+    <script src="/js/libs/jquery-1.7.2.min.js"></script>
+    <script src="/js/libs/jquery-ui-1.8.18.min.js"></script>
+    <script src="/js/libs/bootstrap.js"></script>
+    <script type="text/javascript">
+        window.$$ = jQuery.noConflict(true);
+    </script>
+
+    <script id="jquery" src="/classpath/jquery.js" type="text/javascript"></script>
+    <script id="json" src="/classpath/json.js" type="text/javascript"></script>
+
+    <link href="/css/bootstrap.css" rel="stylesheet">
+    <link href="/css/bootstrap-more.css" rel="stylesheet">
+    <link href="/css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <div class="content" id="content">
+
     </div>
-    <div id="content"></div>
-  </div>
-  <span lift="embed?what=/templates-hidden/parts/footer"></span>
-</div>
+
+<script type="text/javascript" class="lift:tail">
+
+    //    jQuery(function() {
+    //        $$('.dropdown-toggle').dropdown()
+    //
+    //        // Show / hide quicksearch menu
+    //        //////////////////////////////////
+    //        var dropdown_results = $$('#quicksearch .dropdown-menu')
+    //        dropdown_results.hide();
+    //        $$('#quicksearch input').focus(function(){
+    //            if (dropdown_results.html().trim().length )
+    //                dropdown_results.show();
+    //        });
+    //        // If an event gets to the body
+    //        $$(document).click(function(){
+    //            dropdown_results.hide();
+    //        });
+    //        // Prevent events from getting pass .popup
+    //        dropdown_results.click(function(e){
+    //            e.stopPropagation();
+    //        });
+    //
+    //        // Bootstrap plugins
+    //        //////////////////////////////////
+    //        $$(".alert").alert();
+    //
+    //    })
+</script>
+
+</body>
+</html>

@@ -1,3 +1,27 @@
-<div lift="surround?with=default;at=content">
-  <p style="font-size: 1.2em;">We're sorry but the page you are trying to access does not exist. (404)</p>
+<div id="main" class="lift:surround?with=default;at=content">
+
+    <div class="container">
+
+        <!-- Main hero unit for a primary marketing message or call to action -->
+        <div class="hero-unit offset2 span6">
+            <h1><span class="badge badge-warning pull-right">404</span> </h1>
+            <h1>Not found:</h1>
+            <h3 id="loc"></h3>
+            <hr/>
+            <p>Sorry, the page  you are looking for does not exists.</p>
+            <p>
+                <a class="" href="/">Home »</a><br/>
+                <a class="" href="#" onclick="history.back(); return false;">Back »</a>
+            </p>
+            <!--<small class="pull-right">OWL UNIT 2012</small>-->
+        </div>
+
+        <script type="text/javascript">
+            jQuery(function(){
+                $("#loc").html(window.location.pathname)
+            })
+        </script>
+
+    </div>
+
 </div>

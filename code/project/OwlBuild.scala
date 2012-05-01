@@ -8,7 +8,7 @@ import com.github.siasia.WebPlugin._
 import com.github.siasia.PluginKeys._
 import com.typesafe.startscript.StartScriptPlugin
 
-object IiBuild extends Build {
+object OwlBuild extends Build {
 
   lazy val buildSettings = Seq(
     organization := "com.owlunit",

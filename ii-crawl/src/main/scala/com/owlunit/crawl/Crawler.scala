@@ -1,12 +1,12 @@
 package com.owlunit.crawl
 
-import com.owlunit.core.ii.IiDao
-import com.codahale.logula.Logging
+import com.owlunit.core.ii.immutable.IiDao
 import imdb.{PersonsCrawler, KeywordsCrawler}
 import movielens.MoviesCrawler
 import org.apache.log4j.Level
 import org.neo4j.rest.graphdb._
 import com.owlunit.service.cinema._
+import com.weiglewilczek.slf4s.Logging
 
 /**
  * @author Anton Chebotaev
@@ -27,15 +27,6 @@ object Crawler extends Logging {
 //  val dao = IiDao.remote("http://04e118aa4.hosted.neo4j.org:7034/db/data/", "a9786d4e8", "b72321c25")
 
   val cinemaService = CinemaService(dao)
-
-  Logging.configure { log =>
-    log.level = Level.INFO
-    log.loggers("com.owlunit.crawl") = Level.TRACE
-
-    log.console.enabled = true
-    log.console.threshold = Level.TRACE
-    log.console.formatted("")
-  }
 
   def main(args: Array[String]) {
 

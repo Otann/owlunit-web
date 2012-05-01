@@ -1,17 +1,17 @@
 package com.owlunit.crawl.imdb
 
-import com.codahale.logula.Logging
 import io.Source
 import collection.mutable.{Map => MutableMap}
 import com.owlunit.crawl.Counter
 import com.owlunit.service.cinema.CinemaService
+import com.weiglewilczek.slf4s.Logging
 
 /**
  * @author Anton Chebotaev
  *         Owls Proprietary
  */
 
-class KeywordsCrawler(sourcePath: String, cinemaService: CinemaService) extends  Logging {
+class KeywordsCrawler(sourcePath: String, cinemaService: CinemaService) extends Logging {
 
   val keywordsExtractor = """([^\s]+ \(\d+\))""".r
   val keywordExtractor = """([^\s]+) \((\d+)\)""".r
@@ -30,7 +30,7 @@ class KeywordsCrawler(sourcePath: String, cinemaService: CinemaService) extends 
       line = source.next()
 
     // read all keywords
-    log.debug("Reading all keywords")
+    logger.debug("Reading all keywords")
     val frequencies = MutableMap[String, Int]()
     try {
     while (source.hasNext && !line.contains("THE KEYWORDS LIST")) {
@@ -40,16 +40,16 @@ class KeywordsCrawler(sourcePath: String, cinemaService: CinemaService) extends 
       line = source.next()
     }
     } catch {
-      case ex: Exception => log.error("Catched unhandeled exception %s for line %s" format (ex, line))
+      case ex: Exception => logger.error("Catched unhandeled exception %s for line %s" format (ex, line))
     }
 
     // read movies
-    log.debug("Reading movie-keyword pairs")
+    logger.debug("Reading movie-keyword pairs")
     val timer = Counter.start()
     val linesTimer = Counter.start(4113524)
     while (source.hasNext) {
       val line = source.next()
-      linesTimer.tick(log, 100000, "lines so far")
+      linesTimer.tick(logger, 100000, "lines so far")
       try {
 
         val keywordLine(name, yearRaw, keywordRaw) = line
@@ -58,11 +58,11 @@ class KeywordsCrawler(sourcePath: String, cinemaService: CinemaService) extends 
         if (movie.isDefined) {
           val keyword = cinemaService.loadOrCreateKeyword(capitalizeKeyword(keywordRaw))
           cinemaService.addKeyword(movie.get, keyword, frequencies(keywordRaw))
-          timer.tick(log, 50000, "movie-keyword relations")
+          timer.tick(logger, 50000, "movie-keyword relations")
         }
       } catch {
         case ex: MatchError => // log.trace("Error matching line " + line)
-        case ex: Exception => log.error("Catched unhandeled exception %s for line %s" format (ex, line))
+        case ex: Exception => logger.error("Catched unhandeled exception %s for line %s" format (ex, line))
       }
 
     }

@@ -5,7 +5,7 @@ import http._
 import util._
 import common._
 import java.util.Date
-import com.owlunit.core.ii.{Recommender, IiDao}
+import com.owlunit.core.ii.mutable.{Recommender, IiDao}
 import com.owlunit.service.cinema._
 
 /**
@@ -30,9 +30,9 @@ object DependencyFactory extends Factory {
       IiDao.remote("http://04e118aa4.hosted.neo4j.org:7034/db/data/", "a9786d4e8", "b72321c25")
   }
 
-  implicit object iiDao extends FactoryMaker(dao)
+  implicit object iiDao extends FactoryMaker[IiDao](dao)
 
-  implicit object cinemaService extends FactoryMaker[CinemaService](CinemaService(DependencyFactory.inject[IiDao].open_!))
+//  implicit object cinemaService extends FactoryMaker[CinemaService](CinemaService(DependencyFactory.inject[IiDao].open_!))
 
   /**
    * objects in Scala are lazily created.  The init()

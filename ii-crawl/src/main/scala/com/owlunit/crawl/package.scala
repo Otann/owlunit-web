@@ -1,8 +1,8 @@
 package com.owlunit
 
 import java.util.concurrent.TimeUnit
-import com.codahale.logula.{Log, Logging}
 import org.apache.log4j.Level
+import com.weiglewilczek.slf4s.{Logger, Logging}
 
 /**
  * @author Anton Chebotaev
@@ -25,7 +25,7 @@ package object crawl {
       counter = 0
     }
 
-    def tick(log: Log, limit: Long, items: String) {
+    def tick(log: Logger, limit: Long, items: String) {
       counter += 1;
       if (counter % limit == 0) {
         val speed = limit.toDouble * 1000 / time;

@@ -7,8 +7,6 @@ import sitemap._
 import sitemap.Loc._
 
 import net.liftmodules.mongoauth.Locs
-import com.owlunit.web.model.User
-import com.owlunit.web.snippet.admin.TestAdminScreen
 
 /**
  * @author Anton Chebotaev
@@ -36,17 +34,17 @@ object Site {
   val login = AuthLocs.buildLoginTokenMenu
   val logout = AuthLocs.buildLogoutMenu
 
-  private val profileParamMenu = Menu.param[User]("User", "Profile",
-    User.findByUsername _,
-    _.username.is
-  ) / "profile" >> Loc.CalcValue(() => User.currentUser) >> MenuGroup.Account
+//  private val profileParamMenu = Menu.param[User]("User", "Profile",
+//    User.findByUsername _,
+//    _.username.is
+//  ) / "profile" >> Loc.CalcValue(() => User.currentUser) >> MenuGroup.Account
 
   private def menus = List(
     home,
 
     Menu.i("Register") / "register" >> AuthLocs.RequireNotLoggedIn,
     logout,
-    profileParamMenu,
+//    profileParamMenu,
 
     Menu("Admin") / "admin" submenus (
       Menu("Item") / "admin" / "item" >> Hidden

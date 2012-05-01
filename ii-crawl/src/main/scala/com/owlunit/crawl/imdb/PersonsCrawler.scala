@@ -1,10 +1,10 @@
 package com.owlunit.crawl.imdb
 
-import com.codahale.logula.Logging
 import io.Source
 import com.owlunit.crawl.Counter
 import com.owlunit.service.cinema.{PersonIi, MovieIi, CinemaService, Role}
 import collection.mutable.{ListBuffer, Map => MutableMap}
+import com.weiglewilczek.slf4s.Logging
 
 /**
  * @author Anton Chebotaev
@@ -28,7 +28,7 @@ class PersonsCrawler(sourcePath: String, cinemaService: CinemaService, role: Rol
 
     while (source.hasNext) {
       val line = source.next()
-      linesTimer.tick(log, 100000, "lines so far")
+      linesTimer.tick(logger, 100000, "lines so far")
       try {
 
         if (personMovieExtractor.findAllIn(line).length > 0) {
@@ -37,7 +37,7 @@ class PersonsCrawler(sourcePath: String, cinemaService: CinemaService, role: Rol
 
             val name = prePerson.split(", ")
             val person = cinemaService.createPerson(new PersonIi(0, name(1), name(0)))
-            personTimer.tick(log, 10000, "persons of role " + role.toString)
+            personTimer.tick(logger, 10000, "persons of role " + role.toString)
             for (movie <- preMovies) {
               cinemaService.addPerson(movie, person, role)
             }
@@ -61,7 +61,7 @@ class PersonsCrawler(sourcePath: String, cinemaService: CinemaService, role: Rol
         }
 
       } catch {
-        case ex: Exception => log.error("Catched unhandeled exception %s for line %s" format (ex, line))
+        case ex: Exception => logger.error("Catched unhandeled exception %s for line %s" format (ex, line))
       }
     }
 

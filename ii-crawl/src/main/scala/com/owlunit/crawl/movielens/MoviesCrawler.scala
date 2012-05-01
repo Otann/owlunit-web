@@ -1,9 +1,9 @@
 package com.owlunit.crawl.movielens
 
-import com.codahale.logula.Logging
 import io.Source
 import com.owlunit.crawl.Counter
 import com.owlunit.service.cinema.{CinemaService, MovieIi, MovieService, KeywordService}
+import com.weiglewilczek.slf4s.Logging
 
 /**
  * @author Anton Chebotaev
@@ -18,7 +18,7 @@ class MoviesCrawler(sourcePath: String, cinemaService: CinemaService) extends Lo
 
     val timer = Counter.start(10681)
 
-    log.debug("Strating to crawl movies from MovieLens")
+    logger.debug("Strating to crawl movies from MovieLens")
     for (line <- Source.fromFile(sourcePath).getLines(); if line != "") line match {
 
       case Pattern(id, name, year, genresRaw) => {
@@ -26,7 +26,7 @@ class MoviesCrawler(sourcePath: String, cinemaService: CinemaService) extends Lo
         val movie = new MovieIi(0, name, year.toInt, tags = genres)
         cinemaService.createMovie(movie)
 
-        timer.tick(log, 500, "movies");
+        timer.tick(logger, 500, "movies");
       }
       case unmatched => {
         print("String was not matched: " + unmatched)

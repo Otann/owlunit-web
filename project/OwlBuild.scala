@@ -1,4 +1,4 @@
-package ii
+package web
 
 import sbt._
 import Keys._
@@ -17,43 +17,31 @@ object OwlBuild extends Build {
   )
 
   lazy val root = Project(
-    id = "ii",
+    id = "ou",
     base = file("."),
     settings = defaultSettings,
-    aggregate = Seq(core, crawl, web)
-  )
-
-  lazy val core = Project(
-    id = "ii-core",
-    base = file("ii-core"),
-    settings = defaultSettings ++ Seq(
-      resolvers ++= Seq(
-        "Neo4j Maven 2 release repository" at "http://m2.neo4j.org/releases"
-      ),
-      libraryDependencies ++= Dependencies.db ++ Seq(Dependency.specs2)
-    )
+    aggregate = Seq(crawl, web)
   )
 
   lazy val crawl = Project(
-    id = "ii-crawl",
-    base = file("ii-crawl"),
+    id = "ou-crawl",
+    base = file("ou-crawl"),
     settings = defaultSettings ++ StartScriptPlugin.startScriptForClassesSettings ++ Seq(
-      libraryDependencies ++= Seq(Dependency.slf4s, Dependency.logback),
+      libraryDependencies ++= Seq(Dependency.slf4s, Dependency.logback, Dependency.iiCore),
       mainClass in Compile := Some("com.owlunit.crawl.Crawler")
     ),
-    dependencies = Seq(core, web)
+    dependencies = Seq(web)
 
   )
 
   lazy val web = Project(
-    id = "ii-web",
-    base = file("ii-web"),
+    id = "ou-web",
+    base = file("ou-web"),
     settings = defaultSettings ++ webSettings ++ StartScriptPlugin.startScriptForClassesSettings ++ Seq(
-      libraryDependencies ++= Dependencies.lift ++ Dependencies.webPlugin,
+      libraryDependencies ++= Dependencies.lift ++ Dependencies.webPlugin ++ Seq(Dependency.iiCore),
       scanDirectories in Compile := Nil,
       mainClass in Compile := Some("JettyLauncher")
-    ),
-    dependencies = Seq(core)
+    )
   )
 
   /////////////////////
@@ -70,10 +58,7 @@ object OwlBuild extends Build {
   	shellPrompt := { s => Project.extract(s).currentProject.id + "> " }
   )
 
-  lazy val defaultSettings = Defaults.defaultSettings ++ Seq(
-    organization := "com.owlunit",
-    version := "0.1-SNAPSHOT",
-    scalaVersion := "2.9.1",
+  lazy val defaultSettings = Defaults.defaultSettings ++ buildSettings ++ Seq(
     resolvers ++= Seq(ScalaToolsSnapshots, Resolvers.owlUnitIvy, Resolvers.owlUnitM2),
     scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked"),
     javacOptions ++= Seq("-Xlint:unchecked"),
@@ -95,8 +80,6 @@ object OwlBuild extends Build {
   
   object Dependencies {
 
-    val db = Seq(Dependency.neo4j, Dependency.neo4jREST)
-    
     val lift = Seq(
       Dependency.liftWebKit,
       Dependency.liftWizard,
@@ -121,17 +104,12 @@ object OwlBuild extends Build {
 
     object V {
       val Lift      = "2.4"
-      val Neo4j     = "1.6"
-      val Hector    = "0.8.0-2"
       val Jetty     = "7.3.1.v20110307"
     }
 
     // Dependencies
 
-    val specs2      = "org.specs2"                %% "specs2"              % "1.9"    % "test"
-
-    val neo4j       = "org.neo4j"                 %  "neo4j"               % V.Neo4j
-    val neo4jREST   = "org.neo4j"                 %  "neo4j-rest-graphdb"  % "1.7-SNAPSHOT"
+    val iiCore      = "com.owlunit"               %% "core"                % "0.1-SNAPSHOT"
 
     val spring      = "org.springframework"       %  "spring-context"      % "3.0.5.RELEASE"
     val dispatch    = "net.databinder"            %% "dispatch-http"       % "0.8.8"

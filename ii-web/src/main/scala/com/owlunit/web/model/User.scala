@@ -13,6 +13,8 @@ import util.FieldContainer
 import net.liftmodules.mongoauth._
 import net.liftmodules.mongoauth.field._
 import net.liftmodules.mongoauth.model._
+import com.owlunit.core.ii.mutable.Ii
+import com.owlunit.web.config.DependencyFactory
 
 /**
  * @author Anton Chebotaev
@@ -23,6 +25,12 @@ class User private () extends ProtoAuthUser[User] with ObjectIdPk[User] {
   def meta = User
 
   def userIdAsString: String = id.toString()
+
+  val iiFootprint = this.getClass.getName + ".MongoId"
+  val iiMetaName  = this.getClass.getName + ".Name"
+
+  protected var ii: Box[Ii] = Empty
+  object iiid extends LongField(this)
 
   object name extends StringField(this, 64) {
     override def displayName = "Name"
@@ -59,6 +67,12 @@ class User private () extends ProtoAuthUser[User] with ObjectIdPk[User] {
   }
 
   def whenCreated: DateTime = new DateTime(id.is.getTime)
+
+  override def save = {
+    ii.map(_.save)
+    super.save
+  }
+
 }
 
 object User extends User with ProtoAuthUserMeta[User] with Loggable {
@@ -68,6 +82,14 @@ object User extends User with ProtoAuthUserMeta[User] with Loggable {
 
   ensureIndex((email.name -> 1), true)
   ensureIndex((username.name -> 1), true)
+
+  lazy val iiDao = DependencyFactory.iiDao.vend //TODO unsafe vend
+
+  override def createRecord = {
+    val result = super.createRecord
+    val ii = iiDao.create.setMeta(iiFootprint, result.id.toString())
+    result.iiid(ii.id)
+  }
 
   def findByEmail(in: String): Box[User] = find(email.name, in)
   def findByUsername(in: String): Box[User] = find(username.name, in)

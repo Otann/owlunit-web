@@ -6,15 +6,7 @@ import util._
 import common._
 import java.util.Date
 import com.owlunit.core.ii.mutable.{Recommender, IiDao}
-import com.owlunit.service.cinema._
 
-/**
- * A factory for generating new instances of Date.  You can create
- * factories for each kind of thing you want to vend in your application.
- * An example is a payment gateway.  You can change the default implementation,
- * or override the default implementation on a session, request or current call
- * stack basis.
- */
 object DependencyFactory extends Factory {
 
   val fbApiKey = "327849237274882"

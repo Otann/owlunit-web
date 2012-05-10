@@ -51,8 +51,8 @@ object Gravatar extends Factory with Loggable {
     try {
       BigInt(1, md.digest(bytes)).toString(16)
     } catch {
-      case a: NoSuchAlgorithmException => logger.error("[Gravater] No Algorithm.", a); ""
-      case x: UnsupportedEncodingException => logger.warn("[Gravater] Unsupported Encoding.", x); ""
+      case a: NoSuchAlgorithmException => logger.error("[Gravatar] No Algorithm.", a); ""
+      case x: UnsupportedEncodingException => logger.warn("[Gravatar] Unsupported Encoding.", x); ""
       case _ => logger.warn("[Gravater] Unknown error."); ""
     }
   }

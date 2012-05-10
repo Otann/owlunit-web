@@ -17,6 +17,7 @@ trait Ii {
   def loadItems: Ii
 
   def save: Ii
+  def delete()
   def setMeta(key: String, value: String): Ii
   def setItem(component: Ii, weight: Double): Ii
 

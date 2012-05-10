@@ -4,14 +4,14 @@ import com.owlunit.core.ii.mutable.{Ii, IiDao}
 import com.owlunit.core.ii.NotFoundException
 import collection.mutable.ListBuffer
 import sys.ShutdownHookThread
-import org.neo4j.graphdb.{Direction, RelationshipType, GraphDatabaseService, Node}
+import org.neo4j.graphdb.{Direction, GraphDatabaseService}
 
 /**
  * @author Anton Chebotaev
  *         Owls Proprietary
  */
 
-private[mutable] class NeoIiDao(graph: GraphDatabaseService) extends IiDao with Helpers {
+private[mutable] class NeoIiDao(val graph: GraphDatabaseService) extends IiDao with Helpers with NeoRecommender {
 
   private def index = graph.index().forNodes(IndexName)
 
@@ -19,8 +19,6 @@ private[mutable] class NeoIiDao(graph: GraphDatabaseService) extends IiDao with 
   def shutdown() { graph.shutdown() }
 
   def create = new NeoIi(None, graph)
-
-  def recommender = null
 
   def load(id: Long) = {
     try {

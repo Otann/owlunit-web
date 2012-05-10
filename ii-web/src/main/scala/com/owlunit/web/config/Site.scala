@@ -35,10 +35,11 @@ object Site {
   val login = AuthLocs.buildLoginTokenMenu
   val logout = AuthLocs.buildLogoutMenu
 
-  private val profileParamMenu = Menu.param[User]("User", "Profile",
+  private val profileParamMenu = Menu.param[User](
+    "User",
+    "Profile",
     User.findByUsername _,
-    _.username.is
-  ) / "profile" >> Loc.CalcValue(() => User.currentUser) >> MenuGroup.Account
+    _.username.is) / "profile" >> Loc.CalcValue(() => User.currentUser) >> MenuGroup.Account
 
   private val adminMenus =
     Menu("Admin") / "admin" / "index" submenus (
@@ -50,14 +51,13 @@ object Site {
 
   private def menus = List(
     home,
-
     logout,
-    profileParamMenu,
 
+    profileParamMenu,
     adminMenus >> MenuGroup.TopBar,
 
     Menu("About")   / "about"    >> MenuGroup.TopBar,
-    Menu("Test")    / "test"     >> MenuGroup.TopBar,//  >> Snippet("TestAdminScreen", TestAdminScreen),
+    Menu("Test")    / "test"     >> MenuGroup.TopBar,
 
     Menu("Throw")   / "throw"    >> Hidden,
     Menu("Error")   / "error"    >> Hidden

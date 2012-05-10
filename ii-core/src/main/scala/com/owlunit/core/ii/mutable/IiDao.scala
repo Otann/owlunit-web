@@ -10,7 +10,7 @@ import org.neo4j.rest.graphdb.RestGraphDatabase
  */
 
 
-trait IiDao {
+trait IiDao extends Recommender {
 
   def init()
   def shutdown()
@@ -23,7 +23,6 @@ trait IiDao {
 
   def indirectComponents(item: Ii, depth: Int): Map[Ii, Double]
   def within(item: Ii): Map[Ii, Double]
-  def recommender: Recommender
 
 }
 

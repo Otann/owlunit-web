@@ -11,9 +11,7 @@ import com.owlunit.core.ii.mutable.Ii
  *         Owls Proprietary
  */
 
-private[impl] object RelType extends RelationshipType {
-  def name() = "CONNECTED"
-}
+
 
 trait Helpers {
 

@@ -10,7 +10,7 @@ import org.neo4j.graphdb._
 
 
 private[impl] class NeoIi(var node: Option[Node], graph: GraphDatabaseService) extends Ii with Helpers {
-  
+
   def this(node: Node, graph: GraphDatabaseService) = this(Some(node), graph)
 
   def index = graph.index().forNodes(IndexName)
@@ -27,12 +27,12 @@ private[impl] class NeoIi(var node: Option[Node], graph: GraphDatabaseService) e
     val tx = graph.beginTx()
     try {
 
-      if (node.isEmpty) {
-        node = Some(graph.createNode())
+      if (this.node.isEmpty) {
+        this.node = Some(graph.createNode())
       }
 
       for {
-        n <- node
+        n <- this.node
         metaMap <- meta
         (key, value) <- metaMap
       } {
@@ -43,7 +43,7 @@ private[impl] class NeoIi(var node: Option[Node], graph: GraphDatabaseService) e
       for {
         itemsMap <- items
         (item: NeoIi, weight) <- itemsMap
-        thisNode <- node
+        thisNode <- this.node
         thatNode <- item.node
       } {
         val rel = getRelation(thisNode, thatNode) match {
@@ -62,35 +62,72 @@ private[impl] class NeoIi(var node: Option[Node], graph: GraphDatabaseService) e
 
   }
 
-  def loadMeta = {
-    node match {
-      case None => meta = Some(Map())
-      case Some(thisNode) => {
-        import collection.mutable.Map
+  def delete() {
 
-        val newMeta = Map[String, String]()
-        val iterator = thisNode.getPropertyKeys.iterator()
+    val tx = graph.beginTx()
+    try {
 
-        while (iterator.hasNext) {
-          val key = iterator.next()
-          newMeta.put(key, thisNode.getProperty(key).toString)
+      if (this.node.isEmpty) {
+        return
+      }
+
+      for {
+        n <- this.node
+      } {
+        index.remove(n)
+        val rels = n.getRelationships.iterator()
+        while (rels.hasNext) {
+          rels.next().delete()
         }
-        meta = Some(newMeta.toMap)
+        
+        n.delete()
+      }
+
+      tx.success()
+
+      this
+    } finally {
+      tx.finish()
+    }
+
+  }
+
+  def loadMeta = {
+    if (meta.isEmpty) {
+      meta = this.node match {
+        case None           => Some(Map())
+        case Some(thisNode) => Some(getMeta(thisNode))
       }
     }
     this
   }
 
+  private def getMeta(node: Node): Map[String, String] = {
+    import collection.mutable.Map
+
+    val newMeta = Map[String, String]()
+    val iterator = node.getPropertyKeys.iterator()
+
+    while (iterator.hasNext) {
+      val key = iterator.next()
+      newMeta.put(key, node.getProperty(key).toString)
+    }
+    newMeta.toMap
+  }
+
   def loadItems = {
-    node match {
-      case None => items = Some(Map())
-      case Some(thisNode) => {
-        val nodes = getNodes(thisNode, Direction.OUTGOING, 1)
-        val newItems: Map[Ii, Double] = nodes.map {case (n, w) => new NeoIi(Some(n), graph) -> w}
-        items = Some(newItems)
+    if (items.isEmpty) {
+      items = this.node match {
+        case None           => Some(Map())
+        case Some(thisNode) => Some(getItems(thisNode))
       }
     }
     this
+  }
+  
+  private def getItems(node: Node): Map[Ii, Double] = {
+    val nodes = getNodes(node, Direction.OUTGOING, 1)
+    nodes.map {case (n, w) => new NeoIi(Some(n), graph) -> w}
   }
 
   def setMeta(key: String, value: String) = {
@@ -105,7 +142,7 @@ private[impl] class NeoIi(var node: Option[Node], graph: GraphDatabaseService) e
     this
   }
 
-  override def hashCode() = node.map(_.hashCode()).getOrElse(0)
+  override def hashCode() = this.node.map(_.hashCode()).getOrElse(0)
   override def equals(p: Any) = p.isInstanceOf[NeoIi] && node == p.asInstanceOf[NeoIi].node
   override def toString = "Ii(%d)" format id
 

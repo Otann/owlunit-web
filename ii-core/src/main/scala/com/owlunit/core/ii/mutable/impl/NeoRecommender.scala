@@ -10,7 +10,9 @@ import org.neo4j.graphdb.{GraphDatabaseService, Direction, Node}
  *         Owls Proprietary
  */
 
-private [mutable] class NeoRecommender(graph: GraphDatabaseService) extends Recommender with Helpers {
+private [mutable] trait NeoRecommender extends Recommender with Helpers {
+
+  def graph: GraphDatabaseService
 
   def compare(a: Ii, b: Ii) = {
     for {

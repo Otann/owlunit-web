@@ -28,11 +28,9 @@ object OwlBuild extends Build {
     base = file("ii-core"),
     settings = defaultSettings ++ Seq(
       resolvers ++= Seq(
-        "Cassandra adapter repository"     at "http://mvn.riptano.com/content/repositories/public",
-        "Scale7 Maven Repo"                at "https://github.com/s7/mvnrepo/raw/master",
         "Neo4j Maven 2 release repository" at "http://m2.neo4j.org/releases"
       ),
-      libraryDependencies ++= Dependencies.db
+      libraryDependencies ++= Dependencies.db ++ Seq(Dependency.specs2)
     )
   )
 
@@ -97,7 +95,7 @@ object OwlBuild extends Build {
   
   object Dependencies {
 
-    val db = Seq(Dependency.hector, Dependency.neo4j, Dependency.neo4jREST)
+    val db = Seq(Dependency.neo4j, Dependency.neo4jREST)
     
     val lift = Seq(
       Dependency.liftWebKit,
@@ -128,11 +126,12 @@ object OwlBuild extends Build {
       val Jetty     = "7.3.1.v20110307"
     }
 
-    // Compile
+    // Dependencies
+
+    val specs2      = "org.specs2"                %% "specs2"              % "1.9"    % "test"
 
     val neo4j       = "org.neo4j"                 %  "neo4j"               % V.Neo4j
     val neo4jREST   = "org.neo4j"                 %  "neo4j-rest-graphdb"  % "1.7-SNAPSHOT"
-    val hector      = "me.prettyprint"            %  "hector-core"         % V.Hector
 
     val spring      = "org.springframework"       %  "spring-context"      % "3.0.5.RELEASE"
     val dispatch    = "net.databinder"            %% "dispatch-http"       % "0.8.8"

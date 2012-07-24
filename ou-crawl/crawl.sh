@@ -1,10 +1,3 @@
 #!/bin/bash
-
-
-
-
-
-
-
 cd ..
-ii-crawl/target/start ARG1
+ou-crawl/target/start

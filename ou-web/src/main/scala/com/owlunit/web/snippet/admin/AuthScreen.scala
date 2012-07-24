@@ -5,7 +5,8 @@ import com.owlunit.web.model._
 
 
 import net.liftweb._
-import common.{Logger, Empty, Failure, Full}
+import common._
+import common.Full
 import http.js.JsCmds
 import http.js.JsCmds.Alert
 import http.{LiftScreen, S}
@@ -13,14 +14,14 @@ import sitemap.Menu
 import util.FieldError
 import util.Helpers._
 import xml.NodeSeq
-import com.owlunit.web.lib.{ModalScreen, AppHelpers, Gravatar}
+import com.owlunit.web.lib.{Gravatar, ModalScreen, AppHelpers}
 
 /**
  * @author Anton Chebotaev
  *         Owls Proprietary
  */
 
-object LoginScreen extends ModalScreen {
+object LoginScreen extends ModalScreen with Loggable {
 
   override def screenTop = Full(<h3>{ "Welcome back" }</h3>)
   override def finishCaption = "Login"
@@ -45,11 +46,13 @@ object LoginScreen extends ModalScreen {
   override def calcAjaxOnDone = {
     User.findByEmail(mailField.is) match {
       case Full(user) => {
-        User.logUserIn(user, true)
+        User.logUserIn(user, isAuthed = true, isRemember = true)
         User.createExtSession(user.id.is)
+        logger.debug("User %s signed in" format mailField.is)
         S.seeOther(url(Site.home))
       }
       case _ => {
+        logger.debug("Some error occured while %s was signing in" format mailField.is)
         S.notice("Unknown error")
       }
     }
@@ -58,7 +61,7 @@ object LoginScreen extends ModalScreen {
   protected def finish() { }
 }
 
-object RegisterScreen extends ModalScreen {
+object RegisterScreen extends ModalScreen with Loggable {
 
   object userVar extends ScreenVar(User.createRecord)
 
@@ -77,16 +80,17 @@ object RegisterScreen extends ModalScreen {
         val user = userVar.is
         user.password.hashIt
         user.save
-        User.logUserIn(user, true)
+        User.logUserIn(user, isAuthed = true)
         User.createExtSession(user.id.is)
         S.notice("Thanks for signing up!")
+        logger.debug("Created user with email %s" format email)
         JsCmds.RedirectTo(Referer.get, () => S.appendNotices(S.getAllNotices))
       }
     }
   }
 
   protected def finish() {
-    debug("registration done")
+    logger.debug("registration done")
   }
 }
 

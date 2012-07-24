@@ -1,17 +1,21 @@
 <div id="main" class="lift:surround?with=admin;at=admin-content">
 
     <div class="row-fluid">
-        <div class="span6">
+        <div class="span6" lift="admin.MovieInfo.render">
 
-            <h2>Movie test!</h2>
-            <p>Movie name is <span lift="admin.MovieSnippet.name"><b>name goes here</b></span></p>
+            <h2>
+                <span movie-data="name">Movie name</span> //
+                <span movie-data="year">2000</span>
+            </h2>
+
+            <img class="thumbnail pull-right" movie-data="poster" src="" alt="">
 
         </div>
 
         <div class="span6">
             <a onclick="$(this).hide(); $('#editbox').show()" class="btn">Edit Base Info</a>
             <div id="editbox" style="display: none;">
-                <span lift="admin.MovieSnippet.edit?span=4&ajax=true"></span>
+                <span lift="admin.EditMovieScreen.render?span=4&ajax=true"></span>
             </div>
         </div>
     </div>

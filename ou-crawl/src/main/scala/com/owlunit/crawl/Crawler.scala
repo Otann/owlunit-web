@@ -1,12 +1,14 @@
 package com.owlunit.crawl
 
-import com.owlunit.core.ii.immutable.IiDao
-import imdb.{PersonsCrawler, KeywordsCrawler}
-import movielens.MoviesCrawler
-import org.apache.log4j.Level
-import org.neo4j.rest.graphdb._
-import com.owlunit.service.cinema._
+import model.PsKeyword
+import model.PsMovie
+import model.PsPerson
+import model.PsRole
+import parser.{Parser, PersonsCrawler, KeywordsParser, MoviesParser}
 import com.weiglewilczek.slf4s.Logging
+import com.owlunit.web.config.{IiDaoConfig, MongoConfig}
+import com.owlunit.web.model.{Keyword, Movie}
+import org.bson.types.ObjectId
 
 /**
  * @author Anton Chebotaev
@@ -14,35 +16,59 @@ import com.weiglewilczek.slf4s.Logging
  */
 
 
-object Crawler extends Logging {
+object Crawler extends Parser with Logging {
 
-  val moviesPath      = "runtime/movielens/movies.dat"
-  val keywordsPath    = "runtime/imdb/keywords.list"
-  val actorsPath      = "runtime/imdb/actors.list"
-  val actressesPath   = "runtime/imdb/actresses.list"
-  val directorsPath   = "runtime/imdb/directors.list"
-  val producersPath   = "runtime/imdb/producers.list"
+  val movies = collection.mutable.Map[String, PsMovie]() // simpleName
 
-  val dao = IiDao.local("/Users/anton/Dev/Owls/data")
-//  val dao = IiDao.remote("http://04e118aa4.hosted.neo4j.org:7034/db/data/", "a9786d4e8", "b72321c25")
+  val keywords = collection.mutable.Map[String, ObjectId]()
+  val persons = collection.mutable.Map[String, ObjectId]()
 
-  val cinemaService = CinemaService(dao)
+  val moviesPath      = "../../raw-data/movielens/movies.dat"
+  val keywordsPath    = "../../raw-data/imdb/keywords.list"
+  val actorsPath      = "../../raw-data/imdb/actors.list"
+  val actressesPath   = "../../raw-data/imdb/actresses.list"
+  val directorsPath   = "../../raw-data/imdb/directors.list"
+  val producersPath   = "../../raw-data/imdb/producers.list"
+
+
+  def cacheMovie(movie: PsMovie) = movies += simplifyName(movie.name, movie.year) -> movie
+
+  def saveKeyword(psKeyword: PsKeyword) = {
+    val keyword = Keyword.createRecord.name(psKeyword.name).save
+    keywords += psKeyword.name -> keyword.id.is
+  }
+
+  def saveMovieKeyword(m: PsMovie, k: PsKeyword, w: Double) =
+    try {
+      val movie = Movie.findBySimpleName(m.name, m.year).open_!
+      val keyword = Keyword.find(keywords(k.name)).open_!
+      movie.addKeyword(keyword, w)
+    } catch {
+      case e: Exception => logger.error("Cant increment %s for %s" format (k, m))
+    }
+
+  def saveMoviePerson(movie: PsMovie, person: PsPerson, role: PsRole) = {}
 
   def main(args: Array[String]) {
 
-//    new MoviesCrawler(moviesPath, cinemaService).run()
-//    new KeywordsCrawler(keywordsPath, cinemaService).run()
+    MongoConfig.init()
+    IiDaoConfig.init()
 
-//    new PersonsCrawler(actorsPath, cinemaService, Role.Actor, 12338129).run()
-//    new PersonsCrawler(actressesPath, cinemaService, Role.Actor, 7243872).run()
-//    new PersonsCrawler(directorsPath, cinemaService, Role.Director, 1724653).run()
-//    new PersonsCrawler(producersPath, cinemaService, Role.Producer, 3719561).run()
+    MoviesParser.parse(moviesPath, cacheMovie, k => {}, (m, k, w) => {})
+//    KeywordsParser.parse(keywordsPath, movies, saveMovieKeyword)
 
-//    log.debug(keywordService.loadOrCreate("Drama 1").toString)
-//    log.debug(keywordService.loadOrCreate("Drama 2").toString)
-//    log.debug(keywordService.search("dra").mkString("\n", "\n", "\n"))
-    
-    dao.shutdown()
+//    PersonsCrawler.parse(actorsPath, movies, PsRole("Actor"), 12338129, saveMoviePerson)
+//    PersonsCrawler.parse(actressesPath, movies, PsRole("Actor"), 7243872)
+//    PersonsCrawler.parse(directorsPath, movies, PsRole("Director"), 1724653)
+//    PersonsCrawler.parse(producersPath, movies, PsRole("Producer"), 3719561)
+
+
+    val counter = Counter.start(10679)
+    for (movie <- movies.values) {
+      counter.tick(logger, 1000, "movies saved")
+      Movie.createRecord.name(movie.name).year(movie.year).save
+    }
+
   }
 
 }

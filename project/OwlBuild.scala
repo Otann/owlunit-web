@@ -54,12 +54,12 @@ object OwlBuild extends Build {
   // For JRebel
 //  scanDirectories in Compile := Nil //WTF why this does not compile?
 
-  override lazy val settings = super.settings ++ Seq(
+  override lazy val settings = super.settings ++ buildSettings ++ Seq(
   	shellPrompt := { s => Project.extract(s).currentProject.id + "> " }
   )
 
   lazy val defaultSettings = Defaults.defaultSettings ++ buildSettings ++ Seq(
-    resolvers ++= Seq(ScalaToolsSnapshots, Resolvers.owlUnitIvy, Resolvers.owlUnitM2),
+    resolvers ++= Seq(ScalaToolsSnapshots, Resolvers.liftModules),
     scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked"),
     javacOptions ++= Seq("-Xlint:unchecked"),
     publishTo := Some(Resolver.file("file",  new File( "/Users/anton/Dev/Owls/repo/owlunit.github.com/repo/ivy/" )) ),
@@ -73,8 +73,9 @@ object OwlBuild extends Build {
   
   object Resolvers {
     
-    val owlUnitIvy = "OwlUnit Ivy Repo" at "http://owlunit.github.com/repo/ivy"
-    val owlUnitM2  = "OwlUnit Maven2 Repo" at "http://owlunit.github.com/repo/m2"
+    val owlUnitIvy  = "OwlUnit Ivy Repo" at "http://owlunit.github.com/repo/ivy"
+    val owlUnitM2   = "OwlUnit Maven2 Repo" at "http://owlunit.github.com/repo/m2"
+    val liftModules = "Liftmodules repo" at "https://repository-liftmodules.forge.cloudbees.com/release"
     
   }
   
@@ -86,7 +87,8 @@ object OwlBuild extends Build {
       Dependency.liftWidgets,
       Dependency.liftMongo,
       Dependency.auth,
-      Dependency.rogue
+      Dependency.rogue,
+      Dependency.logback
     )
 
     val webPlugin = Seq(

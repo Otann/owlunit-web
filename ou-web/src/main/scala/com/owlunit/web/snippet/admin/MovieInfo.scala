@@ -15,23 +15,24 @@ import com.owlunit.web.lib.BootstrapScreen
  *         Owls Proprietary
  */
 
-object MovieSnippet {
+object MovieInfo {
 
   def current: Box[Movie] = for {
     id <- S.param("id") ?~ "You must provide an id"
     movie <- Movie.findById(id)
   } yield { movie }
-  
-  def name = "* *" #> current.map(_.name.is)
 
-  def edit = "* *" #> EditMovieScreen.toForm
+  def render = "movie-data=name *" #> current.map(_.name.is) &
+      "movie-data=year *" #> current.map(_.year.is.toString) &
+      "movie-data=poster [src]" #> current.map(_.posterUrl.is)
+
 
 }
 
 object EditMovieScreen extends BootstrapScreen {
   override def screenTop = Full(<h3>Edit Movie</h3>)
 
-  object movieVar extends ScreenVar(MovieSnippet.current openOr Movie.createRecord)
+  object movieVar extends ScreenVar(MovieInfo.current openOr Movie.createRecord)
   addFields(() => movieVar.is.editFields)
 
   protected def finish() {

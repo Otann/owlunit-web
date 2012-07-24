@@ -15,14 +15,14 @@ import net.liftweb.mongodb.record.field.{ObjectIdField, MongoMapField}
  *         Owls Proprietary
  */
 
-class BsonRecordMapField[OwnerType <: BsonRecord[OwnerType], SubRecordType <: BsonRecord[SubRecordType]] (rec: OwnerType, valueMeta: BsonMetaRecord[SubRecordType])(implicit mf: Manifest[SubRecordType])
+class BsonRecordMapField[OwnerType <: BsonRecord[OwnerType], SubRecordType <: BsonRecord[SubRecordType]](rec: OwnerType, valueMeta: BsonMetaRecord[SubRecordType])(implicit mf: Manifest[SubRecordType])
   extends MongoMapField[OwnerType, SubRecordType](rec: OwnerType) {
 
   import scala.collection.JavaConversions._
 
   override def asDBObject: DBObject = {
     val javaMap = new HashMap[String, DBObject]()
-    for ((key, element) <- value)  {
+    for ((key, element) <- value) {
       javaMap.put(key.asInstanceOf[String], element.asDBObject)
     }
     val dbl = new BasicDBObject(javaMap)
@@ -45,11 +45,12 @@ class BsonRecordMapField[OwnerType <: BsonRecord[OwnerType], SubRecordType <: Bs
     case JObject(fieldList) => val retrievedMap = fieldList.map {
       field =>
         val key = field.name
-      val valRetrieved = valueMeta.fromJValue(field.value) openOr valueMeta.createRecord
-      (key, valRetrieved)
+        val valRetrieved = valueMeta.fromJValue(field.value) openOr valueMeta.createRecord
+        (key, valRetrieved)
     }.toMap
     setBox(Full(retrievedMap))
     case other => setBox(FieldHelpers.expectedA("JObject", other))
   }
+
 }
 

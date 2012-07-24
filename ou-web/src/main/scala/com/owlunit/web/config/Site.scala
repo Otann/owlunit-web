@@ -29,49 +29,56 @@ object Site {
   }
 
   // locations (menu entries)
-  val home = Menu("Home") / "index" >>
-    MenuGroup.TopBar
+  val home = Menu("Home") / "index" >> MenuGroup.TopBar
 
   val login = AuthLocs.buildLoginTokenMenu
   val logout = AuthLocs.buildLogoutMenu
 
-  private val profileParamMenu = Menu.param[User](
-    "User",
-    "Profile",
-    User.findByUsername _,
-    _.username.is) / "profile" >> Loc.CalcValue(() => User.currentUser) >> MenuGroup.Account
+//  private val profileParamMenu = Menu.param[User](
+//    "User",
+//    "Profile",
+//    User.findByUsername _,
+//    _.username.is
+//  ) / "profile" >> Loc.CalcValue(() => User.currentUser) >> MenuGroup.Account
 
   private val adminMenus =
     Menu("Admin") / "admin" / "index" submenus (
+      Menu("Profile")       / "admin" / "profile",
       Menu("Movie")         / "admin" / "movie",
       Menu("Person")        / "admin" / "person",
+
       Menu("Create Movie")  / "admin" / "create" / "movie"  >> MenuGroup.Admin,
       Menu("Create Person") / "admin" / "create" / "person" >> MenuGroup.Admin
       )
+
 
   private def menus = List(
     home,
     logout,
 
-    profileParamMenu,
+//    profileParamMenu,
+    Menu("Profile") / "profile"  >> MenuGroup.TopBar,
     adminMenus >> MenuGroup.TopBar,
 
     Menu("About")   / "about"    >> MenuGroup.TopBar,
     Menu("Test")    / "test"     >> MenuGroup.TopBar,
 
     Menu("Throw")   / "throw"    >> Hidden,
-    Menu("Error")   / "error"    >> Hidden
+    Menu("Error")   / "error"    >> Hidden,
+
+    Menu(Loc("Static", Link(List("static"), true, "/static/index"), "Static Content"))
   )
 
   /*
   * Return a SiteMap needed for Lift
   */
-  def sitemap: SiteMap = SiteMap(menus:_*)
+  def sitemap: SiteMap = SiteMap(menus: _*)
 
   /*
   * Return a URL rewrites
   */
   val statefulRewrites: LiftRules.RewritePF = {
+
     case RewriteRequest(ParsePath("admin" :: "movie" :: id :: Nil,_,_,_),_,_) => {
       if (Movie.findById(id).isDefined)
         RewriteResponse("admin" :: "movie" :: Nil, Map("id" -> id))
@@ -85,6 +92,7 @@ object Site {
       else
         RewriteResponse("404" :: Nil)
     }
+
   }
 
 }

@@ -3,7 +3,7 @@ package com.owlunit.web.snippet.admin
 import xml.NodeSeq
 import net.liftweb.http.js.{JsCmd, JsCmds}
 import net.liftweb.http.NoticeType
-import net.liftweb.common.Logger
+import net.liftweb.common.{Loggable, Logger}
 
 /**
  * @author Anton Chebotaev
@@ -11,7 +11,7 @@ import net.liftweb.common.Logger
  */
 
 
-trait AdminHelper extends Logger {
+trait AdminHelper {
 
   def item(name: String, itemId: String):NodeSeq = <span itemId={ itemId } class="ii badge label">{ name }</span>
 

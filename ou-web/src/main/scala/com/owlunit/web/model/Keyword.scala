@@ -2,67 +2,80 @@ package com.owlunit.web.model
 
 import net.liftweb.mongodb.record.field.ObjectIdPk
 import com.owlunit.core.ii.mutable.Ii
-import net.liftweb.common.{Empty, Box}
 import net.liftweb.record.field.{StringField, LongField}
 import net.liftweb.util.Helpers._
 import net.liftweb.util.FieldContainer
 import net.liftweb.mongodb.record.{MongoMetaRecord, MongoRecord}
 import org.bson.types.ObjectId
-import com.owlunit.web.config.{IiMeta, DependencyFactory}
+import com.owlunit.web.config.DependencyFactory
+import com.owlunit.web.lib.{IiMeta}
+import com.owlunit.core.ii.NotFoundException
+import net.liftweb.common._
 
 /**
  * @author Anton Chebotaev
  *         Owls Proprietary
  */
 
-class Keyword private () extends MongoRecord[Keyword] with ObjectIdPk[Keyword] with IiModelHelper with IiMeta {
+class Keyword private () extends IiMongoRecord[Keyword] with ObjectIdPk[Keyword] with IiMeta {
   def meta = Keyword
+  val baseMeta = "ii.cinema.keyword"
 
-  override def toString() = name.is
+  var ii: Ii = null
 
-  object name extends StringField(this, "") {
-    override def displayName = "Keyword name"
-    override def validations = valMinLen(1, "Must not be empty") _ :: super.validations
-  }
+  object name extends IiStringField(this, ii, Name, 140, "")
 
-  // Fields
-
+  // Field groups
   def createFields = new FieldContainer { def allFields = List(name) }
 
-  // Misc
-
-  override def save = {
-    ii.map(_.save)
-    super.save
-  }
-
-  private var cachedIi: Box[Ii] = Empty
-  def ii = cachedIi
-  
-  object iiid extends LongField(this) {
-    override def displayName = "Movie name"
-    override def apply(in: Long) = {
-      cachedIi = tryo { meta.iiDao.load(in) }
-      super.apply(in)
-    }
-  }
-
 }
-object Keyword extends Keyword with MongoMetaRecord[Keyword] {
+
+
+object Keyword extends Keyword with MongoMetaRecord[Keyword] with Loggable {
 
   lazy val iiDao = DependencyFactory.iiDao.vend //TODO unsafe vend
 
-
-  override def find(oid: ObjectId) = {
-    super.find(oid)
-  }
-
   override def createRecord = {
     val result = super.createRecord
-    val ii = iiDao.create.setMeta(Footprint, result.id.toString())
-    result.iiid(ii.id)
+    result.ii = iiDao.create.setMeta(Footprint, result.id.toString())
+    result
+  }
+  
+  override def find(oid: ObjectId) = {
+    try {
+      for {result <- super.find(oid)} yield {
+        result.ii = iiDao.load(iiid.is)
+        result
+      }
+    } catch {
+      case e: NotFoundException => Failure("Unable to find linked ii", Full(e), Empty)
+    }
   }
 
-  def findById(in: String): Box[Keyword] = if (ObjectId.isValid(in)) find(new ObjectId(in)) else Empty
+  def createFromIi(ii: Ii) = {
+    val oid = new ObjectId(ii.loadMeta.meta.get(Footprint))
+    find(oid)
+  }
+
+  def findByName(name: String): Box[Keyword] = {
+    //TODO investigate how to fix double load of iis (dao.load + find)
+    val ids = iiDao.load(Name, name).map(item => item.loadMeta.meta.get(Footprint))
+    val keywords = ids.map(id => find(new ObjectId(id))).flatten
+    keywords match {
+      case Nil => Empty
+      case keyword :: Nil => Full(keyword)
+      case keyword :: _ => {
+        logger.error("Multiple keywords found with same name %s" format name)
+        Full(keyword)
+      }
+    }
+  }
+
+  def searchByName(prefix: String): Seq[Keyword] = {
+    //TODO investigate how to fix double load of iis (dao.load + find)
+    val ids = iiDao.search(Name, "%s*" format prefix.toLowerCase).map(item => item.loadMeta.meta.get(Footprint))
+    val keywords = ids.map(id => find(new ObjectId(id)))
+    keywords.flatten
+  }
 
 }

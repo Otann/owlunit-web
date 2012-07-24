@@ -14,17 +14,7 @@ object DependencyFactory extends Factory {
 
   val localMode = true // sys.env.getOrElse("OWL_DEPLOY_LOCAL", "false").toBoolean
 
-  def shutdown() { dao.shutdown() }
-  private val dao:IiDao = {
-    if (localMode)
-      IiDao.local("/Users/anton/Dev/Owls/data")
-    else
-      IiDao.remote("http://04e118aa4.hosted.neo4j.org:7034/db/data/", "a9786d4e8", "b72321c25")
-  }
-
-  implicit object iiDao extends FactoryMaker[IiDao](dao)
-
-//  implicit object cinemaService extends FactoryMaker[CinemaService](CinemaService(DependencyFactory.inject[IiDao].open_!))
+  implicit object iiDao extends FactoryMaker[IiDao](IiDaoConfig.dao)
 
   /**
    * objects in Scala are lazily created.  The init()

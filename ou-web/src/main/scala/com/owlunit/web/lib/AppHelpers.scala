@@ -19,4 +19,5 @@ trait AppHelpers {
   def ajaxForm(form: NodeSeq) = SHtml.ajaxForm((
     "type=submit [class+]" #> "btn btn-primary"
     )(form))
+
 }

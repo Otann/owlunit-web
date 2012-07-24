@@ -12,9 +12,9 @@ import com.owlunit.web.lib.BootstrapScreen
 import net.liftweb.record.Field
 
 /**
- * @author Anton Chebotaev
- *         Owls Proprietary
- */
+* @author Anton Chebotaev
+*         Owls Proprietary
+*/
 
 object PersonSnippet {
 
@@ -23,7 +23,7 @@ object PersonSnippet {
     movie <- Person.findById(id)
   } yield { movie }
 
-  def render = "person-data=iiid [itemid]" #> current.map(_.iiid.is.toString) &
+  def render = "person-data=iiid [itemid]" #> current.map(_.ii.id.toString) &
     "person-data=name *" #> current.map(_.fullName) &
     "person-data=photo [src]" #> current.map(_.photoUrl.is)
 

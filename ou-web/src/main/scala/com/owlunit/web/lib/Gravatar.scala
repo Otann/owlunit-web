@@ -15,8 +15,8 @@ import net.liftweb.http.Factory
 object Gravatar extends Factory with Loggable {
 
   val defaultRating = new FactoryMaker[String]("G") {}
-  val defaultSize   = new FactoryMaker[Int](100) {}
-  val defaultImage  = new FactoryMaker[String]("") {}
+  val defaultSize = new FactoryMaker[Int](100) {}
+  val defaultImage = new FactoryMaker[String]("") {}
 
   /**
    * @param email The email address of the recipient
@@ -24,19 +24,19 @@ object Gravatar extends Factory with Loggable {
    * @param rating The rating of the Gravater, the default is G
    * @param default The default image to return if none exists for the given email
    */
-  def imageUrl( email: String,
-                size: Int = defaultSize.vend,
-                rating: String = defaultRating.vend,
-                default: String = defaultImage.vend
+  def imageUrl(email: String,
+               size: Int = defaultSize.vend,
+               rating: String = defaultRating.vend,
+               default: String = defaultImage.vend
                 ): String = {
-    val url = "http://www.gravatar.com/avatar/%s?s=%s&r=%s" format (getMD5(email), size.toString, rating)
-    if (default.length > 0) "%s&d=%s" format (url, Helpers.urlEncode(default)) else url
+    val url = "http://www.gravatar.com/avatar/%s?s=%s&r=%s" format(getMD5(email), size.toString, rating)
+    if (default.length > 0) "%s&d=%s" format(url, Helpers.urlEncode(default)) else url
   }
 
-  def imgTag( email: String,
-              size: Int = defaultSize.vend,
-              rating: String = defaultRating.vend,
-              default: String = defaultImage.vend
+  def imgTag(email: String,
+             size: Int = defaultSize.vend,
+             rating: String = defaultRating.vend,
+             default: String = defaultImage.vend
               ): NodeSeq = {
     <img src={imageUrl(email, size, rating, default)}></img>
   }

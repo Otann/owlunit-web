@@ -75,3 +75,7 @@ p.lift_error {
     /*-moz-border-radius: 45px;*/
     /*border-radius: 45px;*/
 }
+
+.movie-info-poster {
+    float: right;
+}

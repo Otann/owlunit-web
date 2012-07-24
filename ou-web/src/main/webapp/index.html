@@ -1,15 +1,31 @@
-<div id="main" class="lift:surround?with=default;at=content">
+<div id="main" class="lift:surround?with=bootstrap;at=content">
 
     <div class="container">
 
         <!-- Main hero unit for a primary marketing message or call to action -->
         <div class="hero-unit offset2 span6">
-            <h1>Not Welcome</h1>
+
+            <h1>Welcome aboard</h1>
+
             <hr/>
-            <p>Nothing to look at, keep going</p>
+
+            <p class="lift:test_cond.loggedin">
+                <a class="" href="/profile">Go to profile »</a><br/>
+                <a lift="UserSnippet.logout" href="#">Log out »</a><br/>
+            </p>
+
+            <p class="lift:test_cond.loggedout">
+                <a class="lift:admin.LoginScreen.modalHref">Sign In »</a><br/>
+                <a class="lift:admin.RegisterScreen.modalHref">Sign Up »</a><br/>
+            </p>
+
             <small class="pull-right">OWL UNIT 2012</small>
+
         </div>
 
     </div>
+
+    <div lift="admin.LoginScreen.render?ajax=true"></div>
+    <div lift="admin.RegisterScreen.render?ajax=true"></div>
 
 </div>

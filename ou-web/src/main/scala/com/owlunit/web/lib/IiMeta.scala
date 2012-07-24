@@ -8,13 +8,23 @@ package com.owlunit.web.lib
 
 trait IiMeta {
 
-  val Footprint = this.getClass.getName + ".MongoId"
-  val Name  = this.getClass.getName + ".Name"
+  def baseMeta: String
+  val Footprint = baseMeta + ".MongoId"
+  val Name  = baseMeta + ".Name"
 
 }
 
 trait IiMovieMeta extends IiMeta {
 
-  val Year  = this.getClass.getName + ".Year"
+  val SimpleName = baseMeta + ".SimpleName"
+
+  val KeywordWeight = 1.0
+  val ActorWeight = 5.0
+
+}
+
+trait IiPersonMeta extends IiMeta {
+
+  val SimpleName = baseMeta + ".SimpleName"
 
 }

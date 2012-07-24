@@ -9,9 +9,9 @@ import xml.{Text, NodeSeq}
 import com.owlunit.web.model.{Person, User, Movie}
 
 /**
- * @author Anton Chebotaev
- *         Owls Proprietary
- */
+* @author Anton Chebotaev
+*         Owls Proprietary
+*/
 
 object CreateMovieScreen extends BootstrapScreen with AdminHelper {
 

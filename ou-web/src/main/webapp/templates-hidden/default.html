@@ -1,0 +1,140 @@
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title></title>
+    <meta name="description" content="">
+
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/js/libs/jquery-1.7.2.min.js"></script>
+    <script src="/js/libs/jquery-ui-1.8.18.min.js"></script>
+    <script type="text/javascript">
+        window.$$ = jQuery.noConflict(true);
+    </script>
+
+    <!-- Lifty jquery, TODO replace with 1.7 completely-->
+    <script id="jquery" src="/classpath/jquery.js" type="text/javascript"></script>
+    <script id="json" src="/classpath/json.js" type="text/javascript"></script>
+
+    <script class="lift:tail" type="text/javascript">
+
+        // TODO Complete general drag-n-drop code
+        var ii_opts = { helper: 'clone', opacity: 0.65, zIndex: 2700 };
+        $$('body').delegate('.ii', 'mouseover', function(e){
+            var thing = $$(this);
+            if(!thing.hasClass('ui-draggable')) {
+                thing.draggable(ii_opts);
+            }
+        });
+
+    </script>
+
+
+</head>
+<body>
+<!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
+
+<header class="page-header">
+    <nav>
+        <ul>
+            <li><a href="#">Community</a></li>
+            <li><a href="#">Inspiration</a></li>
+            <li><a href="#">Subscriptions<span class="counter">24</span></a></li>
+        </ul>
+    </nav>
+
+    <div class="logo">
+        <img src="/img/temp/logo.png" alt="" />
+    </div>
+</header>
+
+<aside class="userbar">
+
+    <div class="title-wrap">
+        <div class="title">
+            Explore
+        </div>
+    </div>
+
+    <div class="profile">
+        <img src="/img/temp/userpic.png" alt="" /><a href="#">Add to profile</a>
+    </div>
+
+    <div class="landingarea lift:admin.QuickSearch.render" id="quicksearch">
+
+        <form action="">
+            <fieldset>
+                <input value="" placeholder="Start typing..." type="text" name=search class="search-query"/>
+            </fieldset>
+        </form>
+
+        <div class="hint">
+        </div>
+
+        <ul class="tags clearfix dropdown-menu" id="quicksearch-results">
+            <li><span class="ii">Some</span></li>
+            <li><span class="ii">Items</span></li>
+            <li><span class="ii">Right Here</span></li>
+            <!--<li><span class="ii">And one final superlog item with weird name</span></li>-->
+            <li><span class="ii">Items</span></li>
+            <li><span class="ii">Right Here</span></li>
+        </ul>
+
+    </div>
+
+    <div class="trashbin-wrap">
+        <div class="trashbin">
+
+        </div>
+    </div>
+</aside>
+
+<div class="content" id="content">
+
+    <p>content will be here</p>
+
+</div>
+
+<aside class="watchlists">
+
+    <div class="create">
+        <a href="#">Watch Lists</a>
+    </div>
+
+    <ul class="lists">
+        <li>Watched<span class="counter">214</span></li>
+        <li>Christmas..<span class="counter">17</span></li>
+    </ul>
+
+    <div class="landingarea">
+        Alex watch list
+        <p class="hint">Drag movies<br />here to add</p>
+    </div>
+
+    <ul class="listactions">
+        <li>
+            <div><a href="#">Share list</a></div>
+        </li>
+        <li>
+            <div><a href="#">Remove list</a></div>
+        </li>
+    </ul>
+
+    <div class="signout">
+        <a href="#">Sign out</a>
+    </div>
+</aside>
+
+<!--<script>window.jQuery || document.write('<script src="js/libs/jquery-1.7.1.min.js"><\/script>')</script>-->
+
+<!--<script src="/js/plugins.js"></script>-->
+<!--<script src="/js/script.js"></script>-->
+
+</body>
+</html>

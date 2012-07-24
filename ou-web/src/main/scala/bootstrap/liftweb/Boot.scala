@@ -24,7 +24,7 @@ class Boot {
 
     MongoConfig.init()
     DependencyFactory.init()
-    LiftRules.unloadHooks.append(() => DependencyFactory.shutdown())
+    LiftRules.unloadHooks.append(() => IiDaoConfig.shutdown())
 
     LiftRules.addToPackages("com.owlunit.web")
 
@@ -32,6 +32,7 @@ class Boot {
 
     LiftRules.statefulRewrite.append(Site.statefulRewrites)
 
+    //TODO anton chebotaev - replace with 1.7
     LiftRules.jsArtifacts = net.liftweb.http.js.jquery.JQuery14Artifacts
 
     //Show the spinny image when an Ajax call starts and go away when it ends

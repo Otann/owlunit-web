@@ -10,6 +10,7 @@ import http._
 import auth._
 import sitemap._
 import Loc._
+import net.liftmodules.JQueryModule
 
 import com.owlunit.web.config._
 import com.owlunit.web.model.User
@@ -33,7 +34,9 @@ class Boot {
     LiftRules.statefulRewrite.append(Site.statefulRewrites)
 
     //TODO anton chebotaev - replace with 1.7
-    LiftRules.jsArtifacts = net.liftweb.http.js.jquery.JQuery14Artifacts
+    //LiftRules.jsArtifacts = net.liftweb.http.js.jquery.JQuery14Artifacts
+    JQueryModule.InitParam.JQuery = JQueryModule.JQuery172
+    JQueryModule.init()
 
     //Show the spinny image when an Ajax call starts and go away when it ends
     LiftRules.ajaxStart = Full(() => LiftRules.jsArtifacts.show("ajax-loader").cmd)

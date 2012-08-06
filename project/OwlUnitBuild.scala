@@ -8,7 +8,7 @@ import com.github.siasia.WebPlugin._
 import com.github.siasia.PluginKeys._
 import com.typesafe.startscript.StartScriptPlugin
 
-object OwlBuild extends Build {
+object OwlUnitBuild extends Build {
 
   lazy val buildSettings = Seq(
     organization := "com.owlunit",
@@ -38,7 +38,7 @@ object OwlBuild extends Build {
     id = "ou-web",
     base = file("ou-web"),
     settings = defaultSettings ++ webSettings ++ StartScriptPlugin.startScriptForClassesSettings ++ Seq(
-      libraryDependencies ++= Dependencies.lift ++ Dependencies.webPlugin ++ Seq(Dependency.iiCore),
+      libraryDependencies ++= Dependencies.lift ++ Dependencies.webPlugin ++ Seq(Dependency.iiCore, Dependency.jQuery),
       scanDirectories in Compile := Nil,
       mainClass in Compile := Some("JettyLauncher")
     )
@@ -115,6 +115,7 @@ object OwlBuild extends Build {
 
     val spring      = "org.springframework"       %  "spring-context"      % "3.0.5.RELEASE"
     val dispatch    = "net.databinder"            %% "dispatch-http"       % "0.8.8"
+    val jQuery      = "net.liftmodules"           %% "lift-jquery-module"  % (V.Lift + "-1.0")
 
     val liftWebKit  = "net.liftweb"               %% "lift-webkit"         % V.Lift    % "compile->default"
     val liftWizard  = "net.liftweb"               %% "lift-wizard"         % V.Lift    % "compile->default"
@@ -127,6 +128,7 @@ object OwlBuild extends Build {
     val jettyWebapp = "org.eclipse.jetty"         %  "jetty-webapp"        % V.Jetty
     val jettyServer = "org.eclipse.jetty"         %  "jetty-server"        % V.Jetty
     val servlet     = "org.eclipse.jetty"         %  "jetty-servlet"       % V.Jetty
+
     val logback     = "ch.qos.logback"            %  "logback-classic"     % "0.9.28"
     val slf4s       = "com.weiglewilczek.slf4s"   %% "slf4s"               % "1.0.7"
 

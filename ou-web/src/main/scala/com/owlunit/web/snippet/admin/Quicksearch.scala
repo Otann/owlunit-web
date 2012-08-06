@@ -2,7 +2,6 @@ package com.owlunit.web.snippet.admin
 
 import net.liftweb.util._
 import net.liftweb.common._
-import java.util.Date
 import com.owlunit.web.lib._
 import Helpers._
 import net.liftweb.http.js.JsCmd
@@ -16,37 +15,37 @@ import net.liftweb.http.{S, SHtml}
 import collection.mutable.ListBuffer
 import xml.{Null, Attribute, NodeSeq, Text}
 import com.owlunit.web.config.DependencyFactory
+import java.util.{Collections, Date}
+import com.owlunit.web.model.{IiMongoRecord, Person, Keyword, Movie}
+import org.bson.types.ObjectId
 
 /**
-* @author Anton Chebotaev
-*         Owls Proprietary
-*/
-object Quicksearch {
+ * @author Anton Chebotaev
+ *         Owls Proprietary
+ */
+object QuickSearch extends Loggable {
 
   lazy val log = Logger(this.getClass)
 
   val minChars = 3
-  val resultsId = nextFuncName
+  val resultsId = "quicksearch-results"
 
   def onChange = SHtml.onEvent(prefix => {
     if (prefix.length >= 3) {
-      JsCmds.SetHtml(resultsId, loadItems(prefix)) & JsCmds.JsShowId(resultsId)
+      val items = loadItems(prefix)
+      if (items.length > 0) JsCmds.SetHtml(resultsId, items) & JsCmds.JsShowId(resultsId) else JsCmds.Noop
     } else {
       JsCmds.SetHtml(resultsId, NodeSeq.Empty) & JsCmds.JsHideId(resultsId)
     }
   })
 
+  private def makeSimpleIi(id: String, hrefPrefix: String, caption: NodeSeq) =
+      <span class="ii" href={ hrefPrefix + id }>{ caption }</span> % Attribute(None, "data-itemId", Text(id), Null)
+
   private def loadItems(prefix: String) = {
-//    val opts = cinemaService.search(prefix)
-//    opts.map(k => {
-//      val icon = k match {
-//        case x: KeywordIi => "icon-tag"
-//        case x: PersonIi => "icon-user"
-//        case x: MovieIi => "icon-facetime-video"
-//      }
-//      <li><a href={"/admin/item/" + k.id}><i class={icon}></i> {k.title}</a></li>
-//    })
-    NodeSeq.Empty
+    NodeSeq.Empty ++
+      Keyword.searchByName(prefix).map(t => <li>{ makeSimpleIi(t.id.is.toString, "/admin/keyword/", Text(t.name.is.toString)) }</li>) ++
+      Movie.searchByName(prefix).map(t => <li>{ makeSimpleIi(t.id.is.toString, "/admin/movie/", Text(t.name.is.toString)) }</li>)
   }
 
   def render = {

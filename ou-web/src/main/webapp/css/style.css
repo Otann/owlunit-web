@@ -706,3 +706,16 @@ a:hover {
 	}
 
 @import 'print.css';
+
+
+/* ************** */
+/* Added by Anton */
+/* ************** */
+
+.trashbin.ii-hovered {
+    background-color: #211d34;
+}
+
+.profile.ii-hovered {
+    background: #211d34 none;
+}

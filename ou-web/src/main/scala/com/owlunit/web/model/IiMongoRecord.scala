@@ -6,6 +6,7 @@ import net.liftweb.record.field.{LongField, StringField}
 import net.liftweb.util.Helpers._
 import com.owlunit.core.ii.mutable.{IiDao, Ii}
 import net.liftweb.mongodb.record.field.{ObjectIdField, UUIDPk}
+import net.liftweb.http.js.JsObj
 
 
 /**
@@ -13,11 +14,11 @@ import net.liftweb.mongodb.record.field.{ObjectIdField, UUIDPk}
  *         Owls Proprietary
  */
 
-
 trait IiMongoRecord[OwnerType <: IiMongoRecord[OwnerType]] extends MongoRecord[OwnerType]  {
   self: OwnerType =>
 
   def ii: Ii
+//  def toJSON: JsObj
 
   override def save = {
     ii.save

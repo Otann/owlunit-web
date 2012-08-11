@@ -11,17 +11,21 @@ import com.owlunit.web.config.DependencyFactory
 import com.owlunit.web.lib.{IiMeta}
 import com.owlunit.core.ii.NotFoundException
 import net.liftweb.common._
+import net.liftweb.http.js.JE.JsObj
 
 /**
  * @author Anton Chebotaev
  *         Owls Proprietary
  */
 
-class Keyword private () extends IiMongoRecord[Keyword] with ObjectIdPk[Keyword] with IiMeta {
+class Keyword private () extends IiMongoRecord[Keyword] with ObjectIdPk[Keyword] with IiMeta with IiTag {
   def meta = Keyword
   val baseMeta = "ii.cinema.keyword"
 
   var ii: Ii = null
+
+  def tagId = this.id.is.toString
+  def tagCaption = this.name.is.toString
 
   object name extends IiStringField(this, ii, Name, 140, "")
 

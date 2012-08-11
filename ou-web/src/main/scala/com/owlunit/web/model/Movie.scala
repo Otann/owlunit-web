@@ -17,18 +17,24 @@ import com.owlunit.web.lib.IiMovieMeta
 import org.bson.types.ObjectId
 import net.liftweb.common._
 import net.liftweb.mongodb
+import net.liftweb.http.js.JsObj
+import net.liftweb.http.js.JE.JsObj
+import net.liftweb.http.js.JsObj
 
 /**
  * @author Anton Chebotaev
  *         Owls Proprietary
  */
 
-class Movie private extends IiMongoRecord[Movie] with ObjectIdPk[Movie] with IiMovieMeta {
+class Movie private extends IiMongoRecord[Movie] with ObjectIdPk[Movie] with IiMovieMeta with IiTag {
 
   def meta = Movie
   val baseMeta = "ii.cinema.movie"
 
   var ii: Ii = null
+
+  def tagId = this.id.is.toString
+  def tagCaption = this.name.is.toString
 
   // Fields
 

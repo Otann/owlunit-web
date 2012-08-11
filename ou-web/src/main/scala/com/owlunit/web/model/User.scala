@@ -22,11 +22,14 @@ import com.owlunit.web.lib.IiMeta
  *         Owls Proprietary
  */
 
-class User private () extends ProtoAuthUser[User] with ObjectIdPk[User] with IiMongoRecord[User] with IiMeta {
+class User private () extends ProtoAuthUser[User] with ObjectIdPk[User] with IiMongoRecord[User]  with IiMeta with IiTag {
   def meta = User
   def baseMeta = "ii.user"
 
   var ii: Ii = null
+
+  def tagId = this.id.is.toString
+  def tagCaption = this.name.is.toString
 
   def userIdAsString: String = id.toString()
 

@@ -22,6 +22,7 @@ class Person private () extends IiMongoRecord[Person] with ObjectIdPk[Person] wi
   val baseMeta = "ii.cinema.person"
 
   var ii: Ii = null
+//  def toJSON = return J
 
   override def toString() = "%s %s" format (firstName.is, lastName.is)
   def url = "/admin/person/" + id

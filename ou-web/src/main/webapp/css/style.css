@@ -34,7 +34,7 @@ a:hover {
 	color: #ff0b3d;
 }
 
-.ii {
+span.ii {
 	border: 1px solid;
 	border-radius: 3px;
 	padding: 0px 2px;
@@ -712,10 +712,30 @@ a:hover {
 /* Added by Anton */
 /* ************** */
 
+.name .ii {
+    border: none;
+    background: rgba(0, 0, 0, 0.05);
+}
+.name .ii.ui-draggable-dragging {
+    border: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.1);
+
+}
+
 .trashbin.ii-hovered {
     background-color: #211d34;
 }
 
 .profile.ii-hovered {
     background: #211d34 none;
+}
+
+#dropbar {
+    margin-top: 17px;
+    padding-top: 3px;
+    min-height: 100px;
+    border-top: 2px rgba(255, 255, 255, 0.1) dashed;
+}
+#dropbar.ii-hovered {
+    background: rgba(255, 255, 255, 0.1) none;
 }

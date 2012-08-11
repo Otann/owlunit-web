@@ -37,7 +37,7 @@
         </ul>
     </nav>
 
-    <div class="logo">
+    <div class="logo ii" data-id="0" data-caption="OWL UNIT">
         <img src="/img/temp/logo.png" alt="" />
     </div>
 </header>
@@ -50,11 +50,13 @@
         </div>
     </div>
 
-    <div class="profile">
+    <div class="profile" id="profile">
         <img src="/img/temp/userpic.png" alt="" /><a href="#">Add to profile</a>
     </div>
 
     <div class="landingarea lift:admin.QuickSearch.render" id="quicksearch">
+
+        <span class="test"></span>
 
         <form action="">
             <fieldset>
@@ -66,18 +68,15 @@
         </div>
 
         <ul class="tags clearfix dropdown-menu" id="quicksearch-results">
-            <!--<li><span class="ii">Some</span></li>-->
-            <!--<li><span class="ii">Items</span></li>-->
-            <!--<li><span class="ii">Right Here</span></li>-->
-            <!--<li><span class="ii">And one final superlog item with weird name</span></li>-->
-            <!--<li><span class="ii">Items</span></li>-->
-            <!--<li><span class="ii">Right Here</span></li>-->
+        </ul>
+
+        <ul class="tags clearfix" id="dropbar">
         </ul>
 
     </div>
 
     <div class="trashbin-wrap">
-        <div class="trashbin">
+        <div class="trashbin" id="trashbin">
 
         </div>
     </div>
@@ -118,6 +117,10 @@
         <a href="#">Sign out</a>
     </div>
 </aside>
+
+<!-- TODO(Anton) move somewhere maybe? -->
+<ul class="tags" id="dragged">
+</ul>
 
 <!--<script>window.jQuery || document.write('<script src="js/libs/jquery-1.7.1.min.js"><\/script>')</script>-->
 

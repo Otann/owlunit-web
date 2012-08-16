@@ -9,22 +9,22 @@ package com.owlunit.web.lib
 trait IiMeta {
 
   def baseMeta: String
-  val Footprint = baseMeta + ".MongoId"
-  val Name  = baseMeta + ".Name"
+  def Footprint = baseMeta + ".MongoId"
+  def Name  = baseMeta + ".Name"
 
 }
 
 trait IiMovieMeta extends IiMeta {
 
-  val SimpleName = baseMeta + ".SimpleName"
+  def SimpleName = baseMeta + ".SimpleName"
 
   val KeywordWeight = 1.0
-  val ActorWeight = 5.0
+  val GeneralPersonWeight = 5.0
 
 }
 
 trait IiPersonMeta extends IiMeta {
 
-  val SimpleName = baseMeta + ".SimpleName"
+  def SimpleName = baseMeta + ".SimpleName"
 
 }

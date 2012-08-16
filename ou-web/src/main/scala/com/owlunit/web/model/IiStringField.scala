@@ -1,6 +1,7 @@
 package com.owlunit.web.model
 
 import net.liftweb.record.field.StringField
+import net.liftweb.record.Record
 import com.owlunit.core.ii.mutable.Ii
 import net.liftweb.common.Box
 
@@ -10,16 +11,19 @@ import net.liftweb.common.Box
  *         Owls Proprietary
  */
 
-abstract class IiStringField[OwnerType <: net.liftweb.record.Record[OwnerType]]( rec: OwnerType,
-                                                                                 mappedIi: => Ii,
-                                                                                 val key: String,
-                                                                                 maxLength: Int,
-                                                                                 predef: String )
-  extends StringField(rec, maxLength, predef) {
+abstract class IiStringField[OwnerType <: Record[OwnerType]]( parent: OwnerType,
+                                                              mappedIi: => Ii,
+                                                              val metaKey: String,
+                                                              predef: String )
+  // 265 limit is ignored by lift-mongo
+  extends StringField(parent, 256, predef) {
 
-  override def apply(in: String) = {
-    mappedIi.setMeta(key, in.toLowerCase)
-    super.apply(in)
+  override def apply(value: String) = {
+    // set value to ii backend
+    mappedIi.setMeta(metaKey, value.toLowerCase)
+
+    // sel value to local record
+    super.apply(value)
   }
 
 }

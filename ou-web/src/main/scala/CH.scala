@@ -1,5 +1,5 @@
 import bootstrap.liftweb.Boot
-import com.owlunit.web.config.DependencyFactory
+import com.owlunit.web.config.{IiDaoConfig, DependencyFactory}
 
 /**
  * @author Anton Chebotaev
@@ -16,7 +16,7 @@ object CH { //Console helper
   }
 
   def s() {
-//    DependencyFactory.shutdown()
+    IiDaoConfig.shutdown()
   }
 
 }

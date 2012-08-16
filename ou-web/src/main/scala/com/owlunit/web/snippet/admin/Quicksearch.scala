@@ -46,7 +46,7 @@ object QuickSearch extends Loggable {
     // t.id.is
     // t.name.is
      val items = List[JsObj]() ++
-      Keyword.searchByName(prefix).map(t => t.toTagJSON) ++
+      Keyword.searchWithName(prefix).map(t => t.toTagJSON) ++
       Movie.searchByName(prefix).map(t => t.toTagJSON)
     JsArray(items)
   }

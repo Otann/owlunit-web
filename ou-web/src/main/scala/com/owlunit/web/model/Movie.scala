@@ -28,7 +28,10 @@ import net.liftweb.http.js.JsObj
 
 class Movie private extends IiMongoRecord[Movie] with ObjectIdPk[Movie] with IiMovieMeta with IiTag {
 
+  // for MongoRecord
   def meta = Movie
+
+  // for IiMongoRecord, IiMovieMeta and IiTag
   val baseMeta = "ii.cinema.movie"
 
   var ii: Ii = null
@@ -38,46 +41,52 @@ class Movie private extends IiMongoRecord[Movie] with ObjectIdPk[Movie] with IiM
 
   // Fields
 
-  object name extends IiStringField(this, ii, Name, 300, "")
+  object name extends IiStringField(this, ii, Name, "")
   object year extends IntField(this, 0)
   object posterUrl extends StringField(this, "http://placehold.it/130x200")
 
   object keywords extends MongoListField[Movie, ObjectId](this)
   object persons extends BsonRecordListField(this, CrewItem)
 
-  // Field Containers
-
-  def createFields = new FieldContainer { def allFields = List(name, year, posterUrl) }
-  def editFields = new FieldContainer { def allFields = List(name, year, posterUrl) }
-
-  // Manipulation methods
+  // Data manipulation
 
   def addKeyword(k: Keyword, w: Double = KeywordWeight) {
-    keywords(k.id.is :: keywords.is)
-    ii.setItem(k.ii, w)
+    if (!keywords.is.contains(k.id.is)) {
+      keywords(k.id.is :: keywords.is)
+      ii.setItem(k.ii, w)
+    }
   }
 
   def removeKeyword(k: Keyword) {
-    keywords(k.id.is :: keywords.is)
-    ii.setItem(k.ii, KeywordWeight)
+    if (keywords.is.contains(k.id.is)) {
+      keywords(keywords.is filterNot (_ == k.id.is))
+      ii.setItem(k.ii, 0) // TODO(Anton): Check
+    }
   }
 
   def addPerson(p: Person, r: Role.Role) {
-    var item = CrewItem.createRecord.person(p.id.is).role(r)
-    persons(item :: persons.is) //TODO anton chebotaev - add existence check
-    ii.setItem(p.ii, ActorWeight) //TODO anton chebotaev - make it incremental
+    val item = CrewItem.createRecord.person(p.id.is).role(r)
+    persons(item :: persons.is)   //TODO(Anton): add existence check
+    ii.setItem(p.ii, GeneralPersonWeight) //TODO(Anton): make it incremental
   }
+
+  // Persistence
 
   override def save = {
     ii.setMeta(SimpleName, simplifyComplexName(name.is, year.is))
     super.save
   }
 
+  // Field Containers
+
+  def createFields = new FieldContainer { def allFields = List(name, year, posterUrl) }
+  def editFields =   new FieldContainer { def allFields = List(name, year, posterUrl) }
+
 }
 
 object Movie extends Movie with MongoMetaRecord[Movie] with Loggable {
 
-  lazy val iiDao = DependencyFactory.iiDao.vend //TODO unsafe vend
+  lazy val iiDao = DependencyFactory.iiDao.vend //TODO(Anton) unsafe vend
 
   override def createRecord = {
     val result = super.createRecord
@@ -87,7 +96,7 @@ object Movie extends Movie with MongoMetaRecord[Movie] with Loggable {
 
   override def find(oid: ObjectId) = {
     val result = super.find(oid)
-    result.map{ m => m.ii = iiDao.load(m.iiid.is)}
+    result.map{ m => m.ii = iiDao.load(m.informationItemId.is)}
     result
   }
 

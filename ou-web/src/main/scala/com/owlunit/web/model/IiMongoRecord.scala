@@ -18,22 +18,24 @@ trait IiMongoRecord[OwnerType <: IiMongoRecord[OwnerType]] extends MongoRecord[O
   self: OwnerType =>
 
   def ii: Ii
-//  def toJSON: JsObj
 
   override def save = {
     ii.save
-    iiid(ii.id)
+    informationItemId(ii.id)
     super.save
   }
 
-  protected object iiid extends LongField(this)
+  protected object informationItemId extends LongField(this)
 
   protected def simplifyComplexName(args: Any*):String = args.mkString.toLowerCase
-    .replaceAll(", the|, a|the |a |", "")
-    .replaceAll("[\\W&&\\D]", "")
+    .replaceAll(", the|, a|the |a |", "") // remove articles
+    .replaceAll("[\\W&&\\D]", "") // remove all non-chars even spaces
 
   protected def buildQuery(query: String):String = {
+    // spit to words by removing all non-characters and spaces, split with spaces
     val parts = query.toLowerCase.replaceAll("[^\\w\\d ]", "").split(' ')
+
+    // append asterisk to all words longer than 2 characters
     parts.filter(_.length > 2).map(_ + "*").mkString(" ")
   }
 

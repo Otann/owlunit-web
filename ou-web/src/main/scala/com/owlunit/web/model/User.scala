@@ -33,7 +33,7 @@ class User private () extends ProtoAuthUser[User] with ObjectIdPk[User] with IiM
 
   def userIdAsString: String = id.toString()
 
-  object name extends IiStringField(this, ii, Name, 64, "") {
+  object name extends IiStringField(this, ii, Name, "") {
     override def displayName = "Name"
     override def validations =
       valMaxLen(64, "Name must be 64 characters or less") _ ::
@@ -76,7 +76,7 @@ object User extends User with ProtoAuthUserMeta[User] with Loggable {
 
   override def collectionName = "users"
 
-  ensureIndex((iiid.name -> 1), true)
+  ensureIndex((informationItemId.name -> 1), true)
   ensureIndex((email.name -> 1), true)
   ensureIndex((username.name -> 1), true)
 

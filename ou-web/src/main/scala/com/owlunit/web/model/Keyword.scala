@@ -12,6 +12,7 @@ import com.owlunit.web.lib.{IiMeta}
 import com.owlunit.core.ii.NotFoundException
 import net.liftweb.common._
 import net.liftweb.http.js.JE.JsObj
+import com.foursquare.rogue.Rogue._
 
 /**
  * @author Anton Chebotaev
@@ -27,7 +28,7 @@ class Keyword private () extends IiMongoRecord[Keyword] with ObjectIdPk[Keyword]
   def tagId = this.id.is.toString
   def tagCaption = this.name.is.toString
 
-  object name extends IiStringField(this, ii, Name, 140, "")
+  object name extends IiStringField(this, ii, Name, "")
 
   // Field groups
   def createFields = new FieldContainer { def allFields = List(name) }
@@ -45,38 +46,31 @@ object Keyword extends Keyword with MongoMetaRecord[Keyword] with Loggable {
     result
   }
   
-  override def find(oid: ObjectId) = {
+  override def find(oid: ObjectId) = super.find(oid).flatMap(loadIiForLoaded)
+
+  private def loadIiForLoaded(keyword: Keyword): Box[Keyword] = {
     try {
-      for {result <- super.find(oid)} yield {
-        result.ii = iiDao.load(iiid.is)
-        result
-      }
+      keyword.ii = iiDao.load(keyword.informationItemId.is)
+      Full(keyword)
     } catch {
       case e: NotFoundException => Failure("Unable to find linked ii", Full(e), Empty)
     }
   }
 
-  def createFromIi(ii: Ii) = {
-    val oid = new ObjectId(ii.loadMeta.meta.get(Footprint))
-    find(oid)
-  }
-
   def findByName(name: String): Box[Keyword] = {
-    //TODO investigate how to fix double load of iis (dao.load + find)
-    val ids = iiDao.load(Name, name).map(item => item.loadMeta.meta.get(Footprint))
-    val keywords = ids.map(id => find(new ObjectId(id))).flatten
-    keywords match {
+    val query = Keyword where (_.name eqs name)
+    query.fetch() match {
       case Nil => Empty
-      case keyword :: Nil => Full(keyword)
+      case keyword :: Nil => loadIiForLoaded(keyword)
       case keyword :: _ => {
         logger.error("Multiple keywords found with same name %s" format name)
-        Full(keyword)
+        loadIiForLoaded(keyword)
       }
     }
   }
 
-  def searchByName(prefix: String): Seq[Keyword] = {
-    //TODO investigate how to fix double load of iis (dao.load + find)
+  def searchWithName(prefix: String): Seq[Keyword] = {
+    //TODO fix double load of iis (dao.load + find)
     val ids = iiDao.search(Name, "%s*" format prefix.toLowerCase).map(item => item.loadMeta.meta.get(Footprint))
     val keywords = ids.map(id => find(new ObjectId(id)))
     keywords.flatten

@@ -1,21 +1,22 @@
 package com.owlunit.web.model
 
+import common.{IiStringField, IiMongoRecord}
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 
-import net.liftweb._
-import common._
-import http.{StringField => _, BooleanField => _, _}
-import mongodb.record.field._
-import record.field._
-import util.FieldContainer
+import net.liftweb.common._
+import net.liftweb.http.{BooleanField => _, StringField => _, _}
+import net.liftweb.mongodb.record.field._
+import net.liftweb.record.field._
+import net.liftweb.util.FieldContainer
 
 import net.liftmodules.mongoauth._
 import net.liftmodules.mongoauth.field._
 import net.liftmodules.mongoauth.model._
 import com.owlunit.core.ii.mutable.Ii
 import com.owlunit.web.config.DependencyFactory
-import com.owlunit.web.lib.IiMeta
+import com.owlunit.web.lib.{IiTag, IiMeta}
+import net.liftweb.common.Loggable
 
 /**
  * @author Anton Chebotaev
@@ -72,7 +73,7 @@ class User private () extends ProtoAuthUser[User] with ObjectIdPk[User] with IiM
 }
 
 object User extends User with ProtoAuthUserMeta[User] with Loggable {
-  import mongodb.BsonDSL._
+  import net.liftweb.mongodb.BsonDSL._
 
   override def collectionName = "users"
 

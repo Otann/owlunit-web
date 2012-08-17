@@ -1,5 +1,6 @@
 package com.owlunit.web.model
 
+import common.{IiStringField, IiMongoRecord}
 import net.liftweb.record.field._
 import net.liftweb.mongodb.{JsonObject,JsonObjectMeta}
 import net.liftweb.mongodb.record.{MongoRecord,MongoMetaRecord,MongoId}
@@ -12,14 +13,15 @@ import com.foursquare.rogue.Rogue._
 import com.owlunit.core.ii.mutable.Ii
 import net.liftweb.record.{Field, Record}
 import com.owlunit.web.config.DependencyFactory
-import com.owlunit.web.lib.{BsonRecordMapField, IiMovieMeta}
-import com.owlunit.web.lib.IiMovieMeta
+import com.owlunit.web.lib.{IiTag, BsonRecordMapField, IiMovieMeta}
 import org.bson.types.ObjectId
 import net.liftweb.common._
 import net.liftweb.mongodb
 import net.liftweb.http.js.JsObj
 import net.liftweb.http.js.JE.JsObj
 import net.liftweb.http.js.JsObj
+import com.owlunit.core.ii.NotFoundException
+import com.foursquare.rogue.Rogue._
 
 /**
  * @author Anton Chebotaev
@@ -43,6 +45,8 @@ class Movie private extends IiMongoRecord[Movie] with ObjectIdPk[Movie] with IiM
 
   object name extends IiStringField(this, ii, Name, "")
   object year extends IntField(this, 0)
+  protected object simpleName extends StringField(this, "")
+
   object posterUrl extends StringField(this, "http://placehold.it/130x200")
 
   object keywords extends MongoListField[Movie, ObjectId](this)
@@ -60,20 +64,33 @@ class Movie private extends IiMongoRecord[Movie] with ObjectIdPk[Movie] with IiM
   def removeKeyword(k: Keyword) {
     if (keywords.is.contains(k.id.is)) {
       keywords(keywords.is filterNot (_ == k.id.is))
-      ii.setItem(k.ii, 0) // TODO(Anton): Check
+      ii.removeItem(k.ii)
     }
   }
 
-  def addPerson(p: Person, r: Role.Role) {
-    val item = CrewItem.createRecord.person(p.id.is).role(r)
-    persons(item :: persons.is)   //TODO(Anton): add existence check
-    ii.setItem(p.ii, GeneralPersonWeight) //TODO(Anton): make it incremental
+  def addPerson(person: Person, role: Role.Role) {
+    val item = CrewItem.createRecord.person(person.id.is).role(role)
+
+    // check that is not there yet
+    if (!persons.is.contains(item)) {
+      persons(item :: persons.is)
+      val weight = ii.loadItems.items.map(_(person.ii)).getOrElse(0.0)
+
+      role match {
+        case Role.Actor    => ii.setItem(person.ii, weight + ActorWeight)
+        case Role.Director => ii.setItem(person.ii, weight + DirectorWeight)
+        case Role.Producer => ii.setItem(person.ii, weight + ProducerWeight)
+        case _ => ii.setItem(person.ii, weight + GeneralPersonWeight)
+      }
+    }
   }
 
   // Persistence
 
+  protected def simplifyName = simplifyComplexName(name.is, year.is)
+
   override def save = {
-    ii.setMeta(SimpleName, simplifyComplexName(name.is, year.is))
+    simpleName(simplifyName)
     super.save
   }
 
@@ -85,8 +102,14 @@ class Movie private extends IiMongoRecord[Movie] with ObjectIdPk[Movie] with IiM
 }
 
 object Movie extends Movie with MongoMetaRecord[Movie] with Loggable {
+  import mongodb.BsonDSL._
 
   lazy val iiDao = DependencyFactory.iiDao.vend //TODO(Anton) unsafe vend
+
+  ensureIndex((informationItemId.name -> 1), unique = true)
+  ensureIndex((simpleName.name -> 1), unique = true)
+
+  // Creation
 
   override def createRecord = {
     val result = super.createRecord
@@ -94,46 +117,42 @@ object Movie extends Movie with MongoMetaRecord[Movie] with Loggable {
     result
   }
 
-  override def find(oid: ObjectId) = {
-    val result = super.find(oid)
-    result.map{ m => m.ii = iiDao.load(m.informationItemId.is)}
-    result
+  // Helper for load methods to init Ii subsystem properly
+
+  private def loadIiForLoaded(record: Movie): Box[Movie] = {
+    try {
+      record.ii = iiDao.load(record.informationItemId.is)
+      Full(record)
+    } catch {
+      case e: NotFoundException => Failure("Unable to find linked ii", Full(e), Empty)
+    }
   }
+
+  // Resolver methods
+
+  override def find(oid: ObjectId) = super.find(oid).flatMap(loadIiForLoaded)
 
   def findBySimpleName(name: String, year: Int): Box[Movie] = try {
-    val simpleName = simplifyComplexName(name, year)
-    val ii = iiDao.load(SimpleName, simpleName) match {
-      case Nil => return Empty
-      case item :: Nil => item
+    val query = Movie where (_.simpleName eqs simplifyComplexName(name, year))
+    query.fetch() match {
+      case Nil => Empty
+      case item :: Nil => loadIiForLoaded(item)
       case item :: _ => {
         logger.error("Multiple movies found with same simplename %s" format simpleName)
-        item
+        loadIiForLoaded(item)
       }
     }
-    val movieId = ii.loadMeta.meta.get(Footprint)
-    find(new ObjectId(movieId))
   } catch {
-    case ex: Throwable => Failure("Can't find movie by id (%d)" format id, Full(ex), Empty)
+    case ex: Throwable => Failure("Can't find movie by id (%s)" format id.is, Full(ex), Empty)
   }
 
-  def findById(in: String): Box[Movie] =
-    if (ObjectId.isValid(in))
-      find(new ObjectId(in))
-    else
-      Failure("ObjectIs not valid")
-
-  def findByIiId(id: Long): Box[Movie] = try {
-    val movieId = iiDao.load(id).loadMeta.meta.get(Footprint)
-    find(new ObjectId(movieId))
-  } catch {
-    case ex: Throwable => Failure("Can't find movie by id (%d)" format id, Full(ex), Empty)
-  }
-
-  def searchByName(prefix: String): Seq[Movie] = {
-    //TODO investigate how to fix double load of iis (dao.load + find)
-    val ids = iiDao.search(Name, "%s*" format prefix.toLowerCase).map(item => item.loadMeta.meta.get(Footprint))
-    val movies = ids.map(id => find(new ObjectId(id)))
-    movies.flatten
+  def searchByName(prefix: String): List[Movie] = {
+    val iiMap: Map[Long, Ii] = iiDao.search(Name, "%s*" format prefix.toLowerCase).map(item => (item.id -> item)).toMap
+    val query = Movie where (_.informationItemId in iiMap.keys)
+    query.fetch().map(record => {
+      record.ii = iiMap(record.informationItemId.is)
+      record
+    })
   }
 
 }

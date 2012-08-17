@@ -4,10 +4,12 @@ import com.owlunit.web.config.{IiDaoConfig, DependencyFactory}
 /**
  * @author Anton Chebotaev
  *         Owls Proprietary
+ *
+ *         Console helper
  */
 
 
-object CH { //Console helper
+object CH {
 
   val b: Boot = new Boot()
 

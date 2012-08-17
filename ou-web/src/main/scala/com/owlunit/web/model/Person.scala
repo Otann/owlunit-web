@@ -1,5 +1,6 @@
 package com.owlunit.web.model
 
+import common.IiMongoRecord
 import net.liftweb.mongodb.record.field.ObjectIdPk
 import net.liftweb.mongodb.record.{MongoMetaRecord, MongoRecord}
 import net.liftweb.record.field.{StringField, LongField}

@@ -1,4 +1,4 @@
-package com.owlunit.web.model
+package com.owlunit.web.model.common
 
 import net.liftweb.record.field.StringField
 import net.liftweb.record.Record
@@ -11,11 +11,11 @@ import net.liftweb.common.Box
  *         Owls Proprietary
  */
 
-abstract class IiStringField[OwnerType <: Record[OwnerType]]( parent: OwnerType,
-                                                              mappedIi: => Ii,
-                                                              val metaKey: String,
-                                                              predef: String )
-  // 265 limit is ignored by lift-mongo
+abstract class IiStringField[OwnerType <: Record[OwnerType]](parent: OwnerType,
+                                                             mappedIi: => Ii,
+                                                             val metaKey: String,
+                                                             predef: String)
+// 265 limit is ignored by lift-mongo
   extends StringField(parent, 256, predef) {
 
   override def apply(value: String) = {

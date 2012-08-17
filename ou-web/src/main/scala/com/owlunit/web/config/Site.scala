@@ -80,14 +80,14 @@ object Site {
   val statefulRewrites: LiftRules.RewritePF = {
 
     case RewriteRequest(ParsePath("admin" :: "movie" :: id :: Nil,_,_,_),_,_) => {
-      if (Movie.findById(id).isDefined)
+      if (Movie.find(id).isDefined)
         RewriteResponse("admin" :: "movie" :: Nil, Map("id" -> id))
       else
         RewriteResponse("404" :: Nil)
     }
 
     case RewriteRequest(ParsePath("admin" :: "person" :: id :: Nil,_,_,_),_,_) => {
-      if (Person.findById(id).isDefined)
+      if (Person.find(id).isDefined)
         RewriteResponse("admin" :: "person" :: Nil, Map("id" -> id))
       else
         RewriteResponse("404" :: Nil)

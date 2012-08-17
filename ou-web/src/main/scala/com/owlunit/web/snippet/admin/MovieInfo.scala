@@ -19,7 +19,7 @@ object MovieInfo {
 
   def current: Box[Movie] = for {
     id <- S.param("id") ?~ "You must provide an id"
-    movie <- Movie.findById(id)
+    movie <- Movie.find(id)
   } yield { movie }
 
   def render = "movie-data=name *" #> current.map(_.name.is) &

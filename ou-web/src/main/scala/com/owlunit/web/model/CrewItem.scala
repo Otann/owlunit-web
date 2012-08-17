@@ -23,5 +23,5 @@ object CrewItem extends CrewItem with BsonMetaRecord[CrewItem]
 
 object Role extends Enumeration {
   type Role = Value
-  val Undefined, Actor, Director, Produces = Value
+  val Undefined, Actor, Director, Producer = Value
 }

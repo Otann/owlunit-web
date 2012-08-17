@@ -1,4 +1,4 @@
-package com.owlunit.web.model
+package com.owlunit.web.model.common
 
 import net.liftweb.mongodb.record.{MongoMetaRecord, MongoRecord}
 import net.liftweb.common.{Box, Empty}
@@ -14,7 +14,7 @@ import net.liftweb.http.js.JsObj
  *         Owls Proprietary
  */
 
-trait IiMongoRecord[OwnerType <: IiMongoRecord[OwnerType]] extends MongoRecord[OwnerType]  {
+trait IiMongoRecord[OwnerType <: IiMongoRecord[OwnerType]] extends MongoRecord[OwnerType] {
   self: OwnerType =>
 
   def ii: Ii
@@ -27,11 +27,11 @@ trait IiMongoRecord[OwnerType <: IiMongoRecord[OwnerType]] extends MongoRecord[O
 
   protected object informationItemId extends LongField(this)
 
-  protected def simplifyComplexName(args: Any*):String = args.mkString.toLowerCase
+  protected def simplifyComplexName(args: Any*): String = args.mkString.toLowerCase
     .replaceAll(", the|, a|the |a |", "") // remove articles
     .replaceAll("[\\W&&\\D]", "") // remove all non-chars even spaces
 
-  protected def buildQuery(query: String):String = {
+  protected def buildQuery(query: String): String = {
     // spit to words by removing all non-characters and spaces, split with spaces
     val parts = query.toLowerCase.replaceAll("[^\\w\\d ]", "").split(' ')
 

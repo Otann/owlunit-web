@@ -20,7 +20,7 @@ object JettyLauncher extends App {
 
   val context = new ServletContextHandler(server, "/", ServletContextHandler.NO_SESSIONS)
   context.setSessionHandler(new SessionHandler())
-  context.addServlet(classOf[DefaultServlet], "/");
+  context.addServlet(classOf[DefaultServlet], "/")
   context.addFilter(classOf[LiftFilter], "/*", 0)
   context.setResourceBase("ii-web/src/main/webapp")
 

@@ -1,5 +1,6 @@
 package com.owlunit.web.model
 
+import common.{IiStringField, IiMongoRecord}
 import net.liftweb.mongodb.record.field.ObjectIdPk
 import com.owlunit.core.ii.mutable.Ii
 import net.liftweb.record.field.{StringField, LongField}
@@ -8,11 +9,12 @@ import net.liftweb.util.FieldContainer
 import net.liftweb.mongodb.record.{MongoMetaRecord, MongoRecord}
 import org.bson.types.ObjectId
 import com.owlunit.web.config.DependencyFactory
-import com.owlunit.web.lib.{IiMeta}
+import com.owlunit.web.lib.{IiTag, IiMeta}
 import com.owlunit.core.ii.NotFoundException
 import net.liftweb.common._
 import net.liftweb.http.js.JE.JsObj
 import com.foursquare.rogue.Rogue._
+import net.liftweb.mongodb
 
 /**
  * @author Anton Chebotaev
@@ -37,16 +39,21 @@ class Keyword private () extends IiMongoRecord[Keyword] with ObjectIdPk[Keyword]
 
 
 object Keyword extends Keyword with MongoMetaRecord[Keyword] with Loggable {
+  import mongodb.BsonDSL._
 
   lazy val iiDao = DependencyFactory.iiDao.vend //TODO unsafe vend
+
+  ensureIndex((informationItemId.name -> 1), unique = true)
+
+  // Creation
 
   override def createRecord = {
     val result = super.createRecord
     result.ii = iiDao.create.setMeta(Footprint, result.id.toString())
     result
   }
-  
-  override def find(oid: ObjectId) = super.find(oid).flatMap(loadIiForLoaded)
+
+  // Helper for load methods to init Ii subsystem properly
 
   private def loadIiForLoaded(keyword: Keyword): Box[Keyword] = {
     try {
@@ -56,6 +63,10 @@ object Keyword extends Keyword with MongoMetaRecord[Keyword] with Loggable {
       case e: NotFoundException => Failure("Unable to find linked ii", Full(e), Empty)
     }
   }
+
+  // Resolver methods
+
+  override def find(oid: ObjectId) = super.find(oid).flatMap(loadIiForLoaded)
 
   def findByName(name: String): Box[Keyword] = {
     val query = Keyword where (_.name eqs name)
@@ -69,11 +80,13 @@ object Keyword extends Keyword with MongoMetaRecord[Keyword] with Loggable {
     }
   }
 
-  def searchWithName(prefix: String): Seq[Keyword] = {
-    //TODO fix double load of iis (dao.load + find)
-    val ids = iiDao.search(Name, "%s*" format prefix.toLowerCase).map(item => item.loadMeta.meta.get(Footprint))
-    val keywords = ids.map(id => find(new ObjectId(id)))
-    keywords.flatten
+  def searchWithName(prefix: String): List[Keyword] = {
+    val iiMap: Map[Long, Ii] = iiDao.search(Name, "%s*" format prefix.toLowerCase).map(item => (item.id -> item)).toMap
+    val query = Keyword where (_.informationItemId in iiMap.keys)
+    query.fetch().map(keyword => {
+      keyword.ii = iiMap(keyword.informationItemId.is)
+      keyword
+    })
   }
 
 }

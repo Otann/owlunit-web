@@ -4,15 +4,13 @@ import com.owlunit.web.config.Site
 import com.owlunit.web.model._
 
 
-import net.liftweb._
-import common._
-import common.Full
-import http.js.JsCmds
-import http.js.JsCmds.Alert
-import http.{LiftScreen, S}
-import sitemap.Menu
-import util.FieldError
-import util.Helpers._
+import net.liftweb.common._
+import net.liftweb.http.js.JsCmds
+import net.liftweb.http.js.JsCmds.Alert
+import net.liftweb.http.{LiftScreen, S}
+import net.liftweb.sitemap.Menu
+import net.liftweb.util.FieldError
+import net.liftweb.util.Helpers._
 import xml.NodeSeq
 import com.owlunit.web.lib.{Gravatar, ModalScreen, AppHelpers}
 

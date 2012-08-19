@@ -15,7 +15,9 @@ import net.liftweb.util.Helpers._
 
 object MoviesParser extends Parser with PsWeights with Logging {
 
-  val Pattern = """(\d+)::([^\(]+).+\((\d+)\)::(.*)""".r
+  // 4902::Devil's Backbone, The (El Espinazo del diablo) (2001)::Drama|Fantasy|Horror|Thriller|War
+  //                id     name    skip opt name      year     genres
+  val Pattern = """(\d+)::([^\(]+)(?: \([^\(]*\) )?\((\d+)\)::(.*)""".r
 
   def parse(
              path: String,

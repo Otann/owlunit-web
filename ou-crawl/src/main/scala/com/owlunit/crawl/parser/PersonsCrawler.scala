@@ -2,9 +2,9 @@ package com.owlunit.crawl.parser
 
 import io.Source
 import com.owlunit.crawl._
-import collection.mutable.{ListBuffer, Map => MutableMap}
 import com.weiglewilczek.slf4s.Logging
-import model.{PsPerson, PsRole, PsMovie}
+import model.{PsPerson, PsMovie}
+import com.owlunit.web.model.{Person, Role}
 
 /**
  * @author Anton Chebotaev
@@ -16,12 +16,12 @@ object PersonsCrawler extends Parser with Logging {
   val personMovieExtractor = """^([^\t]+)\t+([^\()]+)\((\d+)\).*$""".r
   val movieExtractor       = """^\t\t\t(.+)\((\d+)\).*$""".r
 
-  def parse(
-             path: String,
-             movies: collection.mutable.Map[String, PsMovie],
-             role: PsRole,
+  def parse( path: String,
+             movieSimpleNames: collection.mutable.Map[String, PsMovie],
+             role: Role.Role,
              totalLines: Int,
-             flush: (PsMovie, PsPerson, PsRole) => Any
+             flushPerson: (PsPerson) => Person,
+             flushRelation: (PsMovie, Person, Role.Role) => Any
              ) {
 
     val personTimer = Counter.start()
@@ -35,17 +35,19 @@ object PersonsCrawler extends Parser with Logging {
       if (prePerson != null && !preMovies.isEmpty) {
 
         val name = prePerson.split(", ")
-        val person = if (name.length > 1) PsPerson(name(1), name(0)) else PsPerson(fullName, "")
+        val psPerson = if (name.length > 1) PsPerson(name(1), name(0)) else PsPerson(fullName, "")
         personTimer.tick(logger, 10000, "persons of role " + role)
+
+        val person = flushPerson(psPerson)
         for (movie <- preMovies) {
-          flush(movie, person, role)
+          flushRelation(movie, person, role)
         }
       }
     }
 
     def loadMovie(name: String, year: Int) = {
       val s = simplifyName(name, year)
-      if (movies.contains(s)) Some(PsMovie(name, year)) else None
+      if (movieSimpleNames.contains(s)) Some(PsMovie(name, year)) else None
     }
 
     while (source.hasNext) {

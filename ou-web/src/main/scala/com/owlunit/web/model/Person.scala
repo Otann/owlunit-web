@@ -2,15 +2,17 @@ package com.owlunit.web.model
 
 import common.IiMongoRecord
 import net.liftweb.mongodb.record.field.ObjectIdPk
-import net.liftweb.mongodb.record.{MongoMetaRecord, MongoRecord}
-import net.liftweb.record.field.{StringField, LongField}
+import net.liftweb.mongodb.record.MongoMetaRecord
+import net.liftweb.record.field.StringField
 import net.liftweb.util.FieldContainer
 import org.bson.types.ObjectId
 import com.owlunit.core.ii.mutable.Ii
 import com.owlunit.web.config.DependencyFactory
-import com.owlunit.core.ii.DAOException
-import net.liftweb.common.{Full, Failure, Empty, Box}
-import com.owlunit.web.lib.{IiPersonMeta, IiMeta}
+import net.liftweb.common._
+import com.owlunit.web.lib.{IiTag, IiPersonMeta}
+import net.liftweb.mongodb
+import com.owlunit.core.ii.NotFoundException
+import net.liftweb.common.Full
 
 /**
  * @author Anton Chebotaev
@@ -18,15 +20,19 @@ import com.owlunit.web.lib.{IiPersonMeta, IiMeta}
  */
 
 
-class Person private () extends IiMongoRecord[Person] with ObjectIdPk[Person] with IiPersonMeta {
+class Person private() extends IiMongoRecord[Person] with ObjectIdPk[Person] with IiPersonMeta with IiTag {
+
+  // for MongoRecord
   def meta = Person
+
+  // for IiMongoRecord, IiMovieMeta and IiTag
   val baseMeta = "ii.cinema.person"
-
   var ii: Ii = null
-//  def toJSON = return J
+  def tagId = id.is.toString
+  def tagCaption = fullName
+  def tagUrl = "#" //TODO(Anton) implement permalinks
 
-  override def toString() = "%s %s" format (firstName.is, lastName.is)
-  def url = "/admin/person/" + id
+  // Fields
 
   object firstName extends StringField(this, "") {
     override def displayName = "First name"
@@ -37,22 +43,26 @@ class Person private () extends IiMongoRecord[Person] with ObjectIdPk[Person] wi
     override def validations = valMinLen(1, "Must not be empty") _ :: super.validations
   }
 
-  object photoUrl extends StringField(this, "http://placehold.it/130x200")
-
-  // Fields
-
-  def createFields = new FieldContainer { def allFields = List(firstName, lastName, photoUrl) }
-
-  // Helpers
-
   def fullName = "%s %s" format (firstName.is, lastName.is)
 
-  // Misc
+  object photoUrl extends StringField(this, "http://placehold.it/130x200")
+
+  // Field containers
+  def createFields = new FieldContainer { def allFields = List(firstName, lastName, photoUrl) }
 
 }
-object Person extends Person with MongoMetaRecord[Person] {
+
+object Person extends Person with MongoMetaRecord[Person] with Loggable {
+  import mongodb.BsonDSL._
+  import com.foursquare.rogue.Rogue._
 
   lazy val iiDao = DependencyFactory.iiDao.vend //TODO unsafe vend
+
+  ensureIndex((informationItemId.name -> 1), unique = true)
+  ensureIndex((firstName.name -> 1), unique = true)
+  ensureIndex((lastName.name -> 1), unique = true)
+
+  // Creation
 
   override def createRecord = {
     val result = super.createRecord
@@ -60,17 +70,40 @@ object Person extends Person with MongoMetaRecord[Person] {
     result
   }
 
-  def findById(in: String): Box[Person] =
-    if (ObjectId.isValid(in))
-      find(new ObjectId(in))
-    else
-      Failure("ObjectIs not valid")
+  // Helper for load methods to init Ii subsystem properly
 
-  def findById(id: Long): Box[Person] = try {
-    val personId = iiDao.load(id).loadMeta.meta.get(Footprint)
-    find(new ObjectId(personId))
-  } catch {
-    case ex: Throwable => Failure("Can't find person by id (%d)" format id, Full(ex), Empty)
+  private def loadIiForLoaded(record: Person): Box[Person] = {
+    try {
+      record.ii = iiDao.load(record.informationItemId.is)
+      Full(record)
+    } catch {
+      case e: NotFoundException => Failure("Unable to find linked ii", Full(e), Empty)
+    }
+  }
+
+  // Resolver methods
+
+  override def find(oid: ObjectId) = super.find(oid).flatMap(loadIiForLoaded)
+
+  def findByName(firstName: String, lastName: String): Box[Person] = {
+    val query = Person where (_.firstName eqs firstName) and (_.lastName eqs lastName)
+    query.fetch() match {
+      case Nil => Empty
+      case record :: Nil => loadIiForLoaded(record)
+      case keyword :: _ => {
+        logger.error("Multiple persons found with same name %s" format fullName)
+        loadIiForLoaded(keyword)
+      }
+    }
+  }
+
+  def searchWithName(prefix: String): List[Person] = {
+    val iiMap: Map[Long, Ii] = iiDao.search(Name, "%s*" format prefix.toLowerCase).map(item => (item.id -> item)).toMap
+    val query = Person where (_.informationItemId in iiMap.keys)
+    query.fetch().map(keyword => {
+      keyword.ii = iiMap(keyword.informationItemId.is)
+      keyword
+    })
   }
 
 }

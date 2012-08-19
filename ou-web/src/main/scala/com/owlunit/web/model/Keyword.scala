@@ -3,16 +3,14 @@ package com.owlunit.web.model
 import common.{IiStringField, IiMongoRecord}
 import net.liftweb.mongodb.record.field.ObjectIdPk
 import com.owlunit.core.ii.mutable.Ii
-import net.liftweb.record.field.{StringField, LongField}
 import net.liftweb.util.Helpers._
 import net.liftweb.util.FieldContainer
-import net.liftweb.mongodb.record.{MongoMetaRecord, MongoRecord}
+import net.liftweb.mongodb.record.MongoMetaRecord
 import org.bson.types.ObjectId
 import com.owlunit.web.config.DependencyFactory
 import com.owlunit.web.lib.{IiTag, IiMeta}
 import com.owlunit.core.ii.NotFoundException
 import net.liftweb.common._
-import net.liftweb.http.js.JE.JsObj
 import com.foursquare.rogue.Rogue._
 import net.liftweb.mongodb
 
@@ -21,22 +19,25 @@ import net.liftweb.mongodb
  *         Owls Proprietary
  */
 
-class Keyword private () extends IiMongoRecord[Keyword] with ObjectIdPk[Keyword] with IiMeta with IiTag {
+class Keyword private() extends IiMongoRecord[Keyword] with ObjectIdPk[Keyword] with IiMeta with IiTag {
+
+  // for MongoRecord
   def meta = Keyword
+
+  // for IiMongoRecord, IiMovieMeta and IiTag
   val baseMeta = "ii.cinema.keyword"
-
   var ii: Ii = null
+  override def tagId = this.id.is.toString
+  override def tagCaption = this.name.is.toString
+  def tagUrl = "#" //TODO(Anton) implement permalinks
 
-  def tagId = this.id.is.toString
-  def tagCaption = this.name.is.toString
-
+  // Fields
   object name extends IiStringField(this, ii, Name, "")
 
-  // Field groups
+  // Field containers
   def createFields = new FieldContainer { def allFields = List(name) }
 
 }
-
 
 object Keyword extends Keyword with MongoMetaRecord[Keyword] with Loggable {
   import mongodb.BsonDSL._

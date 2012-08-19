@@ -13,9 +13,9 @@ import net.liftweb.http.js.JsObj
 trait IiTag {
 
   protected def tagId: String
-
   protected def tagCaption: String
+  protected def tagUrl: String //TODO(Anton): make more "lifty"
 
-  def toTagJSON: JsObj = JsObj(("id", tagId), ("caption", tagCaption))
+  def toTagJSON: JsObj = JsObj(("id", tagId), ("caption", tagCaption), ("url", tagUrl))
 
 }

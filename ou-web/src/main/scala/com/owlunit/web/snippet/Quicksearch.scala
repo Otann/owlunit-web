@@ -1,4 +1,4 @@
-package com.owlunit.web.snippet.admin
+package com.owlunit.web.snippet
 
 import net.liftweb.util._
 import net.liftweb.common._
@@ -6,7 +6,7 @@ import Helpers._
 import net.liftweb.http.js.JsCmds._
 import net.liftweb.http.js.JE._
 import net.liftweb.http.SHtml
-import com.owlunit.web.model.{Keyword, Movie}
+import com.owlunit.web.model.{Person, Keyword, Movie}
 import net.liftweb.http.js.JE.Call
 
 /**
@@ -26,8 +26,9 @@ object Quicksearch extends Loggable {
   })
 
   private def loadItems(prefix: String) = JsArray(
-    Keyword.searchWithName(prefix).map(t => t.toTagJSON) :::
-    Movie.searchByName(prefix).map(t => t.toTagJSON)
+    Keyword.searchWithName(prefix).map(t => t.toTagJSON).take(10) :::
+      Movie.searchWithName(prefix).map(t => t.toTagJSON).take(10) :::
+      Person.searchWithName(prefix).map(t => t.toTagJSON).take(10)
   )
 
   def render = "name=search [oninput]" #> onChange

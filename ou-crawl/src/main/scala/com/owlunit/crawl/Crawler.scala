@@ -3,12 +3,12 @@ package com.owlunit.crawl
 import model.PsKeyword
 import model.PsMovie
 import model.PsPerson
-import model.PsRole
 import parser.{Parser, PersonsCrawler, KeywordsParser, MoviesParser}
 import com.weiglewilczek.slf4s.Logging
 import com.owlunit.web.config.{IiDaoConfig, MongoConfig}
-import com.owlunit.web.model.{Keyword, Movie}
+import com.owlunit.web.model.{Role, Person, Keyword, Movie}
 import org.bson.types.ObjectId
+import net.liftweb.common.Full
 
 /**
  * @author Anton Chebotaev
@@ -16,58 +16,82 @@ import org.bson.types.ObjectId
  */
 
 
-object Crawler extends Parser with Logging {
+object Crawler extends Parser with CrawlerPaths with Logging {
 
-  val movies = collection.mutable.Map[String, PsMovie]() // simpleName
-
+  val movies = collection.mutable.Map[String, PsMovie]() // simpleName -> PsMovie
   val keywords = collection.mutable.Map[String, ObjectId]()
   val persons = collection.mutable.Map[String, ObjectId]()
 
-  val moviesPath      = "../../raw-data/movielens/movies.dat"
-  val keywordsPath    = "../../raw-data/imdb/keywords.list"
-  val actorsPath      = "../../raw-data/imdb/actors.list"
-  val actressesPath   = "../../raw-data/imdb/actresses.list"
-  val directorsPath   = "../../raw-data/imdb/directors.list"
-  val producersPath   = "../../raw-data/imdb/producers.list"
-
-
   def cacheMovie(movie: PsMovie) = movies += simplifyName(movie.name, movie.year) -> movie
 
-  def saveKeyword(psKeyword: PsKeyword) = {
-    val keyword = Keyword.createRecord.name(psKeyword.name).save
-    keywords += psKeyword.name -> keyword.id.is
-  }
-
-  def saveMovieKeyword(m: PsMovie, k: PsKeyword, w: Double) =
+  def saveMovieKeyword(m: PsMovie, k: PsKeyword, w: Double) {
     try {
-      val movie = Movie.findBySimpleName(m.name, m.year).open_!
-      val keyword = Keyword.find(keywords(k.name)).open_!
-      movie.addKeyword(keyword, w)
+      Movie.findBySimpleName(m.name, m.year) match {
+
+        // Movie found
+        case Full(movie) => {
+          // Load or create keyword
+          val keyword = Keyword.findByName(k.name) match {
+            case Full(kw) => kw
+            case _ => Keyword.createRecord.name(k.name).save
+          }
+
+          // Save relation
+          movie.addKeyword(keyword, w).save
+        }
+
+        // Movie not found, log error
+        case _ => logger.error("Cant find cached movie %s" format m)
+
+      }
     } catch {
+      // Don't throw anything out
       case e: Exception => logger.error("Cant increment %s for %s" format (k, m))
     }
+  }
 
-  def saveMoviePerson(movie: PsMovie, person: PsPerson, role: PsRole) = {}
+  def savePerson(p: PsPerson) = Person.createRecord.firstName(p.firstName).lastName(p.lastName).save
+
+  def saveMoviePerson(m: PsMovie, person: Person, role: Role.Role) {
+    try {
+      Movie.findBySimpleName(m.name, m.year) match {
+
+        // Movie found
+        case Full(movie) => movie.addPerson(person, role).save
+
+        // Movie not found, log error
+        case _ => logger.error("Cant find cached movie %s" format m)
+
+      }
+    } catch {
+      // Don't throw anything out, only log
+      case e: Exception => logger.error("Cant increment %s for %s" format (person.fullName, m))
+    }
+  }
 
   def main(args: Array[String]) {
 
     MongoConfig.init()
     IiDaoConfig.init()
 
+    // Load movies list
     MoviesParser.parse(moviesPath, cacheMovie, k => {}, (m, k, w) => {})
-//    KeywordsParser.parse(keywordsPath, movies, saveMovieKeyword)
 
-//    PersonsCrawler.parse(actorsPath, movies, PsRole("Actor"), 12338129, saveMoviePerson)
-//    PersonsCrawler.parse(actressesPath, movies, PsRole("Actor"), 7243872)
-//    PersonsCrawler.parse(directorsPath, movies, PsRole("Director"), 1724653)
-//    PersonsCrawler.parse(producersPath, movies, PsRole("Producer"), 3719561)
-
-
+    // Persist movies
     val counter = Counter.start(10679)
     for (movie <- movies.values) {
       counter.tick(logger, 1000, "movies saved")
       Movie.createRecord.name(movie.name).year(movie.year).save
     }
+
+    // Parse and persist keywords and relations to movies
+    KeywordsParser.parse(keywordsPath, movies, saveMovieKeyword)
+
+    // Parse people
+    PersonsCrawler.parse(actorsPath, movies, Role.Actor, 12338129, savePerson, saveMoviePerson)
+    PersonsCrawler.parse(actressesPath, movies, Role.Actor, 7243872, savePerson, saveMoviePerson)
+    PersonsCrawler.parse(directorsPath, movies, Role.Director, 1724653, savePerson, saveMoviePerson)
+    PersonsCrawler.parse(producersPath, movies, Role.Producer, 3719561, savePerson, saveMoviePerson)
 
   }
 

@@ -722,6 +722,11 @@ span.ii {
 
 }
 
+#quicksearch-results {
+    max-height: 230px;
+    overflow-y: scroll;
+}
+
 .trashbin.ii-hovered {
     background-color: #211d34;
 }

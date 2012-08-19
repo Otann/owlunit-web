@@ -2,24 +2,16 @@ package com.owlunit.web.model
 
 import common.{IiStringField, IiMongoRecord}
 import net.liftweb.record.field._
-import net.liftweb.mongodb.{JsonObject,JsonObjectMeta}
-import net.liftweb.mongodb.record.{MongoRecord,MongoMetaRecord,MongoId}
+import net.liftweb.mongodb.record.MongoMetaRecord
 import net.liftweb.mongodb.record.field._
-import xml.NodeSeq
 import net.liftweb.util.Helpers._
-import net.liftweb.util.{FieldContainer, FieldIdentifier, FieldError}
-import net.liftweb.http.{S, SHtml}
-import com.foursquare.rogue.Rogue._
+import net.liftweb.util.FieldContainer
 import com.owlunit.core.ii.mutable.Ii
-import net.liftweb.record.{Field, Record}
 import com.owlunit.web.config.DependencyFactory
-import com.owlunit.web.lib.{IiTag, BsonRecordMapField, IiMovieMeta}
+import com.owlunit.web.lib.{IiTag, IiMovieMeta}
 import org.bson.types.ObjectId
 import net.liftweb.common._
 import net.liftweb.mongodb
-import net.liftweb.http.js.JsObj
-import net.liftweb.http.js.JE.JsObj
-import net.liftweb.http.js.JsObj
 import com.owlunit.core.ii.NotFoundException
 import com.foursquare.rogue.Rogue._
 
@@ -28,18 +20,18 @@ import com.foursquare.rogue.Rogue._
  *         Owls Proprietary
  */
 
-class Movie private extends IiMongoRecord[Movie] with ObjectIdPk[Movie] with IiMovieMeta with IiTag {
+class Movie private() extends IiMongoRecord[Movie] with ObjectIdPk[Movie] with IiMovieMeta with IiTag {
 
   // for MongoRecord
   def meta = Movie
 
   // for IiMongoRecord, IiMovieMeta and IiTag
+
   val baseMeta = "ii.cinema.movie"
-
   var ii: Ii = null
-
   def tagId = this.id.is.toString
   def tagCaption = this.name.is.toString
+  def tagUrl = "#" //TODO(Anton) implement permalinks
 
   // Fields
 
@@ -54,27 +46,29 @@ class Movie private extends IiMongoRecord[Movie] with ObjectIdPk[Movie] with IiM
 
   // Data manipulation
 
-  def addKeyword(k: Keyword, w: Double = KeywordWeight) {
+  def addKeyword(k: Keyword, w: Double = KeywordWeight) = {
     if (!keywords.is.contains(k.id.is)) {
       keywords(k.id.is :: keywords.is)
       ii.setItem(k.ii, w)
     }
+    this
   }
 
-  def removeKeyword(k: Keyword) {
+  def removeKeyword(k: Keyword) = {
     if (keywords.is.contains(k.id.is)) {
       keywords(keywords.is filterNot (_ == k.id.is))
       ii.removeItem(k.ii)
     }
+    this
   }
 
-  def addPerson(person: Person, role: Role.Role) {
+  def addPerson(person: Person, role: Role.Role) = {
     val item = CrewItem.createRecord.person(person.id.is).role(role)
 
     // check that is not there yet
     if (!persons.is.contains(item)) {
       persons(item :: persons.is)
-      val weight = ii.loadItems.items.map(_(person.ii)).getOrElse(0.0)
+      val weight = ii.loadItems.items.get.getOrElse(person.ii, 0.0)
 
       role match {
         case Role.Actor    => ii.setItem(person.ii, weight + ActorWeight)
@@ -83,6 +77,8 @@ class Movie private extends IiMongoRecord[Movie] with ObjectIdPk[Movie] with IiM
         case _ => ii.setItem(person.ii, weight + GeneralPersonWeight)
       }
     }
+
+    this
   }
 
   // Persistence
@@ -146,7 +142,7 @@ object Movie extends Movie with MongoMetaRecord[Movie] with Loggable {
     case ex: Throwable => Failure("Can't find movie by id (%s)" format id.is, Full(ex), Empty)
   }
 
-  def searchByName(prefix: String): List[Movie] = {
+  def searchWithName(prefix: String): List[Movie] = {
     val iiMap: Map[Long, Ii] = iiDao.search(Name, "%s*" format prefix.toLowerCase).map(item => (item.id -> item)).toMap
     val query = Movie where (_.informationItemId in iiMap.keys)
     query.fetch().map(record => {

@@ -46,7 +46,7 @@ object CreatePersonScreen extends BootstrapScreen with AdminHelper {
   protected def finish() {
     personVar.is.save
     S.notice(<span>Person <strong>{ personVar.is.toString() }</strong> crated!</span>)
-    S.redirectTo(personVar.is.url)
+    S.redirectTo(personVar.is.tagUrl)
   }
 
 //  override protected def doFinish() = {

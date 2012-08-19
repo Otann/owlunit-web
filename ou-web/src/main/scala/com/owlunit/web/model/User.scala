@@ -23,7 +23,7 @@ import net.liftweb.common.Loggable
  *         Owls Proprietary
  */
 
-class User private () extends ProtoAuthUser[User] with ObjectIdPk[User] with IiMongoRecord[User]  with IiMeta with IiTag {
+class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiMongoRecord[User]  with IiMeta with IiTag {
   def meta = User
   def baseMeta = "ii.user"
 
@@ -31,6 +31,7 @@ class User private () extends ProtoAuthUser[User] with ObjectIdPk[User] with IiM
 
   def tagId = this.id.is.toString
   def tagCaption = this.name.is.toString
+  def tagUrl = "#" //TODO(Anton) implement permalinks
 
   def userIdAsString: String = id.toString()
 

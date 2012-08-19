@@ -18,8 +18,7 @@ object KeywordsParser extends Parser with PsWeights with Logging {
   val keywordExtractor = """([^\s]+) \((\d+)\)""".r
   val keywordLine = """^(.*) \((\d+)\).*\t([^\s]*)\s*""".r
 
-  def parse(
-             path: String,
+  def parse( path: String,
              movies: collection.mutable.Map[String, PsMovie],
              flush: (PsMovie, PsKeyword, Double) => Any) {
 

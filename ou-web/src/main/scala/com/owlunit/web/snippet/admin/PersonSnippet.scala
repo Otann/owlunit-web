@@ -20,7 +20,7 @@ object PersonSnippet {
 
   def current: Box[Person] = for {
     id <- S.param("id") ?~ "You must provide an id"
-    movie <- Person.findById(id)
+    movie <- Person.find(id)
   } yield { movie }
 
   def render = "person-data=iiid [itemid]" #> current.map(_.ii.id.toString) &

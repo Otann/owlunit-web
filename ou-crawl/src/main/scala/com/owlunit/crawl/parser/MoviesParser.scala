@@ -35,7 +35,7 @@ object MoviesParser extends Parser with PsWeights with Logging {
         val genres = genresRaw.split('|').toSet.map((g: String) => PsKeyword(capitalizeKeyword(g)))
         val year = yearRaw.toInt // comes as safe Int from regex
 
-        val movie = PsMovie(name, year)
+        val movie = PsMovie(name.trim, year) //TODO(Anton) fix and check regex
 
         flushMovie(movie)
         genres.foreach(flushKeyword)

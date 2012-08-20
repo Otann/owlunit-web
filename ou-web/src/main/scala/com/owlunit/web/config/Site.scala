@@ -57,7 +57,7 @@ object Site {
     logout,
 
 //    profileParamMenu,
-    Menu("Profile") / "profile"  >> MenuGroup.TopBar,
+    Menu("Profile") / "me"  >> MenuGroup.TopBar >> If(() => S.loggedIn_?, "You must be logged in"),
     adminMenus >> MenuGroup.TopBar,
 
     Menu("About")   / "about"    >> MenuGroup.TopBar,

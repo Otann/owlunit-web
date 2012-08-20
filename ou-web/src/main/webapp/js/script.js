@@ -46,7 +46,7 @@
             test: function(params) { console.log('Test success!', params); },
             receiveSearchedIi: function(items){
                 // look for IiTag in scala
-                // items = [{id: 'mongo_id', caption: 'Toy Story'}, ...]
+                // items = [{id: 'mongo_id', caption: 'Toy Story', url: '#'}, ...]
                 OU.Areas.QuickSearch.collection.reset(items);
             }
         }
@@ -60,6 +60,7 @@
             if (this.get('tag')) {
                 var tag = $(this.get('tag'));
                 this.set('id', tag.data('id'));
+                this.set('url', tag.attr('href'));
                 this.set('caption', tag.data('caption'));
                 this.unset('tag', {silent: true});
             }
@@ -71,7 +72,7 @@
     });
 
     OU.IiView = Backbone.View.extend({
-        tagName: 'span',
+        tagName: 'a',
         className: 'ii',
         initialize : function(options) {
             this.render = _.bind(this.render, this); // bind 'this' in render to real 'this'
@@ -79,6 +80,7 @@
         },
         render: function() {
             $(this.el)
+                .attr('href', this.model.get('url'))
                 .attr('data-id', this.model.get('id'))
                 .attr('data-caption', this.model.get('caption'))
                 .html(this.model.get('caption'));
@@ -142,8 +144,8 @@ $(function(){
 
     (function(dropbar){
         dropbar.collection = new OU.IiSet([
-            {id: -1, caption: 'Drag items here'},
-            {id: -2, caption: 'Or drag from here to trash'}
+            {id: -1, caption: 'Drag items here', url: '#'},
+            {id: -2, caption: 'Or drag from here to trash', url: '#'}
         ]);
 
         dropbar.view = new OU.IiSetView({

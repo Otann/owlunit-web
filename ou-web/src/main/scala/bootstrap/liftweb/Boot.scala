@@ -14,6 +14,7 @@ import net.liftmodules.JQueryModule
 
 import com.owlunit.web.config._
 import com.owlunit.web.model.User
+import net.liftmodules.mongoauth.MongoAuth
 
 /**
  * A class that's instantiated early and run.  It allows the application
@@ -33,12 +34,14 @@ class Boot {
 
     LiftRules.statefulRewrite.append(Site.statefulRewrites)
 
-    //TODO anton chebotaev - replace with 1.7
-    //LiftRules.jsArtifacts = net.liftweb.http.js.jquery.JQuery14Artifacts
+    // init mongoauth ?
+//    MongoAuth.authUserMeta.default.set(User)
+//    MongoAuth.indexUrl.default.set("/")
+
     JQueryModule.InitParam.JQuery = JQueryModule.JQuery172
     JQueryModule.init()
 
-    //Show the spinny image when an Ajax call starts and go away when it ends
+    //Show the spiny image when an Ajax call starts and go away when it ends
     LiftRules.ajaxStart = Full(() => LiftRules.jsArtifacts.show("ajax-loader").cmd)
     LiftRules.ajaxEnd = Full(() => LiftRules.jsArtifacts.hide("ajax-loader").cmd)
 
@@ -55,7 +58,7 @@ class Boot {
     LiftRules.htmlProperties.default.set((r: Req) => new Html5Properties(r.userAgent))
 
     LiftRules.uriNotFound.prepend(NamedPF("404handler"){
-      case (req,failure) => NotFoundAsTemplate(ParsePath(List("404"),"html",false,false))
+      case (req,failure) => NotFoundAsTemplate(ParsePath(List("404"), "html", absolute = false, endSlash = false))
     })
 
   }

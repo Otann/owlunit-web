@@ -15,7 +15,7 @@ import net.liftweb.http.Factory
 object Gravatar extends Factory with Loggable {
 
   val defaultRating = new FactoryMaker[String]("G") {}
-  val defaultSize = new FactoryMaker[Int](100) {}
+  val defaultSize = new FactoryMaker[Int](150) {}
   val defaultImage = new FactoryMaker[String]("") {}
 
   /**

@@ -54,6 +54,12 @@ class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiMo
       super.validations
   }
 
+  object backdrop extends StringField(this, "http://placehold.it/606x60")
+
+  object movies extends MongoListField[User, ObjectId](this)
+  object friends extends MongoListField[User, ObjectId](this)
+  object keywords extends MongoListField[User, ObjectId](this)
+
   /*
    * FieldContainers for various Lift Screens.
    */
@@ -66,7 +72,7 @@ class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiMo
   }
 
   def registerScreenFields = new FieldContainer {
-    def allFields = List(username, email, password)
+    def allFields = List(name, username, email, password)
   }
 
   def whenCreated: DateTime = new DateTime(id.is.getTime)

@@ -3,7 +3,7 @@ package com.owlunit.web.snippet
 import com.owlunit.web.model.User
 import net.liftweb.util.Helpers._
 import com.owlunit.web.config.Site
-import com.owlunit.web.lib.AppHelpers
+import com.owlunit.web.lib.{Gravatar, AppHelpers}
 import net.liftweb.common.{Logger, Full, Failure, Empty}
 
 /**
@@ -12,7 +12,7 @@ import net.liftweb.common.{Logger, Full, Failure, Empty}
  */
 
 
-object UserSnippet extends AppHelpers with Logger {
+object MeSnippet extends AppHelpers with Logger {
 
   val owlUrl = "http://i293.photobucket.com/albums/mm46/smiley_foreva/Badge/owl.png"
   val failUrl = "http://sisyphus.ru/img/fail.png"
@@ -32,4 +32,15 @@ object UserSnippet extends AppHelpers with Logger {
     "*" #> (button ++ User.currentUser.map(_.toForm(button)(debug(_))))
   }
 
+  def nameTag = ".name *" #> User.currentUser.map(_.render)
+
+  def render =
+    nameTag &
+    ".picture *" #> User.currentUser.map(user => Gravatar.imgTag(user.email.is)) &
+    ".wallpaper [style]" #> "background: url(http://placehold.it/606x60)" &
+    ".occupation *" #> "Some example from Scala" &
+    ".rating [style]" #> "width: 95%"
+
+
+  //
 }

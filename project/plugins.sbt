@@ -17,4 +17,4 @@ libraryDependencies <+= sbtVersion(v => v match {
 // StartScript plugin (https://github.com/typesafehub/xsbt-start-script-plugin)
 resolvers += Classpaths.typesafeResolver
 
-addSbtPlugin("com.typesafe.startscript" % "xsbt-start-script-plugin" % "0.5.0")
+addSbtPlugin("com.typesafe.startscript" % "xsbt-start-script-plugin" % "0.5.2")

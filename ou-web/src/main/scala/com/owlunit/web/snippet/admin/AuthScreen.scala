@@ -12,14 +12,16 @@ import net.liftweb.sitemap.Menu
 import net.liftweb.util.FieldError
 import net.liftweb.util.Helpers._
 import xml.NodeSeq
-import com.owlunit.web.lib.{Gravatar, ModalScreen, AppHelpers}
+import com.owlunit.web.lib.ui.{Gravatar, ModalScreen}
+import com.owlunit.web.lib.{Gravatar, AppHelpers}
+import com.owlunit.web.lib.ui.ModalScreen
 
 /**
  * @author Anton Chebotaev
  *         Owls Proprietary
  */
 
-object LoginScreen extends ModalScreen with Loggable {
+object LoginScreen extends ModalScreen with Loggable with AppHelpers {
 
   override def screenTop = Full(<h3>{ "Welcome back" }</h3>)
   override def finishCaption = "Login"

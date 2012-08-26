@@ -1,12 +1,10 @@
 package com.owlunit.web.snippet.admin
 
-import net.liftweb.util.Helpers._
 import net.liftweb.http._
 import js.JsCmds
-import net.liftweb.common.{Logger, Full, Failure, Empty}
-import com.owlunit.web.lib.{BootstrapScreen, AppHelpers}
-import xml.{Text, NodeSeq}
-import com.owlunit.web.model.{Person, User, Movie}
+import net.liftweb.common.Full
+import com.owlunit.web.model.{Person, Movie}
+import com.owlunit.web.lib.ui.BootstrapScreen
 
 /**
 * @author Anton Chebotaev

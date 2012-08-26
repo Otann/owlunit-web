@@ -15,7 +15,8 @@ import net.liftmodules.mongoauth.field._
 import net.liftmodules.mongoauth.model._
 import com.owlunit.core.ii.mutable.Ii
 import com.owlunit.web.config.DependencyFactory
-import com.owlunit.web.lib.{IiTag, IiMeta}
+import com.owlunit.web.lib.ui.IiTag
+import com.owlunit.web.lib.IiMeta
 import net.liftweb.common.Loggable
 
 /**

@@ -9,7 +9,8 @@ import org.bson.types.ObjectId
 import com.owlunit.core.ii.mutable.Ii
 import com.owlunit.web.config.DependencyFactory
 import net.liftweb.common._
-import com.owlunit.web.lib.{IiTag, IiPersonMeta}
+import com.owlunit.web.lib.ui.IiTag
+import com.owlunit.web.lib.IiPersonMeta
 import net.liftweb.mongodb
 import com.owlunit.core.ii.NotFoundException
 import net.liftweb.common.Full
@@ -49,6 +50,11 @@ class Person private() extends IiMongoRecord[Person] with ObjectIdPk[Person] wit
 
   // Field containers
   def createFields = new FieldContainer { def allFields = List(firstName, lastName, photoUrl) }
+
+  override def save = {
+    ii.setMeta(Name, fullName) // allow search by full name
+    super.save
+  }
 
 }
 

@@ -1,4 +1,4 @@
-package com.owlunit.web.lib
+package com.owlunit.web.lib.ui
 
 import java.io.UnsupportedEncodingException
 import java.security.{MessageDigest, NoSuchAlgorithmException}

@@ -2,13 +2,9 @@ package com.owlunit.web.snippet.admin
 
 import net.liftweb.util.Helpers._
 import net.liftweb.http._
-import js.JE._
-import js.JsCmd
-import js.JsCmds._
-import xml.NodeSeq
 import com.owlunit.web.model.Movie
 import net.liftweb.common._
-import com.owlunit.web.lib.BootstrapScreen
+import com.owlunit.web.lib.ui.BootstrapScreen
 
 /**
  * @author Anton Chebotaev

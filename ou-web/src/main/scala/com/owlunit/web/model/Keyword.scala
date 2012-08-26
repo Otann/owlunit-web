@@ -8,7 +8,8 @@ import net.liftweb.util.FieldContainer
 import net.liftweb.mongodb.record.MongoMetaRecord
 import org.bson.types.ObjectId
 import com.owlunit.web.config.DependencyFactory
-import com.owlunit.web.lib.{IiTag, IiMeta}
+import com.owlunit.web.lib.ui.IiTag
+import com.owlunit.web.lib.IiMeta
 import com.owlunit.core.ii.NotFoundException
 import net.liftweb.common._
 import com.foursquare.rogue.Rogue._

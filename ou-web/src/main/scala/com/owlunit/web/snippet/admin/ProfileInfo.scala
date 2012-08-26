@@ -8,8 +8,7 @@ import js.JsCmds._
 import xml.NodeSeq
 import com.owlunit.web.model.Movie
 import net.liftweb.common._
-import com.owlunit.web.lib.{Gravatar, JsHandlerSnippet, BootstrapScreen}
-import com.owlunit.web.lib.{JsHandlerSnippet, Gravatar, BootstrapScreen}
+import com.owlunit.web.lib.ui.Gravatar
 import com.owlunit.web.model.User
 
 /**
@@ -28,10 +27,10 @@ object ProfileInfo extends Loggable {
 
 }
 
-object ProfileDroppable extends JsHandlerSnippet with AdminHelper {
-
-  def handleJs(param: String) = null
-
-}
+//object ProfileDroppable extends JsHandlerSnippet with AdminHelper {
+//
+//  def handleJs(param: String) = null
+//
+//}
 
 object ProfileItems extends SessionVar(Set[String]())

@@ -1,9 +1,8 @@
-package com.owlunit.web.lib
+package com.owlunit.web.lib.ui
 
 import net.liftweb.http.js.JE.JsObj
 import net.liftweb.http.js.JsObj
 import net.liftweb.util.Helpers._
-import com.owlunit.web.model.User
 
 /**
  * @author Anton Chebotaev
@@ -15,16 +14,18 @@ import com.owlunit.web.model.User
 trait IiTag {
 
   protected def tagId: String
+
   protected def tagCaption: String
+
   protected def tagUrl: String //TODO(Anton): make more "lifty"
 
   def toTagJSON: JsObj = JsObj(("id", tagId), ("caption", tagCaption), ("url", tagUrl))
 
-  def render =
+  def snippet =
     ".ii *" #> tagCaption &
-    ".ii [data-id]" #> tagId &
-    ".ii [data-caption]" #> tagCaption &
-    ".ii [data-url]" #> tagUrl
+      ".ii [data-id]" #> tagId &
+      ".ii [data-caption]" #> tagCaption &
+      ".ii [data-url]" #> tagUrl
 
 
 }

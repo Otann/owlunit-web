@@ -8,7 +8,8 @@ import net.liftweb.util.Helpers._
 import net.liftweb.util.FieldContainer
 import com.owlunit.core.ii.mutable.Ii
 import com.owlunit.web.config.DependencyFactory
-import com.owlunit.web.lib.{IiTag, IiMovieMeta}
+import com.owlunit.web.lib.ui.IiTag
+import com.owlunit.web.lib.IiMovieMeta
 import org.bson.types.ObjectId
 import net.liftweb.common._
 import net.liftweb.mongodb
@@ -37,7 +38,9 @@ class Movie private() extends IiMongoRecord[Movie] with ObjectIdPk[Movie] with I
 
   object name extends IiStringField(this, ii, Name, "")
   object year extends IntField(this, 0)
+
   protected object simpleName extends StringField(this, "")
+  protected def simplifyName = simplifyComplexName(name.is, year.is)
 
   object posterUrl extends StringField(this, "http://placehold.it/130x200")
 
@@ -68,13 +71,13 @@ class Movie private() extends IiMongoRecord[Movie] with ObjectIdPk[Movie] with I
     // check that is not there yet
     if (!persons.is.contains(item)) {
       persons(item :: persons.is)
-      val weight = ii.loadItems.items.get.getOrElse(person.ii, 0.0)
 
+      val weight = ii.loadItems.items.get.getOrElse(person.ii, 0.0)
       role match {
         case Role.Actor    => ii.setItem(person.ii, weight + ActorWeight)
         case Role.Director => ii.setItem(person.ii, weight + DirectorWeight)
         case Role.Producer => ii.setItem(person.ii, weight + ProducerWeight)
-        case _ => ii.setItem(person.ii, weight + GeneralPersonWeight)
+        case _             => ii.setItem(person.ii, weight + GeneralPersonWeight)
       }
     }
 
@@ -82,8 +85,6 @@ class Movie private() extends IiMongoRecord[Movie] with ObjectIdPk[Movie] with I
   }
 
   // Persistence
-
-  protected def simplifyName = simplifyComplexName(name.is, year.is)
 
   override def save = {
     simpleName(simplifyName)

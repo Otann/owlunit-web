@@ -26,7 +26,7 @@ object PersonsCrawler extends Parser with Logging {
 
     val personTimer = Counter.start()
     val linesTimer = Counter.start(totalLines)
-    val source = Source.fromFile(path).getLines()
+    val source = Source.fromFile(path, "latin1").getLines()
 
     var prePerson: String = null
     var preMovies = collection.mutable.ListBuffer[PsMovie]()

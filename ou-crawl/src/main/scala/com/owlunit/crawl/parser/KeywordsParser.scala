@@ -22,7 +22,7 @@ object KeywordsParser extends Parser with PsWeights with Logging {
              movies: collection.mutable.Map[String, PsMovie],
              flush: (PsMovie, PsKeyword, Double) => Any) {
 
-    val source = Source.fromFile(path).getLines()
+    val source = Source.fromFile(path, "latin1").getLines()
 
     // skip first part
     var line = source.next()

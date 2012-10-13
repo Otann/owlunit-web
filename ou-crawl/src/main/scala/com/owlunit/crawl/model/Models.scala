@@ -5,8 +5,8 @@ package com.owlunit.crawl.model
  *         Owls Proprietary
  */
 
-case class PsKeyword(name: String)
+case class PlainKeyword(name: String)
 
-case class PsMovie(name: String, year: Int)
+case class PlainMovie(name: String, year: Int)
 
-case class PsPerson(firstName: String, lastName: String)
+case class PlainPerson(firstName: String, lastName: String)

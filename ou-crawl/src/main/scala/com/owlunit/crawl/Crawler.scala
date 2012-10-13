@@ -1,8 +1,8 @@
 package com.owlunit.crawl
 
-import model.PsKeyword
-import model.PsMovie
-import model.PsPerson
+import model.PlainKeyword
+import model.PlainMovie
+import model.PlainPerson
 import parser.{Parser, PersonsCrawler, KeywordsParser, MoviesParser}
 import com.weiglewilczek.slf4s.Logging
 import com.owlunit.web.config.{IiDaoConfig, MongoConfig}
@@ -18,18 +18,19 @@ import net.liftweb.common.Full
 
 object Crawler extends Parser with CrawlerPaths with Logging {
 
-  val movies = collection.mutable.Map[String, PsMovie]() // simpleName -> PsMovie
+  val movies = collection.mutable.Map[String, PlainMovie]()    // simpleName -> PlainMovie
   val keywords = collection.mutable.Map[String, ObjectId]()
   val persons = collection.mutable.Map[String, ObjectId]()
 
-  def cacheMovie(movie: PsMovie) = movies += simplifyName(movie.name, movie.year) -> movie
+  def cacheMovie(movie: PlainMovie) = movies += simplifyName(movie.name, movie.year) -> movie
 
-  def saveMovieKeyword(m: PsMovie, k: PsKeyword, w: Double) {
+  def saveMovieKeyword(m: PlainMovie, k: PlainKeyword, w: Double) {
     try {
       Movie.findBySimpleName(m.name, m.year) match {
 
         // Movie found
         case Full(movie) => {
+
           // Load or create keyword
           val keyword = Keyword.findByName(k.name) match {
             case Full(kw) => kw
@@ -50,9 +51,9 @@ object Crawler extends Parser with CrawlerPaths with Logging {
     }
   }
 
-  def savePerson(p: PsPerson) = Person.createRecord.firstName(p.firstName).lastName(p.lastName).save
+  def savePerson(p: PlainPerson) = Person.createRecord.firstName(p.firstName).lastName(p.lastName).save
 
-  def saveMoviePerson(m: PsMovie, person: Person, role: Role.Role) {
+  def saveMoviePerson(m: PlainMovie, person: Person, role: Role.Role) {
     try {
       Movie.findBySimpleName(m.name, m.year) match {
 
@@ -88,10 +89,10 @@ object Crawler extends Parser with CrawlerPaths with Logging {
     KeywordsParser.parse(keywordsPath, movies, saveMovieKeyword)
 
     // Parse people
-    PersonsCrawler.parse(actorsPath, movies, Role.Actor, 12338129, savePerson, saveMoviePerson)
-    PersonsCrawler.parse(actressesPath, movies, Role.Actor, 7243872, savePerson, saveMoviePerson)
-    PersonsCrawler.parse(directorsPath, movies, Role.Director, 1724653, savePerson, saveMoviePerson)
-    PersonsCrawler.parse(producersPath, movies, Role.Producer, 3719561, savePerson, saveMoviePerson)
+    PersonsCrawler.parse(actorsPath,    movies, Role.Actor,    12338129, savePerson, saveMoviePerson)
+    PersonsCrawler.parse(actressesPath, movies, Role.Actor,    7243872,  savePerson, saveMoviePerson)
+    PersonsCrawler.parse(directorsPath, movies, Role.Director, 1724653,  savePerson, saveMoviePerson)
+    PersonsCrawler.parse(producersPath, movies, Role.Producer, 3719561,  savePerson, saveMoviePerson)
 
   }
 

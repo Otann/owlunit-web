@@ -6,7 +6,7 @@ package com.owlunit.crawl.model
  */
 
 
-trait PsWeights {
+trait ParserWeights {
 
   val initialGenreWeight = 30.0
 

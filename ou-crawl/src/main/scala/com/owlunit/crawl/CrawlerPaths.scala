@@ -6,11 +6,11 @@ package com.owlunit.crawl
  */
 trait CrawlerPaths {
 
-  val moviesPath      = "../../raw-data/movielens/movies.dat"
-  val keywordsPath    = "../../raw-data/imdb/keywords.list"
-  val actorsPath      = "../../raw-data/imdb/actors.list"
-  val actressesPath   = "../../raw-data/imdb/actresses.list"
-  val directorsPath   = "../../raw-data/imdb/directors.list"
-  val producersPath   = "../../raw-data/imdb/producers.list"
+  val moviesPath      = "../../data-raw/movielens/movies.dat"
+  val keywordsPath    = "../../data-raw/imdb/keywords.list"
+  val actorsPath      = "../../data-raw/imdb/actors.list"
+  val actressesPath   = "../../data-raw/imdb/actresses.list"
+  val directorsPath   = "../../data-raw/imdb/directors.list"
+  val producersPath   = "../../data-raw/imdb/producers.list"
 
 }

@@ -3,7 +3,7 @@ package com.owlunit.crawl.parser
 import io.Source
 import com.owlunit.crawl._
 import com.weiglewilczek.slf4s.Logging
-import model.{PsPerson, PsMovie}
+import model.{PlainPerson, PlainMovie}
 import com.owlunit.web.model.{Person, Role}
 
 /**
@@ -17,11 +17,11 @@ object PersonsCrawler extends Parser with Logging {
   val movieExtractor       = """^\t\t\t(.+)\((\d+)\).*$""".r
 
   def parse( path: String,
-             movieSimpleNames: collection.mutable.Map[String, PsMovie],
+             movieSimpleNames: collection.mutable.Map[String, PlainMovie],
              role: Role.Role,
              totalLines: Int,
-             flushPerson: (PsPerson) => Person,
-             flushRelation: (PsMovie, Person, Role.Role) => Any
+             flushPerson: (PlainPerson) => Person,
+             flushRelation: (PlainMovie, Person, Role.Role) => Any
              ) {
 
     val personTimer = Counter.start()
@@ -29,13 +29,13 @@ object PersonsCrawler extends Parser with Logging {
     val source = Source.fromFile(path, "latin1").getLines()
 
     var prePerson: String = null
-    var preMovies = collection.mutable.ListBuffer[PsMovie]()
+    var preMovies = collection.mutable.ListBuffer[PlainMovie]()
 
     def flushLocal(fullName: String) {
       if (prePerson != null && !preMovies.isEmpty) {
 
         val name = prePerson.split(", ")
-        val psPerson = if (name.length > 1) PsPerson(name(1), name(0)) else PsPerson(fullName, "")
+        val psPerson = if (name.length > 1) PlainPerson(name(1), name(0)) else PlainPerson(fullName, "")
         personTimer.tick(logger, 10000, "persons of role " + role)
 
         val person = flushPerson(psPerson)
@@ -47,7 +47,7 @@ object PersonsCrawler extends Parser with Logging {
 
     def loadMovie(name: String, year: Int) = {
       val s = simplifyName(name, year)
-      if (movieSimpleNames.contains(s)) Some(PsMovie(name, year)) else None
+      if (movieSimpleNames.contains(s)) Some(PlainMovie(name, year)) else None
     }
 
     while (source.hasNext) {
@@ -60,7 +60,7 @@ object PersonsCrawler extends Parser with Logging {
           // new person, flush previous
           flushLocal(prePerson)
           prePerson = null
-          preMovies = collection.mutable.ListBuffer[PsMovie]()
+          preMovies = collection.mutable.ListBuffer[PlainMovie]()
 
           val personMovieExtractor(personName, movieName, yearRaw) = line
           val year = yearRaw.toInt

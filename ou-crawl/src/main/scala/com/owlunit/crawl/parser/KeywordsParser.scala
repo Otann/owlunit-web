@@ -4,23 +4,22 @@ import io.Source
 import collection.mutable.{Map => MutableMap}
 import com.owlunit.crawl._
 import com.weiglewilczek.slf4s.Logging
-import com.owlunit.web.model.Movie
-import model.{PsMovie, PsWeights, PsKeyword}
+import model.{PlainMovie, ParserWeights, PlainKeyword}
 
 /**
  * @author Anton Chebotaev
  *         Owls Proprietary
  */
 
-object KeywordsParser extends Parser with PsWeights with Logging {
+object KeywordsParser extends Parser with ParserWeights with Logging {
 
   val keywordsExtractor = """([^\s]+ \(\d+\))""".r
-  val keywordExtractor = """([^\s]+) \((\d+)\)""".r
-  val keywordLine = """^(.*) \((\d+)\).*\t([^\s]*)\s*""".r
+  val keywordExtractor  = """([^\s]+) \((\d+)\)""".r
+  val keywordLine       = """^(.*) \((\d+)\).*\t([^\s]*)\s*""".r
 
   def parse( path: String,
-             movies: collection.mutable.Map[String, PsMovie],
-             flush: (PsMovie, PsKeyword, Double) => Any) {
+             movies: collection.mutable.Map[String, PlainMovie],
+             flush: (PlainMovie, PlainKeyword, Double) => Any) {
 
     val source = Source.fromFile(path, "latin1").getLines()
 
@@ -63,7 +62,7 @@ object KeywordsParser extends Parser with PsWeights with Logging {
         val movie = movies.get(simplifyName(name, yearRaw.toInt))
 
         if (movie.isDefined) {
-          val keyword = PsKeyword(capitalizeKeyword(keywordRaw))
+          val keyword = PlainKeyword(capitalizeKeyword(keywordRaw))
           flush(movie.get, keyword, adaptiveWeight(keywordRaw))
           keywordsCounter.tick(logger, 50000, "movie-keyword relations parsed")
         }

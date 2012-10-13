@@ -9,12 +9,12 @@ import js.JsCmds._
  * @author Anton Chebotaev
  *         Owls Proprietary
  */
-class CallableFunction(name: String, callback: (String) => JsCmd, args: List[String] = List()) extends JsCmd {
+class CallableFunction(name: String, callback: (Any) => JsCmd, args: List[String] = List()) extends JsCmd {
   //  override val toJsCmd = AnonFunc(
   override val toJsCmd = Function(
     name,
     args,
     //  SHtml.jsonCall ?
-    SHtml.ajaxCall(JsRaw("Array.prototype.slice.call(arguments).join('|')"), callback)._2
+    SHtml.jsonCall(JsRaw("Array.prototype.slice.call(arguments).join('|')"), callback)._2
   ).toJsCmd
 }

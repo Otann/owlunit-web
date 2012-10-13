@@ -29,8 +29,9 @@ class Keyword private() extends IiMongoRecord[Keyword] with ObjectIdPk[Keyword] 
   val baseMeta = "ii.cinema.keyword"
   var ii: Ii = null
   override def tagId = this.id.is.toString
+  override def tagType = "keyword"
   override def tagCaption = this.name.is.toString
-  def tagUrl = "#" //TODO(Anton) implement permalinks
+  override def tagUrl = "#" //TODO(Anton) implement permalinks
 
   // Fields
   object name extends IiStringField(this, ii, Name, "")

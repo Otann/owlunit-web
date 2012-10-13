@@ -26,13 +26,17 @@ class Movie private() extends IiMongoRecord[Movie] with ObjectIdPk[Movie] with I
   // for MongoRecord
   def meta = Movie
 
-  // for IiMongoRecord, IiMovieMeta and IiTag
-
-  val baseMeta = "ii.cinema.movie"
+  // for IiMongoRecord
   var ii: Ii = null
-  def tagId = this.id.is.toString
-  def tagCaption = this.name.is.toString
-  def tagUrl = "#" //TODO(Anton) implement permalinks
+
+  // for IiMovieMeta
+  val baseMeta = "ii.cinema.movie"
+
+  // for IiTag
+  override def tagId      = this.id.is.toString
+  override def tagType    = "movie"
+  override def tagCaption = this.name.is.toString
+  override def tagUrl     = "/movie/%s" format this.id.is.toString //TODO(Anton) implement permalinks
 
   // Fields
 
@@ -42,10 +46,13 @@ class Movie private() extends IiMongoRecord[Movie] with ObjectIdPk[Movie] with I
   protected object simpleName extends StringField(this, "")
   protected def simplifyName = simplifyComplexName(name.is, year.is)
 
-  object posterUrl extends StringField(this, "http://placehold.it/130x200")
+  object posterUrl extends StringField(this, "http://placehold.it/150x150")
+  object backdropUrl extends StringField(this, "http://placehold.it/600x60")
 
   object keywords extends MongoListField[Movie, ObjectId](this)
   object persons extends BsonRecordListField(this, CrewItem)
+
+  object tagline extends StringField(this, "Tagline")
 
   // Data manipulation
 
@@ -58,7 +65,7 @@ class Movie private() extends IiMongoRecord[Movie] with ObjectIdPk[Movie] with I
   }
 
   def removeKeyword(k: Keyword) = {
-    if (keywords.is.contains(k.id.is)) {
+    if (keywords.is contains k.id.is) {
       keywords(keywords.is filterNot (_ == k.id.is))
       ii.removeItem(k.ii)
     }
@@ -81,6 +88,11 @@ class Movie private() extends IiMongoRecord[Movie] with ObjectIdPk[Movie] with I
       }
     }
 
+    this
+  }
+
+  def removePerson(person: Person, role: Role.Role) = {
+    // TODO(Anton) implement!
     this
   }
 

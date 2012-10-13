@@ -712,9 +712,17 @@ span.ii {
 /* Added by Anton */
 /* ************** */
 
+.ii {
+    white-space: nowrap;
+}
+
 .name .ii {
     border: none;
     background: rgba(0, 0, 0, 0.05);
+    padding: 0 10px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
 }
 .name .ii.ui-draggable-dragging {
     border: rgba(0, 0, 0, 0.5);
@@ -724,6 +732,7 @@ span.ii {
 
 #quicksearch-results {
     max-height: 230px;
+    padding-bottom: 20px;
     overflow-y: scroll;
 }
 
@@ -735,12 +744,43 @@ span.ii {
     background: #211d34 none;
 }
 
-#dropbar {
-    margin-top: 17px;
-    padding-top: 3px;
-    min-height: 100px;
+.userbar .landingarea input {
+    margin-bottom: 5px;
+}
+
+.dropbar-border {
+    margin: 8px 0;
     border-top: 2px rgba(255, 255, 255, 0.1) dashed;
+}
+
+#dropbar {
+    min-height: 100px;
 }
 #dropbar.ii-hovered {
     background: rgba(255, 255, 255, 0.1) none;
+}
+
+.wallpaper {
+    background-position: center; !important
+}
+
+.content .profile-header .picture {
+    width: inherit;
+    height: inherit;
+    line-height: 0;
+}
+
+.profile-header .picture img {
+    max-width: 150px;
+    max-height: 300px;
+}
+
+.userbar .tags li .ii {
+    background: url(/img/movie-tags-ii-drag-handle.png) 100% 50% no-repeat #333;
+    border: 1px solid #555;
+    color: #fff;
+}
+
+.movie-info:first-child {
+    margin-top: 50px;
 }

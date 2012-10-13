@@ -8,7 +8,6 @@ import js.JsCmds._
 import xml.NodeSeq
 import com.owlunit.web.model.Person
 import net.liftweb.common._
-import com.owlunit.web.lib.BootstrapScreen
 import net.liftweb.record.Field
 
 /**

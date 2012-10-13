@@ -1,13 +1,11 @@
 package com.owlunit.web.config
 
 import net.liftweb._
-import common._
 import http._
 import sitemap._
 import sitemap.Loc._
 
 import net.liftmodules.mongoauth.Locs
-import sitemap.Menu.Menuable
 import com.owlunit.web.model.{Person, Movie, User}
 
 /**
@@ -63,6 +61,8 @@ object Site {
     Menu("About")   / "about"    >> MenuGroup.TopBar,
     Menu("Test")    / "test"     >> MenuGroup.TopBar,
 
+    Menu("Movie")   / "movie"    >> Hidden,
+
     Menu("Throw")   / "throw"    >> Hidden,
     Menu("Error")   / "error"    >> Hidden,
 
@@ -79,16 +79,16 @@ object Site {
   */
   val statefulRewrites: LiftRules.RewritePF = {
 
-    case RewriteRequest(ParsePath("admin" :: "movie" :: id :: Nil,_,_,_),_,_) => {
+    case RewriteRequest(ParsePath("movie" :: id :: Nil,_,_,_),_,_) => {
       if (Movie.find(id).isDefined)
-        RewriteResponse("admin" :: "movie" :: Nil, Map("id" -> id))
+        RewriteResponse("movie" :: Nil, Map("id" -> id))
       else
         RewriteResponse("404" :: Nil)
     }
 
     case RewriteRequest(ParsePath("admin" :: "person" :: id :: Nil,_,_,_),_,_) => {
       if (Person.find(id).isDefined)
-        RewriteResponse("admin" :: "person" :: Nil, Map("id" -> id))
+        RewriteResponse("person" :: Nil, Map("id" -> id))
       else
         RewriteResponse("404" :: Nil)
     }

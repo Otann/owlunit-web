@@ -13,7 +13,7 @@ import net.liftweb.util.FieldError
 import net.liftweb.util.Helpers._
 import xml.NodeSeq
 import com.owlunit.web.lib.ui.{Gravatar, ModalScreen}
-import com.owlunit.web.lib.{Gravatar, AppHelpers}
+import com.owlunit.web.lib.AppHelpers
 import com.owlunit.web.lib.ui.ModalScreen
 
 /**

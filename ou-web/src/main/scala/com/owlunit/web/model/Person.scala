@@ -29,9 +29,10 @@ class Person private() extends IiMongoRecord[Person] with ObjectIdPk[Person] wit
   // for IiMongoRecord, IiMovieMeta and IiTag
   val baseMeta = "ii.cinema.person"
   var ii: Ii = null
-  def tagId = id.is.toString
-  def tagCaption = fullName
-  def tagUrl = "#" //TODO(Anton) implement permalinks
+  override def tagId = id.is.toString
+  override def tagType = "person"
+  override def tagCaption = fullName
+  override def tagUrl = "#" //TODO(Anton) implement permalinks
 
   // Fields
 

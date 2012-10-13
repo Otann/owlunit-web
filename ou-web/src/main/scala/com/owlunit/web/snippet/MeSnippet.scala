@@ -15,17 +15,17 @@ import net.liftweb.common.{Logger, Full, Failure, Empty}
 
 object MeSnippet extends AppHelpers with Logger {
 
-  def username = "* *" #> User.currentUser.map(_.username.is)
-
   def logout = "* [href]" #> url(Site.logout)
 
   def nameTag = ".name *" #> User.currentUser.map(_.snippet)
 
+  def smallAvatar = "img" #> User.currentUser.map(user => Gravatar.imgTag(user.email.is, 30))
+
   def render =
     nameTag &
-    ".picture *" #> User.currentUser.map(user => Gravatar.imgTag(user.email.is)) &
+    ".picture *"         #> User.currentUser.map(user => Gravatar.imgTag(user.email.is)) &
     ".wallpaper [style]" #> "background: url(http://placehold.it/606x60)" &
-    ".occupation *" #> "Some example from Scala" &
-    ".rating [style]" #> "width: 95%"
+    ".occupation *"      #> "Some example from Scala" &
+    ".rating [style]"    #> "width: 95%"
 
 }

@@ -30,11 +30,12 @@ class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiMo
 
   var ii: Ii = null
 
-  def tagId = this.id.is.toString
-  def tagCaption = this.name.is.toString
-  def tagUrl = "#" //TODO(Anton) implement permalinks
+  override def tagId = this.id.is.toString
+  override def tagCaption = this.name.is.toString
+  override def tagType = "user"
+  override def tagUrl = "#" //TODO(Anton) implement permalinks
 
-  def userIdAsString: String = id.toString()
+  override def userIdAsString: String = id.toString()
 
   object name extends IiStringField(this, ii, Name, "") {
     override def displayName = "Name"
@@ -44,15 +45,9 @@ class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiMo
   }
   object location extends StringField(this, 64) {
     override def displayName = "Location"
-    override def validations =
-      valMaxLen(64, "Location must be 64 characters or less") _ ::
-      super.validations
   }
   object bio extends TextareaField(this, 160) {
     override def displayName = "Bio"
-    override def validations =
-      valMaxLen(160, "Bio must be 160 characters or less") _ ::
-      super.validations
   }
 
   object backdrop extends StringField(this, "http://placehold.it/606x60")

@@ -16,7 +16,7 @@ object IiDaoConfig {
 
   val localMode = true // sys.env.getOrElse("OWL_DEPLOY_LOCAL", "false").toBoolean
 
-  def init() { dao.init() } // creates shutdown hook
+  def init() { dao.init() }
   def shutdown() { dao.shutdown() }
 
   val dao:IiDao = {

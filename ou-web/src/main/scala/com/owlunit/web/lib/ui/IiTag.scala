@@ -14,18 +14,17 @@ import net.liftweb.util.Helpers._
 trait IiTag {
 
   protected def tagId: String
-
+  protected def tagType: String
   protected def tagCaption: String
-
   protected def tagUrl: String //TODO(Anton): make more "lifty"
 
-  def toTagJSON: JsObj = JsObj(("id", tagId), ("caption", tagCaption), ("url", tagUrl))
+  def toTagJSON: JsObj = JsObj(("id", tagId), ("caption", tagCaption), ("url", tagUrl), ("type", tagType))
 
   def snippet =
     ".ii *" #> tagCaption &
       ".ii [data-id]" #> tagId &
+      ".ii [data-type]" #> tagType &
       ".ii [data-caption]" #> tagCaption &
       ".ii [data-url]" #> tagUrl
-
 
 }

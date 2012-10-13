@@ -6,6 +6,7 @@
     ////////////////////////////////
 
     window.OU = {
+
         Options: {
             DraggableItems: {
                 helper: function(event){
@@ -24,6 +25,7 @@
                 hoverClass: 'ii-hovered'
             }
         },
+
         Areas: {
             Dropbar: {
                 selector: '#dropbar',
@@ -42,12 +44,24 @@
                 selector: '#profile'
             }
         },
+
+        // Callbacks for scala code
         Callbacks: {
-            test: function(params) { console.log('Test success!', params); },
+            test: function(params) { console.log('Test success! Params:', params); },
             receiveSearchedIi: function(items){
                 // look for IiTag in scala
                 // items = [{id: 'mongo_id', caption: 'Toy Story', url: '#'}, ...]
+                if (items.length > 0) {
+                    $('.hint').html('');
+                } else if ($("input[name='search']").val().length >= 3) {
+                    $('.hint').html('Nothing found, try another letters');
+                }
+                console.log(items);
                 OU.Areas.QuickSearch.collection.reset(items);
+            },
+            handleProfileDrop: function(ii){
+                // rewritten by server side
+                console.log('ERROR: Method should be replaced by server side');
             }
         }
     };
@@ -58,16 +72,21 @@
     OU.Ii = Backbone.Model.extend({
         initialize: function(options){
             if (this.get('tag')) {
+                // receive tag object
                 var tag = $(this.get('tag'));
+                // get data from object
                 this.set('id', tag.data('id'));
                 this.set('url', tag.attr('href'));
+                this.set('type', tag.data('type'));
                 this.set('caption', tag.data('caption'));
+                // remove to be clear
                 this.unset('tag', {silent: true});
             }
         },
         defaults: {
             id: null,
-            caption: null
+            caption: null,
+            type: null
         }
     });
 
@@ -82,6 +101,7 @@
             $(this.el)
                 .attr('href', this.model.get('url'))
                 .attr('data-id', this.model.get('id'))
+                .attr('data-type', this.model.get('type'))
                 .attr('data-caption', this.model.get('caption'))
                 .html(this.model.get('caption'));
             return this;
@@ -110,7 +130,7 @@
             var that = this;
             // Clear out this element.
             $(this.el).empty();
-
+            // Draw all elements
             this.collection.each(function(item) {
                 var view = new OU.IiView({model: item});
                 $(that.el).append($('<li>').html(view.render().el));
@@ -144,8 +164,8 @@ $(function(){
 
     (function(dropbar){
         dropbar.collection = new OU.IiSet([
-            {id: -1, caption: 'Drag items here', url: '#'},
-            {id: -2, caption: 'Or drag from here to trash', url: '#'}
+//            {id: -1, caption: 'Drag items here', url: '#'},
+//            {id: -2, caption: 'Or drag from here to trash', url: '#'}
         ]);
 
         dropbar.view = new OU.IiSetView({
@@ -204,8 +224,7 @@ $(function(){
         hoverClass: 'ii-hovered',
         drop: function(event, ui) {
             var sample = new OU.Ii({tag: ui.draggable});
-            // TODO(Anton): call server callback for adding to profile
-            console.log('TODO(Anton): call server callback for adding to profile');
+            OU.Callbacks.handleProfileDrop(sample);
         }
     });
 

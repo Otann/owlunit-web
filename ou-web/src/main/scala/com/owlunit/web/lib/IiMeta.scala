@@ -12,18 +12,18 @@ trait IiMeta {
 
   def baseMeta: String
   def Footprint = baseMeta + ".MongoId"
-  def Name  = baseMeta + ".Name"
+  def Name      = baseMeta + ".Name"
 
 }
 
 trait IiMovieMeta extends IiMeta {
 
-  val KeywordWeight = 1.0
+  val KeywordWeight       = 1.0
 
   val GeneralPersonWeight = 5.0
-  val ActorWeight = 5.0
-  val DirectorWeight  = 5.0
-  val ProducerWeight = 5.0
+  val ActorWeight         = 5.0
+  val DirectorWeight      = 5.0
+  val ProducerWeight      = 5.0
 
 }
 

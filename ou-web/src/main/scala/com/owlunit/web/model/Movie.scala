@@ -44,15 +44,17 @@ class Movie private() extends IiMongoRecord[Movie] with ObjectIdPk[Movie] with I
   object year extends IntField(this, 0)
 
   protected object simpleName extends StringField(this, "")
-  protected def simplifyName = simplifyComplexName(name.is, year.is)
+  protected def simplifiedName = simplifyComplexName(name.is, year.is)
 
   object posterUrl extends StringField(this, "http://placehold.it/150x150")
   object backdropUrl extends StringField(this, "http://placehold.it/600x60")
 
-  object keywords extends MongoListField[Movie, ObjectId](this)
-  object persons extends BsonRecordListField(this, CrewItem)
-
   object tagline extends StringField(this, "Tagline")
+
+  // TODO(Anton) make protected ans how it is used?
+  object keywords extends MongoListField[Movie, ObjectId](this)    // List of ObjectIds
+  object persons extends BsonRecordListField(this, CrewItem)       // List of CrewItems (Role, Person)
+
 
   // Data manipulation
 
@@ -99,7 +101,7 @@ class Movie private() extends IiMongoRecord[Movie] with ObjectIdPk[Movie] with I
   // Persistence
 
   override def save = {
-    simpleName(simplifyName)
+    simpleName(simplifiedName)
     super.save
   }
 

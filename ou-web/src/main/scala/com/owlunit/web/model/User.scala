@@ -56,17 +56,7 @@ class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiMo
   object friends extends MongoListField[User, ObjectId](this)
   object keywords extends MongoListField[User, ObjectId](this)
 
-  /*
-   * FieldContainers for various Lift Screens.
-   */
-  def accountScreenFields = new FieldContainer {
-    def allFields = List(username, email)
-  }
-
-  def profileScreenFields = new FieldContainer {
-    def allFields = List(name, location, bio)
-  }
-
+  // FieldContainers for various Lift Screens.
   def registerScreenFields = new FieldContainer {
     def allFields = List(name, username, email, password)
   }
@@ -80,9 +70,9 @@ object User extends User with ProtoAuthUserMeta[User] with Loggable {
 
   override def collectionName = "users"
 
-  ensureIndex((informationItemId.name -> 1), true)
-  ensureIndex((email.name -> 1), true)
-  ensureIndex((username.name -> 1), true)
+  ensureIndex((informationItemId.name -> 1), unique = true)
+  ensureIndex((email.name -> 1), unique = true)
+  ensureIndex((username.name -> 1), unique = true)
 
   lazy val iiDao = DependencyFactory.iiDao.vend //TODO unsafe vend
 

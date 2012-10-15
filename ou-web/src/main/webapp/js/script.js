@@ -49,14 +49,14 @@
         Callbacks: {
             test: function(params) { console.log('Test success! Params:', params); },
             receiveSearchedIi: function(items){
-                // look for IiTag in scala
-                // items = [{id: 'mongo_id', caption: 'Toy Story', url: '#'}, ...]
-                if (items.length > 0) {
+                var query_length = $("input[name='search']").val().length;
+                if (items.length > 0 || query_length < 3) {
                     $('.hint').html('');
-                } else if ($("input[name='search']").val().length >= 3) {
+                } else if (query_length >= 3) {
                     $('.hint').html('Nothing found, try another letters');
                 }
-                console.log(items);
+                // look for IiTag in scala
+                // items = [{id: 'mongo_id', caption: 'Toy Story', url: '#'}, ...]
                 OU.Areas.QuickSearch.collection.reset(items);
             },
             handleProfileDrop: function(ii){

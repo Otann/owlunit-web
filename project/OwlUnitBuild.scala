@@ -129,7 +129,7 @@ object OwlUnitBuild extends Build {
     val jettyServer = "org.eclipse.jetty"         %  "jetty-server"        % V.Jetty
     val servlet     = "org.eclipse.jetty"         %  "jetty-servlet"       % V.Jetty
 
-    val logback     = "ch.qos.logback"            %  "logback-classic"     % "0.9.28"
+    val logback     = "ch.qos.logback"            %  "logback-classic"     % "1.0.6"
     val slf4s       = "com.weiglewilczek.slf4s"   %% "slf4s"               % "1.0.7"
 
   }

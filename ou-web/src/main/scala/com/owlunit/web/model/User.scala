@@ -37,6 +37,9 @@ class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiMo
 
   override def userIdAsString: String = id.toString()
 
+  object loginContinueUrl extends StringField(this, 64, "/")
+  object isConnectedToFaceBook extends BooleanField(this, false);
+
   object name extends IiStringField(this, ii, Name, "") {
     override def displayName = "Name"
     override def validations =

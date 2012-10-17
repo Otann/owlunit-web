@@ -1,0 +1,3 @@
+facebook.key=457979400920082
+facebook.secret=56d403a35b57b61ea45c97daf04904f7
+facebook.callbackurl=/api/facebook/auth

@@ -1,12 +1,15 @@
 package com.owlunit.web.config
 
 import net.liftweb._
+import common.Full
 import http._
 import sitemap._
 import sitemap.Loc._
 
 import net.liftmodules.mongoauth.Locs
 import com.owlunit.web.model.{Person, Movie, User}
+import com.owlunit.web.lib.FacebookGraph
+import util.Helpers
 
 /**
  * @author Anton Chebotaev
@@ -32,7 +35,8 @@ object Site {
   val login = AuthLocs.buildLoginTokenMenu
   val logout = AuthLocs.buildLogoutMenu
 
-//  private val profileParamMenu = Menu.param[User](
+
+  //  private val profileParamMenu = Menu.param[User](
 //    "User",
 //    "Profile",
 //    User.findByUsername _,
@@ -65,6 +69,11 @@ object Site {
 
     Menu("Throw")   / "throw"    >> Hidden,
     Menu("Error")   / "error"    >> Hidden,
+
+    Menu.i("FacebookConnect") / "facebook" / "connect" >> EarlyResponse(() => {
+      FacebookGraph.csrf(Helpers.nextFuncName)
+      Full(RedirectResponse(FacebookGraph.authUrl, S.responseCookies: _*))
+    }),
 
     Menu(Loc("Static", Link(List("static"), true, "/static/index"), "Static Content"))
   )

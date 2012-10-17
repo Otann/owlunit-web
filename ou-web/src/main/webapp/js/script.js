@@ -9,7 +9,7 @@
 
         Options: {
             DraggableItems: {
-                helper: function(event){
+                helper: function(){
                     var ii = new OU.Ii({tag: this});
                     var view = new OU.IiView({model: ii});
                     return $('<li>').append(view.render().el);
@@ -70,15 +70,17 @@
     ////////////////////////////////
 
     OU.Ii = Backbone.Model.extend({
-        initialize: function(options){
+        initialize: function(){
             if (this.get('tag')) {
                 // receive tag object
                 var tag = $(this.get('tag'));
+
                 // get data from object
                 this.set('id', tag.data('id'));
                 this.set('url', tag.attr('href'));
                 this.set('type', tag.data('type'));
                 this.set('caption', tag.data('caption'));
+
                 // remove to be clear
                 this.unset('tag', {silent: true});
             }
@@ -227,5 +229,9 @@ $(function(){
             OU.Callbacks.handleProfileDrop(sample);
         }
     });
+
+
+    // Init facebook
+    ////////////////////////////////
 
 });

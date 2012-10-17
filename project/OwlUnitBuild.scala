@@ -86,6 +86,8 @@ object OwlUnitBuild extends Build {
       Dependency.liftWizard,
       Dependency.liftWidgets,
       Dependency.liftMongo,
+      Dependency.liftJson,
+      Dependency.dispatch,
       Dependency.auth,
       Dependency.rogue,
       Dependency.logback

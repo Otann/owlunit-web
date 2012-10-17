@@ -32,12 +32,14 @@
 
 <div id="fb-root"></div>
 <script>
+
     // Additional JS functions here
     window.fbAsyncInit = function() {
 
         FB.init({
             appId      : '457979400920082', // App ID
             channelUrl : '//owlunit.com/static/channel.html', // Channel File
+            redirect_uri: 'localhost:8080',
             status     : true, // check login status
             cookie     : true, // enable cookies to allow the server to access the session
             xfbml      : true  // parse XFBML
@@ -45,16 +47,38 @@
 
         // Additional init code here
         FB.getLoginStatus(function(response) {
+            console.log('111');
+            console.log(response);
             if (response.status === 'connected') {
                 // connected
                 console.log('facebook connected!')
             } else if (response.status === 'not_authorized') {
                 // not_authorized
                 console.log('facebook not_authorized')
+                login();
             } else {
                 // not_logged_in
                 console.log('facebook not_logged_in')
+                login();
             }
+        });
+    };
+
+    window.login = function() {
+        FB.login(function(response) {
+            if (response.authResponse) {
+                // connected
+                testAPI();
+            } else {
+                // cancelled
+            }
+        });
+    };
+
+    window.testAPI = function() {
+        console.log('Welcome!  Fetching your information.... ');
+        FB.api('/me', function(response) {
+            console.log('Good to see you, ' + response.name + '.');
         });
     };
 
@@ -66,6 +90,7 @@
         js.src = "//connect.facebook.net/en_US/all.js";
         ref.parentNode.insertBefore(js, ref);
     }(document));
+
 </script>
 
 <!-- Facebook SDK ended -->

@@ -25,12 +25,12 @@ object Facebook extends Loggable {
    */
   def link = {
     <span id="id_facebooklink">
-      <a href="#"><img src="/img/fb.png" width="181" height="25"/></a>
+      <a href="#"><img src="/img/fb.png" width="25" height="25"/></a>
     </span>
-      <div lift="embed?what=/templates-hidden/parts/fb-init"></div>
+
       <script type="text/javascript">
         <![CDATA[
-var Cataalog = {
+var Catalog = {
   api: {
     facebook: {
       init: function(data, success) {
@@ -84,37 +84,38 @@ var Cataalog = {
     }
   }
 }
-      $("#id_facebooklink").click(function() { onClick(); });
 
-      var onClick = function() {
-        Cataalog.util.wopen("/facebook/connect", "facebook_connect", 640, 360);
-        return false;
-      };
+$("#id_facebooklink").click(function() { onClick(); });
 
-      Cataalog.facebook.init(Input, function() {
-        FB.getLoginStatus(function(response) {
-          if (response.authResponse) {
-            Cataalog.api.facebook.init(response.authResponse, function(data) {
-              if (data.alert) {
-                console.log(data.alert.level+": "+data.alert.message);
+var onClick = function() {
+  Catalog.util.wopen("/facebook/connect", "facebook_connect", 640, 360);
+  return false;
+};
+
+Catalog.facebook.init(Input, function() {
+  FB.getLoginStatus(function(response) {
+    if (response.authResponse) {
+      Catalog.api.facebook.init(response.authResponse, function(data) {
+        if (data.alert) {
+          console.log(data.alert.level+": "+data.alert.message);
+        }
+        else if (data.status) {
+          onClick = function() {
+            Catalog.api.facebook.login(function(resp) {
+              if (resp.alert) {
+                console.log(resp.alert.level+": "+resp.alert.message);
               }
-              else if (data.status) {
-                onClick = function() {
-                  Cataalog.api.facebook.login(function(resp) {
-                    if (resp.alert) {
-                      console.log(resp.alert.level+": "+resp.alert.message);
-                    }
-                    else if (resp.url) {
-                      window.location=resp.url
-                    }
-                  })
-                  return false;
-                };
+              else if (resp.url) {
+                window.location=resp.url
               }
             })
-          }
-        })
-      });
+            return false;
+          };
+        }
+      })
+    }
+  })
+});
     ]]>
       </script>
   }
@@ -126,22 +127,23 @@ var Cataalog = {
       <script type="text/javascript">
         <![CDATA[
       $("#id_facebooklink").click(function() {
-        Cataalog.util.wopen("/facebook/connect", "facebook_connect", 640, 360);
+        Catalog.util.wopen("/facebook/connect", "facebook_connect", 640, 360);
         return false;
       });
     ]]>
       </script>
   }
 
+  def url = "* [href]" #> FacebookGraph.authUrl
+
   /**
    * Inject the data Facebook needs for initialization
    */
-  def init =
-    "#id_jsinit" #>
-      Script(
-        JsCrVar("Input", JsObj(
-          ("appId", Str(FacebookGraph.key.vend)),
-          ("channelUrl", Str(S.hostAndPath + FacebookGraph.channelUrl.vend)))))
+  def init = "#id_jsinit" #> 
+    Script(
+      JsCrVar("Input", JsObj(
+        ("appId", Str(FacebookGraph.key.vend)),
+        ("channelUrl", Str(S.hostAndPath + FacebookGraph.channelUrl.vend)))))
 
   def close =
     Script(
@@ -152,7 +154,7 @@ var Cataalog = {
    * Only display if connected to facebook and access tokenis empty
    */
   def checkAuthToken(in: NodeSeq): NodeSeq =
-    if (User.isConnectedToFaceBook.is && FacebookGraph.currentAccessToken.is.isEmpty)
+    if (User.isConnectedToFaceBook && FacebookGraph.currentAccessToken.is.isEmpty)
       in
     else
       NodeSeq.Empty

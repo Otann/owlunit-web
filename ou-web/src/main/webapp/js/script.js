@@ -51,9 +51,9 @@
             receiveSearchedIi: function(items){
                 var query_length = $("input[name='search']").val().length;
                 if (items.length > 0 || query_length < 3) {
-                    $('.hint').html('');
+                    $('#quicksearch .hint').html('');
                 } else if (query_length >= 3) {
-                    $('.hint').html('Nothing found, try another letters');
+                    $('#quicksearch .hint').html('Nothing found, try another letters');
                 }
                 // look for IiTag in scala
                 // items = [{id: 'mongo_id', caption: 'Toy Story', url: '#'}, ...]

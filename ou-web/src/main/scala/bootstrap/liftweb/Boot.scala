@@ -15,6 +15,7 @@ import net.liftmodules.JQueryModule
 import com.owlunit.web.config._
 import com.owlunit.web.model.User
 import net.liftmodules.mongoauth.MongoAuth
+import com.owlunit.web.api.FacebookApiStateful
 
 /**
  * A class that's instantiated early and run.  It allows the application
@@ -32,7 +33,8 @@ class Boot {
 
     LiftRules.setSiteMapFunc(Site.sitemap _)
 
-    LiftRules.statefulRewrite.append(Site.statefulRewrites)
+    LiftRules.statefulRewrite.append(Site.statefulRewrites) // add rewrites
+    LiftRules.dispatch.append(FacebookApiStateful) // add Facebook API
 
     // init mongoauth ?
 //    MongoAuth.authUserMeta.default.set(User)

@@ -23,9 +23,9 @@ object MeSnippet extends AppHelpers with Logger {
 
   def render =
     nameTag &
-    ".picture *"         #> User.currentUser.map(user => Gravatar.imgTag(user.email.is)) &
-    ".wallpaper [style]" #> "background: url(http://placehold.it/606x60)" &
-    ".occupation *"      #> "Some example from Scala" &
-    ".rating [style]"    #> "width: 95%"
+    ".picture-image   [src]" #> User.currentUser.map(user => user.photo.is) &
+    ".wallpaper-image [src]" #> User.currentUser.map(user => user.cover.is) &
+    ".occupation *"          #> "Some example from Scala" &
+    ".rating [style]"        #> ("width: %d%%" format 95)
 
 }

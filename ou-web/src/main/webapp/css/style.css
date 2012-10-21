@@ -34,7 +34,8 @@ a:hover {
 	color: #ff0b3d;
 }
 
-span.ii {
+span.ii,
+a.ii {
 	border: 1px solid;
 	border-radius: 3px;
 	padding: 0px 2px;
@@ -72,19 +73,11 @@ span.ii {
 	}									
 
 		.tags li .ii{
+            color: #455559;
 			background: #e7eaea;
 			border: 0;
-			
-			color: #455559;
-			
-			padding-left: 8px;
-			padding-right: 8px;
-			
-			padding-top: 3px;
-			padding-bottom: 4px;
-			padding-right: 11px;
-			
-			border-radius: 3px;
+            padding: 4px 11px 3px 6px;
+            border-radius: 3px;
 		}
 		
 			.tags li .ii.highlighted {
@@ -350,7 +343,7 @@ span.ii {
 
 			.content .profile-header .wallpaper {
 				height: 60px;
-				background: url(/img/temp/wallpaper.png);
+				background-url: url(/img/temp/wallpaper.png);
 				
 				border-bottom: 1px solid #e7eaea;
 			}
@@ -761,7 +754,11 @@ span.ii {
 }
 
 .wallpaper {
-    background-position: center; !important
+    overflow: hidden;
+    background-position: center !important;
+}
+.wallpaper-image {
+    width: 100%;
 }
 
 .content .profile-header .picture {
@@ -783,4 +780,12 @@ span.ii {
 
 .movie-info:first-child {
     margin-top: 50px;
+}
+
+.blur {
+    filter: blur(2px);
+    -webkit-filter: blur(2px);
+    -moz-filter: blur(2px);
+    -o-filter: blur(2px);
+    -ms-filter: blur(2px);
 }

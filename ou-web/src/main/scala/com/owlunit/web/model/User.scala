@@ -5,19 +5,20 @@ import org.bson.types.ObjectId
 import org.joda.time.DateTime
 
 import net.liftweb.common._
-import net.liftweb.http.{BooleanField => _, StringField => _, _}
+import net.liftweb.http.SessionVar
 import net.liftweb.mongodb.record.field._
 import net.liftweb.record.field._
 import net.liftweb.util.FieldContainer
-
+import net.liftweb.util.Helpers._
+import net.liftweb.common.Loggable
 import net.liftmodules.mongoauth._
-import net.liftmodules.mongoauth.field._
 import net.liftmodules.mongoauth.model._
+
 import com.owlunit.core.ii.mutable.Ii
 import com.owlunit.web.config.DependencyFactory
 import com.owlunit.web.lib.ui.IiTag
 import com.owlunit.web.lib.IiMeta
-import net.liftweb.common.Loggable
+import net.liftweb.json.JsonAST.JValue
 
 /**
  * @author Anton Chebotaev
@@ -28,41 +29,46 @@ class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiMo
   def meta = User
   def baseMeta = "ii.user"
 
-  var ii: Ii = null
+  // IiDao backend components
+  ////////////////////////////////
 
+  var ii: Ii = null
   override def tagId = this.id.is.toString
   override def tagCaption = this.name.is.toString
   override def tagType = "user"
   override def tagUrl = "#" //TODO(Anton) implement permalinks
 
-  override def userIdAsString: String = id.toString()
+  override def userIdAsString = id.toString()
 
   object loginContinueUrl extends StringField(this, 64, "/")
-  object isConnectedToFaceBook extends BooleanField(this, false);
+
+  // Bio-like-info and Facebook
+  ////////////////////////////////
+
+  object facebookId extends IntField(this)
+  def isConnectedToFaceBook = facebookId.is != 0 //TODO(Anton) refactor maybe
 
   object name extends IiStringField(this, ii, Name, "") {
     override def displayName = "Name"
-    override def validations =
-      valMaxLen(64, "Name must be 64 characters or less") _ ::
-      super.validations
-  }
-  object location extends StringField(this, 64) {
-    override def displayName = "Location"
-  }
-  object bio extends TextareaField(this, 160) {
-    override def displayName = "Bio"
+    override def validations = valMaxLen(64, "Name must be 64 characters or less") _ :: super.validations
   }
 
-  object backdrop extends StringField(this, "http://placehold.it/606x60")
+  object cover extends StringField(this, "http://placehold.it/606x60")
+  object photo extends StringField(this, "http://placehold.it/606x60")
+
+  object bio extends TextareaField(this, 160)
+  object location extends StringField(this, 64)
+  object locale extends StringField(this, 8, "")
+
+  // Movies fields
+  ////////////////////////////////
 
   object movies extends MongoListField[User, ObjectId](this)
   object friends extends MongoListField[User, ObjectId](this)
   object keywords extends MongoListField[User, ObjectId](this)
 
-  // FieldContainers for various Lift Screens.
-  def registerScreenFields = new FieldContainer {
-    def allFields = List(name, username, email, password)
-  }
+  // Helpers and tech
+  ////////////////////////////////
 
   def whenCreated: DateTime = new DateTime(id.is.getTime)
 
@@ -71,47 +77,63 @@ class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiMo
 object User extends User with ProtoAuthUserMeta[User] with Loggable {
   import net.liftweb.mongodb.BsonDSL._
 
-  override def collectionName = "users"
+  // Mongo config
+  ////////////////////////////////
 
+  override def collectionName = "users"
   ensureIndex((informationItemId.name -> 1), unique = true)
-  ensureIndex((email.name -> 1), unique = true)
-  ensureIndex((username.name -> 1), unique = true)
+  ensureIndex((email.name             -> 1), unique = true)
+  ensureIndex((username.name          -> 1), unique = true)
+  ensureIndex((facebookId.name        -> 1), unique = true)
+
+  private lazy val indexUrl = MongoAuth.indexUrl.vend
+  private lazy val registerUrl = MongoAuth.registerUrl.vend
+  private lazy val loginTokenAfterUrl = MongoAuth.loginTokenAfterUrl.vend
+
+  // IiDao dependency
+  ////////////////////////////////
 
   lazy val iiDao = DependencyFactory.iiDao.vend //TODO unsafe vend
 
-  override def createRecord = {
+  // CRUD and Find
+  ////////////////////////////////
+
+  override def createRecord: User = {
     val result = super.createRecord
     result.ii = iiDao.create.setMeta(Footprint, result.id.toString())
     result
   }
 
+  def fromFacebookJson(json: JValue) = tryo { createRecord
+    .facebookId((json \ "id").values.asInstanceOf[String].toInt)
+    .name((json \ "name").values.asInstanceOf[String])
+    .cover((json \ "cover" \ "source").values.asInstanceOf[String])
+    .email((json \ "email").values.asInstanceOf[String])
+  }
+
   def findByEmail(in: String): Box[User] = find(email.name, in)
   def findByUsername(in: String): Box[User] = find(username.name, in)
   def findByStringId(id: String): Box[User] = if (ObjectId.isValid(id)) find(new ObjectId(id)) else Empty
+  def findByFacebookId(in: Int): Box[User] = find(facebookId.name, in)
+
+  // Tech stuff
+  ////////////////////////////////
 
   override def onLogIn: List[User => Unit] = List((user: User) => User.loginCredentials.remove())
-  override def onLogOut: List[Box[User] => Unit] = List(
-    (x: Box[User]) => logger.debug("User.onLogOut called."),
-    (x: Box[User]) => x.foreach { u => ExtSession.deleteExtCookie() }
-  )
+  override def onLogOut: List[Box[User] => Unit] = List((x: Box[User]) => x.foreach { u => ExtSession.deleteExtCookie() })
 
-  /*
-   * MongoAuth vars
-   */
-  private lazy val indexUrl = MongoAuth.indexUrl.vend
-  private lazy val registerUrl = MongoAuth.registerUrl.vend
-  private lazy val loginTokenAfterUrl = MongoAuth.loginTokenAfterUrl.vend
 
-  /*
-   * ExtSession
-   */
+  // External Session
+  ////////////////////////////////
+
   def createExtSession(uid: ObjectId) { ExtSession.createExtSession(uid) }
 
   // used during login process
-  object loginCredentials extends SessionVar[LoginCredentials](LoginCredentials(""))
+  object loginCredentials extends SessionVar[LoginCredentials](LoginCredentials("", 0))
 
   // asInstanceOf[User] is used to dismiss IDEA error report
   object sessionUser extends SessionVar[User](createRecord.email(loginCredentials.is.email).asInstanceOf[User])
+
 }
 
-case class LoginCredentials(email: String)
+case class LoginCredentials(email: String, facebookId: Int)

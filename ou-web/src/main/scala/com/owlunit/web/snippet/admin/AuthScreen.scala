@@ -69,7 +69,7 @@ object RegisterScreen extends ModalScreen with Loggable {
   override def finishCaption = "Register"
   override def cancelCaption = "Cancel"
 
-  addFields(() => userVar.is.registerScreenFields)
+//  addFields(userVar.is.registerScreenFields)
 
   override def calcAjaxOnDone = {
     val email = userVar.is.email.is

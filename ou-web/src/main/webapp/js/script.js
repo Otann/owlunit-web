@@ -50,19 +50,41 @@
             test: function(params) { console.log('Test success! Params:', params); },
             receiveSearchedIi: function(items){
                 var query_length = $("input[name='search']").val().length;
+                var hint = $('#quicksearch .hint');
                 if (items.length > 0 || query_length < 3) {
-                    $('#quicksearch .hint').html('');
+                    hint.html('');
                 } else if (query_length >= 3) {
-                    $('#quicksearch .hint').html('Nothing found, try another letters');
+                    hint.html('Nothing found, try another letters');
                 }
                 // look for IiTag in scala
                 // items = [{id: 'mongo_id', caption: 'Toy Story', url: '#'}, ...]
                 OU.Areas.QuickSearch.collection.reset(items);
             },
             handleProfileDrop: function(ii){
-                // rewritten by server side
-                console.log('ERROR: Method should be replaced by server side');
+                OU.postJSON('/api/drop/profile', ii.toJSON(), function(status){
+                    if (status != 200) {
+                        alert(status);
+                    }
+                });
             }
+        },
+
+        postJSON: function(url, json, callback) {
+            $.ajax({
+                type: "POST",
+                url: url,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify(json),
+                success: function(data, textStatus, jqXHR){
+                    callback(jqXHR.status, data);
+                },
+                error:function (jqXHR){
+                    callback(jqXHR.status, jqXHR.statusText);
+                }
+            })
+
         }
     };
 
@@ -229,9 +251,5 @@ $(function(){
             OU.Callbacks.handleProfileDrop(sample);
         }
     });
-
-
-    // Init facebook
-    ////////////////////////////////
 
 });

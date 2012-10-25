@@ -22,4 +22,9 @@ trait AppHelpers {
     "type=submit [class+]" #> "btn btn-primary"
     )(form))
 
+  def extractString(value: JValue, func: JValue => JValue): Box[String] =
+    tryo {
+      func(value).values.asInstanceOf[String]
+    }
+
 }

@@ -2,7 +2,6 @@
 
     <div class="container">
 
-        <!-- Main hero unit for a primary marketing message or call to action -->
         <div class="hero-unit offset2 span6">
 
             <h1>Welcome aboard</h1>
@@ -10,14 +9,11 @@
             <hr/>
 
             <p class="lift:test_cond.loggedin">
-                <a class="" href="/me">Go to profile »</a><br/>
                 <a lift="MeSnippet.logout" href="#">Log out »</a><br/>
             </p>
 
             <p class="lift:test_cond.loggedout">
-                <a class="lift:admin.LoginScreen.modalHref">Sign In »</a><br/>
-                <a class="lift:admin.RegisterScreen.modalHref">Sign Up »</a><br/>
-                <a class="lift:Facebook.url" href="#">Log in with Facebook</a>
+                <a href="#" class="lift:Facebook.url btn btn-primary btn-large"><i class="icon-white icon-user"></i> Log In With Facebook</a>
             </p>
 
             <small class="pull-right">OWL UNIT 2012</small>
@@ -25,8 +21,5 @@
         </div>
 
     </div>
-
-    <div lift="admin.LoginScreen.render?ajax=true"></div>
-    <div lift="admin.RegisterScreen.render?ajax=true"></div>
 
 </div>

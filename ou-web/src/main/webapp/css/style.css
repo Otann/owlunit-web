@@ -782,6 +782,9 @@ a.ii {
     margin-top: 50px;
 }
 
+.wallpaper {
+    vertical-align: middle;
+}
 .blur {
     filter: blur(2px);
     -webkit-filter: blur(2px);

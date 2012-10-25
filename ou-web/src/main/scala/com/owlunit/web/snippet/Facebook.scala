@@ -126,11 +126,11 @@ Catalog.facebook.init(Input, function() {
     </span>
       <script type="text/javascript">
         <![CDATA[
-      $("#id_facebooklink").click(function() {
-        Catalog.util.wopen("/facebook/connect", "facebook_connect", 640, 360);
-        return false;
-      });
-    ]]>
+          $("#id_facebooklink").click(function() {
+            Catalog.util.wopen("/facebook/connect", "facebook_connect", 640, 360);
+            return false;
+          });
+        ]]>
       </script>
   }
 

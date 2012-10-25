@@ -1,6 +1,6 @@
 package com.owlunit.web.api
 
-import com.owlunit.web.lib.{ AccessToken, AppHelpers, FacebookGraph }
+import com.owlunit.web.lib.{ AppHelpers, FacebookGraph }
 import com.owlunit.web.model.User
 import net.liftweb._
 import common._
@@ -8,8 +8,6 @@ import http._
 import http.rest.RestHelper
 import json._
 import util.Helpers._
-import com.owlunit.web.config.Site
-import org.bson.types.ObjectId
 
 /**
  * @author Anton Chebotaev
@@ -18,9 +16,8 @@ import org.bson.types.ObjectId
 
 object FacebookApiStateful extends RestHelper with AppHelpers with Loggable {
 
-  def registerUrl = "/register" //TODO "%s?url=%s".format(Site.facebookClose.url, Site.register.url)
-  def errorUrl = "/error" //TODO Site.facebookError.url
-  def homeUrl = "/profile" //TODO "%s?url=%s".format(Site.facebookClose.url, Site.home.url)
+  def errorUrl = "/" //TODO Site.facebookError.url
+  def homeUrl = "/me" //TODO "%s?url=%s".format(Site.facebookClose.url, Site.home.url)
 
   serve("api" / "facebook" prefix {
     /*
@@ -160,11 +157,6 @@ object FacebookApiStateful extends RestHelper with AppHelpers with Loggable {
     //    }
 
   })
-
-  private def extractString(value: JValue, func: JValue => JValue): Box[String] =
-    tryo {
-      func(value).values.asInstanceOf[String]
-    }
 
   private def extractId(jv: JValue): Box[Int] = tryo {
     val JString(fbid) = jv \ "id"

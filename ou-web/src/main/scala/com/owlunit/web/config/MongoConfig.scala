@@ -3,6 +3,9 @@ package com.owlunit.web.config
 import net.liftweb.mongodb.{MongoDB, DefaultMongoIdentifier}
 import net.liftweb.util.Props
 import com.mongodb.{ServerAddress, Mongo}
+import net.liftweb.util.{ Helpers, Props }
+import net.liftweb.common.Full
+
 
 /**
  * @author Anton Chebotaev
@@ -12,13 +15,17 @@ import com.mongodb.{ServerAddress, Mongo}
 object MongoConfig {
 
   def init() {
+
     // On Mac OS X: mongod --dbpath=/data/db/
     val server = new ServerAddress(
-       Props.get("mongo.host", "127.0.0.1"),
-       Props.getInt("mongo.port", 27017)
+       Props.get("owlunit.mongo.host", "127.0.0.1"),
+       Props.getInt("owlunit.mongo.port", 27017)
     )
 
-    MongoDB.defineDb(DefaultMongoIdentifier, new Mongo(server), "owl")
+    def dbName = Props.get("owlunit.mongo.db", "owl")
+
+    MongoDB.defineDb(DefaultMongoIdentifier, new Mongo(server), dbName)
+
   }
 
 }

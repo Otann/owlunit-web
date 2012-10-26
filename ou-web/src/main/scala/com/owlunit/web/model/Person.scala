@@ -66,8 +66,8 @@ object Person extends Person with MongoMetaRecord[Person] with Loggable {
   lazy val iiDao = DependencyFactory.iiDao.vend //TODO unsafe vend
 
   ensureIndex((informationItemId.name -> 1), unique = true)
-  ensureIndex((firstName.name -> 1), unique = true)
-  ensureIndex((lastName.name -> 1), unique = true)
+  ensureIndex((firstName.name -> 1))
+  ensureIndex((lastName.name -> 1))
 
   // Creation
 

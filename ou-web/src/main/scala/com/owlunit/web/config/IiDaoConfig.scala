@@ -2,6 +2,8 @@ package com.owlunit.web.config
 
 import com.owlunit.core.ii.mutable.IiDao
 import java.net.InetAddress
+import net.liftweb.util.{Props, Helpers}
+import net.liftweb.common.Full
 
 /**
  * @author Anton Chebotaev
@@ -11,19 +13,14 @@ import java.net.InetAddress
 
 object IiDaoConfig {
 
-  def isNestFrontend = InetAddress.getLocalHost.getHostName == "nest-frontend"
-  def localPath = if (isNestFrontend) "/mnt/data/owlunit/neo4j/" else "/usr/local/var/neo4j/"
+  def localPath = Props.get("owlunit.neo4j.path", "/dev/null") //TODO: /dev/null is bad
 
-  val localMode = true // sys.env.getOrElse("OWL_DEPLOY_LOCAL", "false").toBoolean
+//  val localMode = sys.env.getOrElse("OWL_DEPLOY_LOCAL", "false").toBoolean
+//  IiDao.remote("http://04e118aa4.hosted.neo4j.org:7034/db/data/", "a9786d4e8", "b72321c25")
+
+  val dao = IiDao.local(localPath)
 
   def init() { dao.init() }
   def shutdown() { dao.shutdown() }
-
-  val dao:IiDao = {
-    if (localMode)
-      IiDao.local(localPath)
-    else
-      IiDao.remote("http://04e118aa4.hosted.neo4j.org:7034/db/data/", "a9786d4e8", "b72321c25")
-  }
 
 }

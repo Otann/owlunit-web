@@ -9,6 +9,7 @@ import com.owlunit.web.config.{IiDaoConfig, MongoConfig}
 import com.owlunit.web.model.{Role, Person, Keyword, Movie}
 import org.bson.types.ObjectId
 import net.liftweb.common.Full
+import net.liftweb.util.Props
 
 /**
  * @author Anton Chebotaev
@@ -71,6 +72,8 @@ object Crawler extends Parser with CrawlerPaths with Logging {
   }
 
   def main(args: Array[String]) {
+
+    logger.info(Props.get("owlunit.neo4j.path", "Path undefined"))
 
     MongoConfig.init()
     IiDaoConfig.init()

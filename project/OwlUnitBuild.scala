@@ -38,7 +38,7 @@ object OwlUnitBuild extends Build {
     id = "ou-web",
     base = file("ou-web"),
     settings = defaultSettings ++ webSettings ++ StartScriptPlugin.startScriptForClassesSettings ++ Seq(
-      libraryDependencies ++= Dependencies.lift ++ Dependencies.webPlugin ++ Seq(Dependency.iiCore, Dependency.jQuery),
+      libraryDependencies ++= Dependencies.lift ++ Dependencies.webPlugin ++ Seq(Dependency.iiCore, Dependency.jQuery, Dependency.specs2),
       scanDirectories in Compile := Nil,
       mainClass in Compile := Some("JettyLauncher")
     )
@@ -133,6 +133,8 @@ object OwlUnitBuild extends Build {
 
     val logback     = "ch.qos.logback"            %  "logback-classic"     % "1.0.6"
     val slf4s       = "com.weiglewilczek.slf4s"   %% "slf4s"               % "1.0.7"
+
+    val specs2      = "org.specs2"                %% "specs2"               % "1.9"    % "test"
 
   }
 

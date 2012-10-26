@@ -2,7 +2,7 @@ facebook.key=457979400920082
 facebook.secret=56d403a35b57b61ea45c97daf04904f7
 facebook.callbackurl=/api/facebook/auth
 
-owlunit.neo4j.path=/mnt/data/owlunit/neo4j/
+owlunit.neo4j.path=/usr/local/var/neo4j/
 owlunit.mongo.db=owl
 owlunit.mongo.host=127.0.0.1
 owlunit.mongo.port=27017

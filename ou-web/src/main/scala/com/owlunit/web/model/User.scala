@@ -60,12 +60,16 @@ class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiMo
   object location extends StringField(this, 64)
   object locale extends StringField(this, 8, "")
 
-  // Movies fields
+  // Domain fields
   ////////////////////////////////
 
   object movies extends MongoListField[User, ObjectId](this)
   object friends extends MongoListField[User, ObjectId](this)
   object keywords extends MongoListField[User, ObjectId](this)
+
+  def addItem(item: IiTag) = {
+
+  }
 
   // Helpers and tech
   ////////////////////////////////
@@ -104,17 +108,18 @@ object User extends User with ProtoAuthUserMeta[User] with Loggable {
     result
   }
 
-  def fromFacebookJson(json: JValue) = tryo { createRecord
-    .facebookId((json \ "id").values.asInstanceOf[String].toInt)
-    .name((json \ "name").values.asInstanceOf[String])
-    .cover((json \ "cover" \ "source").values.asInstanceOf[String])
-    .email((json \ "email").values.asInstanceOf[String])
+  def fromFacebookJson(json: JValue) = tryo {
+    createRecord
+      .facebookId((json \ "id").values.asInstanceOf[String].toInt)
+      .name((json \ "name").values.asInstanceOf[String])
+      .cover((json \ "cover" \ "source").values.asInstanceOf[String])
+      .email((json \ "email").values.asInstanceOf[String])
   }
 
   def findByEmail(in: String): Box[User] = find(email.name, in)
+  def findByFacebookId(in: Int): Box[User] = find(facebookId.name, in)
   def findByUsername(in: String): Box[User] = find(username.name, in)
   def findByStringId(id: String): Box[User] = if (ObjectId.isValid(id)) find(new ObjectId(id)) else Empty
-  def findByFacebookId(in: Int): Box[User] = find(facebookId.name, in)
 
   // Tech stuff
   ////////////////////////////////

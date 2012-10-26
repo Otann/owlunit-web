@@ -22,7 +22,7 @@ object DependencyFactory extends Factory {
    * results in all the objects getting initialized and
    * registering their types with the dependency injector
    */
-  def init() {
+  def init(test: Boolean = false) {
     List(
       iiDao
     )

@@ -1,6 +1,6 @@
 package com.owlunit.web.model
 
-import common.{IiStringField, IiMongoRecord}
+import common.{IiTagRecord, IiStringField, IiMongoRecord}
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 
@@ -17,7 +17,6 @@ import net.liftmodules.mongoauth.model._
 import com.owlunit.core.ii.mutable.Ii
 import com.owlunit.web.config.DependencyFactory
 import com.owlunit.web.lib.ui.IiTag
-import com.owlunit.web.lib.IiMeta
 import net.liftweb.json.JsonAST.JValue
 
 /**
@@ -25,51 +24,44 @@ import net.liftweb.json.JsonAST.JValue
  *         Owls Proprietary
  */
 
-class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiMongoRecord[User]  with IiMeta with IiTag {
+class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiTagRecord[User] with IiTag {
   def meta = User
-  def baseMeta = "ii.user"
 
   // IiDao backend components
   ////////////////////////////////
 
   var ii: Ii = null
-  override def tagId = this.id.is.toString
   override def tagCaption = this.name.is.toString
-  override def tagType = "user"
+  override def tagType = "User"
   override def tagUrl = "#" //TODO(Anton) implement permalinks
 
   override def userIdAsString = id.toString()
 
-  object loginContinueUrl extends StringField(this, 64, "/")
+  object loginContinueUrl extends StringField(this, 64, "/me")
 
   // Bio-like-info and Facebook
   ////////////////////////////////
 
   object facebookId extends IntField(this)
-  def isConnectedToFaceBook = facebookId.is != 0 //TODO(Anton) refactor maybe
+  def isConnectedToFaceBook = facebookId.is != 0
 
-  object name extends IiStringField(this, ii, Name, "") {
-    override def displayName = "Name"
-    override def validations = valMaxLen(64, "Name must be 64 characters or less") _ :: super.validations
-  }
+  object name extends StringField(this, "")
 
   object cover extends StringField(this, "http://placehold.it/606x60")
-  object photo extends StringField(this, "http://placehold.it/606x60")
+  object photo extends StringField(this, "http://placehold.it/150x150")
 
-  object bio extends TextareaField(this, 160)
+  object bio extends TextareaField(this, 0)
   object location extends StringField(this, 64)
   object locale extends StringField(this, 8, "")
 
   // Domain fields
   ////////////////////////////////
 
-  object movies extends MongoListField[User, ObjectId](this)
   object friends extends MongoListField[User, ObjectId](this)
+
+  object movies extends MongoListField[User, ObjectId](this)
+  object persons extends MongoListField[User, ObjectId](this)
   object keywords extends MongoListField[User, ObjectId](this)
-
-  def addItem(item: IiTag) = {
-
-  }
 
   // Helpers and tech
   ////////////////////////////////
@@ -104,7 +96,7 @@ object User extends User with ProtoAuthUserMeta[User] with Loggable {
 
   override def createRecord: User = {
     val result = super.createRecord
-    result.ii = iiDao.create.setMeta(Footprint, result.id.toString())
+    result.ii = iiDao.create
     result
   }
 

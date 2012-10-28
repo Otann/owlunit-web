@@ -1,6 +1,6 @@
 package com.owlunit.web.model
 
-import common.{IiStringField, IiMongoRecord}
+import common.IiTagRecord
 import net.liftweb.record.field._
 import net.liftweb.mongodb.record.MongoMetaRecord
 import net.liftweb.mongodb.record.field._
@@ -8,8 +8,6 @@ import net.liftweb.util.Helpers._
 import net.liftweb.util.FieldContainer
 import com.owlunit.core.ii.mutable.Ii
 import com.owlunit.web.config.DependencyFactory
-import com.owlunit.web.lib.ui.IiTag
-import com.owlunit.web.lib.IiMovieMeta
 import org.bson.types.ObjectId
 import net.liftweb.common._
 import net.liftweb.mongodb
@@ -21,26 +19,21 @@ import com.foursquare.rogue.Rogue._
  *         Owls Proprietary
  */
 
-class Movie private() extends IiMongoRecord[Movie] with ObjectIdPk[Movie] with IiMovieMeta with IiTag {
+class Movie private() extends IiTagRecord[Movie] with ObjectIdPk[Movie] {
 
   // for MongoRecord
   def meta = Movie
 
-  // for IiMongoRecord
+  // for IiTagRecord and IiTag, init in meta object
   var ii: Ii = null
 
-  // for IiMovieMeta
-  val baseMeta = "ii.cinema.movie"
-
-  // for IiTag
-  override def tagId      = this.id.is.toString
-  override def tagType    = "movie"
-  override def tagCaption = this.name.is.toString
+  override def tagType    = "Movie"
+  override def tagCaption = this.name.is
   override def tagUrl     = "/movie/%s" format this.id.is.toString //TODO(Anton) implement permalinks
 
   // Fields
 
-  object name extends IiStringField(this, ii, Name, "")
+  object name extends StringField(this, "")
   object year extends IntField(this, 0)
 
   protected object simpleName extends StringField(this, "")
@@ -58,10 +51,18 @@ class Movie private() extends IiMongoRecord[Movie] with ObjectIdPk[Movie] with I
 
   // Data manipulation
 
-  def addKeyword(k: Keyword, w: Double = KeywordWeight) = {
+  def weight(obj: Any) = obj match {
+    case k: Keyword =>     2.0
+    case Role.Actor =>     5.0
+    case Role.Director => 10.0
+    case Role.Producer => 10.0
+    case _ =>              1.0
+  }
+
+  def addKeyword(k: Keyword) = {
     if (!keywords.is.contains(k.id.is)) {
       keywords(k.id.is :: keywords.is)
-      ii.setItem(k.ii, w)
+      ii.setItem(k.ii, weight(k))
     }
     this
   }
@@ -81,13 +82,8 @@ class Movie private() extends IiMongoRecord[Movie] with ObjectIdPk[Movie] with I
     if (!persons.is.contains(item)) {
       persons(item :: persons.is)
 
-      val weight = ii.loadItems.items.get.getOrElse(person.ii, 0.0)
-      role match {
-        case Role.Actor    => ii.setItem(person.ii, weight + ActorWeight)
-        case Role.Director => ii.setItem(person.ii, weight + DirectorWeight)
-        case Role.Producer => ii.setItem(person.ii, weight + ProducerWeight)
-        case _             => ii.setItem(person.ii, weight + GeneralPersonWeight)
-      }
+      val actualWeight = ii.loadItems.items.get.getOrElse(person.ii, 0.0)
+      ii.setItem(person.ii, actualWeight + weight(role))
     }
 
     this
@@ -119,18 +115,19 @@ object Movie extends Movie with MongoMetaRecord[Movie] with Loggable {
 
   ensureIndex((informationItemId.name -> 1), unique = true)
   ensureIndex((simpleName.name -> 1), unique = true)
+//  ensureIndex((name.name -> 1) ~ (year.name -> -1), unique = true)
 
   // Creation
 
   override def createRecord = {
     val result = super.createRecord
-    result.ii = iiDao.create.setMeta(Footprint, result.id.toString())
+    result.ii = iiDao.create
     result
   }
 
   // Helper for load methods to init Ii subsystem properly
 
-  private def loadIiForLoaded(record: Movie): Box[Movie] = {
+  private def loadIi(record: Movie): Box[Movie] = {
     try {
       record.ii = iiDao.load(record.informationItemId.is)
       Full(record)
@@ -141,16 +138,16 @@ object Movie extends Movie with MongoMetaRecord[Movie] with Loggable {
 
   // Resolver methods
 
-  override def find(oid: ObjectId) = super.find(oid).flatMap(loadIiForLoaded)
+  override def find(oid: ObjectId) = super.find(oid).flatMap(loadIi)
 
   def findBySimpleName(name: String, year: Int): Box[Movie] = try {
     val query = Movie where (_.simpleName eqs simplifyComplexName(name, year))
     query.fetch() match {
       case Nil => Empty
-      case item :: Nil => loadIiForLoaded(item)
+      case item :: Nil => loadIi(item)
       case item :: _ => {
         logger.error("Multiple movies found with same simplename %s" format simpleName)
-        loadIiForLoaded(item)
+        loadIi(item)
       }
     }
   } catch {
@@ -158,8 +155,9 @@ object Movie extends Movie with MongoMetaRecord[Movie] with Loggable {
   }
 
   def searchWithName(prefix: String): List[Movie] = {
-    val iiMap: Map[Long, Ii] = iiDao.search(Name, "%s*" format prefix.toLowerCase).map(item => (item.id -> item)).toMap
+    val iiMap = searchIi(prefix, iiDao).map(item => (item.id -> item)).toMap
     val query = Movie where (_.informationItemId in iiMap.keys)
+
     query.fetch().map(record => {
       record.ii = iiMap(record.informationItemId.is)
       record

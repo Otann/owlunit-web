@@ -13,7 +13,7 @@ import net.liftweb.common.Full
 
 object IiDaoConfig {
 
-  def localPath = Props.get("owlunit.neo4j.path", "/dev/null") //TODO: /dev/null is bad
+  def localPath = Props.get("owlunit.neo4j.path", "/mnt/data/owlunit/neo4j/")
 
 //  val localMode = sys.env.getOrElse("OWL_DEPLOY_LOCAL", "false").toBoolean
 //  IiDao.remote("http://04e118aa4.hosted.neo4j.org:7034/db/data/", "a9786d4e8", "b72321c25")

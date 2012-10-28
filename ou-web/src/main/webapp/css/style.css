@@ -322,6 +322,9 @@ a.ii {
 					color: #dce2e2;
 					font-weight: 600;
 				}
+                    .content .profile-header .info-wrapper .friendship.self {
+                        background: none;
+                    }
 				
 					.content .profile-header .info-wrapper .friendship.checked{
 						background-position: 100% 10px;

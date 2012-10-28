@@ -35,7 +35,7 @@ object MovieSnippet extends AppHelpers with Loggable {
   }
 
   def crew(movie: Movie, caption: String, role: Role.Role) = {
-    val personIds = movie.persons.is.map(_.person.is)
+    val personIds = movie.persons.is.filter(_.role.is == role).map(_.person.is)
     logger.debug("Found personsIds for movie %s" format personIds)
     val persons = Person where (_.id in personIds) fetch()
     logger.debug("Found persons for movie %s" format persons)
@@ -52,9 +52,9 @@ object MovieSnippet extends AppHelpers with Loggable {
   def info = current match {
     case Full(movie) => ".profile-info *" #> ("li *" #> List(
       keywords(movie),
-//      crew(movie, "Actors",    Role.Actor),
-//      crew(movie, "Directors", Role.Director),
-      crew(movie, "Crew", Role.Undefined)
+      crew(movie, "Actors",    Role.Actor),
+      crew(movie, "Directors", Role.Director),
+      crew(movie, "Producer",      Role.Producer)
     ))
     case _ => "*" #> (xhtml => xhtml)
   }

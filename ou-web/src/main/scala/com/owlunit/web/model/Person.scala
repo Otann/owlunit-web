@@ -1,6 +1,6 @@
 package com.owlunit.web.model
 
-import common.IiMongoRecord
+import common.IiTagRecord
 import net.liftweb.mongodb.record.field.ObjectIdPk
 import net.liftweb.mongodb.record.MongoMetaRecord
 import net.liftweb.record.field.StringField
@@ -9,11 +9,11 @@ import org.bson.types.ObjectId
 import com.owlunit.core.ii.mutable.Ii
 import com.owlunit.web.config.DependencyFactory
 import net.liftweb.common._
-import com.owlunit.web.lib.ui.IiTag
-import com.owlunit.web.lib.IiPersonMeta
 import net.liftweb.mongodb
 import com.owlunit.core.ii.NotFoundException
 import net.liftweb.common.Full
+import mongodb.BsonDSL._
+import com.foursquare.rogue.Rogue._
 
 /**
  * @author Anton Chebotaev
@@ -21,47 +21,34 @@ import net.liftweb.common.Full
  */
 
 
-class Person private() extends IiMongoRecord[Person] with ObjectIdPk[Person] with IiPersonMeta with IiTag {
+class Person private() extends IiTagRecord[Person] with ObjectIdPk[Person] {
 
   // for MongoRecord
   def meta = Person
 
-  // for IiMongoRecord, IiMovieMeta and IiTag
-  val baseMeta = "ii.cinema.person"
+  // for IiTagRecord and IiTag, init in meta object
   var ii: Ii = null
-  override def tagId = id.is.toString
-  override def tagType = "person"
+
+  override def tagType = "Person"
   override def tagCaption = fullName
-  override def tagUrl = "#" //TODO(Anton) implement permalinks
+  override def tagUrl = "#"  //TODO(Anton) implement permalinks
 
   // Fields
 
-  object firstName extends StringField(this, "") {
-    override def displayName = "First name"
-    override def validations = valMinLen(1, "Must not be empty") _ :: super.validations
-  }
-  object lastName extends StringField(this, "") {
-    override def displayName = "Last name"
-    override def validations = valMinLen(1, "Must not be empty") _ :: super.validations
-  }
-
-  def fullName = "%s %s" format (firstName.is, lastName.is)
+  object firstName extends StringField(this, "")
+  object lastName extends StringField(this, "")
 
   object photoUrl extends StringField(this, "http://placehold.it/130x200")
 
-  // Field containers
-  def createFields = new FieldContainer { def allFields = List(firstName, lastName, photoUrl) }
+  def fullName = "%s %s" format (firstName.is, lastName.is)
 
-  override def save = {
-    ii.setMeta(Name, fullName) // allow search by full name
-    super.save
-  }
+  // Field containers
+
+  def createFields = new FieldContainer { def allFields = List(firstName, lastName, photoUrl) }
 
 }
 
 object Person extends Person with MongoMetaRecord[Person] with Loggable {
-  import mongodb.BsonDSL._
-  import com.foursquare.rogue.Rogue._
 
   lazy val iiDao = DependencyFactory.iiDao.vend //TODO unsafe vend
 
@@ -73,7 +60,7 @@ object Person extends Person with MongoMetaRecord[Person] with Loggable {
 
   override def createRecord = {
     val result = super.createRecord
-    result.ii = iiDao.create.setMeta(Footprint, result.id.is.toString)
+    result.ii = iiDao.create
     result
   }
 
@@ -105,8 +92,9 @@ object Person extends Person with MongoMetaRecord[Person] with Loggable {
   }
 
   def searchWithName(prefix: String): List[Person] = {
-    val iiMap: Map[Long, Ii] = iiDao.search(Name, "%s*" format prefix.toLowerCase).map(item => (item.id -> item)).toMap
+    val iiMap = searchIi(prefix, iiDao).map(item => (item.id -> item)).toMap
     val query = Person where (_.informationItemId in iiMap.keys)
+
     query.fetch().map(keyword => {
       keyword.ii = iiMap(keyword.informationItemId.is)
       keyword

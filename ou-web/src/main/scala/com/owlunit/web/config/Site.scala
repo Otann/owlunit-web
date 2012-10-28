@@ -31,6 +31,7 @@ object Site {
 
   // locations (menu entries)
   val home = Menu("Home") / "index" >> MenuGroup.TopBar
+  val error = Menu("Error")   / "error"
 
   val login = AuthLocs.buildLoginTokenMenu
   val logout = AuthLocs.buildLogoutMenu
@@ -60,6 +61,7 @@ object Site {
 
 //    profileParamMenu,
     Menu("Profile") / "me"  >> MenuGroup.TopBar >> If(() => S.loggedIn_?, "You must be logged in"),
+
     adminMenus >> MenuGroup.TopBar,
 
     Menu("About")   / "about"    >> MenuGroup.TopBar,
@@ -68,14 +70,14 @@ object Site {
     Menu("Movie")   / "movie"    >> Hidden,
 
     Menu("Throw")   / "throw"    >> Hidden,
-    Menu("Error")   / "error"    >> Hidden,
+    error                        >> Hidden,
 
     Menu.i("FacebookConnect") / "facebook" / "connect" >> EarlyResponse(() => {
       FacebookGraph.csrf(Helpers.nextFuncName)
       Full(RedirectResponse(FacebookGraph.authUrl, S.responseCookies: _*))
     }),
 
-    Menu(Loc("Static", Link(List("static"), true, "/static/index"), "Static Content"))
+    Menu(Loc("Static", Link(List("static"), matchHead_? = true, url = "/static/index"), "Static Content"))
   )
 
   /*

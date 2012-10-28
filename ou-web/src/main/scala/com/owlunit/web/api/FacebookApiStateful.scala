@@ -8,6 +8,7 @@ import http._
 import http.rest.RestHelper
 import json._
 import util.Helpers._
+import com.owlunit.web.config.Site
 
 /**
  * @author Anton Chebotaev
@@ -16,18 +17,14 @@ import util.Helpers._
 
 object FacebookApiStateful extends RestHelper with AppHelpers with Loggable {
 
-  def errorUrl = "/" //TODO Site.facebookError.url
-  def homeUrl = "/me" //TODO "%s?url=%s".format(Site.facebookClose.url, Site.home.url)
-
   serve("api" / "facebook" prefix {
-    /*
-     * This is the url that Facebook calls back to when authorizing a user
-     */
+
+    // This is the url that Facebook calls back to when authorizing a user
     case "auth" :: Nil Get _ => {
 
       if (S.param("code").isDefined) {
 
-        val isNew: Box[Boolean] = (for {
+        val loadedUser: Box[User] = (for {
           code        <- S.param("code")
           state       <- S.param("state") ?~ "State not provided"
           ok          <- boolToBox(state == FacebookGraph.csrf.is) ?~ ("The state does not match. You may be a victim of CSRF. %s != %s" format (state, FacebookGraph.csrf.is))
@@ -39,6 +36,7 @@ object FacebookApiStateful extends RestHelper with AppHelpers with Loggable {
           email       <- extractString(json, _ \ "email") ?~ "no email provided"
           picture     <- extractString(json, _ \ "picture" \ "data" \ "url") or Full("")
           cover       <- extractString(json, _ \ "cover" \ "source") or Full("")
+          bio         <- extractString(json, _ \ "bio") or Full("")
 
         } yield {
 
@@ -52,9 +50,9 @@ object FacebookApiStateful extends RestHelper with AppHelpers with Loggable {
             // already connected
             case Full(user) => {
               // refresh photo and cover
-              user.cover(cover).photo(picture).save
+              user.cover(cover).photo(picture).bio(bio).save
               User.logUserIn(user, isAuthed = true, isRemember = true)
-              true
+              user
             }
 
             // register new
@@ -65,18 +63,18 @@ object FacebookApiStateful extends RestHelper with AppHelpers with Loggable {
               user.photo(picture)
               user.cover(cover)
               user.email(email)
+              user.bio(bio)
               user.save
               // log in created user
               User.logUserIn(user, isAuthed = true, isRemember = true)
-              false
+              user
             }
           }
 
         })
 
-        isNew match {
-          case Full(true)            => RedirectResponse(homeUrl, S.responseCookies: _*)
-          case Full(false)           => RedirectResponse(homeUrl, S.responseCookies: _*)
+        loadedUser match {
+          case Full(user)            => RedirectResponse(user.loginContinueUrl.is, S.responseCookies: _*)
           case Failure(reason, _, _) => handleError(reason)
           case _                     => handleError("Empty isNew decision")
         }
@@ -171,7 +169,7 @@ object FacebookApiStateful extends RestHelper with AppHelpers with Loggable {
   private def handleError(msg: String) = {
     logger.error(msg)
     S.error(msg)
-    RedirectResponse(errorUrl, S.responseCookies: _*)
+    RedirectResponse(url(Site.error), S.responseCookies: _*)
   }
 
 }

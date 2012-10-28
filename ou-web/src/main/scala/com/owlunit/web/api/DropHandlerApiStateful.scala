@@ -8,6 +8,8 @@ import http._
 import http.rest.RestHelper
 import json.JsonDSL._
 import util.Helpers._
+import com.owlunit.web.lib.ui.IiTag
+import com.owlunit.web.model.common.IiTagRecord
 
 /**
  * @author Anton Chebotaev
@@ -18,16 +20,17 @@ object DropHandlerApiStateful extends RestHelper with AppHelpers with Loggable {
 
   serve( "api" / "drop" prefix {
 
-    case "profile" :: Nil JsonPost json -> _ => for {
-      user      <- User.currentUser ?~ "No user is logged in" ~> 500
-      item_type <- extractString(json, _ \ "type") ?~ "No type provided" ~> 500
-      item_id   <- extractString(json, _ \ "id") ?~ "No id provided" ~> 500
-    } yield {
-      logger.debug(json)
-      item_type match {
-        case "keyword" => JsonResponse(("result" -> "ok"))
-        case _ => JsonResponse(("result" -> "fail"))
+    case "profile" :: Nil JsonPost json -> _ => {
+      val response = for {
+        user <- User.currentUser ?~ "No user is logged in" ~> 500
+        tag  <- IiTag.fromJSON(json)  ?~ "Unable to parse json" ~> 500
+        item <- IiTagRecord.load(tag) ?~ "Unable to find item" ~> 500
+      } yield {
+        user.addTag(item)
+        user.save
+        OkResponse()
       }
+      response // makes less implicit highlighting
     }
 
     case "trash" :: Nil JsonPost json -> _ => {

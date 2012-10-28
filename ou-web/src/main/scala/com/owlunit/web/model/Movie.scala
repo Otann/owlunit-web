@@ -1,6 +1,6 @@
 package com.owlunit.web.model
 
-import common.IiTagRecord
+import common.{IiTagMetaContract, IiTagRecord}
 import net.liftweb.record.field._
 import net.liftweb.mongodb.record.MongoMetaRecord
 import net.liftweb.mongodb.record.field._
@@ -27,9 +27,8 @@ class Movie private() extends IiTagRecord[Movie] with ObjectIdPk[Movie] {
   // for IiTagRecord and IiTag, init in meta object
   var ii: Ii = null
 
-  override def tagType    = "Movie"
-  override def tagCaption = this.name.is
-  override def tagUrl     = "/movie/%s" format this.id.is.toString //TODO(Anton) implement permalinks
+  override def iiType    = "movie"
+  override def iiName = this.name.is
 
   // Fields
 
@@ -82,7 +81,7 @@ class Movie private() extends IiTagRecord[Movie] with ObjectIdPk[Movie] {
     if (!persons.is.contains(item)) {
       persons(item :: persons.is)
 
-      val actualWeight = ii.loadItems.items.get.getOrElse(person.ii, 0.0)
+      val actualWeight = ii.items.getOrElse(person.ii, 0.0)
       ii.setItem(person.ii, actualWeight + weight(role))
     }
 
@@ -108,7 +107,7 @@ class Movie private() extends IiTagRecord[Movie] with ObjectIdPk[Movie] {
 
 }
 
-object Movie extends Movie with MongoMetaRecord[Movie] with Loggable {
+object Movie extends Movie with MongoMetaRecord[Movie] with IiTagMetaContract[Movie] with Loggable {
   import mongodb.BsonDSL._
 
   lazy val iiDao = DependencyFactory.iiDao.vend //TODO(Anton) unsafe vend
@@ -139,6 +138,7 @@ object Movie extends Movie with MongoMetaRecord[Movie] with Loggable {
   // Resolver methods
 
   override def find(oid: ObjectId) = super.find(oid).flatMap(loadIi)
+  override def find(id: String) = if (ObjectId.isValid(id)) find(new ObjectId(id)) else Empty
 
   def findBySimpleName(name: String, year: Int): Box[Movie] = try {
     val query = Movie where (_.simpleName eqs simplifyComplexName(name, year))
@@ -154,14 +154,18 @@ object Movie extends Movie with MongoMetaRecord[Movie] with Loggable {
     case ex: Throwable => Failure("Can't find movie by id (%s)" format id.is, Full(ex), Empty)
   }
 
-  def searchWithName(prefix: String): List[Movie] = {
-    val iiMap = searchIi(prefix, iiDao).map(item => (item.id -> item)).toMap
+  protected[model] def loadFromIis(iis: Iterable[Ii]) = {
+    val iiMap = iis.map(ii => (ii.id, ii)).toMap
     val query = Movie where (_.informationItemId in iiMap.keys)
-
     query.fetch().map(record => {
       record.ii = iiMap(record.informationItemId.is)
       record
     })
+  }
+
+  def searchWithName(prefix: String) = {
+    logger.debug("Searching %s prefix in %s" format (prefix, metaName))
+    loadFromIis(prefixSearch(prefix, iiDao))
   }
 
 }

@@ -113,7 +113,7 @@ object OwlUnitBuild extends Build {
 
     // Dependencies
 
-    val iiCore      = "com.owlunit"               %% "core"                % "0.2-SNAPSHOT"
+    val iiCore      = "com.owlunit"               %% "core"                % "0.3-SNAPSHOT"
 
     val spring      = "org.springframework"       %  "spring-context"      % "3.0.5.RELEASE"
     val dispatch    = "net.databinder"            %% "dispatch-http"       % "0.8.8"

@@ -2,7 +2,6 @@ package com.owlunit.web.lib
 
 import org.joda.time.DateTime
 
-import net.liftweb._
 import net.liftweb.common._
 import net.liftweb.json._
 import net.liftweb.http.{ Factory, S, SessionVar }
@@ -11,6 +10,7 @@ import net.liftweb.util.{ Helpers, Props }
 import com.owlunit.web.config.Site
 
 import dispatch._
+import java.util
 
 /**
  * @author Anton Chebotaev
@@ -135,7 +135,6 @@ object FacebookGraph extends Factory with AppHelpers with Loggable {
 
   // http://forum.developers.facebook.net/viewtopic.php?pid=344787
   def parseSignedRequest(in: String): Box[JValue] = {
-    import java.util.Arrays
     import javax.crypto.Mac
     import javax.crypto.spec.SecretKeySpec
     import org.apache.commons.codec.binary.Base64
@@ -165,7 +164,7 @@ object FacebookGraph extends Factory with AppHelpers with Loggable {
 
         }) match {
           case Full((expectedSig, json)) => {
-            if (Arrays.equals(expectedSig, sentSig)) Full(json)
+            if (util.Arrays.equals(expectedSig, sentSig)) Full(json)
             else {
               logger.debug("expectedSig: " + expectedSig.toString)
               logger.debug("sentSig: " + sentSig.toString)

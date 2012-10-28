@@ -1,21 +1,15 @@
 package bootstrap.liftweb
 
 import net.liftweb._
-import mongodb.{DefaultMongoIdentifier, MongoDB}
 import util._
-import Helpers._
 
 import common._
 import http._
-import auth._
-import sitemap._
-import Loc._
 import net.liftmodules.JQueryModule
 
 import com.owlunit.web.config._
 import com.owlunit.web.model.User
-import net.liftmodules.mongoauth.MongoAuth
-import com.owlunit.web.api.{DropHandlerApiStateful, FacebookApiStateful}
+import com.owlunit.web.api.{SearchApiStateful, DropHandlerApiStateful, FacebookApiStateful}
 
 /**
  * A class that's instantiated early and run.  It allows the application
@@ -37,6 +31,7 @@ class Boot {
 
     LiftRules.dispatch.append(FacebookApiStateful)    // register Facebook API
     LiftRules.dispatch.append(DropHandlerApiStateful) // register Drag'n'Drop API
+    LiftRules.dispatch.append(SearchApiStateful)      // register Search API
 
     // init mongoauth ?
 //    MongoAuth.authUserMeta.default.set(User)

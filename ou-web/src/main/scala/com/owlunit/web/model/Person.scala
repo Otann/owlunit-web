@@ -1,6 +1,6 @@
 package com.owlunit.web.model
 
-import common.IiTagRecord
+import common.{IiTagMetaContract, IiTagRecord}
 import net.liftweb.mongodb.record.field.ObjectIdPk
 import net.liftweb.mongodb.record.MongoMetaRecord
 import net.liftweb.record.field.StringField
@@ -11,9 +11,10 @@ import com.owlunit.web.config.DependencyFactory
 import net.liftweb.common._
 import net.liftweb.mongodb
 import com.owlunit.core.ii.NotFoundException
-import net.liftweb.common.Full
 import mongodb.BsonDSL._
 import com.foursquare.rogue.Rogue._
+import net.liftweb.util.Helpers._
+import net.liftweb.common.Full
 
 /**
  * @author Anton Chebotaev
@@ -29,9 +30,8 @@ class Person private() extends IiTagRecord[Person] with ObjectIdPk[Person] {
   // for IiTagRecord and IiTag, init in meta object
   var ii: Ii = null
 
-  override def tagType = "Person"
-  override def tagCaption = fullName
-  override def tagUrl = "#"  //TODO(Anton) implement permalinks
+  override def iiType = "person"
+  override def iiName = fullName
 
   // Fields
 
@@ -48,7 +48,7 @@ class Person private() extends IiTagRecord[Person] with ObjectIdPk[Person] {
 
 }
 
-object Person extends Person with MongoMetaRecord[Person] with Loggable {
+object Person extends Person with MongoMetaRecord[Person] with IiTagMetaContract[Person] with Loggable {
 
   lazy val iiDao = DependencyFactory.iiDao.vend //TODO unsafe vend
 
@@ -66,7 +66,7 @@ object Person extends Person with MongoMetaRecord[Person] with Loggable {
 
   // Helper for load methods to init Ii subsystem properly
 
-  private def loadIiForLoaded(record: Person): Box[Person] = {
+  private def loadIi(record: Person): Box[Person] = {
     try {
       record.ii = iiDao.load(record.informationItemId.is)
       Full(record)
@@ -77,22 +77,23 @@ object Person extends Person with MongoMetaRecord[Person] with Loggable {
 
   // Resolver methods
 
-  override def find(oid: ObjectId) = super.find(oid).flatMap(loadIiForLoaded)
+  override def find(oid: ObjectId) = super.find(oid).flatMap(loadIi)
+  override def find(id: String) = if (ObjectId.isValid(id)) find(new ObjectId(id)) else Empty
 
   def findByName(firstName: String, lastName: String): Box[Person] = {
     val query = Person where (_.firstName eqs firstName) and (_.lastName eqs lastName)
     query.fetch() match {
       case Nil => Empty
-      case record :: Nil => loadIiForLoaded(record)
+      case record :: Nil => loadIi(record)
       case keyword :: _ => {
         logger.error("Multiple persons found with same name %s" format fullName)
-        loadIiForLoaded(keyword)
+        loadIi(keyword)
       }
     }
   }
 
-  def searchWithName(prefix: String): List[Person] = {
-    val iiMap = searchIi(prefix, iiDao).map(item => (item.id -> item)).toMap
+  protected[model] def loadFromIis(iis: Iterable[Ii]) = {
+    val iiMap = iis.map(item => (item.id -> item)).toMap
     val query = Person where (_.informationItemId in iiMap.keys)
 
     query.fetch().map(keyword => {
@@ -101,4 +102,5 @@ object Person extends Person with MongoMetaRecord[Person] with Loggable {
     })
   }
 
+  def searchWithName(prefix: String) = loadFromIis(prefixSearch(prefix, iiDao))
 }

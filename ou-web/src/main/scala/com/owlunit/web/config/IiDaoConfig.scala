@@ -1,9 +1,7 @@
 package com.owlunit.web.config
 
 import com.owlunit.core.ii.mutable.IiDao
-import java.net.InetAddress
-import net.liftweb.util.{Props, Helpers}
-import net.liftweb.common.Full
+import net.liftweb.util.Props
 
 /**
  * @author Anton Chebotaev

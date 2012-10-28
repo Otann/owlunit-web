@@ -35,7 +35,32 @@
             QuickSearch: {
                 selector: '#quicksearch-results',
                 collection: {},
-                view: {}
+                view: {},
+                defaultTimeout: 200,
+                timeout: null,
+                search: function() {
+                    var area = $('#quicksearch')
+                    var query = area.find('input').val();
+                    var hint = area.find('.hint');
+                    if (query.length > 2) {
+                        $.get('/api/search/' + query, function(data){ OU.Areas.QuickSearch.receive(data)});
+                    } else {
+                        OU.Areas.QuickSearch.collection.reset();
+                    }
+                },
+                receive: function(items){
+                    var query_length = $("input[name='search']").val().length;
+                    var hint = $('#quicksearch .hint');
+                    if (items.length > 0 || query_length < 3) {
+                        hint.html('');
+                    } else if (query_length >= 3) {
+                        hint.html('Nothing found, try another letters');
+                    }
+                    // look for IiTag in scala
+                    // items = [{id: 'mongo_id', caption: 'Toy Story', url: '#'}, ...]
+                    OU.Areas.QuickSearch.collection.reset(items);
+                }
+
             },
             Trash: {
                 selector: '#trashbin'
@@ -48,22 +73,11 @@
         // Callbacks for scala code
         Callbacks: {
             test: function(params) { console.log('Test success! Params:', params); },
-            receiveSearchedIi: function(items){
-                var query_length = $("input[name='search']").val().length;
-                var hint = $('#quicksearch .hint');
-                if (items.length > 0 || query_length < 3) {
-                    hint.html('');
-                } else if (query_length >= 3) {
-                    hint.html('Nothing found, try another letters');
-                }
-                // look for IiTag in scala
-                // items = [{id: 'mongo_id', caption: 'Toy Story', url: '#'}, ...]
-                OU.Areas.QuickSearch.collection.reset(items);
-            },
             handleProfileDrop: function(ii){
-                OU.postJSON('/api/drop/profile', ii.toJSON(), function(status){
+                console.log(ii.toJSON());
+                OU.postJSON('/api/drop/profile', ii.toJSON(), function(status, text){
                     if (status != 200) {
-                        alert(status);
+                        alert(status + ': ' + text);
                     }
                 });
             }
@@ -98,10 +112,11 @@
                 var tag = $(this.get('tag'));
 
                 // get data from object
-                this.set('id', tag.data('id'));
-                this.set('url', tag.attr('href'));
-                this.set('type', tag.data('type'));
-                this.set('caption', tag.data('caption'));
+                this.set('id', tag.data('iiId'));
+                this.set('iiId', tag.data('iiId'));
+                this.set('iiUrl', tag.data('iiUrl'));
+                this.set('iiType', tag.data('iiType'));
+                this.set('iiName', tag.data('iiName'));
 
                 // remove to be clear
                 this.unset('tag', {silent: true});
@@ -109,8 +124,10 @@
         },
         defaults: {
             id: null,
-            caption: null,
-            type: null
+            iiId: null,
+            iiType: null,
+            iiName: null,
+            iiUrl: null
         }
     });
 
@@ -123,11 +140,12 @@
         },
         render: function() {
             $(this.el)
-                .attr('href', this.model.get('url'))
-                .attr('data-id', this.model.get('id'))
-                .attr('data-type', this.model.get('type'))
-                .attr('data-caption', this.model.get('caption'))
-                .html(this.model.get('caption'));
+                .attr('href', this.model.get('iiUrl'))
+                .attr('data-ii-id', this.model.get('iiId'))
+                .attr('data-ii-url', this.model.get('iiUrl'))
+                .attr('data-ii-type', this.model.get('iiType'))
+                .attr('data-ii-name', this.model.get('iiName'))
+                .html(this.model.get('iiName'));
             return this;
         }
     });
@@ -165,8 +183,12 @@
 })();
 
 // Bind app to loaded DOM
+////////////////////////////////
 
 $(function(){
+
+    // UI effects
+    ////////////////////////////////
 
     // Make items live when hovered
     $('body').delegate('.ii', 'mouseover', function(){
@@ -182,6 +204,19 @@ $(function(){
             })
         }
     });
+
+    $('.profile a').hover(
+        function() {$(this).html("Go to profile")},
+        function() {$(this).html("Add to profile")}
+    );
+
+    (function(qs){
+        qs.timeout = null;
+        $('#quicksearch').find('input').keyup(function() {
+            if(qs.timeout != null) clearTimeout(qs.timeout);
+            qs.timeout = setTimeout(qs.search, qs.defaultTimeout);
+        });
+    })(OU.Areas.QuickSearch);
 
     // Define and init areas
     ////////////////////////////////

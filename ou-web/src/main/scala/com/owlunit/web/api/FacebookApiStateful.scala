@@ -30,8 +30,8 @@ object FacebookApiStateful extends RestHelper with AppHelpers with Loggable {
           ok          <- boolToBox(state == FacebookGraph.csrf.is) ?~ ("The state does not match. You may be a victim of CSRF. %s != %s" format (state, FacebookGraph.csrf.is))
           accessToken <- FacebookGraph.accessToken(code)
           json        <- FacebookGraph.me(accessToken)
-          facebookId  <- extractId(json)
 
+          facebookId  <- extractId(json)
           name        <- extractString(json, _ \ "name") ?~ "no name provided"
           email       <- extractString(json, _ \ "email") ?~ "no email provided"
           picture     <- extractString(json, _ \ "picture" \ "data" \ "url") or Full("")
@@ -45,12 +45,13 @@ object FacebookApiStateful extends RestHelper with AppHelpers with Loggable {
           // set the access token session var
           FacebookGraph.currentAccessToken(Full(accessToken))
 
-          User.findByFacebookId(facebookId) match {
+          User.findFromFacebook(facebookId, email) match {
 
             // already connected
             case Full(user) => {
               // refresh photo and cover
               user.cover(cover).photo(picture).bio(bio).save
+              logger.debug("Updated user with ii: %s" format user.ii)
               User.logUserIn(user, isAuthed = true, isRemember = true)
               user
             }
@@ -65,6 +66,8 @@ object FacebookApiStateful extends RestHelper with AppHelpers with Loggable {
               user.email(email)
               user.bio(bio)
               user.save
+
+              logger.debug("Created user with ii: %s" format user.ii)
               // log in created user
               User.logUserIn(user, isAuthed = true, isRemember = true)
               user
@@ -93,10 +96,11 @@ object FacebookApiStateful extends RestHelper with AppHelpers with Loggable {
     case "deauth" :: Nil Post _ => {
 
       (for {
-        signedReq <- S.param("signed_request")
-        json <- FacebookGraph.parseSignedRequest(signedReq)
-        facebookId <- extractUserId(json)
-        user <- User.findByFacebookId(facebookId)
+        signedReq   <- S.param("signed_request")
+        json        <- FacebookGraph.parseSignedRequest(signedReq)
+        facebookId  <- extractUserId(json)
+        email       <- extractString(json, _ \ "email")
+        user        <- User.findFromFacebook(facebookId, email)
       } yield {
         // deauthorize facebook
         //TODO(Atnon) User.disconnectFacebook(user)

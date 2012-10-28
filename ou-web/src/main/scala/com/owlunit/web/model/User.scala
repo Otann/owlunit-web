@@ -1,6 +1,6 @@
 package com.owlunit.web.model
 
-import common.{IiTagRecord, IiStringField, IiMongoRecord}
+import common.{IiTagMetaContract, IiTagRecord}
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 
@@ -8,32 +8,32 @@ import net.liftweb.common._
 import net.liftweb.http.SessionVar
 import net.liftweb.mongodb.record.field._
 import net.liftweb.record.field._
-import net.liftweb.util.FieldContainer
 import net.liftweb.util.Helpers._
 import net.liftweb.common.Loggable
 import net.liftmodules.mongoauth._
 import net.liftmodules.mongoauth.model._
+import com.foursquare.rogue.Rogue._
 
 import com.owlunit.core.ii.mutable.Ii
 import com.owlunit.web.config.DependencyFactory
 import com.owlunit.web.lib.ui.IiTag
 import net.liftweb.json.JsonAST.JValue
+import com.owlunit.core.ii.NotFoundException
 
 /**
  * @author Anton Chebotaev
  *         Owls Proprietary
  */
 
-class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiTagRecord[User] with IiTag {
+class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiTagRecord[User] with IiTag with Loggable {
   def meta = User
 
   // IiDao backend components
   ////////////////////////////////
 
   var ii: Ii = null
-  override def tagCaption = this.name.is.toString
-  override def tagType = "User"
-  override def tagUrl = "#" //TODO(Anton) implement permalinks
+  override def iiName = this.name.is.toString
+  override def iiType = "user"
 
   override def userIdAsString = id.toString()
 
@@ -42,7 +42,7 @@ class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiTa
   // Bio-like-info and Facebook
   ////////////////////////////////
 
-  object facebookId extends IntField(this)
+  object facebookId extends LongField(this)
   def isConnectedToFaceBook = facebookId.is != 0
 
   object name extends StringField(this, "")
@@ -54,14 +54,29 @@ class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiTa
   object location extends StringField(this, 64)
   object locale extends StringField(this, 8, "")
 
-  // Domain fields
+  // Domain fields and modifiers
   ////////////////////////////////
+
+  def movies = Movie.loadFromIis(ii.items.keys)
+
+  def persons = Person.loadFromIis(ii.items.keys)
+  def keywords = Keyword.loadFromIis(ii.items.keys)
+  def respects = User.loadFromIis(ii.items.keys)
 
   object friends extends MongoListField[User, ObjectId](this)
 
-  object movies extends MongoListField[User, ObjectId](this)
-  object persons extends MongoListField[User, ObjectId](this)
-  object keywords extends MongoListField[User, ObjectId](this)
+  def addTag(tag: IiTagRecord[_]) = {
+    val weight = tag match {
+      case k: Keyword => 7.0
+      case p: Person => 10.0
+      case m: Movie => 5.0
+      case _ => 0.0
+    }
+    this.ii.setItem(tag.ii, weight)
+    this
+  }
+
+  def hasItem(iiId: String) = ii.items.keys.toSet.contains(iiId)
 
   // Helpers and tech
   ////////////////////////////////
@@ -70,7 +85,7 @@ class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiTa
 
 }
 
-object User extends User with ProtoAuthUserMeta[User] with Loggable {
+object User extends User with ProtoAuthUserMeta[User] with IiTagMetaContract[User] {
   import net.liftweb.mongodb.BsonDSL._
 
   // Mongo config
@@ -79,12 +94,11 @@ object User extends User with ProtoAuthUserMeta[User] with Loggable {
   override def collectionName = "users"
   ensureIndex((informationItemId.name -> 1), unique = true)
   ensureIndex((email.name             -> 1), unique = true)
-  ensureIndex((username.name          -> 1), unique = true)
   ensureIndex((facebookId.name        -> 1), unique = true)
 
-  private lazy val indexUrl = MongoAuth.indexUrl.vend
-  private lazy val registerUrl = MongoAuth.registerUrl.vend
-  private lazy val loginTokenAfterUrl = MongoAuth.loginTokenAfterUrl.vend
+//  private lazy val indexUrl = MongoAuth.indexUrl.vend
+//  private lazy val registerUrl = MongoAuth.registerUrl.vend
+//  private lazy val loginTokenAfterUrl = MongoAuth.loginTokenAfterUrl.vend
 
   // IiDao dependency
   ////////////////////////////////
@@ -108,10 +122,38 @@ object User extends User with ProtoAuthUserMeta[User] with Loggable {
       .email((json \ "email").values.asInstanceOf[String])
   }
 
-  def findByEmail(in: String): Box[User] = find(email.name, in)
-  def findByFacebookId(in: Int): Box[User] = find(facebookId.name, in)
-  def findByUsername(in: String): Box[User] = find(username.name, in)
-  def findByStringId(id: String): Box[User] = if (ObjectId.isValid(id)) find(new ObjectId(id)) else Empty
+  private def loadIi(user: User): Box[User] = {
+    try {
+      user.ii = iiDao.load(user.informationItemId.is)
+      Full(user)
+    } catch {
+      case e: NotFoundException => Failure("Unable to find linked ii", Full(e), Empty)
+    }
+  }
+
+  override def find(oid: ObjectId) = super.find(oid).flatMap(loadIi)
+  override def find(id: String): Box[User] = if (ObjectId.isValid(id)) find(new ObjectId(id)) else Empty
+
+  override def findByStringId(id: String): Box[User] = this.find(id)
+  def findFromFacebook(facebookIdIn: Int, emailIn: String): Box[User] =
+    find(facebookId.name, facebookIdIn) or find(email.name, emailIn) flatMap (loadIi)
+
+  //TODO(Anton): refactor
+  def findByEmail(in: String): Box[User] = find(email.name, in).flatMap(loadIi)
+  def findByUsername(in: String): Box[User] = find(username.name, in).flatMap(loadIi)
+
+  protected[model] def loadFromIis(iis: Iterable[Ii]) = {
+    val iiMap = iis.map(item => (item.id -> item)).toMap
+    val query = User where (_.informationItemId in iiMap.keys)
+
+    // Init ii before return
+    query.fetch().map(user => {
+      user.ii = iiMap(user.informationItemId.is)
+      user
+    })
+  }
+
+  def searchWithName(prefix: String) = loadFromIis(prefixSearch(prefix, iiDao))
 
   // Tech stuff
   ////////////////////////////////

@@ -145,6 +145,8 @@ a.ii {
 				}
 				
 				.userbar .profile img {
+                    height: 40px;
+                    width: 40px;
 					vertical-align: middle;
 					box-shadow: 0 1px 3px 0px #000;
 					margin-right: 18px;

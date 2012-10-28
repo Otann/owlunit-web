@@ -7,7 +7,7 @@ import sitemap._
 import sitemap.Loc._
 
 import net.liftmodules.mongoauth.Locs
-import com.owlunit.web.model.{Person, Movie, User}
+import com.owlunit.web.model.{Person, Movie}
 import com.owlunit.web.lib.FacebookGraph
 import util.Helpers
 

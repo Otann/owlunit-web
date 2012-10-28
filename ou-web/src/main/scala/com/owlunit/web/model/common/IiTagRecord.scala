@@ -1,8 +1,10 @@
 package com.owlunit.web.model.common
 
-import net.liftweb.util.Helpers._
 import com.owlunit.core.ii.mutable.IiDao
 import com.owlunit.web.lib.ui.IiTag
+import net.liftweb.common.{Empty, Full, Box}
+import com.owlunit.web.config.DependencyFactory
+import com.owlunit.web.model.{Keyword, Person, Movie}
 
 /**
  * @author Anton Chebotaev
@@ -14,30 +16,49 @@ import com.owlunit.web.lib.ui.IiTag
  *
  */
 
-trait IiTagRecord[OwnerType <: IiTagRecord[OwnerType]] extends IiMongoRecord[OwnerType] with IiTag {
+trait IiTagMeta extends IiMeta {
+
+  protected def metaGlobalName = metaGlobal + ".iiName"
+  protected def metaGlobalType = metaGlobal + ".iiType"
+
+}
+
+trait IiTagRecord[OwnerType <: IiTagRecord[OwnerType]] extends IiMongoRecord[OwnerType] with IiTag with IiTagMeta {
   self: OwnerType =>
 
   // Methods required by representation
 
-  def tagId = this.id.toString
+  def iiId = this.id.toString
 
   // Methods for save, index and search
 
-  override def baseMeta = super.baseMeta + "." + this.tagType
-  protected def captionMeta = baseMeta + ".Name"
+  override def metaBase = super.metaBase + "." + this.iiType
+  protected def metaName = metaBase + ".Name"
 
   override def save = {
-    ii.setMeta(captionMeta, tagCaption)
+    // for local search (only within type)
+    ii.setMeta(metaName, iiName)
+
+    // for global search
+    ii.setMeta(metaGlobalName, iiName)
+    ii.setMeta(metaGlobalType, iiType)
     super.save
   }
 
-  protected def searchIi(prefix: String, dao: IiDao) = dao.search(captionMeta, "%s*" format prefix.toLowerCase)
+  protected def prefixSearch(prefix: String, dao: IiDao) = dao.search(metaName, "%s*" format prefix)
 
   // Helper methods for descendants
 
   protected def simplifyComplexName(args: Any*): String = args.mkString.toLowerCase
     .replaceAll(", the|, a|the |a |", "") // remove articles
     .replaceAll("[\\W&&\\D]", "") // remove all non-chars even spaces
+
+
+}
+
+object IiTagRecord extends IiTagMeta {
+
+  lazy val iiDao = DependencyFactory.iiDao.vend //TODO(Anton) unsafe vend
 
   protected def buildQuery(query: String): String = {
     // spit to words by removing all non-characters and spaces, split with spaces
@@ -46,5 +67,19 @@ trait IiTagRecord[OwnerType <: IiTagRecord[OwnerType]] extends IiMongoRecord[Own
     // append asterisk to all words longer than 2 characters
     parts.filter(_.length > 2).map(_ + "*").mkString(" ")
   }
+
+  def search(query: String): Iterable[IiTag] = {
+    val iis = iiDao.search(metaGlobalName, buildQuery(query))
+    for (ii <- iis) yield IiTag(ii.meta(metaGlobalType), ii.meta(metaObjectId), ii.meta(metaGlobalName))
+  }
+
+  def load(tag: IiTag): Box[IiTagRecord[_]] = tag match {
+    case record: IiTagRecord[_] => Full(record)
+    case IiTag("movie", id, _) => Movie.find(id)
+    case IiTag("person", id, _) => Person.find(id)
+    case IiTag("keyword", id, _) => Keyword.find(id)
+    case _ => Empty
+  }
+
 
 }

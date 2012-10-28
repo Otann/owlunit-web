@@ -1,6 +1,6 @@
 package com.owlunit.web.model
 
-import common.IiTagRecord
+import common.{IiTagMetaContract, IiTagRecord}
 import net.liftweb.mongodb.record.field.ObjectIdPk
 import com.owlunit.core.ii.mutable.Ii
 import net.liftweb.util.Helpers._
@@ -27,9 +27,8 @@ class Keyword private() extends IiTagRecord[Keyword] with ObjectIdPk[Keyword] {
   // for IiTagRecord and IiTag, init in meta object
   var ii: Ii = null
 
-  override def tagType = "Keyword"
-  override def tagCaption = this.name.is.toString
-  override def tagUrl = "#" //TODO(Anton) implement permalinks
+  override def iiType = "keyword"
+  override def iiName = this.name.is.toString
 
   // Fields
   object name extends StringField(this, "")
@@ -39,12 +38,13 @@ class Keyword private() extends IiTagRecord[Keyword] with ObjectIdPk[Keyword] {
 
 }
 
-object Keyword extends Keyword with MongoMetaRecord[Keyword] with Loggable {
+object Keyword extends Keyword with MongoMetaRecord[Keyword] with IiTagMetaContract[Keyword] with Loggable {
   import mongodb.BsonDSL._
 
   lazy val iiDao = DependencyFactory.iiDao.vend //TODO unsafe vend
 
   ensureIndex((informationItemId.name -> 1), unique = true)
+  ensureIndex((name.name -> 1)) //TODO(Anton): unique?
 
   override def createRecord = {
     val result = super.createRecord
@@ -64,6 +64,7 @@ object Keyword extends Keyword with MongoMetaRecord[Keyword] with Loggable {
   // Resolver methods
 
   override def find(oid: ObjectId) = super.find(oid).flatMap(loadIi)
+  override def find(id: String) = if (ObjectId.isValid(id)) find(new ObjectId(id)) else Empty
 
   def findByName(name: String): Box[Keyword] = {
     val query = Keyword where (_.name eqs name)
@@ -77,8 +78,8 @@ object Keyword extends Keyword with MongoMetaRecord[Keyword] with Loggable {
     }
   }
 
-  def searchWithName(prefix: String): List[Keyword] = {
-    val iiMap = searchIi(prefix, iiDao).map(item => (item.id -> item)).toMap
+  protected[model] def loadFromIis(iis: Iterable[Ii]) = {
+    val iiMap = iis.map(item => (item.id -> item)).toMap
     val query = Keyword where (_.informationItemId in iiMap.keys)
 
     // Init ii before return
@@ -87,5 +88,7 @@ object Keyword extends Keyword with MongoMetaRecord[Keyword] with Loggable {
       keyword
     })
   }
+
+  def searchWithName(prefix: String) = loadFromIis(prefixSearch(prefix, iiDao))
 
 }

@@ -39,7 +39,7 @@ object Crawler extends Parser with CrawlerPaths with Logging {
           }
 
           // Save relation
-          movie.addKeyword(keyword, w).save
+          movie.addKeyword(keyword).save
         }
 
         // Movie not found, log error
@@ -89,13 +89,13 @@ object Crawler extends Parser with CrawlerPaths with Logging {
     }
 
     // Parse and persist keywords and relations to movies
-    KeywordsParser.parse(keywordsPath, movies, saveMovieKeyword)
+//    KeywordsParser.parse(keywordsPath, movies, saveMovieKeyword)
 
     // Parse people
-    PersonsCrawler.parse(actorsPath,    movies, Role.Actor,    12338129, savePerson, saveMoviePerson)
-    PersonsCrawler.parse(actressesPath, movies, Role.Actor,    7243872,  savePerson, saveMoviePerson)
-    PersonsCrawler.parse(directorsPath, movies, Role.Director, 1724653,  savePerson, saveMoviePerson)
-    PersonsCrawler.parse(producersPath, movies, Role.Producer, 3719561,  savePerson, saveMoviePerson)
+//    PersonsCrawler.parse(actorsPath,    movies, Role.Actor,    12338129, savePerson, saveMoviePerson)
+//    PersonsCrawler.parse(actressesPath, movies, Role.Actor,    7243872,  savePerson, saveMoviePerson)
+//    PersonsCrawler.parse(directorsPath, movies, Role.Director, 1724653,  savePerson, saveMoviePerson)
+//    PersonsCrawler.parse(producersPath, movies, Role.Producer, 3719561,  savePerson, saveMoviePerson)
 
   }
 

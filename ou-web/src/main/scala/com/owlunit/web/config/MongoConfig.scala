@@ -1,10 +1,8 @@
 package com.owlunit.web.config
 
 import net.liftweb.mongodb.{MongoDB, DefaultMongoIdentifier}
-import net.liftweb.util.Props
 import com.mongodb.{ServerAddress, Mongo}
-import net.liftweb.util.{ Helpers, Props }
-import net.liftweb.common.Full
+import net.liftweb.util.Props
 
 
 /**

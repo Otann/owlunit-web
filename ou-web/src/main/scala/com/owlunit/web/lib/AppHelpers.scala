@@ -4,13 +4,11 @@ import scala.xml._
 
 import net.liftweb._
 import common._
-import http.{SHtml, S, NoticeType}
+import http.{SHtml, S}
 import json._
 import sitemap.Menu
-import util.CssSel
 import util.Helpers._
 
-import org.bson.types.ObjectId
 
 trait AppHelpers {
 

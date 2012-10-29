@@ -72,6 +72,7 @@ class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiTa
       case m: Movie => 5.0
       case _ => 0.0
     }
+    logger.debug("adding ii: %s" format tag.ii)
     this.ii.setItem(tag.ii, weight)
     this
   }

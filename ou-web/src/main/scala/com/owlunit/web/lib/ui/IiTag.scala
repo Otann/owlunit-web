@@ -7,6 +7,7 @@ import net.liftweb.json.DefaultFormats
 import com.owlunit.web.lib.AppHelpers
 import net.liftweb.common.{Loggable, Box}
 import com.owlunit.web.model.User
+import xml.Text
 
 /**
  * @author Anton Chebotaev
@@ -31,14 +32,17 @@ trait IiTag {
       ~ ("iiOwned" -> iiOwned)
     )
 
-  def snippet = ".ii *" #> iiName &
+  def snippet = ".ii *" #> (iiType match {
+    case "keyword" => <i class="icon-tag icon-white"></i> ++ Text(" " + iiName)
+    case _ => Text(iiName)
+    }) &
     ".ii [data-ii-id]" #> iiId &
     ".ii [data-ii-type]" #> iiType &
     ".ii [data-ii-name]" #> iiName &
     ".ii [data-ii-url]" #> iiUrl &
     ".ii [data-ii-owned]" #> iiOwned &
     ".ii [href]" #> iiUrl &
-    ".ii [class+]" #> (if (iiOwned) "highlighted" else "")
+    ".ii [class+]" #> (if (iiOwned) "highlighted" else "")  //TODO why not working?
 
   def hrefSnippet = snippet & ".ii [href]" #> iiUrl
 

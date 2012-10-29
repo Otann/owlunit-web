@@ -139,13 +139,16 @@
             this.model.bind('change', this.render); // call render on each change
         },
         render: function() {
+            var content = this.model.get('iiName');
+            var type = this.model.get('iiType');
+            if (type == 'keyword') content = '<i class="icon-tag icon-white"></i> ' + content
             $(this.el)
                 .attr('href', this.model.get('iiUrl'))
                 .attr('data-ii-id', this.model.get('iiId'))
                 .attr('data-ii-url', this.model.get('iiUrl'))
                 .attr('data-ii-type', this.model.get('iiType'))
                 .attr('data-ii-name', this.model.get('iiName'))
-                .html(this.model.get('iiName'));
+                .html(content);
             return this;
         }
     });

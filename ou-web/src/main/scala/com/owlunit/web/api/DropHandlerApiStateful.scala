@@ -26,8 +26,9 @@ object DropHandlerApiStateful extends RestHelper with AppHelpers with Loggable {
         tag  <- IiTag.fromJSON(json)  ?~ "Unable to parse json" ~> 500
         item <- IiTagRecord.load(tag) ?~ "Unable to find item" ~> 500
       } yield {
-        user.addTag(item)
-        user.save
+        user.addTag(item).save
+        logger.debug("adding ii: %s" format item.ii)
+        logger.debug("user items: %s" format user.ii.items)
         OkResponse()
       }
       response // makes less implicit highlighting

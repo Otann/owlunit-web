@@ -28,7 +28,7 @@ class Keyword private() extends IiTagRecord[Keyword] with ObjectIdPk[Keyword] {
   var ii: Ii = null
 
   override def iiType = "keyword"
-  override def iiName = this.name.is.toString
+  override def iiName = this.name.is
 
   // Fields
   object name extends StringField(this, "")

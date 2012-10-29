@@ -21,8 +21,6 @@ object MovieSnippet extends AppHelpers with Loggable {
     movie <- Movie.find(id)
   } yield { movie }
 
-  def titleTag = ".name *" #> current.map(_.snippet)
-
   def keywords(movie: Movie) = {
     val keywords = Keyword where (_.id in movie.keywords.is) fetch()
     ".key *" #> (".caption *" #> "Keywords" & ".counter *" #> keywords.length) &
@@ -36,24 +34,24 @@ object MovieSnippet extends AppHelpers with Loggable {
       "ul *" #> ("li *" #> persons.map(_.snippet))
   }
 
-  def header = titleTag &
-    ".picture *"          #> ("* [src]" #> current.map(_.posterUrl)) &
-    ".wallpaper [style]"  #> current.map("background: url(%s);" format _.backdropUrl.is) &
-    ".occupation *"       #> current.map(_.tagline.is) &
-    ".rating [style]"     #> "width: 95%"
+  def header(movie: Movie) =
+    ".name *" #> movie.snippet &
+      ".picture *"          #> ("* [src]" #> movie.posterUrl) &
+      ".wallpaper [style]"  #> ("background: url(%s);" format movie.backdropUrl.is) &
+      ".occupation *"       #> movie.tagline.is &
+      ".rating [style]"     #> "width: 95%"
 
-  def items = current match {
-    case Full(movie) => ".profile-info *" #> ("li *" #> List(
-      keywords(movie),
-      crew(movie, "Actors",    Role.Actor),
-      crew(movie, "Directors", Role.Director),
-      crew(movie, "Producer",      Role.Producer)
-    ))
+  def renderItems(movie: Movie) =
+    ".profile-info *" #> (
+      "li *" #> List(
+        keywords(movie),
+        crew(movie, "Actors",    Role.Actor),
+        crew(movie, "Directors", Role.Director),
+        crew(movie, "Producer",      Role.Producer)
+      ))
+
+  def render = current match {
+    case Full(movie) => header(movie) & renderItems(movie)
     case _ => "*" #> (xhtml => xhtml)
-  }
-
-  def render = {
-    logger.debug("Movies meta: %s" format current.map(_.ii.meta))
-    header & items
   }
 }

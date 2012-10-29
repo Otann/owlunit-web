@@ -10,24 +10,7 @@ import com.owlunit.web.config.{IiDaoConfig, MongoConfig}
  *         Owls Proprietary
  */
 
-class ModelsTest extends Specification with Loggable {
-
-  def randomLong = Helpers.nextNum
-  def randomString = Helpers.nextFuncName
-
-  def createRandomUser = {
-    val user = User.createRecord
-    user.facebookId(randomLong)
-    user.name(randomString)
-    user.email(randomString)
-    user
-  }
-  def createRandomMovie = {
-    val movie = Movie.createRecord
-    movie.name(randomString)
-    movie.year(2000)
-    movie
-  }
+class ModelsTest extends Specification with ModelHelper with Loggable {
 
   step {
     System.setProperty("run.mode", "test")
@@ -38,39 +21,67 @@ class ModelsTest extends Specification with Loggable {
   "User" should {
     "be able to save/load" in {
       val user = createRandomUser.save
-      logger.debug("Newly created user = %s" format user)
-      User.find(user.id.is) must not beEmpty
+      User.find(user.id.is).isDefined must beTrue
     }
-    "be created with non 0 ii.id" in {
+    "be created with non initialized ii" in {
+      val user = createRandomUser
+      user.ii.id mustEqual 0
+    }
+    "have initialized ii" in {
       val user = createRandomUser.save
-      logger.debug("Newly created user = %s" format user)
-      user.ii.id mustNotEqual 0
+      User.find(user.id.is).open_!.ii.id mustNotEqual 0
+    }
+    "be created with empty movies" in {
+      val user = createRandomUser.save
+      User.find(user.id.is).open_!.movies must beEmpty
+    }
+    "be created with empty keywords" in {
+      val user = createRandomUser.save
+      User.find(user.id.is).open_!.keywords must beEmpty
+    }
+    "be created with empty persons" in {
+      val user = createRandomUser.save
+      User.find(user.id.is).open_!.persons must beEmpty
     }
     "be able to add movie" in {
       val user = createRandomUser.save
-      val movie = createRandomMovie
-
-      logger.debug("Newly created user = %s" format user)
-      user.ii.id mustNotEqual 0
+      user.addTag(createRandomKeyword.save).save
+      val movie = createRandomMovie.save
+      user.addTag(movie).save
+      User.find(user.id.is).open_!.movies.length mustEqual 1
+    }
+    "be able to add keyword" in {
+      val user = createRandomUser.save
+      user.addTag(createRandomMovie.save).save
+      val keyword = createRandomKeyword.save
+      user.addTag(keyword).save
+      User.find(user.id.is).open_!.keywords.length mustEqual 1
+    }
+    "be able to add person" in {
+      val user = createRandomUser.save
+      val person = createRandomPerson.save
+      user.addTag(person).save
+      User.find(user.id.is).open_!.persons.length mustEqual 1
     }
   }
 
   "Keyword" should {
     "be able to save/load" in {
       val id = Keyword.createRecord.name("keyword").save.id.is
-      Keyword.find(id) must not beEmpty
+      Keyword.find(id).isDefined must beTrue
     }
   }
 
   "Person" should {
     "be able to save/load" in {
       val id = Person.createRecord.firstName("Johny").lastName("Doe").save.id.is
-      Person.find(id) must not beEmpty
+      Person.find(id).isDefined must beTrue
     }
   }
 
   step {
     IiDaoConfig.dao.shutdown()
+    System.setProperty("run.mode", "development")
   }
 
 }

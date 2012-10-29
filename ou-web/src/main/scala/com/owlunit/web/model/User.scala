@@ -58,7 +58,6 @@ class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiTa
   ////////////////////////////////
 
   def movies = Movie.loadFromIis(ii.items.keys)
-
   def persons = Person.loadFromIis(ii.items.keys)
   def keywords = Keyword.loadFromIis(ii.items.keys)
   def respects = User.loadFromIis(ii.items.keys)
@@ -72,7 +71,6 @@ class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiTa
       case m: Movie => 5.0
       case _ => 0.0
     }
-    logger.debug("adding ii: %s" format tag.ii)
     this.ii.setItem(tag.ii, weight)
     this
   }

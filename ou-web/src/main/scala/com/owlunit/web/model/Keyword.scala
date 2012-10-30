@@ -46,16 +46,20 @@ object Keyword extends Keyword with MongoMetaRecord[Keyword] with IiTagMetaContr
   ensureIndex((informationItemId.name -> 1), unique = true)
   ensureIndex((name.name -> 1)) //TODO(Anton): unique?
 
+  // Creation
+
   override def createRecord = {
     val result = super.createRecord
     result.ii = iiDao.create
     result
   }
 
-  private def loadIi(keyword: Keyword): Box[Keyword] = {
+  // Helper for load methods to init Ii subsystem properly
+
+  private def loadIi(record: Keyword): Box[Keyword] = {
     try {
-      keyword.ii = iiDao.load(keyword.informationItemId.is)
-      Full(keyword)
+      record.ii = iiDao.load(record.informationItemId.is)
+      Full(record)
     } catch {
       case e: NotFoundException => Failure("Unable to find linked ii", Full(e), Empty)
     }
@@ -65,6 +69,15 @@ object Keyword extends Keyword with MongoMetaRecord[Keyword] with IiTagMetaContr
 
   override def find(oid: ObjectId) = super.find(oid).flatMap(loadIi)
   override def find(id: String) = if (ObjectId.isValid(id)) find(new ObjectId(id)) else Empty
+
+  protected[model] def loadFromIis(iis: Iterable[Ii]) = {
+    val iiMap = iis.map(ii => (ii.id -> ii)).toMap
+    val query = Keyword where (_.informationItemId in iiMap.keys)
+    query.fetch().map(record => {
+      record.ii = iiMap(record.informationItemId.is)
+      record
+    })
+  }
 
   def findByName(name: String): Box[Keyword] = {
     val query = Keyword where (_.name eqs name)
@@ -76,17 +89,6 @@ object Keyword extends Keyword with MongoMetaRecord[Keyword] with IiTagMetaContr
         loadIi(keyword)
       }
     }
-  }
-
-  protected[model] def loadFromIis(iis: Iterable[Ii]) = {
-    val iiMap = iis.map(item => (item.id -> item)).toMap
-    val query = Keyword where (_.informationItemId in iiMap.keys)
-
-    // Init ii before return
-    query.fetch().map(keyword => {
-      keyword.ii = iiMap(keyword.informationItemId.is)
-      keyword
-    })
   }
 
   def searchWithName(prefix: String) = loadFromIis(prefixSearch(prefix, iiDao))

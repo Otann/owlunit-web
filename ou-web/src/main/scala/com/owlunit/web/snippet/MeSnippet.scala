@@ -17,7 +17,7 @@ object MeSnippet extends AppHelpers with Loggable {
 
   def logout = "* [href]" #> url(Site.logout)
 
-  def smallAvatar = "img [src]" #> User.currentUser.map(_.photo.is)
+  def smallAvatar = "* [src]" #> User.currentUser.map(_.photo.is)
 
   def renderItemsList(user: User, caption: String, items: List[IiTagRecord[_]]) = {
     ".key *" #> (".caption *" #> caption & ".counter *" #> items.length) &
@@ -40,7 +40,16 @@ object MeSnippet extends AppHelpers with Loggable {
       ".rating [style]"        #> ("width: %d%%" format 95)
 
   def render = User.currentUser match {
-    case Full(user) => renderInfo(user) & renderItems(user)
+    case Full(user) => {
+      logger.debug("\n\n!!!!!!!!!!!!!!!!!!!!!\n\n")
+      logger.debug("Keywords: %s" format user.keywords)
+      logger.debug("Raw: %s" format user.ii.items.keys.filter(_.meta("ii.cinema.iiType") == "keyword").map(_.meta))
+      logger.debug("\n\n!!!!!!!!!!!!!!!!!!!!!\n\n")
+      logger.debug("Movies: %s" format user.movies)
+      logger.debug("Raw: %s" format user.ii.items.keys.filter(_.meta("ii.cinema.iiType") == "movie").map(_.meta))
+      logger.debug("\n\n!!!!!!!!!!!!!!!!!!!!!\n\n")
+      renderInfo(user) & renderItems(user)
+    }
     case _ => "*" #> (xhtml => xhtml)
   }
 }

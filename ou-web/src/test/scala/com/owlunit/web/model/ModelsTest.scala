@@ -1,9 +1,10 @@
 package com.owlunit.web.model
 
 import org.specs2.mutable.Specification
-import net.liftweb.util.{Helpers, Props}
+import net.liftweb.util.Props
 import net.liftweb.common.Loggable
 import com.owlunit.web.config.{IiDaoConfig, MongoConfig}
+import java.io.File
 
 /**
  * @author Anton Chebotaev
@@ -12,8 +13,15 @@ import com.owlunit.web.config.{IiDaoConfig, MongoConfig}
 
 class ModelsTest extends Specification with ModelHelper with Loggable {
 
+  var dbPath = ""
+
   step {
     System.setProperty("run.mode", "test")
+
+    dbPath = Props.get("owlunit.neo4j.path", "target/neo4j")
+    logger.debug("db path: %s" format dbPath)
+    (new File(dbPath)).delete()
+
     MongoConfig.init()
     IiDaoConfig.init()
   }
@@ -21,6 +29,7 @@ class ModelsTest extends Specification with ModelHelper with Loggable {
   "User" should {
     "be able to save/load" in {
       val user = createRandomUser.save
+      logger.debug("User's id: %s" format user.id.is)
       User.find(user.id.is).isDefined must beTrue
     }
     "be created with non initialized ii" in {
@@ -51,10 +60,9 @@ class ModelsTest extends Specification with ModelHelper with Loggable {
       User.find(user.id.is).open_!.movies.length mustEqual 1
     }
     "be able to add keyword" in {
-      val user = createRandomUser.save
-      user.addTag(createRandomMovie.save).save
-      val keyword = createRandomKeyword.save
-      user.addTag(keyword).save
+      val user = loadRandomUser
+      user.addTag(loadRandomKeyword).save
+      logger.debug("Keyword before load: %s" format user.keywords)
       User.find(user.id.is).open_!.keywords.length mustEqual 1
     }
     "be able to add person" in {
@@ -80,7 +88,10 @@ class ModelsTest extends Specification with ModelHelper with Loggable {
   }
 
   step {
+
     IiDaoConfig.dao.shutdown()
+    (new File(dbPath)).delete()
+
     System.setProperty("run.mode", "development")
   }
 

@@ -18,20 +18,28 @@ object MovieSnippet extends AppHelpers with Loggable {
 
   def current: Box[Movie] = for {
     id <- S.param("id") ?~ "You must provide an id"
-    movie <- Movie.find(id)
+    movie:Movie <- Movie.find(id)
   } yield { movie }
 
   def keywords(movie: Movie) = {
-    val keywords = Keyword where (_.id in movie.keywords.is) fetch()
+    val keywords = movie.keywords
     ".key *" #> (".caption *" #> "Keywords" & ".counter *" #> keywords.length) &
-      "ul *" #> ("li *" #> keywords.map(_.snippet))
+      "ul *" #> ("li *" #> movie.keywords.map(_.snippet))
   }
 
-  def crew(movie: Movie, caption: String, role: Role.Role) = {
-    val personIds = movie.persons.is.filter(_.role.is == role).map(_.person.is)
-    val persons = Person where (_.id in personIds) fetch()
+  def crew(personsMap: Map[Role.Role, Seq[Person]], caption: String, role: Role.Role) = {
+    val persons = personsMap(role)
     ".key *" #> (".caption *" #> caption & ".counter *" #> persons.length) &
       "ul *" #> ("li *" #> persons.map(_.snippet))
+  }
+
+  def allCrew(movie: Movie) = {
+    val persons = movie.persons
+    List(
+      crew(persons, "Actor", Role.Actor),
+      crew(persons, "Director", Role.Director),
+      crew(persons, "Producer", Role.Producer)
+    )
   }
 
   def header(movie: Movie) =
@@ -43,12 +51,8 @@ object MovieSnippet extends AppHelpers with Loggable {
 
   def renderItems(movie: Movie) =
     ".profile-info *" #> (
-      "li *" #> List(
-        keywords(movie),
-        crew(movie, "Actors",    Role.Actor),
-        crew(movie, "Directors", Role.Director),
-        crew(movie, "Producer",      Role.Producer)
-      ))
+      "li *" #> keywords(movie) :: allCrew(movie)
+      )
 
   def render = current match {
     case Full(movie) => header(movie) & renderItems(movie)

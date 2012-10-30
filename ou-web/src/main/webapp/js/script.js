@@ -208,7 +208,7 @@ $(function(){
         }
     });
 
-    $('.profile a').hover(
+    $('#profile img').hover(
         function() {$(this).html("Go to profile")},
         function() {$(this).html("Add to profile")}
     );

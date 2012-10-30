@@ -1,4 +1,4 @@
 owlunit.neo4j.path=target/neo4j/
-owlunit.mongo.db=owl-test
+owlunit.mongo.db=owltest
 owlunit.mongo.host=127.0.0.1
 owlunit.mongo.port=27017

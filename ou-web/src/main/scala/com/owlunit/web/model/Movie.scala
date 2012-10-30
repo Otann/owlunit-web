@@ -27,7 +27,7 @@ class Movie private() extends IiTagRecord[Movie] with ObjectIdPk[Movie] {
   // for IiTagRecord and IiTag, init in meta object
   var ii: Ii = null
 
-  override def iiType    = "movie"
+  override def iiType = "movie"
   override def iiName = this.name.is
 
   // Fields
@@ -38,19 +38,15 @@ class Movie private() extends IiTagRecord[Movie] with ObjectIdPk[Movie] {
   protected object simpleName extends StringField(this, "")
   protected def simplifiedName = simplifyComplexName(name.is, year.is)
 
-  object posterUrl extends StringField(this, "http://placehold.it/150x150")
-  object backdropUrl extends StringField(this, "http://placehold.it/600x60")
+  object posterUrl extends StringField(this, "/img/no_poster.png")
+  object backdropUrl extends StringField(this, "/img/no_backdrop.png")
 
   object tagline extends StringField(this, "Tagline")
 
-  // TODO(Anton) make protected ans how it is used?
-  object keywords extends MongoListField[Movie, ObjectId](this)    // List of ObjectIds
-  object persons extends BsonRecordListField(this, CrewItem)       // List of CrewItems (Role, Person)
-
-
   // Data manipulation
 
-  def weight(obj: Any) = obj match {
+  // helper to define weight values
+  private def weight(obj: Any) = obj match {
     case k: Keyword =>     2.0
     case Role.Actor =>     5.0
     case Role.Director => 10.0
@@ -58,29 +54,41 @@ class Movie private() extends IiTagRecord[Movie] with ObjectIdPk[Movie] {
     case _ =>              1.0
   }
 
-  def addKeyword(k: Keyword) = {
-    if (!keywords.is.contains(k.id.is)) {
-      keywords(k.id.is :: keywords.is)
-      ii.setItem(k.ii, weight(k))
-    }
+  // keywords are easy, just set weight
+
+  def keywords = Keyword.loadFromIis(ii.items.keys)
+
+  def addKeyword(keyword: Keyword) = {
+    this.ii.setItem(keyword.ii, weight(keyword))
     this
   }
 
-  def removeKeyword(k: Keyword) = {
-    if (keywords.is contains k.id.is) {
-      keywords(keywords.is filterNot (_ == k.id.is))
-      ii.removeItem(k.ii)
-    }
+  def removeKeyword(keyword: Keyword) = {
+    this.ii.setItem(keyword.ii, 0)
     this
+  }
+
+  // persons can be attach with multiple roles, store it in mongo
+
+  // List of CrewItem(Role, Person)
+  protected object personsObject extends BsonRecordListField(this, CrewItem)
+
+  def rolePersonsIds(role: Role.Role): Seq[ObjectId] = personsObject.is.filter(_.role.is == role).map(_.person.is)
+
+  def allPersons = Person.loadFromIis(ii.items.keys)
+
+  def persons: Map[Role.Role, Seq[Person]] = {
+    val persons = allPersons.map(person => person.id.is -> person).toMap
+    val result = for (role <- Role.values) yield role -> rolePersonsIds(role).map(id => persons(id))
+    result.toMap
   }
 
   def addPerson(person: Person, role: Role.Role) = {
     val item = CrewItem.createRecord.person(person.id.is).role(role)
 
-    // check that is not there yet
-    if (!persons.is.contains(item)) {
-      persons(item :: persons.is)
-
+    // check that if it is not there yet
+    if (!personsObject.is.contains(item)) {
+      personsObject(item :: personsObject.is)
       val actualWeight = ii.items.getOrElse(person.ii, 0.0)
       ii.setItem(person.ii, actualWeight + weight(role))
     }
@@ -89,7 +97,8 @@ class Movie private() extends IiTagRecord[Movie] with ObjectIdPk[Movie] {
   }
 
   def removePerson(person: Person, role: Role.Role) = {
-    // TODO(Anton) implement!
+    val item = CrewItem.createRecord.person(person.id.is).role(role)
+    personsObject(personsObject.is.filterNot(_ == item))
     this
   }
 
@@ -114,7 +123,6 @@ object Movie extends Movie with MongoMetaRecord[Movie] with IiTagMetaContract[Mo
 
   ensureIndex((informationItemId.name -> 1), unique = true)
   ensureIndex((simpleName.name -> 1), unique = true)
-//  ensureIndex((name.name -> 1) ~ (year.name -> -1), unique = true)
 
   // Creation
 
@@ -140,6 +148,15 @@ object Movie extends Movie with MongoMetaRecord[Movie] with IiTagMetaContract[Mo
   override def find(oid: ObjectId) = super.find(oid).flatMap(loadIi)
   override def find(id: String) = if (ObjectId.isValid(id)) find(new ObjectId(id)) else Empty
 
+  protected[model] def loadFromIis(iis: Iterable[Ii]) = {
+    val iiMap = iis.map(ii => (ii.id -> ii)).toMap
+    val query = Movie where (_.informationItemId in iiMap.keys)
+    query.fetch().map(record => {
+      record.ii = iiMap(record.informationItemId.is)
+      record
+    })
+  }
+
   def findBySimpleName(name: String, year: Int): Box[Movie] = try {
     val query = Movie where (_.simpleName eqs simplifyComplexName(name, year))
     query.fetch() match {
@@ -154,14 +171,7 @@ object Movie extends Movie with MongoMetaRecord[Movie] with IiTagMetaContract[Mo
     case ex: Throwable => Failure("Can't find movie by id (%s)" format id.is, Full(ex), Empty)
   }
 
-  protected[model] def loadFromIis(iis: Iterable[Ii]) = {
-    val iiMap = iis.map(ii => (ii.id, ii)).toMap
-    val query = Movie where (_.informationItemId in iiMap.keys)
-    query.fetch().map(record => {
-      record.ii = iiMap(record.informationItemId.is)
-      record
-    })
-  }
+
 
   def searchWithName(prefix: String) = {
     logger.debug("Searching %s prefix in %s" format (prefix, metaName))

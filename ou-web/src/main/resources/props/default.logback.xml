@@ -1,0 +1,23 @@
+<configuration scan="true" scanPeriod="30 seconds">
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!--<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>-->
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="neo4j" level="OFF"/>
+    <logger name="console logger" level="OFF"/>
+    <logger name="net.liftweb.util.TimeHelpers" level="ERROR"/>
+
+
+    <!---->
+    <!--<logger name="neo4j.neostore" level="OFF"/>-->
+    <!--<logger name="neo4j.xafactory" level="OFF"/>-->
+
+    <root level="debug">
+        <appender-ref ref="STDOUT" />
+    </root>
+
+</configuration>

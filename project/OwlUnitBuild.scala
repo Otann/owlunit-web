@@ -63,7 +63,12 @@ object OwlUnitBuild extends Build {
     scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked"),
     javacOptions ++= Seq("-Xlint:unchecked"),
     publishTo := Some(Resolver.file("file",  new File( "/Users/anton/Dev/Owls/repo/owlunit.github.com/repo/ivy/" )) ),
-    StartScriptPlugin.stage in Compile := Unit
+    StartScriptPlugin.stage in Compile := Unit,
+
+//    parallelExecution in Test := false
+    testOptions in Test += Tests.Setup( () => System.setProperty("run.mode", "test") ),
+    testOptions in Test += Tests.Cleanup( () => System.setProperty("run.mode", "development") )
+
   )
 
 

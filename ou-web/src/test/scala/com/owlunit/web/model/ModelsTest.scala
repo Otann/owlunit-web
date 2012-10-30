@@ -4,7 +4,7 @@ import org.specs2.mutable.Specification
 import net.liftweb.util.Props
 import net.liftweb.common.Loggable
 import com.owlunit.web.config.{IiDaoConfig, MongoConfig}
-import java.io.File
+import scala.sys.process._
 
 /**
  * @author Anton Chebotaev
@@ -13,15 +13,7 @@ import java.io.File
 
 class ModelsTest extends Specification with ModelHelper with Loggable {
 
-  var dbPath = ""
-
   step {
-    System.setProperty("run.mode", "test")
-
-    dbPath = Props.get("owlunit.neo4j.path", "target/neo4j")
-    logger.debug("db path: %s" format dbPath)
-    (new File(dbPath)).delete()
-
     MongoConfig.init()
     IiDaoConfig.init()
   }
@@ -29,7 +21,6 @@ class ModelsTest extends Specification with ModelHelper with Loggable {
   "User" should {
     "be able to save/load" in {
       val user = createRandomUser.save
-      logger.debug("User's id: %s" format user.id.is)
       User.find(user.id.is).isDefined must beTrue
     }
     "be created with non initialized ii" in {
@@ -54,7 +45,6 @@ class ModelsTest extends Specification with ModelHelper with Loggable {
     }
     "be able to add movie" in {
       val user = createRandomUser.save
-      user.addTag(createRandomKeyword.save).save
       val movie = createRandomMovie.save
       user.addTag(movie).save
       User.find(user.id.is).open_!.movies.length mustEqual 1
@@ -62,14 +52,27 @@ class ModelsTest extends Specification with ModelHelper with Loggable {
     "be able to add keyword" in {
       val user = loadRandomUser
       user.addTag(loadRandomKeyword).save
-      logger.debug("Keyword before load: %s" format user.keywords)
       User.find(user.id.is).open_!.keywords.length mustEqual 1
     }
     "be able to add person" in {
-      val user = createRandomUser.save
-      val person = createRandomPerson.save
+      val user = loadRandomUser
+      val person = loadRandomPerson
       user.addTag(person).save
       User.find(user.id.is).open_!.persons.length mustEqual 1
+    }
+    "add movie, keyword and person" in {
+      val user = loadRandomUser
+      User.find(user.id.is).open_!.addTag(loadRandomMovie).save
+      User.find(user.id.is).open_!.addTag(loadRandomKeyword).save
+      User.find(user.id.is).open_!.addTag(loadRandomPerson).save
+      User.find(user.id.is).open_!.ii.items.size mustEqual 3
+    }
+    "fails on web" in {
+      val user = loadRandomUser
+      User.find(user.id.is).open_!.addTag(loadRandomMovie).save
+      User.find(user.id.is).open_!.addTag(loadRandomKeyword).save
+      User.find(user.id.is).open_!.addTag(loadRandomPerson).save
+      User.find(user.id.is).open_!.ii.items.size mustEqual 3
     }
   }
 
@@ -90,9 +93,15 @@ class ModelsTest extends Specification with ModelHelper with Loggable {
   step {
 
     IiDaoConfig.dao.shutdown()
-    (new File(dbPath)).delete()
 
-    System.setProperty("run.mode", "development")
+    val neoDbPath = Props.get("owlunit.neo4j.path", "/tmp/none")
+    logger.debug("neo path was %s" format neoDbPath)
+    Seq("rm", "-rf", neoDbPath).!! // remove neo folder
+
+    val mongoDb = Props.get("owlunit.mongo.db", "none")
+    logger.debug("mongo db was %s" format mongoDb)
+    Seq("mongo", mongoDb, "--eval", "'db.dropDatabase();'").!! // drop mongo db
+
   }
 
 }

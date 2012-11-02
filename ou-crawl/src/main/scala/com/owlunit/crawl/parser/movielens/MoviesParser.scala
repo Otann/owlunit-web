@@ -1,9 +1,11 @@
-package com.owlunit.crawl.parser
+package com.owlunit.crawl.parser.movielens
 
 import io.Source
 import com.weiglewilczek.slf4s.Logging
 import com.owlunit.crawl._
-import model.{ParserWeights, PlainKeyword, PlainMovie}
+import lib.Counter
+import model.{PlainKeyword, PlainMovie}
+import parser.ParserHelper
 
 
 /**
@@ -11,7 +13,7 @@ import model.{ParserWeights, PlainKeyword, PlainMovie}
  *         Owls Proprietary
  */
 
-object MoviesParser extends Parser with ParserWeights with Logging {
+object MoviesParser extends ParserHelper with Logging {
 
   // 4902::Devil's Backbone, The (El Espinazo del diablo) (2001)::Drama|Fantasy|Horror|Thriller|War
   //                id     name    skip opt name      year     genres
@@ -21,7 +23,7 @@ object MoviesParser extends Parser with ParserWeights with Logging {
              path: String,
              flushMovie: (PlainMovie) => Any,
              flushKeyword: (PlainKeyword) => Any,
-             flushPair: (PlainMovie, PlainKeyword, Double) => Any
+             flushPair: (PlainMovie, PlainKeyword) => Any
   ) {
 
     val counter = Counter.start(10681)
@@ -37,7 +39,7 @@ object MoviesParser extends Parser with ParserWeights with Logging {
 
         flushMovie(movie)
         genres.foreach(flushKeyword)
-        genres.foreach(k => flushPair(movie, k, keywordMaxWeight))
+        genres.foreach(k => flushPair(movie, k))
 
         counter.tick(logger, 1000, "movies parsed")
       }

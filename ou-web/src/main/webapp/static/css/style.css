@@ -38,7 +38,7 @@ span.ii,
 a.ii {
 	border: 1px solid;
 	border-radius: 3px;
-	padding: 0px 2px;
+	padding: 0 2px;
 	padding-right: 9px;
 
 	background: url(/img/userbar-ii-drag-handle.png) -1000px 50% no-repeat;
@@ -49,7 +49,7 @@ a.ii {
 
 	.ii:hover {
 		background-position: right 50%;
-	}
+    }
 	
 .ratingbar {
 	clear: both;

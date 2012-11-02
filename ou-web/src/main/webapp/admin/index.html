@@ -1,60 +1,7 @@
-<div id="main" class="lift:surround?with=admin;at=admin-content">
+<div id="main" class="lift:surround?with=base-admin;at=admin-content">
 
     <div class="span6">
-        <h3>Source</h3>
-        <div id="source" class="well src">
-        </div>
-        <button id="add1" class="btn">Add more</button>
+        <h3>Hello!</h3>
     </div>
-
-    <div class="span4">
-        <h3>Destination</h3>
-        <div id="destination" class="well dst">
-            <span class="label ii lift:Droppable.item"></span>
-        </div>
-    </div>
-
-    <div class="lift:Droppable.script?name=handleDrop"></div>
-
-    <script class="lift:tail" type="text/javascript">
-        jQuery(function(){
-            var ii_template = '<span class="label ii"></span>';
-            var ii_opts = { helper: 'clone', opacity: 0.65 };
-            var dst_contains = function(item){ return $$('[itemid=' + item + ']', $$('#destination')).length !== 0; };
-
-            $$('#source').delegate('.ii', 'mouseover', function(e){
-                var thing = $$(this);
-                if(!thing.hasClass('ui-draggable')) {
-                    thing.draggable(ii_opts);
-                }
-            });
-
-            $$('#destination').droppable({
-                hoverClass: 'well-hover',
-                accept: function(item) { return item.hasClass('ii') && !dst_contains(item.attr("itemId")); },
-                drop: function(event, ui) {
-                    var itemId = ui.draggable.attr("itemId");
-                    var dstId = "destination";
-                    var srcId = "source";
-
-                    if (!dst_contains(itemId)) {
-                        lift.handleDrop(itemId + '~' + dstId + '~' + srcId);
-                        $$('#destination').append(ui.draggable.clone())
-                    }
-                }
-            });
-
-            var num = 1;
-            $$('#add1').click(function(){
-                for(i = 1; i < 240; i++) {
-                    $$(ii_template)
-                            .html(i)
-                            .attr('itemId', i)
-                            .appendTo('#source');
-                }
-            })
-
-        })
-    </script>
 
 </div>

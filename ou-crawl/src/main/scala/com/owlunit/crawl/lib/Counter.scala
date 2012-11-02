@@ -1,4 +1,4 @@
-package com.owlunit.crawl
+package com.owlunit.crawl.lib
 
 import java.util.concurrent.TimeUnit
 import com.weiglewilczek.slf4s.Logger

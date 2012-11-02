@@ -6,7 +6,7 @@ package com.owlunit.crawl.parser
  */
 
 
-trait Parser {
+trait ParserHelper {
 
   def capitalizeKeyword(k: String) = k.split('-').map(capitalizeWord).mkString(" ")
   def capitalizeWord(s: String) = s(0).toUpper + s.substring(1, s.length).toLowerCase

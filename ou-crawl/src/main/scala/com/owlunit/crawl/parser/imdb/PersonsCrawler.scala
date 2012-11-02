@@ -1,17 +1,19 @@
-package com.owlunit.crawl.parser
+package com.owlunit.crawl.parser.imdb
 
 import io.Source
 import com.owlunit.crawl._
 import com.weiglewilczek.slf4s.Logging
+import lib.Counter
 import model.{PlainPerson, PlainMovie}
 import com.owlunit.web.model.{Person, Role}
+import parser.ParserHelper
 
 /**
  * @author Anton Chebotaev
  *         Owls Proprietary
  */
 
-object PersonsCrawler extends Parser with Logging {
+object PersonsCrawler extends ParserHelper with Logging {
 
   val personMovieExtractor = """^([^\t]+)\t+([^\()]+)\((\d+)\).*$""".r
   val movieExtractor       = """^\t\t\t(.+)\((\d+)\).*$""".r

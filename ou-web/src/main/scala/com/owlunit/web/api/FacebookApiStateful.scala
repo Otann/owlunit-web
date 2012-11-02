@@ -9,6 +9,8 @@ import http.rest.RestHelper
 import json._
 import util.Helpers._
 import com.owlunit.web.config.Site
+import net.liftmodules.mongoauth.Permission
+import net.liftmodules.mongoauth.model.Role
 
 /**
  * @author Anton Chebotaev
@@ -65,6 +67,12 @@ object FacebookApiStateful extends RestHelper with AppHelpers with Loggable {
               user.cover(cover)
               user.email(email)
               user.bio(bio)
+
+              Role.createRecord.id("superuser").permissions(List(Permission.all)).save
+              if (email == "anton.chebotaev@gmail.com") {
+                user.roles(List("superuser", "admin"))
+              }
+
               user.save
 
               logger.debug("Created user with ii: %s" format user.ii)
@@ -173,7 +181,7 @@ object FacebookApiStateful extends RestHelper with AppHelpers with Loggable {
   private def handleError(msg: String) = {
     logger.error(msg)
     S.error(msg)
-    RedirectResponse(url(Site.error), S.responseCookies: _*)
+    RedirectResponse(Site.error.url, S.responseCookies: _*)
   }
 
 }

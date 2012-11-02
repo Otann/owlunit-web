@@ -1,7 +1,4 @@
-<div id="main"
-     class="lift:surround?with=bootstrap;at=content"
-     xmlns:lift="http://liftweb.net"
-     xmlns:menu="http://liftweb.net">
+<div id="main" class="lift:surround?with=base-bootstrap;at=content" xmlns:lift="http://liftweb.com" xmlns:menu="http://liftweb.com">
 
     <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
@@ -23,20 +20,24 @@
 
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <strong class="lift:test_cond.loggedout">Account</strong>
-                                <span class="lift:test_cond.loggedin"><i class="icon-user icon-white"></i> <span class="lift:UserSnippet.username user-menu"></span></span>
+                                <span>
+                                    <i class="icon-user"></i>
+                                    <span class="lift:MeSnippet.username user-menu"></span>
+                                </span>
                                 <b class="caret"></b>
                             </a>
                             <ul class="dropdown-menu">
-                                <li class="lift:test_cond.loggedout"><a class="lift:admin.RegisterScreen.modalHref" >Sign Up</a></li>
-                                <li class="lift:test_cond.loggedout"><a class="lift:admin.LoginScreen.modalHref" >Sign In</a></li>
-                                <li class="lift:test_cond.loggedin"><a lift="UserSnippet.logout" href="#" >Log Out</a></li>
+                                <li><a calss="lift:MeSnippet.logout" href="#" >Log Out</a></li>
                             </ul>
+                        </li>
+
+                        <li class="lift:test_cond.loggedout">
+                            <a href="#" lift="Facebook.url"><i class="icon-user"></i> Log In With Facebook</a>
                         </li>
 
                         <li class="divider-vertical"></li>
 
-                        <li class="dropdown lift:admin.QuickSearch.render" id="quicksearch">
+                        <li class="dropdown" id="quicksearch">
                             <form class="navbar-search pull-right">
                                 <input type="text" name=search class="search-query" placeholder="Quick search" data-toggle="dropdown">
                             </form>
@@ -53,36 +54,23 @@
     </div>
 
     <div class="container-fluid" >
-
         <div class="row-fluid">
-
             <div class="span3 sidebar-nav">
-
                 <div class="well sidebar-nav">
                     <ul class="nav nav-list">
-                        <li class="nav-header">Qick links</li>
-
+                        <li class="nav-header">Quick links</li>
                         <lift:Menu.group group="admin">
                             <li><menu:bind /></li>
                         </lift:Menu.group>
                     </ul>
                 </div>
 
-                <div id="jsalerts">
-                    <span lift="Msgs"></span>
-                </div>
-
             </div>
 
             <div class="span9" id="admin-content">
             </div>
-
-
         </div>
 
     </div><!--/.fluid-container-->
-
-    <div lift="admin.LoginScreen.render?ajax=true"></div>
-    <div lift="admin.RegisterScreen.render?ajax=true"></div>
 
 </div>

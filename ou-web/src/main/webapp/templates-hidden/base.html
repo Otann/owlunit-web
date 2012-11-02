@@ -1,28 +1,30 @@
 <!doctype html>
-<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
-<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
-<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang="en"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
 <head>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title></title>
     <meta name="description" content="">
 
     <meta name="viewport" content="width=device-width">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/static/css/style.css">
 
     <!-- Lift-provided scripts -->
     <script id="jquery" src="/classpath/jquery.js" type="text/javascript"></script>
     <script id="json" src="/classpath/json.js" type="text/javascript"></script>
 
     <!-- Plugins and frameworks -->
-    <script src="/js/libs/underscore-1.3.3.js"></script>
-    <script src="/js/libs/backbone-0.9.2.js"></script>
-    <script src="/js/libs/jquery-ui-1.8.18.min.js"></script>
+    <script src="/static/js/libs/underscore-1.3.3.js"></script>
+    <script src="/static/js/libs/backbone-0.9.2.js"></script>
+    <script src="/static/js/libs/jquery-ui-1.8.18.min.js"></script>
 
     <!-- Application code -->
-    <script src="/js/script.js"></script>
+    <script src="/static/js/owlunit.js"></script>
+    <script src="/static/js/script.js"></script>
 
 </head>
 <body>
@@ -31,6 +33,7 @@
 <header class="page-header">
     <nav>
         <ul>
+            <li class="lift:test_cond.loggedin"><a href="/admin/">Administration</a></li>
             <li><a href="#">Community</a></li>
             <li><a href="#">Inspiration</a></li>
             <li><a href="#">Subscriptions<span class="counter"></span></a></li>
@@ -38,7 +41,7 @@
     </nav>
 
     <div class="logo ii" data-id="0" data-caption="OWL UNIT">
-        <img src="/img/temp/logo.png" alt="" />
+        <img src="/static/img/temp/logo.png" alt="" />
     </div>
 </header>
 
@@ -51,7 +54,7 @@
     </div>
 
     <div class="profile lift:test_cond.loggedin" id="profile">
-        <a href="/me"><img src="/img/temp/userpic.png" alt="" class="lift:MeSnippet.smallAvatar"/> Add to profile</a>
+        <a href="/me"><img src="/img/temp/userpic.png" alt="" class="lift:MeSnippet.photo"/> Add to profile</a>
     </div>
     <div class="profile lift:test_cond.loggedout" id="facebook-login">
         <a class="lift:Facebook.url" href="/me"><img src="/img/no_userpic.png" alt=""/> Login with facebook</a>

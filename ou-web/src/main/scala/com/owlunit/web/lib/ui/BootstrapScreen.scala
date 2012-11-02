@@ -14,7 +14,7 @@ import xml.{Node, Text, Elem, NodeSeq}
  */
 trait BootstrapScreen extends LiftScreen with Loggable {
 
-  override def allTemplatePath = "templates-hidden" :: "bootstrap-screen" :: Nil
+  override def allTemplatePath = "templates-hidden" :: "screen-bootstrap" :: Nil
 
   // makes screen ajaxable
   override def calcAjaxOnDone = {

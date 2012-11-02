@@ -1,15 +1,17 @@
 package com.owlunit.crawl
 
-import model.PlainKeyword
-import model.PlainMovie
-import model.PlainPerson
-import parser.{Parser, PersonsCrawler, KeywordsParser, MoviesParser}
 import com.weiglewilczek.slf4s.Logging
-import com.owlunit.web.config.{IiDaoConfig, MongoConfig}
-import com.owlunit.web.model.{Role, Person, Keyword, Movie}
 import org.bson.types.ObjectId
 import net.liftweb.common.Full
 import net.liftweb.util.Props
+import com.owlunit.web.config.{IiDaoConfig, MongoConfig}
+import com.owlunit.web.model.{Role, Person, Keyword, Movie}
+
+import lib.Counter
+import model._
+import parser.ParserHelper
+import parser.movielens.MoviesParser
+import parser.imdb.{PersonsCrawler, KeywordsParser}
 
 /**
  * @author Anton Chebotaev
@@ -17,7 +19,7 @@ import net.liftweb.util.Props
  */
 
 
-object Crawler extends Parser with CrawlerPaths with Logging {
+object Crawler extends ParserHelper with CrawlerPaths with Logging {
 
   val movies = collection.mutable.Map[String, PlainMovie]()    // simpleName -> PlainMovie
   val keywords = collection.mutable.Map[String, ObjectId]()
@@ -79,7 +81,7 @@ object Crawler extends Parser with CrawlerPaths with Logging {
     IiDaoConfig.init()
 
     // Load movies list
-    MoviesParser.parse(moviesPath, cacheMovie, k => {}, (m, k, w) => {})
+    MoviesParser.parse(moviesPath, cacheMovie, k => {}, (m, k) => {})
 
     // Persist movies
     val counter = Counter.start(10679)

@@ -16,88 +16,91 @@ import util.Helpers
  *         Owls Proprietary
  */
 
-object Site {
+object MenuGroups {
+  val TopAdminBar    = LocGroup("admin_topbar")
+  val LeftAdminAdmin = LocGroup("admin_leftbar")
+}
 
-  object MenuGroup {
-    val TopBar   = LocGroup("topbar")
-    val Account  = LocGroup("account")
-    val Admin    = LocGroup("admin")
-  }
+case class MenuLoc(menu: Menu) {
+  lazy val url: String     = S.contextPath+menu.loc.calcDefaultHref
+  lazy val fullUrl: String = S.hostAndPath+menu.loc.calcDefaultHref
+}
 
-  object AuthLocs extends Locs {
-    override protected def logoutLocParams =     MenuGroup.Account :: Hidden :: super.logoutLocParams
-    override protected def loginTokenLocParams = MenuGroup.Account :: Hidden :: super.loginTokenLocParams
-  }
+object Site extends Locs {
+  import MenuGroups._
 
-  // locations (menu entries)
-  val home = Menu("Home") / "index" >> MenuGroup.TopBar
-  val error = Menu("Error")   / "error"
+  // Authentication
+  override protected def logoutLocParams =     Hidden :: super.logoutLocParams
+  override protected def loginTokenLocParams = Hidden :: super.loginTokenLocParams
 
-  val login = AuthLocs.buildLoginTokenMenu
-  val logout = AuthLocs.buildLogoutMenu
+  // Globaly uses locations
+  val home = MenuLoc(Menu.i("Home") / "index" >> TopAdminBar)
+  val error = MenuLoc(Menu.i("Error")   / "error" >> Hidden)
 
+  // Auth locations
+  val loginToken = MenuLoc(super.buildLoginTokenMenu)
+  val logout = MenuLoc(super.buildLogoutMenu)
 
-  //  private val profileParamMenu = Menu.param[User](
-//    "User",
-//    "Profile",
-//    User.findByUsername _,
-//    _.username.is
-//  ) / "profile" >> Loc.CalcValue(() => User.currentUser) >> MenuGroup.Account
-
+  // Administration part
   private val adminMenus =
-    Menu("Admin") / "admin" / "index" submenus (
-      Menu("Profile")       / "admin" / "profile",
-      Menu("Movie")         / "admin" / "movie",
-      Menu("Person")        / "admin" / "person",
+    Menu.i("Admin") / "admin" / "index" submenus (
 
-      Menu("Create Movie")  / "admin" / "create" / "movie"  >> MenuGroup.Admin,
-      Menu("Create Person") / "admin" / "create" / "person" >> MenuGroup.Admin
+      Menu.i("Profile")       / "admin" / "profile",
+      Menu.i("Movie")         / "admin" / "movie",
+      Menu.i("Person")        / "admin" / "person",
+
+      Menu.i("Create Movie")  / "admin" / "create" / "movie"  >> LeftAdminAdmin,
+      Menu.i("Create Person") / "admin" / "create" / "person" >> LeftAdminAdmin
+
       )
 
+  // Website root menu
+  /////////////////////////
 
   private def menus = List(
-    home,
-    logout,
 
-//    profileParamMenu,
-    Menu("Profile") / "me"  >> MenuGroup.TopBar >> If(() => S.loggedIn_?, "You must be logged in"),
+    // Basic menus
+    home.menu,
+    error.menu,
+    logout.menu,
+    loginToken.menu,
+    Menu.i("Login") / "login" >> RequireNotLoggedIn,
 
-    adminMenus >> MenuGroup.TopBar,
+    // User space menus
+    Menu("Profile")         / "me"  >> TopAdminBar >> RequireLoggedIn,
+    Menu("Recommendations") / "recommendation",
 
-    Menu("About")   / "about"    >> MenuGroup.TopBar,
-    Menu("Test")    / "test"     >> MenuGroup.TopBar,
+    // Rewrite menus for objects
+    Menu("Movie")           / "movie" >> Hidden,
 
-    Menu("Movie")   / "movie"    >> Hidden,
-
-    Menu("Throw")   / "throw"    >> Hidden,
-    error                        >> Hidden,
-
+    // API menus
     Menu.i("FacebookConnect") / "facebook" / "connect" >> EarlyResponse(() => {
       FacebookGraph.csrf(Helpers.nextFuncName)
       Full(RedirectResponse(FacebookGraph.authUrl, S.responseCookies: _*))
-    }),
+    }) >> Hidden,
 
-    Menu(Loc("Static", Link(List("static"), matchHead_? = true, url = "/static/index"), "Static Content"))
+    // Admin menus
+    adminMenus >> TopAdminBar >> HasRole("admin"),
+
+    // Static files
+    Menu(Loc("Static", Link(List("static"), matchHead_? = true, url = "/static/index"), "Static Content", Hidden))
+
   )
 
-  /*
-  * Return a SiteMap needed for Lift
-  */
+  // SiteMap needed for Lift
   def sitemap: SiteMap = SiteMap(menus: _*)
 
-  /*
-  * Return a URL rewrites
-  */
+  // URL rewrites
   val statefulRewrites: LiftRules.RewritePF = {
 
-    case RewriteRequest(ParsePath("movie" :: id :: Nil,_,_,_),_,_) => {
+    case RewriteRequest(ParsePath("movie" :: id :: Nil, _, _, _), _, _) => {
       if (Movie.find(id).isDefined)
         RewriteResponse("movie" :: Nil, Map("id" -> id))
       else
         RewriteResponse("404" :: Nil)
     }
 
-    case RewriteRequest(ParsePath("admin" :: "person" :: id :: Nil,_,_,_),_,_) => {
+    case RewriteRequest(ParsePath("admin" :: "person" :: id :: Nil, _, _, _), _, _) => {
       if (Person.find(id).isDefined)
         RewriteResponse("person" :: Nil, Map("id" -> id))
       else

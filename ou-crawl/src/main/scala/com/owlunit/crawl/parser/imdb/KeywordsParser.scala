@@ -1,17 +1,19 @@
-package com.owlunit.crawl.parser
+package com.owlunit.crawl.parser.imdb
 
 import io.Source
 import collection.mutable.{Map => MutableMap}
 import com.owlunit.crawl._
 import com.weiglewilczek.slf4s.Logging
-import model.{PlainMovie, ParserWeights, PlainKeyword}
+import lib.Counter
+import model.{PlainMovie, PlainKeyword}
+import parser.ParserHelper
 
 /**
  * @author Anton Chebotaev
  *         Owls Proprietary
  */
 
-object KeywordsParser extends Parser with ParserWeights with Logging {
+object KeywordsParser extends ParserHelper with Logging {
 
   val keywordsExtractor = """([^\s]+ \(\d+\))""".r
   val keywordExtractor  = """([^\s]+) \((\d+)\)""".r
@@ -46,7 +48,7 @@ object KeywordsParser extends Parser with ParserWeights with Logging {
     val frequencyMin = frequencies.values.min
     val frequencyGap = frequencies.values.max - frequencies.values.min
     def adaptiveFreq(key: String) = (frequencies(key).toDouble - frequencyMin) / frequencyGap
-    def adaptiveWeight(key: String) = keywordMinWeight + adaptiveFreq(key) * (keywordMaxWeight - keywordMinWeight)
+    def adaptiveWeight(key: String) = 1 // keywordMinWeight + adaptiveFreq(key) * (keywordMaxWeight - keywordMinWeight)
 
     // read movies
     logger.debug("Reading movie-keyword pairs")

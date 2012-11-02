@@ -15,7 +15,7 @@ trait ModalScreen extends BootstrapScreen {
   // alias for form's ScreenVar
   def divId = FormGUID.get
 
-  override def allTemplatePath = "templates-hidden" :: "modal-screen" :: Nil
+  override def allTemplatePath = "templates-hidden" :: "screen-modal" :: Nil
 
   def openCaption   = "Open"
 

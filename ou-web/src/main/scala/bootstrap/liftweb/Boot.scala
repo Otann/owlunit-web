@@ -10,6 +10,7 @@ import net.liftmodules.JQueryModule
 import com.owlunit.web.config._
 import com.owlunit.web.model.User
 import com.owlunit.web.api.{SearchApiStateful, DropHandlerApiStateful, FacebookApiStateful}
+import net.liftmodules.mongoauth.MongoAuth
 
 /**
  * A class that's instantiated early and run.  It allows the application
@@ -34,8 +35,8 @@ class Boot {
     LiftRules.dispatch.append(SearchApiStateful)      // register Search API
 
     // init mongoauth ?
-//    MongoAuth.authUserMeta.default.set(User)
-//    MongoAuth.indexUrl.default.set("/")
+    MongoAuth.authUserMeta.default.set(User)
+    MongoAuth.indexUrl.default.set(Site.home.url)
 
     JQueryModule.InitParam.JQuery = JQueryModule.JQuery172
     JQueryModule.init()

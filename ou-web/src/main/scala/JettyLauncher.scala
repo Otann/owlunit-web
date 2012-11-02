@@ -24,6 +24,8 @@ object JettyLauncher extends App {
   context.addFilter(classOf[LiftFilter], "/*", 0)
   context.setResourceBase("ii-web/src/main/webapp")
 
+
+
   server.start
   server.join
 

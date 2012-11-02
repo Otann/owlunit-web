@@ -13,4 +13,7 @@ trait CrawlerPaths {
   val directorsPath   = "../../data-raw/imdb/directors.list"
   val producersPath   = "../../data-raw/imdb/producers.list"
 
+  val parsedMovies    = "../../data-raw/parsed/movies.case"
+  val parsedKeywords  = "../../data-raw/parsed/keywords.case"
+
 }

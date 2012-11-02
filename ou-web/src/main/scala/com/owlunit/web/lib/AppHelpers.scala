@@ -14,8 +14,6 @@ trait AppHelpers {
 
   def boolToBox(b: Boolean) = if (b) Full(b) else Empty
 
-  def url(menu: Menu) = S.contextPath + menu.loc.calcDefaultHref
-
   def ajaxForm(form: NodeSeq) = SHtml.ajaxForm((
     "type=submit [class+]" #> "btn btn-primary"
     )(form))

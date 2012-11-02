@@ -2,21 +2,6 @@ body {
     padding-top: 60px;
     padding-bottom: 40px;
 }
-.sidebar-nav {
-    padding: 9px 0;
-}
-.navbar .nav .dropdown-menu .active > a,
-.navbar .nav .dropdown-menu .active > a:hover {
-    color: white;
-    text-decoration: none;
-    background-color: #08C;
-}
-#quicksearch .dropdown-menu {
-    /*top: 38px;*/
-    top: 28px;
-    max-height: 400px;
-    overflow-y: auto;
-}
 .navbar-fixed-top .brand {
     padding-right: 0;
     padding-left: 0;
@@ -24,19 +9,38 @@ body {
     margin-right: 20px;
     float: left;
     font-weight: bold;
-    color: white;
+    color: #000000;
     text-shadow: 0 1px 0 rgba(0, 0, 0, .2), 0 0 30px rgba(0, 0, 0, .125);
     -webkit-transition: all .2s linear;
     -moz-transition: all .2s linear;
     transition: all .2s linear;
 }
+
+.sidebar-nav {
+    padding: 9px 0;
+}
+
+.navbar .nav .dropdown-menu .active > a,
+.navbar .nav .dropdown-menu .active > a:hover {
+    color: white;
+    text-decoration: none;
+    background-color: #08C;
+}
+
+#quicksearch .dropdown-menu {
+    /*top: 38px;*/
+    top: 28px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
 p.lift_error {
     font-weight: bold;
     color: #b94a48;
 }
 .user-menu {
     font-weight: bold;
-    color: #fff;
+    color: #000000;
 }
 .crud-form h3 {
     border-bottom: 1px solid #EEE;
@@ -67,6 +71,7 @@ p.lift_error {
 .hero-unit .badge:hover {
     cursor: auto;
     font-size: 40px;
+    line-height: 40px;
     /*background-color: #B94A48;*/
     /*position: relative;*/
     /*bottom: 7px;*/

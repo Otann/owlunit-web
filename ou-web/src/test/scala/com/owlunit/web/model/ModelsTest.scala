@@ -85,7 +85,8 @@ class ModelsTest extends Specification with ModelHelper with Loggable {
 
   "Person" should {
     "be able to save/load" in {
-      val id = Person.createRecord.firstName("Johny").lastName("Doe").save.id.is
+      Person.createRecord.firstName("Johny").save
+      val id = Person.createRecord.firstName("Johny").save.id.is
       Person.find(id).isDefined must beTrue
     }
   }

@@ -19,7 +19,7 @@ import com.foursquare.rogue.Rogue._
  *         Owls Proprietary
  */
 
-class Movie private() extends IiTagRecord[Movie] with ObjectIdPk[Movie] {
+class Movie private() extends IiTagRecord[Movie] with ObjectIdPk[Movie] with Loggable {
 
   // for MongoRecord
   def meta = Movie
@@ -73,13 +73,13 @@ class Movie private() extends IiTagRecord[Movie] with ObjectIdPk[Movie] {
   // List of CrewItem(Role, Person)
   protected object personsObject extends BsonRecordListField(this, CrewItem)
 
-  def rolePersonsIds(role: Role.Role): Seq[ObjectId] = personsObject.is.filter(_.role.is == role).map(_.person.is)
-
   def allPersons = Person.loadFromIis(ii.items.keys)
 
   def persons: Map[Role.Role, Seq[Person]] = {
-    val persons = allPersons.map(person => person.id.is -> person).toMap
-    val result = for (role <- Role.values) yield role -> rolePersonsIds(role).map(id => persons(id))
+    allPersons.map(p => logger.debug(p.fullName))
+    val personsMap = allPersons.map(person => person.id.is -> person).toMap
+
+    val result = for (role <- Role.values) yield role -> personsObject.is.filter(_.role.is == role).map(po => personsMap(po.person.is))
     result.toMap
   }
 

@@ -41,7 +41,7 @@ a.ii {
 	padding: 0 2px;
 	padding-right: 9px;
 
-	background: url(/img/userbar-ii-drag-handle.png) -1000px 50% no-repeat;
+	background: url(/static/img/userbar-ii-drag-handle.png) -1000px 50% no-repeat;
 
 	cursor: move;
     white-space:nowrap;
@@ -59,7 +59,7 @@ a.ii {
 
 	.ratingbar .rating {
 		height: 4px;
-		background: url(/img/movie-ratingbar.png) #ff001e;
+		background: url(/static/img/movie-ratingbar.png) #ff001e;
 	}
 
 .tags {
@@ -85,7 +85,7 @@ a.ii {
 			}		
 
 			.tags li .ii:hover {
-				background: url(/img/movie-tags-ii-drag-handle.png) 100% 50% no-repeat #000;
+				background: url(/static/img/movie-tags-ii-drag-handle.png) 100% 50% no-repeat #000;
 				color: #fff;
 			}
 	
@@ -116,11 +116,11 @@ a.ii {
 		}
 	
 		.userbar .title-wrap {
-			background: url(/img/userbar-title-bg.png) repeat-x;
+			background: url(/static/img/userbar-title-bg.png) repeat-x;
 		}
 		
 			.userbar .title {
-				background: url(/img/userbar-title.png) 18px 50% no-repeat #000;
+				background: url(/static/img/userbar-title.png) 18px 50% no-repeat #000;
 
 				padding-left: 68px;
 				
@@ -134,7 +134,7 @@ a.ii {
 				padding-left: 20px;
 			
 				line-height: 61px;
-				background: url(/img/userbar-profile-bg.png) repeat-x #202020;
+				background: url(/static/img/userbar-profile-bg.png) repeat-x #202020;
 				
 				font-weight: 600;
 				text-shadow: 0 -1px 3px #000;
@@ -172,7 +172,7 @@ a.ii {
 					
 					line-height: 22px;
 					
-					background: url(/img/userbar-landing-add.png) 100% 50% no-repeat;
+					background: url(/static/img/userbar-landing-add.png) 100% 50% no-repeat;
 					color: #515e61;
 					font-weight: 600;
 					
@@ -212,7 +212,7 @@ a.ii {
 				
 					border-top: 1px solid #333;
 					
-					background: 26px 50% url(/img/userbar-trashbin.png) no-repeat #000;
+					background: 26px 50% url(/static/img/userbar-trashbin.png) no-repeat #000;
 				}
 	
 	.page-header{
@@ -312,7 +312,7 @@ a.ii {
 					right: 30px;
 					top: 104px;
 					
-					background: url(/img/checks-18x18.png) 100% -50px no-repeat;
+					background: url(/static/img/checks-18x18.png) 100% -50px no-repeat;
 					
 					padding-right: 30px;										
 					vertical-align: middle;
@@ -348,7 +348,7 @@ a.ii {
 
 			.content .profile-header .wallpaper {
 				height: 60px;
-				background-url: url(/img/temp/wallpaper.png);
+				background-url: url(/static/img/temp/wallpaper.png);
 				
 				border-bottom: 1px solid #e7eaea;
 			}
@@ -503,7 +503,7 @@ a.ii {
 								}
 								
 									.content .movie-list > li .title .actions li.has-icon {
-										background: url(/img/movie-title-actions-icons.png) 0 17px no-repeat;
+										background: url(/static/img/movie-title-actions-icons.png) 0 17px no-repeat;
 										
 										padding-left: 15px;
 									}
@@ -513,7 +513,7 @@ a.ii {
 										}
 								
 									.content .movie-list > li .title .actions li.watch-toggler {
-										background: url(/img/checks-18x18.png) 100% -40px no-repeat;
+										background: url(/static/img/checks-18x18.png) 100% -40px no-repeat;
 										
 										padding-right: 30px;										
 										vertical-align: bottom;
@@ -543,7 +543,7 @@ a.ii {
 							
 								.content .movie-list > li .title .ii:hover {
 									color: #fff;
-									background: url(/img/movie-title-ii-drag-handle.png) 100% 50% no-repeat #202020;
+									background: url(/static/img/movie-title-ii-drag-handle.png) 100% 50% no-repeat #202020;
 								}
 					
 						.content .movie-list .poster {
@@ -599,7 +599,7 @@ a.ii {
 			height: 60px;
 			line-height: 64px;
 			
-			background: url(/img/watchlists-create.png) 169px 50% no-repeat #dadfdf;
+			background: url(/static/img/watchlists-create.png) 169px 50% no-repeat #dadfdf;
 			
 			border: 1px solid #c8cece;
 			
@@ -616,7 +616,7 @@ a.ii {
 		
 			.watchlists .lists li {
 				color: #d4d4d4;
-				background: url(/img/watchlists-lists.png) 169px 50% no-repeat #fff;
+				background: url(/static/img/watchlists-lists.png) 169px 50% no-repeat #fff;
 				
 				height: 39px;
 				line-height: 39px;
@@ -646,7 +646,7 @@ a.ii {
 				}
 				
 			.watchlists .signout {
-				background: url(/img/watchlists-logout.png) 169px 50% no-repeat #fff;
+				background: url(/static/img/watchlists-logout.png) 169px 50% no-repeat #fff;
 			
 				position: absolute;
 				bottom: 58px;
@@ -778,7 +778,7 @@ a.ii {
 }
 
 .userbar .tags li .ii {
-    background: url(/img/movie-tags-ii-drag-handle.png) 100% 50% no-repeat #333;
+    background: url(/static/img/movie-tags-ii-drag-handle.png) 100% 50% no-repeat #333;
     border: 1px solid #555;
     color: #fff;
 }
@@ -809,7 +809,7 @@ a.ii {
     *margin-right: .3em;
     line-height: 14px;
     vertical-align: text-top;
-    background-image: url("../img/glyphicons-halflings.png");
+    background-image: url("../static/img/glyphicons-halflings.png");
     background-position: 14px 14px;
     background-repeat: no-repeat;
 }
@@ -829,7 +829,7 @@ a.ii {
 .dropdown-menu > li > a:hover > [class*=" icon-"],
 .dropdown-menu > .active > a > [class^="icon-"],
 .dropdown-menu > .active > a > [class*=" icon-"] {
-    background-image: url("../img/glyphicons-halflings-white.png");
+    background-image: url("/static/img/glyphicons-halflings-white.png");
 }
 
 .icon-tag {

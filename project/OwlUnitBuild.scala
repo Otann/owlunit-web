@@ -1,11 +1,10 @@
-package web
-
 import sbt._
-import Keys._
+import sbt.Keys._
 import sbt.Package._
 import java.util.jar.Attributes.Name._
-import com.github.siasia.WebPlugin._
+import com.github.siasia.WebPlugin.webSettings
 import com.github.siasia.PluginKeys._
+import com.untyped.sbtjs.Plugin.{JsKeys, jsSettings}
 import com.typesafe.startscript.StartScriptPlugin
 
 object OwlUnitBuild extends Build {
@@ -26,22 +25,23 @@ object OwlUnitBuild extends Build {
   lazy val crawl = Project(
     id = "ou-crawl",
     base = file("ou-crawl"),
-    settings = defaultSettings ++ StartScriptPlugin.startScriptForClassesSettings ++ Seq(
+    dependencies = Seq(web),
+    settings = defaultSettings ++ Seq(
       libraryDependencies ++= Seq(Dependency.slf4s, Dependency.logback, Dependency.iiCore),
       mainClass in Compile := Some("com.owlunit.crawl.Crawler")
-    ),
-    dependencies = Seq(web)
-
+    ) ++ StartScriptPlugin.startScriptForClassesSettings
   )
 
   lazy val web = Project(
     id = "ou-web",
     base = file("ou-web"),
-    settings = defaultSettings ++ webSettings ++ StartScriptPlugin.startScriptForClassesSettings ++ Seq(
-      libraryDependencies ++= Dependencies.lift ++ Dependencies.webPlugin ++ Seq(Dependency.iiCore, Dependency.jQuery, Dependency.specs2),
-      scanDirectories in Compile := Nil,
+    settings = defaultSettings ++ Seq(
+      libraryDependencies ++= Dependencies.lift
+        ++ Dependencies.webPlugin
+        ++ Seq(Dependency.iiCore, Dependency.jQuery, Dependency.specs2),
+      scanDirectories in Compile := Nil, // For JRebel
       mainClass in Compile := Some("JettyLauncher")
-    )
+    ) ++ webSettings ++ jsSettings ++ coffeeSettings ++ StartScriptPlugin.startScriptForClassesSettings
   )
 
   /////////////////////
@@ -49,23 +49,36 @@ object OwlUnitBuild extends Build {
   /////////////////////
 
   seq(webSettings: _*)
-  seq(StartScriptPlugin.startScriptForClassesSettings: _*)
-
-  // For JRebel
-//  scanDirectories in Compile := Nil //WTF why this does not compile?
 
   override lazy val settings = super.settings ++ buildSettings ++ Seq(
   	shellPrompt := { s => Project.extract(s).currentProject.id + "> " }
   )
 
+  lazy val coffeeSettings = Seq(
+    // To change the directory that is scanned, use:
+    (sourceDirectory in (Compile, JsKeys.js)) <<= (sourceDirectory in Compile)(_ / "coffee"),
+
+    // To change the destination directory to src/main/webapp in an xsbt-web-plugin project, use:
+    (resourceManaged in (Compile, JsKeys.js)) <<= (sourceDirectory in Compile)(_ / "webapp" / "static" / "js" / "coffee"),
+
+    // To automatically add generated Javascript files to the application JAR:
+    (resourceGenerators in Compile) <+= (JsKeys.js in Compile),
+
+    // To cause the js task to run automatically when you run compile:
+    (compile in Compile) <<= (compile in Compile) dependsOn (JsKeys.js in Compile),
+
+    // To use pretty-printing instead of regular Javascript minification:
+    (JsKeys.prettyPrint in (Compile, JsKeys.js)) := true
+  )
+
   lazy val defaultSettings = Defaults.defaultSettings ++ buildSettings ++ Seq(
-    resolvers ++= Seq(ScalaToolsSnapshots, Resolvers.liftModules),
+    resolvers ++= Seq(Resolvers.liftModules),
     scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked"),
     javacOptions ++= Seq("-Xlint:unchecked"),
     publishTo := Some(Resolver.file("file",  new File( "/Users/anton/Dev/Owls/repo/owlunit.github.com/repo/ivy/" )) ),
     StartScriptPlugin.stage in Compile := Unit,
 
-//    parallelExecution in Test := false
+//    parallelExecution in Test := false // runs all tests sequentially
     testOptions in Test += Tests.Setup( () => System.setProperty("run.mode", "test") ),
     testOptions in Test += Tests.Cleanup( () => System.setProperty("run.mode", "development") )
 
@@ -81,7 +94,7 @@ object OwlUnitBuild extends Build {
     val owlUnitIvy  = "OwlUnit Ivy Repo" at "http://owlunit.github.com/repo/ivy"
     val owlUnitM2   = "OwlUnit Maven2 Repo" at "http://owlunit.github.com/repo/m2"
     val liftModules = "Liftmodules repo" at "https://repository-liftmodules.forge.cloudbees.com/release"
-    
+
   }
   
   object Dependencies {

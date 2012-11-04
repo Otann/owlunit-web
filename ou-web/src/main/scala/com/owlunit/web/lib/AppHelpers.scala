@@ -4,6 +4,7 @@ import scala.xml._
 
 import net.liftweb._
 import common._
+import http.js.{JsCmds, JsCmd}
 import http.{SHtml, S}
 import json._
 import sitemap.Menu
@@ -22,5 +23,8 @@ trait AppHelpers {
     tryo {
       func(value).values.asInstanceOf[String]
     }
+
+  def JsLog(log: String):JsCmd = JsCmds.Run("console.log('%s');" format log.replace("\n", ""))
+  def JsLog(logs: Any*):JsCmd = JsLog(logs.mkString(" "))
 
 }

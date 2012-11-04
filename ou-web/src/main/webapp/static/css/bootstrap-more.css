@@ -9,8 +9,8 @@ body {
     margin-right: 20px;
     float: left;
     font-weight: bold;
-    color: #000000;
-    text-shadow: 0 1px 0 rgba(0, 0, 0, .2), 0 0 30px rgba(0, 0, 0, .125);
+    color: #ffffff;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35), 0 0 30px rgba(0, 0, 0, .125);
     -webkit-transition: all .2s linear;
     -moz-transition: all .2s linear;
     transition: all .2s linear;
@@ -27,9 +27,7 @@ body {
     background-color: #08C;
 }
 
-#quicksearch .dropdown-menu {
-    /*top: 38px;*/
-    top: 28px;
+#quicksearch-results {
     max-height: 400px;
     overflow-y: auto;
 }
@@ -83,4 +81,26 @@ p.lift_error {
 
 .movie-info-poster {
     float: right;
+}
+
+li.dragging-ii {
+    display: inline-block;
+    border-radius: 3px;
+
+    border-radius: 4px;
+    padding-right: 9px;
+
+    cursor: move;
+    white-space:nowrap;
+
+    background: url(/static/img/movie-tags-ii-drag-handle.png) 100% 50% no-repeat #333;
+    border: 1px solid #555;
+}
+li.dragging-ii a {
+    color: #fff;
+    line-height: 10px;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 3px 6px;
+
 }

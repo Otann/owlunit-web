@@ -24,6 +24,7 @@ trait BootstrapScreen extends LiftScreen with Loggable {
   // be able to use bootstrap spans, append them from param to all inputs
   def spanClass = "span%s" format (S.attr("span") openOr "4")
   override protected def renderHtml() = ("input [class+]" #> spanClass)(super.renderHtml())
+  override protected def wrapInDiv(in: NodeSeq) = super.wrapInDiv(in) % ("class" -> spanClass)
 
   // make button's captions overridable
   def finishCaption = "Ok"
@@ -38,7 +39,7 @@ trait BootstrapScreen extends LiftScreen with Loggable {
         {cancelCaption}
       </button>
     else
-      Elem(null, null, null, null)
+      <button style="display: none;"></button>
 
 }
 

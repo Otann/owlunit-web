@@ -68,8 +68,9 @@ object FacebookApiStateful extends RestHelper with AppHelpers with Loggable {
               user.email(email)
               user.bio(bio)
 
-              Role.createRecord.id("superuser").permissions(List(Permission.all)).save
               if (email == "anton.chebotaev@gmail.com") {
+                Role.createRecord.id("superuser").permissions(List(Permission.all)).save
+                Role.createRecord.id("admin").permissions(List(Permission.all)).save
                 user.roles(List("superuser", "admin"))
               }
 

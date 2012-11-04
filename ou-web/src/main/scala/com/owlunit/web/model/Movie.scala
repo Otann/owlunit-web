@@ -38,8 +38,8 @@ class Movie private() extends IiTagRecord[Movie] with ObjectIdPk[Movie] with Log
   protected object simpleName extends StringField(this, "")
   protected def simplifiedName = simplifyComplexName(name.is, year.is)
 
-  object posterUrl extends StringField(this, "/img/no_poster.png")
-  object backdropUrl extends StringField(this, "/img/no_backdrop.png")
+  object posterUrl extends StringField(this, "/static/img/no_poster.png")
+  object backdropUrl extends StringField(this, "/static/img/no_backdrop.png")
 
   object tagline extends StringField(this, "Tagline")
 

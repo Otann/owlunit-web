@@ -49,3 +49,6 @@ Thumbs.db
 #####################
 
 runtime/*
+
+# coffeescript compiled
+ou-web/src/main/webapp/static/js/coffee/*.js

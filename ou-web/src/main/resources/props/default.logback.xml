@@ -8,9 +8,7 @@
     </appender>
 
     <logger name="neo4j" level="OFF"/>
-    <logger name="console logger" level="OFF"/>
     <logger name="net.liftweb.util.TimeHelpers" level="ERROR"/>
-
 
     <!---->
     <!--<logger name="neo4j.neostore" level="OFF"/>-->

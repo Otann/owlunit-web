@@ -43,8 +43,8 @@ object MovieSnippet extends AppHelpers with Loggable {
   }
 
   def header(movie: Movie) =
-    ".name *" #> movie.snippet &
-      ".year *" #> movie.year.is &
+    ".name *"               #> movie.snippet &
+      ".year *"             #> movie.yearField.is &
       ".picture *"          #> ("* [src]" #> movie.posterUrl) &
       ".wallpaper [style]"  #> ("background: url(%s);" format movie.backdropUrl.is) &
       ".occupation *"       #> movie.tagline.is &

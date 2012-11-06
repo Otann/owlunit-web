@@ -34,7 +34,8 @@ object FacebookApiStateful extends RestHelper with AppHelpers with Loggable {
           json        <- FacebookGraph.me(accessToken)
 
           facebookId  <- extractId(json)
-          name        <- extractString(json, _ \ "name") ?~ "no name provided"
+          firstName   <- extractString(json, _ \ "first_name") ?~ "no name provided"
+          lastName    <- extractString(json, _ \ "last_name") ?~ "no name provided"
           email       <- extractString(json, _ \ "email") ?~ "no email provided"
           picture     <- extractString(json, _ \ "picture" \ "data" \ "url") or Full("")
           cover       <- extractString(json, _ \ "cover" \ "source") or Full("")
@@ -62,7 +63,8 @@ object FacebookApiStateful extends RestHelper with AppHelpers with Loggable {
             case _ => {
               val user = User.createRecord
               user.facebookId(facebookId)
-              user.name(name)
+              user.firstName(firstName)
+              user.lastName(lastName)
               user.photo(picture)
               user.cover(cover)
               user.email(email)

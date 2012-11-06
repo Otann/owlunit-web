@@ -47,22 +47,22 @@ OU = window.OU
 
 class OU.Ii extends Backbone.Model
   defaults:
-    id:     null,
-    iiId:   null,
-    iiType: null,
-    iiName: null,
-    iiUrl:  null
+    id:       null,
+    objectid: null,
+    kind:     null,
+    name:     null,
+    url:      null
 
   initialize: ->
     if @get('tag')
       tag = $(@get('tag'))
 
       # get data from object
-      @set('id',     tag.data('iiId'));
-      @set('iiId',   tag.data('iiId'));
-      @set('iiUrl',  tag.data('iiUrl'));
-      @set('iiType', tag.data('iiType'));
-      @set('iiName', tag.data('iiName'));
+      @set('id',       tag.data('objectid'));
+      @set('objectid', tag.data('objectid'));
+      @set('url',      tag.data('url'));
+      @set('type',     tag.data('kind'));
+      @set('name',     tag.data('name'));
 
       # remove to be clear
       @unset('tag', {silent: true});
@@ -76,17 +76,17 @@ class OU.IiView extends Backbone.View
     @model.bind('change', @render) # call render on each change
 
   render: ->
-    content = @model.get('iiName')
-    type = @model.get('iiType')
+    content = @model.get('name')
+    type = @model.get('kind')
     if type == 'keyword'
       content = '<i class="icon-tag icon-white"></i> ' + content
     $(@el)
-      .attr('draggable',    true)
-      .attr('href',         @model.get('iiUrl'))
-      .attr('data-ii-id',   @model.get('iiId'))
-      .attr('data-ii-url',  @model.get('iiUrl'))
-      .attr('data-ii-type', @model.get('iiType'))
-      .attr('data-ii-name', @model.get('iiName'))
+#      .attr('draggable',    true) # HTML 5 not integrated yet
+      .attr('href',          @model.get('url'))
+      .attr('data-objectid', @model.get('objectid'))
+      .attr('data-url',      @model.get('url'))
+      .attr('data-kind',     @model.get('kind'))
+      .attr('data-name',     @model.get('name'))
       .html(content);
     this
 

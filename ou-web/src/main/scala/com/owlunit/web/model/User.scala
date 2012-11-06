@@ -1,6 +1,6 @@
 package com.owlunit.web.model
 
-import common.{IiTagMetaContract, IiTagRecord}
+import common.{IiTagContract, IiTagRecord}
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 
@@ -18,7 +18,7 @@ import com.owlunit.core.ii.mutable.Ii
 import com.owlunit.web.config.DependencyFactory
 import com.owlunit.web.lib.ui.IiTag
 import net.liftweb.json.JsonAST.JValue
-import com.owlunit.core.ii.NotFoundException
+import com.mongodb.DBObject
 
 /**
  * @author Anton Chebotaev
@@ -28,16 +28,13 @@ import com.owlunit.core.ii.NotFoundException
 class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiTagRecord[User] with IiTag with Loggable {
   def meta = User
 
-  // IiDao backend components
+  // for IiTagRecord
   ////////////////////////////////
 
   var ii: Ii = null
-  override def iiName = this.name.is.toString
-  override def iiType = "user"
 
-  override def userIdAsString = id.toString()
-
-  object loginContinueUrl extends StringField(this, 64, "/me")
+  override def name = "%s %s" format (this.firstName.is, this.lastName.is)
+  override def kind = "user"
 
   // Bio-like-info and Facebook
   ////////////////////////////////
@@ -45,7 +42,8 @@ class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiTa
   object facebookId extends LongField(this)
   def isConnectedToFaceBook = facebookId.is != 0
 
-  object name extends StringField(this, "")
+  object firstName extends StringField(this, "")
+  object lastName extends StringField(this, "")
 
   object cover extends StringField(this, "http://placehold.it/606x60")
   object photo extends StringField(this, "http://placehold.it/150x150")
@@ -53,6 +51,9 @@ class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiTa
   object bio extends TextareaField(this, 0)
   object location extends StringField(this, 64)
   object locale extends StringField(this, 8, "")
+
+  object loginContinueUrl extends StringField(this, 64, "/me")
+
 
   // Domain fields and modifiers
   ////////////////////////////////
@@ -72,22 +73,24 @@ class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiTa
       case _ => 0.0
     }
     logger.debug("Adding keyword to user")
-    logger.debug("user iiId is %s" format this.ii.id)
-    logger.debug("tag  iiId is %s" format tag.ii.id)
+    logger.debug("user ii id is %s" format this.ii.id)
+    logger.debug("tag  ii id is %s" format tag.ii.id)
     this.ii.setItem(tag.ii, weight)
     this
   }
 
-  def hasItem(iiId: String) = ii.items.keys.toSet.contains(iiId)
+  def hasItem(iiId: String) = ii.items.keys.toSet.contains((item: Ii) => item.meta(metaGlobalId) == iiId)
 
   // Helpers and tech
   ////////////////////////////////
 
   def whenCreated: DateTime = new DateTime(id.is.getTime)
 
+  override def userIdAsString = id.toString()
+
 }
 
-object User extends User with ProtoAuthUserMeta[User] with IiTagMetaContract[User] {
+object User extends User with ProtoAuthUserMeta[User] with IiTagContract[User] {
   import net.liftweb.mongodb.BsonDSL._
 
   // Mongo config
@@ -105,54 +108,45 @@ object User extends User with ProtoAuthUserMeta[User] with IiTagMetaContract[Use
   // IiDao dependency
   ////////////////////////////////
 
-  lazy val iiDao = DependencyFactory.iiDao.vend //TODO unsafe vend
+  def iiDao = DependencyFactory.iiDao.vend
 
-  // CRUD and Find
+  // Creation and fetching
   ////////////////////////////////
 
-  override def createRecord: User = {
+  override def createRecord = {
     val result = super.createRecord
     result.ii = iiDao.create
     result
   }
 
+  override def fromDBObject(dbo: DBObject) = {
+    val result = super.fromDBObject(dbo)
+    result.ii = iiDao.load(result.informationItemId.is)
+    result
+  }
+
+
   def fromFacebookJson(json: JValue) = tryo {
     createRecord
       .facebookId((json \ "id").values.asInstanceOf[String].toInt)
-      .name((json \ "name").values.asInstanceOf[String])
+      .firstName((json \ "first_name").values.asInstanceOf[String])
+      .firstName((json \ "last_name").values.asInstanceOf[String])
       .cover((json \ "cover" \ "source").values.asInstanceOf[String])
       .email((json \ "email").values.asInstanceOf[String])
   }
 
-  private def loadIi(user: User): Box[User] = {
-    try {
-      user.ii = iiDao.load(user.informationItemId.is)
-      Full(user)
-    } catch {
-      case e: NotFoundException => Failure("Unable to find linked ii", Full(e), Empty)
-    }
-  }
-
-  override def find(oid: ObjectId) = super.find(oid).flatMap(loadIi)
-  override def find(id: String): Box[User] = if (ObjectId.isValid(id)) find(new ObjectId(id)) else Empty
-
   override def findByStringId(id: String): Box[User] = this.find(id)
   def findFromFacebook(facebookIdIn: Int, emailIn: String): Box[User] =
-    find(facebookId.name, facebookIdIn) or find(email.name, emailIn) flatMap (loadIi)
+    find(facebookId.name, facebookIdIn) or find(email.name, emailIn)
 
   //TODO(Anton): refactor
-  def findByEmail(in: String): Box[User] = find(email.name, in).flatMap(loadIi)
-  def findByUsername(in: String): Box[User] = find(username.name, in).flatMap(loadIi)
+  def findByEmail(in: String): Box[User] = find(email.name, in)
+  def findByUsername(in: String): Box[User] = find(username.name, in)
 
   protected[model] def loadFromIis(iis: Iterable[Ii]) = {
     val iiMap = iis.map(item => (item.id -> item)).toMap
     val query = User where (_.informationItemId in iiMap.keys)
-
-    // Init ii before return
-    query.fetch().map(user => {
-      user.ii = iiMap(user.informationItemId.is)
-      user
-    })
+    query.fetch()
   }
 
   def searchWithName(prefix: String) = loadFromIis(prefixSearch(prefix, iiDao))

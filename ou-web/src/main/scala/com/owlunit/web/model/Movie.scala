@@ -1,6 +1,6 @@
 package com.owlunit.web.model
 
-import common.{IiTagMetaContract, IiTagRecord}
+import common.{IiTagContract, IiTagRecord}
 import net.liftweb.record.field._
 import net.liftweb.mongodb.record.MongoMetaRecord
 import net.liftweb.mongodb.record.field._
@@ -8,11 +8,10 @@ import net.liftweb.util.Helpers._
 import net.liftweb.util.FieldContainer
 import com.owlunit.core.ii.mutable.Ii
 import com.owlunit.web.config.DependencyFactory
-import org.bson.types.ObjectId
 import net.liftweb.common._
 import net.liftweb.mongodb
-import com.owlunit.core.ii.NotFoundException
 import com.foursquare.rogue.Rogue._
+import com.mongodb.DBObject
 
 /**
  * @author Anton Chebotaev
@@ -27,16 +26,16 @@ class Movie private() extends IiTagRecord[Movie] with ObjectIdPk[Movie] with Log
   // for IiTagRecord and IiTag, init in meta object
   var ii: Ii = null
 
-  override def iiType = "movie"
-  override def iiName = this.name.is
+  override def kind = "movie"
+  override def name = this.nameField.is
 
   // Fields
 
-  object name extends StringField(this, "")
-  object year extends IntField(this, 0)
+  object nameField extends StringField(this, "")
+  object yearField extends IntField(this, 0)
 
   protected object simpleName extends StringField(this, "")
-  protected def simplifiedName = simplifyComplexName(name.is, year.is)
+  protected def simplifiedName = simplifyComplexName(nameField.is, yearField.is)
 
   object posterUrl extends StringField(this, "/static/img/no_poster.png")
   object backdropUrl extends StringField(this, "/static/img/no_backdrop.png")
@@ -114,15 +113,15 @@ class Movie private() extends IiTagRecord[Movie] with ObjectIdPk[Movie] with Log
 
   // Field Containers
 
-  def createFields = new FieldContainer { def allFields = List(name, year, posterUrl) }
-  def editFields =   new FieldContainer { def allFields = List(name, year, posterUrl) }
+  def createFields = new FieldContainer { def allFields = List(nameField, yearField, posterUrl) }
+  def editFields =   new FieldContainer { def allFields = List(nameField, yearField, posterUrl) }
 
 }
 
-object Movie extends Movie with MongoMetaRecord[Movie] with IiTagMetaContract[Movie] with Loggable {
+object Movie extends Movie with MongoMetaRecord[Movie] with IiTagContract[Movie] with Loggable {
   import mongodb.BsonDSL._
 
-  lazy val iiDao = DependencyFactory.iiDao.vend //TODO(Anton) unsafe vend
+  def iiDao = DependencyFactory.iiDao.vend
 
   ensureIndex((informationItemId.name -> 1), unique = true)
   ensureIndex((simpleName.name -> 1), unique = true)
@@ -135,21 +134,15 @@ object Movie extends Movie with MongoMetaRecord[Movie] with IiTagMetaContract[Mo
     result
   }
 
-  // Helper for load methods to init Ii subsystem properly
-
-  private def loadIi(record: Movie): Box[Movie] = {
-    try {
-      record.ii = iiDao.load(record.informationItemId.is)
-      Full(record)
-    } catch {
-      case e: NotFoundException => Failure("Unable to find linked ii", Full(e), Empty)
-    }
+  override def fromDBObject(dbo: DBObject) = {
+    val result = super.fromDBObject(dbo)
+    result.ii = iiDao.load(result.informationItemId.is)
+    result
   }
 
-  // Resolver methods
+  // Helper for load methods to init Ii subsystem properly
 
-  override def find(oid: ObjectId) = super.find(oid).flatMap(loadIi)
-  override def find(id: String) = if (ObjectId.isValid(id)) find(new ObjectId(id)) else Empty
+  // Resolver methods
 
   protected[model] def loadFromIis(iis: Iterable[Ii]) = {
     val iiMap = iis.map(ii => (ii.id -> ii)).toMap
@@ -164,10 +157,10 @@ object Movie extends Movie with MongoMetaRecord[Movie] with IiTagMetaContract[Mo
     val query = Movie where (_.simpleName eqs simplifyComplexName(name, year))
     query.fetch() match {
       case Nil => Empty
-      case item :: Nil => loadIi(item)
+      case item :: Nil => Full(item)
       case item :: _ => {
         logger.error("Multiple movies found with same simplename %s" format simpleName)
-        loadIi(item)
+        Full(item)
       }
     }
   } catch {

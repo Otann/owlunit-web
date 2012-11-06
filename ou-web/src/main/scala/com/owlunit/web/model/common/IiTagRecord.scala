@@ -1,11 +1,13 @@
 package com.owlunit.web.model.common
 
-import com.owlunit.core.ii.mutable.IiDao
+import com.owlunit.core.ii.mutable.{Ii, IiDao}
 import com.owlunit.web.lib.ui.IiTag
 import net.liftweb.common.{Failure, Empty, Full, Box}
 import com.owlunit.web.config.DependencyFactory
 import com.owlunit.web.model.{User, Keyword, Person, Movie}
 import org.bson.types.ObjectId
+import net.liftweb.record.field.LongField
+import net.liftweb.mongodb.record.MongoRecord
 
 /**
  * @author Anton Chebotaev
@@ -17,32 +19,37 @@ import org.bson.types.ObjectId
  *
  */
 
-trait IiTagMeta extends IiMeta {
-
-  protected def metaGlobalName = metaGlobal + ".iiName"
-  protected def metaGlobalType = metaGlobal + ".iiType"
-
-}
-
-trait IiTagRecord[OwnerType <: IiTagRecord[OwnerType]] extends IiMongoRecord[OwnerType] with IiTag with IiTagMeta {
+trait IiTagRecord[OwnerType <: IiTagRecord[OwnerType]] extends MongoRecord[OwnerType] with IiTag with IiTagMeta {
   self: OwnerType =>
 
-  // Methods required by representation
+  // Methods required by representation (using mongo ids for now)
+  def objectId = this.id.toString
 
-  def iiId = this.id.toString
+  // Item has to define and initialize it's own property
+  def ii: Ii
+
+  // Field for storing Ii id in MongoDb
+   object informationItemId extends LongField(this)
+
+
 
   // Methods for save, index and search
 
-  override def metaBase = super.metaBase + "." + this.iiType
+  override protected def metaBase = super.metaBase + "." + this.kind
   protected def metaName = metaBase + ".Name"
 
   override def save = {
-    // for local search (only within type)
-    ii.setMeta(metaName, iiName)
 
     // for global search
-    ii.setMeta(metaGlobalName, iiName)
-    ii.setMeta(metaGlobalType, iiType)
+    ii.setMeta(metaGlobalId, this.id.toString)
+    ii.setMeta(metaGlobalName, name)
+    ii.setMeta(metaGlobalType, kind)
+
+    // for local search (only within type)
+    ii.setMeta(metaName, name)
+    ii.save
+
+    informationItemId(ii.id)
     super.save
   }
 
@@ -71,7 +78,7 @@ object IiTagRecord extends IiTagMeta {
 
   def search(query: String): Iterable[IiTag] = {
     val iis = iiDao.search(metaGlobalName, buildQuery(query))
-    for (ii <- iis) yield IiTag(ii.meta(metaGlobalType), ii.meta(metaObjectId), ii.meta(metaGlobalName))
+    for (ii <- iis) yield IiTag(ii.meta(metaGlobalType), ii.meta(metaGlobalId), ii.meta(metaGlobalName))
   }
 
   def load(tag: IiTag): Box[IiTagRecord[_]] = tag match {
@@ -84,8 +91,8 @@ object IiTagRecord extends IiTagMeta {
   }
 
   def load(id: String): Box[IiTag] = {
-    iiDao.search(metaObjectId, id) match {
-      case ii :: Nil => Full(IiTag(ii.meta(metaGlobalType), ii.meta(metaObjectId), ii.meta(metaGlobalName)))
+    iiDao.search(metaGlobalId, id) match {
+      case ii :: Nil => Full(IiTag(ii.meta(metaGlobalType), ii.meta(metaGlobalId), ii.meta(metaGlobalName)))
       case Nil => Empty
       case _ => Failure("Multiple found", Empty, Empty)
     }

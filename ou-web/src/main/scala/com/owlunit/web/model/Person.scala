@@ -1,6 +1,6 @@
 package com.owlunit.web.model
 
-import common.{IiTagMetaContract, IiTagRecord}
+import common.{IiTagContract, IiTagRecord}
 import net.liftweb.mongodb.record.field.ObjectIdPk
 import net.liftweb.mongodb.record.MongoMetaRecord
 import net.liftweb.record.field.StringField
@@ -30,8 +30,8 @@ class Person private() extends IiTagRecord[Person] with ObjectIdPk[Person] {
   // for IiTagRecord and IiTag, init in meta object
   var ii: Ii = null
 
-  override def iiType = "person"
-  override def iiName = fullName
+  override def kind = "person"
+  override def name = fullName
 
   // Fields
 
@@ -48,9 +48,9 @@ class Person private() extends IiTagRecord[Person] with ObjectIdPk[Person] {
 
 }
 
-object Person extends Person with MongoMetaRecord[Person] with IiTagMetaContract[Person] with Loggable {
+object Person extends Person with MongoMetaRecord[Person] with IiTagContract[Person] with Loggable {
 
-  lazy val iiDao = DependencyFactory.iiDao.vend //TODO unsafe vend
+  def iiDao = DependencyFactory.iiDao.vend
 
   ensureIndex((informationItemId.name -> 1), unique = true)
   ensureIndex((firstName.name -> 1))

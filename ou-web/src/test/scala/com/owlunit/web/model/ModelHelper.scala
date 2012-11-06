@@ -15,7 +15,8 @@ trait ModelHelper {
   def createRandomUser = {
     val user = User.createRecord
     user.facebookId(randomLong)
-    user.name(randomString)
+    user.firstName(randomString)
+    user.lastName(randomString)
     user.email(randomString)
     user
   }
@@ -27,8 +28,8 @@ trait ModelHelper {
 
   def createRandomMovie = {
     val movie = Movie.createRecord
-    movie.name(randomString)
-    movie.year(2000)
+    movie.nameField(randomString)
+    movie.yearField(2000)
     movie
   }
 
@@ -39,7 +40,7 @@ trait ModelHelper {
 
   def createRandomKeyword = {
     val keyword = Keyword.createRecord
-    keyword.name(randomString)
+    keyword.nameField(randomString)
     keyword
   }
 

@@ -19,7 +19,7 @@ object MeSnippet extends AppHelpers with Loggable {
 
   def photo = "* [src]" #> User.currentUser.map(_.photo.is)
 
-  def username = "* *" #> User.currentUser.map(_.name.is)
+  def username = "* *" #> User.currentUser.map(_.name)
 
   def renderItemsList(user: User, caption: String, items: List[IiTagRecord[_]]) = {
     ".key *" #> (".caption *" #> caption & ".counter *" #> items.length) &

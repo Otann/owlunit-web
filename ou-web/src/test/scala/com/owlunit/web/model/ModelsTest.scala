@@ -27,6 +27,25 @@ class ModelsTest extends Specification with ModelHelper with Loggable {
     IiDaoConfig.init()
   }
 
+  "Keywords" should {
+    "be able to save/load" in {
+      val k = createRandomKeyword.save
+      Keyword.find(k.id.is).isDefined must beTrue
+    }
+    "be created with non initialized ii" in {
+      val k = createRandomKeyword
+      k.ii.id mustEqual 0
+    }
+    "have initialized ii after save" in {
+      val k = createRandomKeyword.save
+      k.ii.id mustNotEqual 0
+    }
+    "load ii after load" in {
+      val k = loadRandomKeyword
+      k.ii.id mustNotEqual 0
+    }
+  }
+
   "User" should {
     "be able to save/load" in {
       val user = createRandomUser.save
@@ -36,7 +55,7 @@ class ModelsTest extends Specification with ModelHelper with Loggable {
       val user = createRandomUser
       user.ii.id mustEqual 0
     }
-    "have initialized ii" in {
+    "have initialized ii after save" in {
       val user = createRandomUser.save
       User.find(user.id.is).open_!.ii.id mustNotEqual 0
     }
@@ -76,9 +95,7 @@ class ModelsTest extends Specification with ModelHelper with Loggable {
       User.find(user.id.is).open_!.addTag(loadRandomPerson).save
       User.find(user.id.is).open_!.ii.items.size mustEqual 3
     }
-    "fails on web" in {
-      logger.info("Failed test begind")
-
+    "add used tag" in {
       // create fresh items
       val userId = loadRandomUser.id.is
       val movieId = loadRandomMovie.id.is
@@ -92,24 +109,31 @@ class ModelsTest extends Specification with ModelHelper with Loggable {
 
       // Perform add
       User.find(userId).open_!.addTag(Keyword.find(keywordId).open_!).save
-      logger.info("Failed test end")
 
       User.find(userId).open_!.keywords.length mustEqual 2
     }
   }
 
-  "Keyword" should {
+  "Movie" should {
     "be able to save/load" in {
-      val id = Keyword.createRecord.name("keyword").save.id.is
+      val id = Keyword.createRecord.nameField("keyword").save.id.is
       Keyword.find(id).isDefined must beTrue
     }
-  }
+    "add used tag" in {
+      // create fresh items
+      val movieId = loadRandomMovie.id.is
+      val keywordId = loadRandomKeyword.id.is
 
-  "Person" should {
-    "be able to save/load" in {
-      Person.createRecord.firstName("Johny").save
-      val id = Person.createRecord.firstName("Johny").save.id.is
-      Person.find(id).isDefined must beTrue
+      // make keyword used
+      loadRandomMovie.addKeyword(Keyword.find(keywordId).open_!).save
+
+      // make movie used
+      Movie.find(movieId).open_!.addKeyword(loadRandomKeyword).save
+
+      // Perform add
+      Movie.find(movieId).open_!.addKeyword(Keyword.find(keywordId).open_!).save
+
+      Movie.find(movieId).open_!.keywords.length mustEqual 2
     }
   }
 

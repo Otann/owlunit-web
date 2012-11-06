@@ -56,19 +56,29 @@
 
     <div class="container-fluid" >
         <div class="row-fluid">
+            <div class="span9" id="admin-content"></div>
+
             <div class="span3 sidebar-nav">
-                <div class="well sidebar-nav">
-                    <ul class="nav nav-list">
-                        <li class="nav-header">Quick links</li>
-                        <lift:Menu.group group="admin">
-                            <li><menu:bind /></li>
-                        </lift:Menu.group>
-                    </ul>
+                <!--<div class="well sidebar-nav">-->
+                <!--<ul class="nav nav-list">-->
+                <!--<li class="nav-header">Quick links</li>-->
+                <!--<lift:Menu.group group="admin">-->
+                <!--<li><menu:bind /></li>-->
+                <!--</lift:Menu.group>-->
+                <!--</ul>-->
+                <!--</div>-->
+                <div class="well sidebar-nav sidebar-drop" id="admin-nav">
+                    <li class="nav-header">Drop here to navigate</li>
                 </div>
-
-            </div>
-
-            <div class="span9" id="admin-content">
+                <div class="well sidebar-nav" id="content">
+                    <li class="nav-header">Drop here to add link from</li>
+                    <div id="drop-from" class="sidebar-drop"></div>
+                    <li class="nav-header">to</li>
+                    <div id="drop-to" class="sidebar-drop"></div>
+                </div>
+                <div class="well sidebar-nav" id="dropbar">
+                    <li class="nav-header">Dropbar</li>
+                </div>
             </div>
         </div>
 

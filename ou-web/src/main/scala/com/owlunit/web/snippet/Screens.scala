@@ -1,6 +1,7 @@
 package com.owlunit.web.snippet
 
 import net.liftweb.http._
+import js.JsCmds.RedirectTo
 import js.{JsCmd, JsCmds}
 import net.liftweb.common.Full
 import com.owlunit.web.model.{Keyword, Person, Movie}
@@ -20,12 +21,16 @@ object ScreenCreateMovie extends BootstrapScreen with AppHelpers {
   addFields(() => objectVar.is.createFields )
   object objectVar extends ScreenVar(Movie.createRecord)
 
-  protected def finish() { objectVar.is.save }
+  protected def finish() {
+    objectVar.is.save
+    objectVar(Movie.createRecord)
+  }
+
   override protected def doFinish() = {
     val notice = if (validate.isEmpty)
-      JsLog(objectVar.is.toString() + " created")
+      RedirectTo(Referer.get)
     else
-      JsCmds.Noop
+      JsLog("Validation errors: %s" format validate)
     super.doFinish() & notice
   }
 }
@@ -37,10 +42,13 @@ object ScreenCreateKeyword extends BootstrapScreen with AppHelpers {
   addFields(() => objectVar.is.createFields )
   object objectVar extends ScreenVar(Keyword.createRecord)
 
-  protected def finish() { objectVar.is.save }
+  protected def finish() {
+    objectVar.is.save
+    objectVar(Keyword.createRecord)
+  }
   override protected def doFinish() = {
     val notice = if (validate.isEmpty)
-      JsLog(objectVar.is.toString() + " created")
+      RedirectTo(Referer.get)
     else
       JsCmds.Noop
     super.doFinish() & notice

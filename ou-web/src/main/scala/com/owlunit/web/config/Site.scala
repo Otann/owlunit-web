@@ -18,7 +18,7 @@ import util.Helpers
 
 object MenuGroups {
   val TopAdminBar    = LocGroup("admin_topbar")
-  val LeftAdminAdmin = LocGroup("admin_leftbar")
+  val LeftAdmin = LocGroup("admin_leftbar")
 }
 
 case class MenuLoc(menu: Menu) {
@@ -45,12 +45,9 @@ object Site extends Locs {
   private val adminMenus =
     Menu.i("Admin") / "admin" / "index" submenus (
 
-      Menu.i("Profile")       / "admin" / "profile",
       Menu.i("Movie")         / "admin" / "movie",
       Menu.i("Person")        / "admin" / "person",
-
-      Menu.i("Create Movie")  / "admin" / "create" / "movie"  >> LeftAdminAdmin,
-      Menu.i("Create Person") / "admin" / "create" / "person" >> LeftAdminAdmin
+      Menu.i("Keyword")       / "admin" / "keyword"
 
       )
 
@@ -93,19 +90,11 @@ object Site extends Locs {
   // URL rewrites
   val statefulRewrites: LiftRules.RewritePF = {
 
-    case RewriteRequest(ParsePath("movie" :: id :: Nil, _, _, _), _, _) => {
-      if (Movie.find(id).isDefined)
-        RewriteResponse("movie" :: Nil, Map("id" -> id))
-      else
-        RewriteResponse("404" :: Nil)
-    }
+    case RewriteRequest(ParsePath("movie" :: id :: Nil, _, _, _), _, _) => RewriteResponse("movie" :: Nil, Map("id" -> id))
 
-    case RewriteRequest(ParsePath("admin" :: "person" :: id :: Nil, _, _, _), _, _) => {
-      if (Person.find(id).isDefined)
-        RewriteResponse("person" :: Nil, Map("id" -> id))
-      else
-        RewriteResponse("404" :: Nil)
-    }
+    case RewriteRequest(ParsePath("admin" :: "movie"   :: id :: Nil, _, _, _), _, _) => RewriteResponse("admin" :: "movie"   :: Nil, Map("id" -> id))
+    case RewriteRequest(ParsePath("admin" :: "person"  :: id :: Nil, _, _, _), _, _) => RewriteResponse("admin" :: "person"  :: Nil, Map("id" -> id))
+    case RewriteRequest(ParsePath("admin" :: "keyword" :: id :: Nil, _, _, _), _, _) => RewriteResponse("admin" :: "keyword" :: Nil, Map("id" -> id))
 
   }
 

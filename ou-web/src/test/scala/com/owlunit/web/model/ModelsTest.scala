@@ -14,6 +14,15 @@ import scala.sys.process._
 class ModelsTest extends Specification with ModelHelper with Loggable {
 
   step {
+
+    val neoDbPath = Props.get("owlunit.neo4j.path", "/tmp/none")
+    Seq("rm", "-rf", neoDbPath).!! // remove neo folder
+    logger.debug("neo path was %s" format neoDbPath)
+
+    val mongoDb = Props.get("owlunit.mongo.db", "none")
+    Seq("mongo", mongoDb, "--eval", "'db.dropDatabase();'").!! // drop mongo db
+    logger.debug("mongo db was %s" format mongoDb)
+
     MongoConfig.init()
     IiDaoConfig.init()
   }
@@ -68,11 +77,24 @@ class ModelsTest extends Specification with ModelHelper with Loggable {
       User.find(user.id.is).open_!.ii.items.size mustEqual 3
     }
     "fails on web" in {
-      val user = loadRandomUser
-      User.find(user.id.is).open_!.addTag(loadRandomMovie).save
-      User.find(user.id.is).open_!.addTag(loadRandomKeyword).save
-      User.find(user.id.is).open_!.addTag(loadRandomPerson).save
-      User.find(user.id.is).open_!.ii.items.size mustEqual 3
+      logger.info("Failed test begind")
+
+      // create fresh items
+      val userId = loadRandomUser.id.is
+      val movieId = loadRandomMovie.id.is
+      val keywordId = loadRandomKeyword.id.is
+
+      // make keyword used
+      Movie.find(movieId).open_!.addKeyword(Keyword.find(keywordId).open_!).save
+
+      // make user used
+      User.find(userId).open_!.addTag(loadRandomKeyword).save
+
+      // Perform add
+      User.find(userId).open_!.addTag(Keyword.find(keywordId).open_!).save
+      logger.info("Failed test end")
+
+      User.find(userId).open_!.keywords.length mustEqual 2
     }
   }
 
@@ -94,14 +116,6 @@ class ModelsTest extends Specification with ModelHelper with Loggable {
   step {
 
     IiDaoConfig.dao.shutdown()
-
-    val neoDbPath = Props.get("owlunit.neo4j.path", "/tmp/none")
-    logger.debug("neo path was %s" format neoDbPath)
-    Seq("rm", "-rf", neoDbPath).!! // remove neo folder
-
-    val mongoDb = Props.get("owlunit.mongo.db", "none")
-    logger.debug("mongo db was %s" format mongoDb)
-    Seq("mongo", mongoDb, "--eval", "'db.dropDatabase();'").!! // drop mongo db
 
   }
 

@@ -2,9 +2,10 @@ package com.owlunit.web.model.common
 
 import com.owlunit.core.ii.mutable.IiDao
 import com.owlunit.web.lib.ui.IiTag
-import net.liftweb.common.{Empty, Full, Box}
+import net.liftweb.common.{Failure, Empty, Full, Box}
 import com.owlunit.web.config.DependencyFactory
-import com.owlunit.web.model.{Keyword, Person, Movie}
+import com.owlunit.web.model.{User, Keyword, Person, Movie}
+import org.bson.types.ObjectId
 
 /**
  * @author Anton Chebotaev
@@ -75,11 +76,19 @@ object IiTagRecord extends IiTagMeta {
 
   def load(tag: IiTag): Box[IiTagRecord[_]] = tag match {
     case record: IiTagRecord[_] => Full(record)
+    case IiTag("user", id, _) => User.find(id)
     case IiTag("movie", id, _) => Movie.find(id)
     case IiTag("person", id, _) => Person.find(id)
     case IiTag("keyword", id, _) => Keyword.find(id)
     case _ => Empty
   }
 
+  def load(id: String): Box[IiTag] = {
+    iiDao.search(metaObjectId, id) match {
+      case ii :: Nil => Full(IiTag(ii.meta(metaGlobalType), ii.meta(metaObjectId), ii.meta(metaGlobalName)))
+      case Nil => Empty
+      case _ => Failure("Multiple found", Empty, Empty)
+    }
 
+  }
 }

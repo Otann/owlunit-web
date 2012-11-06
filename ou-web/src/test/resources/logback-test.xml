@@ -6,7 +6,7 @@
         </encoder>
     </appender>
 
-    <logger name="neo4j" level="OFF"/>
+    <!--<logger name="neo4j" level="OFF"/>-->
 
     <root level="debug">
         <appender-ref ref="STDOUT" />

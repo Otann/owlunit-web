@@ -54,6 +54,24 @@ object DropHandlerApiStateful extends RestHelper with AppHelpers with Loggable {
     }
 
 
+    case "admin" :: fromId :: toId :: Nil Get _ => {
+      val response = for {
+        user     <- User.currentUser          ?~ "No user is logged in"   ~> 500
+        if User.hasRole("admin")
+        fromTag  <- IiTagRecord.load(fromId)  ?~ "Item 'from' not found"  ~> 404
+        fromItem <- IiTagRecord.load(fromTag) ?~ "Item 'from' not found"  ~> 404
+        toTag    <- IiTagRecord.load(toId)    ?~ "Item 'to' not found"    ~> 404
+        toItem   <- IiTagRecord.load(toTag)   ?~ "Item 'to' not found"    ~> 404
+      } yield {
+        val fromIi = iiDao.vend.load(fromItem.ii.id)
+        val toIi   = iiDao.vend.load(toItem.ii.id)
+        fromIi.setItem(toIi, 239.0).save
+        OkResponse()
+      }
+      response
+    }
+
+
   })
 
 

@@ -16,7 +16,6 @@ Admin.Areas =
     search: () ->
       query = $(Admin.Areas.QuickSearch.selector).find('input').val();
       if query.length >= 3
-        $(Admin.Areas.QuickSearch.selector).find('.dropdown-menu').show()
         $.get(OU.Config.url.globalSearch + query, (data) -> Admin.Areas.QuickSearch.receive(data))
       else
         $(Admin.Areas.QuickSearch.selector).find('.dropdown-menu').hide()
@@ -25,6 +24,7 @@ Admin.Areas =
     receive: (items) ->
       if items.length > 0
         Admin.Areas.QuickSearch.collection.reset(items)
+        $(Admin.Areas.QuickSearch.selector).find('.dropdown-menu').show()
       else
         $(Admin.Areas.QuickSearch.selector).find('.dropdown-menu').html('<li class="nav-header">Nothing found</li>')
 
@@ -62,6 +62,51 @@ jQuery ->
     qs.view.render()
 
   )(Admin.Areas.QuickSearch)
+
+  $('#admin-nav').droppable(
+    accept: '.ii'
+    hoverClass: 'ii-hovered'
+    drop: (event, ui) ->
+      sample = new OU.Ii(tag: ui.draggable)
+      document.location.href = '/admin' + sample.get('iiUrl')
+  )
+
+  Admin.Areas.checkCompleteAdd = () ->
+    if Admin.Areas.dropFrom and Admin.Areas.dropTo
+      from = Admin.Areas.dropFrom.get('iiId')
+      to = Admin.Areas.dropTo.get('iiId')
+      $.get('/api/drop/admin/' + from + '/' + to).success(() ->
+        alert('done!')
+      ).error(() ->
+        alert('fail!')
+      )
+  Admin.Areas.dropFrom = undefined
+  $('#drop-from').droppable(
+    accept: '.ii'
+    hoverClass: 'ii-hovered'
+    drop: (event, ui) ->
+      ii = new OU.Ii(tag: ui.draggable)
+      view = new OU.IiView(model: ii)
+      $(this).html(view.render().el)
+      Admin.Areas.dropFrom = ii
+      Admin.Areas.checkCompleteAdd()
+  )
+  Admin.Areas.dropTo = undefined
+  $('#drop-to').droppable(
+    accept: '.ii'
+    hoverClass: 'ii-hovered'
+    drop: (event, ui) ->
+      ii = new OU.Ii(tag: ui.draggable)
+      view = new OU.IiView(model: ii)
+      $(this).html(view.render().el)
+      Admin.Areas.dropTo = ii
+      Admin.Areas.checkCompleteAdd()
+  )
+  Admin.Areas.clearDropAdd = () ->
+    $('#drop-to').html()
+    Admin.Areas.dropTo = undefined
+
+
 
 #  Admin.Areas.Dropbar.collection = new OU.IiSet()
 #  ((dp) ->

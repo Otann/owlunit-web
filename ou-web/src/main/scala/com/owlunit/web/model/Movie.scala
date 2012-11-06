@@ -59,6 +59,9 @@ class Movie private() extends IiTagRecord[Movie] with ObjectIdPk[Movie] with Log
   def keywords = Keyword.loadFromIis(ii.items.keys)
 
   def addKeyword(keyword: Keyword) = {
+    logger.debug("Adding keyword to movie")
+    logger.debug("movie   iiId is %s" format this.ii.id)
+    logger.debug("keyword iiId is %s" format keyword.ii.id)
     this.ii.setItem(keyword.ii, weight(keyword))
     this
   }

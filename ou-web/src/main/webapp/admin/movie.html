@@ -1,23 +1,28 @@
-<div id="main" class="lift:surround?with=admin;at=admin-content">
+<div id="main" class="lift:surround?with=base-admin;at=admin-content">
 
-    <div class="row-fluid">
-        <div class="span6" lift="admin.MovieInfo.render">
+    <div class="lift:MovieSnippet">
+        <h2>
+            <span class="name"><a class="ii">Fight Club</a></span>
+            <span class="year">2000</span>
+        </h2>
 
-            <h2>
-                <span movie-data="name">Movie name</span> //
-                <span movie-data="year">2000</span>
-            </h2>
-
-            <img class="thumbnail pull-right" movie-data="poster" src="" alt="">
-
+        <div class="pull-right">
+            <div class="wallpaper"></div>
+            <div class="picture"><img src="#" alt=""/></div>
         </div>
 
-        <div class="span6">
-            <a onclick="$(this).hide(); $('#editbox').show()" class="btn">Edit Base Info</a>
-            <div id="editbox" style="display: none;">
-                <span lift="admin.EditMovieScreen.render?span=4&ajax=true"></span>
-            </div>
-        </div>
+        <ul class="profile-info movie-info">
+            <li>
+                <div class="key">
+                    <span class="caption">Top</span>
+                    <span class="counter">71</span>
+                </div>
+
+                <ul class="value tags clearfix">
+                    <li><a class="ii">2004</a></li>
+                </ul>
+            </li>
+        </ul>
     </div>
 
 </div>

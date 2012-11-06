@@ -12,7 +12,8 @@ window.OU =
       helper: ->
         ii = new OU.Ii(tag: this)
         view = new OU.IiView(model: ii)
-        $('<li class="dragging-ii">').append(view.render().el)
+        el = view.render().el
+        $(el).addClass('helper')
       zIndex: 2700
       opacity: 0.90
       cursorAt: { left: 5, top: 20 }

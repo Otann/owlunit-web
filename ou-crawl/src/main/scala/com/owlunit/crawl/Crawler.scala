@@ -37,7 +37,7 @@ object Crawler extends ParserHelper with CrawlerPaths with Logging {
           // Load or create keyword
           val keyword = Keyword.findByName(k.name) match {
             case Full(kw) => kw
-            case _ => Keyword.createRecord.name(k.name).save
+            case _ => Keyword.createRecord.nameField(k.name).save
           }
 
           // Save relation
@@ -87,7 +87,7 @@ object Crawler extends ParserHelper with CrawlerPaths with Logging {
     val counter = Counter.start(10679)
     for (movie <- movies.values) {
       counter.tick(logger, 1000, "movies saved")
-      Movie.createRecord.name(movie.name).year(movie.year).save
+      Movie.createRecord.nameField(movie.name).yearField(movie.year).save
     }
 
     // Parse and persist keywords and relations to movies

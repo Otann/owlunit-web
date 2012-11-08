@@ -13,7 +13,7 @@ import util.Helpers
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  */
 
 object MenuGroups {

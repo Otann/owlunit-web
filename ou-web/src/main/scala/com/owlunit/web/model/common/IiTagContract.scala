@@ -7,7 +7,7 @@ import net.liftweb.mongodb.record.MongoRecord
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  */
 trait IiTagContract[OwnerType <: MongoRecord[OwnerType]] {
 

@@ -17,7 +17,7 @@ import com.mongodb.DBObject
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  */
 
 class Keyword private() extends IiTagRecord[Keyword] with ObjectIdPk[Keyword] with Loggable {

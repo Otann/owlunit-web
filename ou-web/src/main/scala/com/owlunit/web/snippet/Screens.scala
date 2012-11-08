@@ -11,7 +11,7 @@ import com.owlunit.web.lib.AppHelpers
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  *
  */
 object ScreenCreateMovie extends BootstrapScreen with AppHelpers {

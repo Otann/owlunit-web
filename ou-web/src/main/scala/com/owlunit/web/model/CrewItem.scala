@@ -6,7 +6,7 @@ import net.liftweb.record.field.EnumNameField
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  *
  *         BsonRecord fot many-to-many mapping
  *         As many-to-many is anti-pattern for mongo, I see no other way implementing it clearly

@@ -5,7 +5,7 @@ import com.weiglewilczek.slf4s.Logger
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  */
 
 class Counter(val total: Long) {

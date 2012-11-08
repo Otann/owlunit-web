@@ -1,6 +1,6 @@
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  */
 
 import org.eclipse.jetty.server.Server

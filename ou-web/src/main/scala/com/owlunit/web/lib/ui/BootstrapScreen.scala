@@ -8,7 +8,7 @@ import xml.{Node, Text, Elem, NodeSeq}
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  *
  *         Comfortable way to use lift screen with bootstrap
  */

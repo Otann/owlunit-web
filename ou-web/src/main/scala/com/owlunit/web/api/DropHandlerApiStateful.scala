@@ -14,7 +14,7 @@ import com.owlunit.web.config.DependencyFactory.iiDao
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  */
 
 object DropHandlerApiStateful extends RestHelper with AppHelpers with Loggable {

@@ -9,7 +9,7 @@ import net.liftweb.http.Factory
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  */
 
 object Gravatar extends Factory with Loggable {

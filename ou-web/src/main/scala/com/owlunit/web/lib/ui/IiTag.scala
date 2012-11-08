@@ -11,7 +11,7 @@ import xml.Text
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  *
  *         marker trait for sending items to UI
  */

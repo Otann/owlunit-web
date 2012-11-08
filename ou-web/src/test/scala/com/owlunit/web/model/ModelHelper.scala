@@ -4,7 +4,7 @@ import net.liftweb.util.Helpers
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  */
 
 trait ModelHelper {

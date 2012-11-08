@@ -11,7 +11,7 @@ import net.liftweb.mongodb.record.MongoRecord
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  *
  *         Trait for displayable in UI items
  *         (display functionality moved out to IiTag)

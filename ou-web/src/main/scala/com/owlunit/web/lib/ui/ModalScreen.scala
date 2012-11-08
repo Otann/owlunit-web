@@ -6,7 +6,7 @@ import xml.NodeSeq
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  *
  *         Wraps screen in bootstrap modal functionality
  */

@@ -15,7 +15,7 @@ import util.Helpers._
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  */
 
 object Facebook extends Loggable {

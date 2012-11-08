@@ -15,7 +15,7 @@ import com.mongodb.DBObject
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  */
 
 class Movie private() extends IiTagRecord[Movie] with ObjectIdPk[Movie] with Loggable {

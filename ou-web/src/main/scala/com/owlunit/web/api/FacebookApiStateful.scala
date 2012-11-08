@@ -14,7 +14,7 @@ import net.liftmodules.mongoauth.model.Role
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  */
 
 object FacebookApiStateful extends RestHelper with AppHelpers with Loggable {

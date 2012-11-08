@@ -10,7 +10,7 @@ import parser.ParserHelper
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  */
 
 object KeywordsParser extends ParserHelper with Logging {

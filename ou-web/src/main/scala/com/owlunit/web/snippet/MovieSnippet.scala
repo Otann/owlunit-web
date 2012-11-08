@@ -10,7 +10,7 @@ import com.foursquare.rogue.Rogue._
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  */
 
 

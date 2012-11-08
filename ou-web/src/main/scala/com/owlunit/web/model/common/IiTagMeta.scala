@@ -2,7 +2,7 @@ package com.owlunit.web.model.common
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  *
  *         Defines metadata keys for Ii subsystem
  */

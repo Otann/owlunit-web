@@ -14,7 +14,7 @@ import java.util
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  */
 
 object FacebookGraph extends Factory with AppHelpers with Loggable {

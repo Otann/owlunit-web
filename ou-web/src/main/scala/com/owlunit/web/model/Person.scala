@@ -18,7 +18,7 @@ import net.liftweb.common.Full
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  */
 
 

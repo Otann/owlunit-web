@@ -7,7 +7,7 @@ import net.liftweb.util.Props
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  */
 
 object MongoConfig {

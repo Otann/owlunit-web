@@ -15,7 +15,7 @@ import parser.imdb.{PersonsCrawler, KeywordsParser}
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  */
 
 

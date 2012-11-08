@@ -8,7 +8,7 @@ import scala.sys.process._
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  */
 
 class ModelsTest extends Specification with ModelHelper with Loggable {

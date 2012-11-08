@@ -2,7 +2,7 @@ package com.owlunit.crawl.parser
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  */
 
 

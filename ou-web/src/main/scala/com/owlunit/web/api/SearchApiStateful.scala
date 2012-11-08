@@ -11,7 +11,7 @@ import com.owlunit.web.model.common.IiTagRecord
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  */
 
 object SearchApiStateful extends RestHelper with AppHelpers with Loggable {

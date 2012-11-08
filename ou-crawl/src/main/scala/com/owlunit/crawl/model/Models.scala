@@ -2,7 +2,7 @@ package com.owlunit.crawl.model
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  */
 
 case class PlainKeyword(name: String)

@@ -22,7 +22,7 @@ import com.mongodb.DBObject
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  */
 
 class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiTagRecord[User] with IiTag with Loggable {

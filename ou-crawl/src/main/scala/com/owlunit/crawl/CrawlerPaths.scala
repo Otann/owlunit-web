@@ -2,7 +2,7 @@ package com.owlunit.crawl
 
 /**
  * @author Anton Chebotaev
- *         Owls Proprietary
+ *         Copyright OwlUnit
  */
 trait CrawlerPaths {
 

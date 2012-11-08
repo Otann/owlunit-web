@@ -798,6 +798,23 @@ a.ii {
     -ms-filter: blur(2px);
 }
 
+a.ii.helper {
+    line-height: 14px;
+    font-size: 13px;
+    font-weight: bold;
+    text-decoration: none;
+    white-space:nowrap;
+
+    cursor: move;
+    display: inline-block;
+    padding: 3px 14px 4px 5px;
+    border-radius: 4px;
+
+    color: #fff;
+    background: url(/static/img/movie-tags-ii-drag-handle.png) 100% 50% no-repeat #333;
+    border: 1px solid #555;
+}
+
 /* ///////////// from bootstrap ///////////////// */
 
 [class^="icon-"],

@@ -72,9 +72,6 @@ class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiTa
       case m: Movie => 5.0
       case _ => 0.0
     }
-    logger.debug("Adding keyword to user")
-    logger.debug("user ii id is %s" format this.ii.id)
-    logger.debug("tag  ii id is %s" format tag.ii.id)
     this.ii.setItem(tag.ii, weight)
     this
   }

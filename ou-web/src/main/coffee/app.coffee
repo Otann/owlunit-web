@@ -37,6 +37,19 @@ OU.Areas =
 
 jQuery ->
 
+  # align profile image
+  sidebar_img = $('.sidebar-pic img')
+  profile_img = $('.picture-image')
+  i = new Image();
+  i.onload = ->
+    if this.height > this.width
+      sidebar_img.css("max-width", "40px")
+      profile_img.css("max-width", "150px")
+    else
+      sidebar_img.css("max-height", "40px")
+      profile_img.css("max-height", "150px")
+  i.src = sidebar_img.attr('src');
+
   # UI effects
   $('body').delegate('.ii', 'mouseover', ->
     thing = $(this)

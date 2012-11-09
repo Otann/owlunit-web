@@ -338,12 +338,20 @@ a.ii.helper {
       color: #737373;
     }
 
-    img {
+    .sidebar-pic {
+      display: inline-block;
       height: 40px;
       width: 40px;
+
+      overflow: hidden;
       vertical-align: middle;
       box-shadow: 0 1px 3px 0px #000;
       margin-right: 18px;
+      background: white;
+    }
+    img {
+//      max-height: 40px;
+//      max-width: 40px;
     }
   }
 
@@ -385,7 +393,24 @@ a.ii.helper {
       width: 195px;
     }
   }
+  .controls-wrap {
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 60px;
+    width: 100%;
 
+    li {
+      float: right;
+      margin-bottom: 20px;
+      margin-right: 20px;
+
+      .apply {
+        color: #fff;
+        text-shadow: #000 0 -2px 0;
+        font-weight: 500;
+      }
+    }
+  }
   .trashbin-wrap {
     padding-top: 1px;
 
@@ -543,27 +568,41 @@ a.ii.helper {
       background-url: url(/static/img/temp/wallpaper.png);
 
       border-bottom: 1px solid #e7eaea;
+      overflow: hidden;
+      background-position: center !important;
+      vertical-align: middle;
+//      visibility: hidden;
+    }
+    .wallpaper-image {
+      width: 100%;
+
     }
 
+
     .picture {
+
       width: 150px;
       height: 150px;
-
-      padding: 3px;
-
-      border: 1px solid #e7eaea;
-
       line-height: 150px;
-
-      vertical-align: middle;
-      text-align: center;
 
       margin-left: 18px;
       margin-top: -40px;
-
-      background: #fff;
-
       position: absolute;
+      border: 1px solid #e7eaea;
+
+      .border {
+
+        border: 3px solid #fff;
+        vertical-align: middle;
+        text-align: center;
+
+        .wrapper {
+          width: 150px;
+          height: 150px;
+          position: relative;
+          overflow: hidden;
+        }
+      }
     }
   }
 
@@ -944,33 +983,16 @@ a.ii.helper {
   background: rgba(255, 255, 255, 0.1) none;
 }
 
-.wallpaper {
-  overflow: hidden;
-  background-position: center !important;
-}
-.wallpaper-image {
-  width: 100%;
-}
-
 .content .profile-header .picture {
   width: inherit;
   height: inherit;
   line-height: 0;
 }
 
-.profile-header .picture img {
-  max-width: 150px;
-  max-height: 300px;
-}
-
-
 .movie-info:first-child {
   margin-top: 50px;
 }
 
-.wallpaper {
-  vertical-align: middle;
-}
 .blur {
   filter: blur(2px);
   -webkit-filter: blur(2px);

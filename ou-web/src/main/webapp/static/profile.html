@@ -10,9 +10,9 @@
 		<meta name="description" content="">
 
 		<meta name="viewport" content="width=device-width">
-		<link rel="stylesheet" href="/css/style.css">
+		<link rel="stylesheet" href="/static/css/style.css">
 
-		<script src="/js/libs/modernizr-2.5.2.min.js"></script>
+		<script src="/static/js/libs/modernizr-2.5.2.min.js"></script>
 	</head>
 	<body>
 	  <!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
@@ -39,7 +39,7 @@
 			</div>
 			
 			<div class="profile">
-				<img src="/img/temp/userpic.png" alt="" /><a href="#">Add to profile</a>
+				<img src="/static/img/temp/userpic.png" alt="" /><a href="#">Add to profile</a>
 			</div>
 			
 			<div class="landingarea">
@@ -66,12 +66,16 @@
 		<div class="content">
 
 			<div class="profile-header">
-				<div class="wallpaper"></div>
-				<div class="picture"><img src="/img/temp/av.png" alt="" /></div>				
+				<div class="wallpaper">
+                    <img class="wallpaper-image blur" src="/static/img/temp/wallpaper.png">
+				</div>
+				<div class="picture"><img src="/static/img/temp/av.png" alt="" /></div>
 
 				<div class="info-wrapper">
 					<div class="name">
-						Alexey Ivanovskii<span class="social"><a href="#"><img src="/img/icon-fb.png" alt="" /></a></span><span class="social"><a href="#"><img src="/img/icon-tw.png" alt="" /></a></span>
+						Alexey Ivanovskii
+                        <span class="social"><a href="#"><img src="/static/img/icon-fb.png" alt="" /></a></span>
+                        <span class="social"><a href="#"><img src="/static/img/icon-tw.png" alt="" /></a></span>
 					</div>
 					
 					<div class="friendship">

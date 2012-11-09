@@ -25,6 +25,14 @@ trait IiTag {
   protected def url = "/%s/%s" format (kind, objectId)
   protected def isOwned = User.currentUser.map(_.hasItem(objectId)).openOr(false)
 
+  private def iconTag(name: String) = <i class={ "icon-" + name }></i>
+  private def icon = kind match {
+    case "keyword"  => iconTag("lemon")
+    case "movie"    => iconTag("film")
+    case "person"   => iconTag("user")
+    case _          => Text("")
+  }
+
   def toJSON: JValue =(
     ("objectId" -> objectId)
       ~ ("name" -> name)
@@ -33,7 +41,7 @@ trait IiTag {
       ~ ("isOwned" -> isOwned)
     )
 
-  def snippet = ".ii *"   #> Text(name) &
+  def snippet = ".ii *"   #> (icon ++ Text(name)) &
     ".ii [data-objectid]" #> objectId &
     ".ii [data-kind]"     #> kind &
     ".ii [data-name]"     #> name &

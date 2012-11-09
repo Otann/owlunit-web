@@ -18,7 +18,7 @@ window.OU =
       opacity: 0.90
       cursorAt: { left: 5, top: 20 }
       distance: 5
-      appendTo: '#dropbar'
+      appendTo: 'body'
     DroppableAreas:
       accept: '.ii',
       hoverClass: 'ii-hovered'
@@ -75,6 +75,17 @@ class OU.IiView extends Backbone.View
     _.bindAll @ # bind 'this' in render to real 'this'
     @model.bind('change', @render) # call render on each change
 
+  icon: ->
+    kind = @model.get('kind')
+    if kind == 'keyword'
+      '<i class="icon-lemon"></i>'
+    else if kind == 'movie'
+      '<i class="icon-film"></i>'
+    else if kind == 'person'
+      '<i class="icon-user"></i>'
+    else
+      ''
+
   render: ->
     content = @model.get('name')
     $(@el)
@@ -84,7 +95,7 @@ class OU.IiView extends Backbone.View
       .attr('data-kind',     @model.get('kind'))
       .attr('data-name',     @model.get('name'))
 #      .attr('draggable',     true) # HTML 5 not integrated yet
-      .html(content);
+      .html(@icon() + content);
     this
 
 class OU.IiSet extends Backbone.Collection

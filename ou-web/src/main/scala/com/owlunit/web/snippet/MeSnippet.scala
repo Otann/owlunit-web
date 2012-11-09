@@ -42,13 +42,7 @@ object MeSnippet extends AppHelpers with Loggable {
       ".rating [style]"        #> ("width: %d%%" format 95)
 
   def render = User.currentUser match {
-    case Full(user) => {
-      logger.debug("Keywords: %s" format user.keywords)
-      logger.debug("Raw: %s" format user.ii.items.keys.filter(_.meta("ii.cinema.iiType") == "keyword").map(_.meta))
-      logger.debug("Movies: %s" format user.movies)
-      logger.debug("Raw: %s" format user.ii.items.keys.filter(_.meta("ii.cinema.iiType") == "movie").map(_.meta))
-      renderInfo(user) & renderItems(user)
-    }
+    case Full(user) => renderInfo(user) & renderItems(user)
     case _ => "*" #> (xhtml => xhtml)
   }
 }

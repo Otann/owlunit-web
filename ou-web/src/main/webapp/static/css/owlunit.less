@@ -176,9 +176,8 @@ span.ii, a.ii {
   i:before {
     font-size: 1.4em;
     position: relative;
-    margin-right: 10px;
-    top: 2px;
-    left: -4px;
+    top: 0.15em;
+    left: -0.3em;
   }
 }
 a.ii.helper {
@@ -218,9 +217,9 @@ a.ii.helper {
   i:before {
     font-size: 1.4em;
     position: relative;
-    padding-right: 10px;
-    top: 2px;
-    left: 4px;
+    padding-right: 3px;
+  //    top: 0.15em;
+  //    left: 0px;
   }
 
 }
@@ -250,21 +249,33 @@ a.ii.helper {
       background: #e7eaea;
       border: 0;
       border-radius: 3px;
+
       i:before {
         color: #c0c0c0;
       }
-    }
 
-    .ii:hover {
-      background: url(/static/img/movie-tags-ii-drag-handle.png) 100% 50% no-repeat #000;
-      color: #fff;
-      i:before {
-        color: #dbdbdb;
+      &:hover {
+        background: url(/static/img/movie-tags-ii-drag-handle.png) 100% 50% no-repeat #000;
+        color: #fff;
+        i:before {
+          color: #dbdbdb;
+        }
       }
     }
 
     .ii.highlighted {
       background: #a4dcde;
+      i:before {
+        color: #354144;
+      }
+
+      &:hover {
+        background: url(/static/img/movie-tags-ii-drag-handle.png) 100% 50% no-repeat #000;
+        color: #fff;
+        i:before {
+          color: #fff;
+        }
+      }
     }
   }
 }
@@ -350,8 +361,8 @@ a.ii.helper {
       background: white;
     }
     img {
-//      max-height: 40px;
-//      max-width: 40px;
+    //      max-height: 40px;
+    //      max-width: 40px;
     }
   }
 
@@ -404,7 +415,7 @@ a.ii.helper {
       margin-bottom: 20px;
       margin-right: 20px;
 
-      .apply {
+      #apply {
         color: #fff;
         text-shadow: #000 0 -2px 0;
         font-weight: 500;
@@ -571,7 +582,7 @@ a.ii.helper {
       overflow: hidden;
       background-position: center !important;
       vertical-align: middle;
-//      visibility: hidden;
+    //      visibility: hidden;
     }
     .wallpaper-image {
       width: 100%;
@@ -700,13 +711,18 @@ a.ii.helper {
     margin-left: 29px;
     margin-right: 40px;
 
+    .title {
+      i {
+        display: none;
+      }
+    }
+
     .poster {
       height: 50px;
     }
 
     .ratingbar {
       margin-bottom: 2px;
-
       .rating {
 
       }
@@ -781,24 +797,25 @@ a.ii.helper {
         }
       }
 
-    }
+      .ii {
+        float: left;
 
-    .ii {
-      float: left;
+        border: 0;
+        padding-left: 7px;
+        padding-top: 4px;
+        padding-bottom: 5px;
+        padding-right: 18px;
 
-      border: 0;
-      padding-left: 7px;
-      padding-top: 4px;
-      padding-bottom: 5px;
-      padding-right: 18px;
+        margin-bottom: 5px;
 
-      margin-bottom: 5px;
-
-      &:hover {
-        color: #fff;
-        background: url(/static/img/movie-title-ii-drag-handle.png) 100% 50% no-repeat #202020;
+        &:hover {
+          color: #fff;
+          background: url(/static/img/movie-title-ii-drag-handle.png) 100% 50% no-repeat #202020;
+        }
       }
+
     }
+
   }
 
 }
@@ -958,12 +975,17 @@ a.ii.helper {
   overflow-y: scroll;
 }
 
-.trashbin.ii-hovered {
+.trashbin.ii-hovered,
+.trashbin.ii-active {
   background-color: #211d34;
 }
-
-.profile.ii-hovered {
+.profile.ii-hovered,
+.profile.ii-active{
   background: #211d34 none;
+}
+#dropbar.ii-hovered,
+#dropbar.ii-active {
+  background: rgba(255, 255, 255, 0.1) none;
 }
 
 .userbar .landingarea input {
@@ -978,9 +1000,6 @@ a.ii.helper {
 
 #dropbar {
   min-height: 100px;
-}
-#dropbar.ii-hovered {
-  background: rgba(255, 255, 255, 0.1) none;
 }
 
 .content .profile-header .picture {

@@ -18,9 +18,9 @@ import xml.Text
 
 trait IiTag {
 
-  protected def kind: String
-  protected def name: String
-  protected def objectId: String
+  def kind: String
+  def name: String
+  def objectId: String
 
   protected def url = "/%s/%s" format (kind, objectId)
   protected def isOwned = User.currentUser.map(_.hasItem(objectId)).openOr(false)

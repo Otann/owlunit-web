@@ -64,8 +64,8 @@ object Site extends Locs {
     Menu.i("Login") / "login" >> RequireNotLoggedIn,
 
     // User space menus
-    Menu("Profile")         / "me"  >> TopAdminBar >> RequireLoggedIn,
-    Menu("Recommendations") / "recommendation",
+    Menu.i("Profile")         / "me"  >> TopAdminBar >> RequireLoggedIn,
+    Menu("Recommendations") / "recommendations" >> Hidden >> RequireLoggedIn,
 
     // Rewrite menus for objects
     Menu("Movie")           / "movie" >> Hidden,

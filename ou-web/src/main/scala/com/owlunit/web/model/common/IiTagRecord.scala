@@ -94,7 +94,7 @@ object IiTagRecord extends IiTagMeta {
     iiDao.search(metaGlobalId, id) match {
       case ii :: Nil => Full(IiTag(ii.meta(metaGlobalType), ii.meta(metaGlobalId), ii.meta(metaGlobalName)))
       case Nil => Empty
-      case _ => Failure("Multiple found", Empty, Empty)
+      case x => Failure("Multiple found: %s for id: %s" format (x, id), Empty, Empty)
     }
 
   }

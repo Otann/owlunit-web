@@ -91,7 +91,9 @@ jQuery ->
   OU.Areas.Dropbar.collection = new OU.IiSet()
   ((dp) ->
 
-
+    $(dp.selector).find('.ii').map((i, t) ->
+      dp.collection.add(new OU.Ii(tag: t))
+    )
     dp.view = new OU.IiSetView({
       el: $(dp.selector)[0]
       collection: dp.collection,
@@ -100,6 +102,8 @@ jQuery ->
     dp.view.render()
 
     dp.view.$el.droppable(
+      accept: '.ii'
+      activeClass: 'ii-active'
       hoverClass: 'ii-hovered',
       accept: (draggable) ->
         ii = new OU.Ii(tag: draggable);
@@ -112,6 +116,8 @@ jQuery ->
   )(OU.Areas.Dropbar)
 
   $(OU.Areas.Profile.selector).droppable(
+    accept: '.ii'
+    activeClass: 'ii-active'
     hoverClass: 'ii-hovered'
     drop: (event, ui) ->
       sample = new OU.Ii(tag: ui.draggable)
@@ -119,6 +125,8 @@ jQuery ->
   )
 
   $(OU.Areas.Trash.selector).droppable(
+    accept: '.ii'
+    activeClass: 'ii-active'
     hoverClass: 'ii-hovered',
     drop: (event, ui) ->
       isFromDropbar = !!ui.draggable.closest(OU.Areas.Dropbar.selector).length
@@ -131,4 +139,10 @@ jQuery ->
       if isFromProfile
         #TODO(Anton): implement trash-profile drop
         console.log('Check if and call server callback for removal from profile');
+  )
+
+  $('#apply').click(->
+    itemIds = OU.Areas.Dropbar.collection.models.map((x) -> x.get('objectId'))
+    parameter = itemIds.reduce((a, b) -> a + '+' + b)
+    document.location.href = '/recommendations?query=' + parameter;
   )

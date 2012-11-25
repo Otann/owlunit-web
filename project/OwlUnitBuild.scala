@@ -19,15 +19,15 @@ object OwlUnitBuild extends Build {
     id = "ou",
     base = file("."),
     settings = defaultSettings,
-    aggregate = Seq(crawl, web)
+    aggregate = Seq(mining, web)
   )
 
-  lazy val crawl = Project(
-    id = "ou-crawl",
-    base = file("ou-crawl"),
+  lazy val mining = Project(
+    id = "ou-mining",
+    base = file("ou-mining"),
     dependencies = Seq(web),
     settings = defaultSettings ++ Seq(
-      libraryDependencies ++= Seq(Dependency.slf4s, Dependency.logback, Dependency.iiCore),
+      libraryDependencies ++= Seq(Dependency.slf4s, Dependency.logback, Dependency.iiCore, Dependency.dispatch),
       mainClass in Compile := Some("com.owlunit.crawl.Crawler")
     ) ++ StartScriptPlugin.startScriptForClassesSettings
   )
@@ -101,8 +101,6 @@ object OwlUnitBuild extends Build {
 
     val lift = Seq(
       Dependency.liftWebKit,
-      Dependency.liftWizard,
-      Dependency.liftWidgets,
       Dependency.liftMongo,
       Dependency.liftJson,
       Dependency.dispatch,
@@ -115,7 +113,7 @@ object OwlUnitBuild extends Build {
       Dependency.jettyWebapp % "container",
       Dependency.jettyWebapp % "compile->default",
       Dependency.jettyServer % "compile->default",
-      Dependency.servlet % "compile->default"
+      Dependency.servlet     % "compile->default"
     )
 
   }
@@ -133,17 +131,15 @@ object OwlUnitBuild extends Build {
 
     val iiCore      = "com.owlunit"               %% "core"                % "0.3-SNAPSHOT"
 
-    val spring      = "org.springframework"       %  "spring-context"      % "3.0.5.RELEASE"
-    val dispatch    = "net.databinder"            %% "dispatch-http"       % "0.8.8"
     val jQuery      = "net.liftmodules"           %% "lift-jquery-module"  % (V.Lift + "-1.0")
 
     val liftWebKit  = "net.liftweb"               %% "lift-webkit"         % V.Lift    % "compile->default"
-    val liftWizard  = "net.liftweb"               %% "lift-wizard"         % V.Lift    % "compile->default"
-    val liftWidgets = "net.liftweb"               %% "lift-widgets"        % V.Lift    % "compile->default"
     val liftJson    = "net.liftweb"               %% "lift-json"           % V.Lift    % "compile->default"
     val liftMongo   = "net.liftweb"               %% "lift-mongodb-record" % V.Lift    % "compile->default"
+
     val rogue       = "com.foursquare"            %% "rogue"               % "1.1.6"   intransitive()
     val auth        = "net.liftmodules"           %% "mongoauth"           % (V.Lift + "-0.3")
+    val dispatch    = "net.databinder.dispatch"   %% "dispatch-core"       % "0.9.4"
 
     val jettyWebapp = "org.eclipse.jetty"         %  "jetty-webapp"        % V.Jetty
     val jettyServer = "org.eclipse.jetty"         %  "jetty-server"        % V.Jetty
@@ -152,7 +148,7 @@ object OwlUnitBuild extends Build {
     val logback     = "ch.qos.logback"            %  "logback-classic"     % "1.0.6"
     val slf4s       = "com.weiglewilczek.slf4s"   %% "slf4s"               % "1.0.7"
 
-    val specs2      = "org.specs2"                %% "specs2"               % "1.9"    % "test"
+    val specs2      = "org.specs2"                %% "specs2"              % "1.9"    % "test"
 
   }
 

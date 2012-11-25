@@ -24,6 +24,11 @@ trait AppHelpers {
       func(value).values.asInstanceOf[String]
     }
 
+  def extractInt(value: JValue, func: JValue => JValue): Box[Int] =
+    tryo {
+      func(value).values.asInstanceOf[scala.math.BigInt].toInt
+    }
+
   def JsLog(log: String):JsCmd = JsCmds.Run("console.log('%s');" format log.replace("\n", ""))
   def JsLog(logs: Any*):JsCmd = JsLog(logs.mkString(" "))
 

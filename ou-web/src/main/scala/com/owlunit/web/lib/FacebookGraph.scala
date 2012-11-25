@@ -11,6 +11,7 @@ import com.owlunit.web.config.Site
 
 import dispatch._
 import java.util
+import com.ning.http.client.{RequestBuilder, Request}
 
 /**
  * @author Anton Chebotaev
@@ -61,15 +62,12 @@ object FacebookGraph extends Factory with AppHelpers with Loggable {
    * Make a request and process the output with the given function
    * See: http://dispatch.databinder.net/Choose+an+Executor.html
    */
-  private[lib] def doRequest[T](req: Request)(func: String => Box[T]): Box[T] =
-    Http x (req as_str) {
-      case (400, _, _, out) => Failure(parseError(out()))
-      case (200, _, _, out) =>
-        val o = out()
-        logger.debug("output from facebook: " + o)
-        func(o)
-      case (status, b, c, out) =>
-        Failure("Unexpected status code: %s - %s".format(status, out()))
+  private[lib] def doRequest[T](req: RequestBuilder)(func: String => Box[T]): Box[T] =
+    Http(req OK as.String).either() match {
+      case Left(error) => Failure(parseError(error.toString))
+      case Right(response) =>
+        logger.debug("output from facebook: " + response)
+        func(response)
     }
 
   private def parseError(in: String): String = Helpers.tryo {
@@ -79,10 +77,10 @@ object FacebookGraph extends Factory with AppHelpers with Loggable {
   } openOr "Error parsing error: " + in
 
   // Make a request and parse the output to json
-  private[lib] def doReq(req: Request): Box[JValue] = doRequest(req) { out => Full(JsonParser.parse(out)) }
+  private[lib] def doReq(req: RequestBuilder): Box[JValue] = doRequest(req) { out => Full(JsonParser.parse(out)) }
 
   // Make a request with the access token as a parameter
-  private def doOauthReq(req: Request, token: AccessToken): Box[JValue] = doReq(req <<? Map("access_token" -> token.value))
+  private def doOauthReq(req: RequestBuilder, token: AccessToken): Box[JValue] = doReq(req <<? Map("access_token" -> token.value))
 
   // Request an access token from facebook for given code
   def accessToken(code: String): Box[AccessToken] = {

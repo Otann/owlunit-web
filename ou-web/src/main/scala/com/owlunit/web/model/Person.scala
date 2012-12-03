@@ -1,6 +1,6 @@
 package com.owlunit.web.model
 
-import common.{IiTagContract, IiTagRecord}
+import common.{IiTagMetaRecord, IiTagRecord}
 import net.liftweb.mongodb.record.field.ObjectIdPk
 import net.liftweb.mongodb.record.MongoMetaRecord
 import net.liftweb.record.field.StringField
@@ -38,7 +38,7 @@ class Person private() extends IiTagRecord[Person] with ObjectIdPk[Person] {
   object firstName extends StringField(this, "")
   object lastName extends StringField(this, "")
 
-  object photoUrl extends StringField(this, "http://placehold.it/130x200")
+  object photoUrl extends StringField(this, "http://fakeimg.pl/130x200")
 
   def fullName = "%s %s" format (firstName.is, lastName.is)
 
@@ -48,37 +48,16 @@ class Person private() extends IiTagRecord[Person] with ObjectIdPk[Person] {
 
 }
 
-object Person extends Person with MongoMetaRecord[Person] with IiTagContract[Person] with Loggable {
-
-  def iiDao = DependencyFactory.iiDao.vend
+object Person extends Person with IiTagMetaRecord[Person] with Loggable {
 
   ensureIndex((informationItemId.name -> 1), unique = true)
   ensureIndex((firstName.name -> 1))
   ensureIndex((lastName.name -> 1))
 
-  // Creation
-
-  override def createRecord = {
-    val result = super.createRecord
-    result.ii = iiDao.create
-    result
-  }
-
   // Helper for load methods to init Ii subsystem properly
 
-  private def loadIi(record: Person): Box[Person] = {
-    try {
-      record.ii = iiDao.load(record.informationItemId.is)
-      Full(record)
-    } catch {
-      case e: NotFoundException => Failure("Unable to find linked ii", Full(e), Empty)
-    }
-  }
 
   // Resolver methods
-
-  override def find(oid: ObjectId) = super.find(oid).flatMap(loadIi)
-  override def find(id: String) = if (ObjectId.isValid(id)) find(new ObjectId(id)) else Empty
 
   def findByName(firstName: String, lastName: String): Box[Person] = {
     val query = Person where (_.firstName eqs firstName) and (_.lastName eqs lastName)
@@ -92,15 +71,4 @@ object Person extends Person with MongoMetaRecord[Person] with IiTagContract[Per
     }
   }
 
-  protected[model] def loadFromIis(iis: Iterable[Ii]) = {
-    val iiMap = iis.map(item => (item.id -> item)).toMap
-    val query = Person where (_.informationItemId in iiMap.keys)
-
-    query.fetch().map(keyword => {
-      keyword.ii = iiMap(keyword.informationItemId.is)
-      keyword
-    })
-  }
-
-  def searchWithName(prefix: String) = loadFromIis(prefixSearch(prefix, iiDao))
 }

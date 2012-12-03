@@ -108,7 +108,7 @@ object FacebookGraph extends Factory with AppHelpers with Loggable {
   }
 
   def me(token: AccessToken): Box[JValue] = doOauthReq(
-    baseReq / "me?fields=username,first_name,last_name,picture.width(150),id,locale,cover,email,bio", token)
+    baseReq / "me" <<? Map("fields" -> "username,first_name,last_name,picture.width(150),id,locale,cover,email,bio"), token)
 
   def me(token: AccessToken, obj: String): Box[JValue] = doOauthReq(baseReq / "me" / obj, token)
 

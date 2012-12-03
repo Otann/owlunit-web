@@ -11,7 +11,7 @@ trait IiTagMeta {
 
   // Base prefix for global meta keys
   protected val metaGlobal = "ii.cinema"
-  protected def metaGlobalId   = metaGlobal + ".IiId"
+  protected def metaGlobalObjectId   = metaGlobal + ".IiId"
   protected def metaGlobalName = metaGlobal + ".iiName"
   protected def metaGlobalType = metaGlobal + ".iiType"
 

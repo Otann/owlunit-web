@@ -1,6 +1,6 @@
 package com.owlunit.web.model
 
-import common.{IiTagContract, IiTagRecord}
+import common.{IiTagMetaRecord, IiTagRecord}
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 
@@ -45,8 +45,8 @@ class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiTa
   object firstName extends StringField(this, "")
   object lastName extends StringField(this, "")
 
-  object cover extends StringField(this, "http://placehold.it/606x60")
-  object photo extends StringField(this, "http://placehold.it/150x150")
+  object cover extends StringField(this, "http://fakeimg.pl/606x60")
+  object photo extends StringField(this, "http://fakeimg.pl/150x150")
 
   object bio extends TextareaField(this, 0)
   object location extends StringField(this, 64)
@@ -76,7 +76,7 @@ class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiTa
     this
   }
 
-  def hasItem(iiId: String) = ii.items.keys.toSet.contains((item: Ii) => item.meta(metaGlobalId) == iiId)
+  def hasItem(iiId: String) = ii.items.keys.toSet.contains((item: Ii) => item.meta(metaGlobalObjectId) == iiId)
 
   // Helpers and tech
   ////////////////////////////////
@@ -87,7 +87,7 @@ class User private() extends ProtoAuthUser[User] with ObjectIdPk[User] with IiTa
 
 }
 
-object User extends User with ProtoAuthUserMeta[User] with IiTagContract[User] {
+object User extends User with ProtoAuthUserMeta[User] with IiTagMetaRecord[User] {
   import net.liftweb.mongodb.BsonDSL._
 
   // Mongo config
@@ -105,16 +105,8 @@ object User extends User with ProtoAuthUserMeta[User] with IiTagContract[User] {
   // IiDao dependency
   ////////////////////////////////
 
-  def iiDao = DependencyFactory.iiDao.vend
-
   // Creation and fetching
   ////////////////////////////////
-
-  override def createRecord = {
-    val result = super.createRecord
-    result.ii = iiDao.create
-    result
-  }
 
   override def fromDBObject(dbo: DBObject) = {
     val result = super.fromDBObject(dbo)
@@ -139,14 +131,6 @@ object User extends User with ProtoAuthUserMeta[User] with IiTagContract[User] {
   //TODO(Anton): refactor
   def findByEmail(in: String): Box[User] = find(email.name, in)
   def findByUsername(in: String): Box[User] = find(username.name, in)
-
-  protected[model] def loadFromIis(iis: Iterable[Ii]) = {
-    val iiMap = iis.map(item => (item.id -> item)).toMap
-    val query = User where (_.informationItemId in iiMap.keys)
-    query.fetch()
-  }
-
-  def searchWithName(prefix: String) = loadFromIis(prefixSearch(prefix, iiDao))
 
   // Tech stuff
   ////////////////////////////////

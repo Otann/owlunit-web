@@ -1,6 +1,6 @@
 package com.owlunit.web.model
 
-import common.{IiTagContract, IiTagRecord}
+import common.{IiTagMetaRecord, IiTagRecord}
 import net.liftweb.record.field._
 import net.liftweb.mongodb.record.MongoMetaRecord
 import net.liftweb.mongodb.record.field._
@@ -115,40 +115,11 @@ class Movie private() extends IiTagRecord[Movie] with ObjectIdPk[Movie] with Log
 
 }
 
-object Movie extends Movie with MongoMetaRecord[Movie] with IiTagContract[Movie] with Loggable {
+object Movie extends Movie with IiTagMetaRecord[Movie] with Loggable {
   import mongodb.BsonDSL._
-
-  def iiDao = DependencyFactory.iiDao.vend
 
   ensureIndex((informationItemId.name -> 1), unique = true)
   ensureIndex((simpleName.name -> 1), unique = true)
-
-  // Creation
-
-  override def createRecord = {
-    val result = super.createRecord
-    result.ii = iiDao.create
-    result
-  }
-
-  override def fromDBObject(dbo: DBObject) = {
-    val result = super.fromDBObject(dbo)
-    result.ii = iiDao.load(result.informationItemId.is)
-    result
-  }
-
-  // Helper for load methods to init Ii subsystem properly
-
-  // Resolver methods
-
-  protected[model] def loadFromIis(iis: Iterable[Ii]) = {
-    val iiMap = iis.map(ii => (ii.id -> ii)).toMap
-    val query = Movie where (_.informationItemId in iiMap.keys)
-    query.fetch().map(record => {
-      record.ii = iiMap(record.informationItemId.is)
-      record
-    })
-  }
 
   def findBySimpleName(name: String, year: Int): Box[Movie] = try {
     val query = Movie where (_.simpleName eqs simplifyComplexName(name, year))
@@ -162,13 +133,6 @@ object Movie extends Movie with MongoMetaRecord[Movie] with IiTagContract[Movie]
     }
   } catch {
     case ex: Throwable => Failure("Can't find movie by id (%s)" format id.is, Full(ex), Empty)
-  }
-
-
-
-  def searchWithName(prefix: String) = {
-    logger.debug("Searching %s prefix in %s" format (prefix, metaName))
-    loadFromIis(prefixSearch(prefix, iiDao))
   }
 
 }

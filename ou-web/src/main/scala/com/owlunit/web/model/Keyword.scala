@@ -1,6 +1,6 @@
 package com.owlunit.web.model
 
-import common.{IiTagContract, IiTagRecord}
+import common.{IiTagMetaRecord, IiTagRecord}
 import net.liftweb.mongodb.record.field.ObjectIdPk
 import com.owlunit.core.ii.mutable.Ii
 import net.liftweb.util.Helpers._
@@ -12,6 +12,7 @@ import com.owlunit.core.ii.NotFoundException
 import net.liftweb.common._
 import com.foursquare.rogue.Rogue._
 import net.liftweb.mongodb
+import mongodb.BsonDSL._
 import net.liftweb.record.field.StringField
 import com.mongodb.DBObject
 
@@ -26,6 +27,8 @@ class Keyword private() extends IiTagRecord[Keyword] with ObjectIdPk[Keyword] wi
   def meta = Keyword
 
   // for IiTagRecord
+//  def ii = informationItem
+//  def setIi(ii: Ii) { informationItem = ii }
   var ii: Ii = null
 
   override def kind = "keyword"
@@ -39,35 +42,10 @@ class Keyword private() extends IiTagRecord[Keyword] with ObjectIdPk[Keyword] wi
 
 }
 
-object Keyword extends Keyword with MongoMetaRecord[Keyword] with IiTagContract[Keyword] with Loggable {
-  import mongodb.BsonDSL._
-
-  def iiDao = DependencyFactory.iiDao.vend
+object Keyword extends Keyword with IiTagMetaRecord[Keyword] with Loggable {
 
   ensureIndex((informationItemId.name -> 1), unique = true)
   ensureIndex((nameField.name -> 1)) //TODO(Anton): unique?
-
-  // Creation and Fetching
-
-  override def createRecord = {
-    val result = super.createRecord
-    result.ii = iiDao.create
-    result
-  }
-
-  override def fromDBObject(dbo: DBObject) = {
-    val result = super.fromDBObject(dbo)
-    result.ii = iiDao.load(result.informationItemId.is)
-    result
-  }
-
-  // Resolver methods
-
-  protected[model] def loadFromIis(iis: Iterable[Ii]) = {
-    val iiMap = iis.map(ii => (ii.id -> ii)).toMap
-    val query = Keyword where (_.informationItemId in iiMap.keys)
-    query.fetch()
-  }
 
   def findByName(name: String): Box[Keyword] = {
     val query = Keyword where (_.nameField eqs name)
@@ -80,7 +58,5 @@ object Keyword extends Keyword with MongoMetaRecord[Keyword] with IiTagContract[
       }
     }
   }
-
-  def searchWithName(prefix: String) = loadFromIis(prefixSearch(prefix, iiDao))
 
 }

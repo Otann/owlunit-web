@@ -27,11 +27,11 @@ trait IiTagRecord[OwnerType <: IiTagRecord[OwnerType]] extends MongoRecord[Owner
 
   // Item has to define and initialize it's own property
   def ii: Ii
+  protected[common] def ii_=(ii: Ii)
 
   // Field for storing Ii id in MongoDb
-   object informationItemId extends LongField(this)
-
-
+  object informationItemId extends LongField(this)
+  object tmdbId extends LongField(this)
 
   // Methods for save, index and search
 
@@ -41,12 +41,12 @@ trait IiTagRecord[OwnerType <: IiTagRecord[OwnerType]] extends MongoRecord[Owner
   override def save = {
 
     // for global search
-    ii.setMeta(metaGlobalId, this.id.toString)
-    ii.setMeta(metaGlobalName, name)
     ii.setMeta(metaGlobalType, kind)
+    ii.setMeta(metaGlobalObjectId, id.toString)
+    ii.setMeta(metaGlobalName, name, isIndexedFulltext = true)
 
     // for local search (only within type)
-    ii.setMeta(metaName, name)
+    ii.setMeta(metaName, name, isIndexedFulltext = true)
     ii.save
 
     informationItemId(ii.id)
@@ -78,7 +78,7 @@ object IiTagRecord extends IiTagMeta {
 
   def search(query: String): Iterable[IiTag] = {
     val iis = iiDao.search(metaGlobalName, buildQuery(query))
-    for (ii <- iis) yield IiTag(ii.meta(metaGlobalType), ii.meta(metaGlobalId), ii.meta(metaGlobalName))
+    for (ii <- iis) yield IiTag(ii.meta(metaGlobalType), ii.meta(metaGlobalObjectId), ii.meta(metaGlobalName))
   }
 
   def load(tag: IiTag): Box[IiTagRecord[_]] = tag match {
@@ -91,8 +91,8 @@ object IiTagRecord extends IiTagMeta {
   }
 
   def load(id: String): Box[IiTag] = {
-    iiDao.search(metaGlobalId, id) match {
-      case ii :: Nil => Full(IiTag(ii.meta(metaGlobalType), ii.meta(metaGlobalId), ii.meta(metaGlobalName)))
+    iiDao.search(metaGlobalObjectId, id) match {
+      case ii :: Nil => Full(IiTag(ii.meta(metaGlobalType), ii.meta(metaGlobalObjectId), ii.meta(metaGlobalName)))
       case Nil => Empty
       case x => Failure("Multiple found: %s for id: %s" format (x, id), Empty, Empty)
     }

@@ -4,12 +4,19 @@ import scala.xml._
 
 import net.liftweb._
 import common._
+import common.Full
 import http.js.{JsCmds, JsCmd}
 import http.{SHtml, S}
 import json._
 import sitemap.Menu
 import util.Helpers._
+import com.ning.http.client.RequestBuilder
+import dispatch._
+import scala.Left
+import scala.Right
+import java.net.ConnectException
 
+object AppHelpers extends AppHelpers
 
 trait AppHelpers {
 
@@ -32,4 +39,14 @@ trait AppHelpers {
   def JsLog(log: String):JsCmd = JsCmds.Run("console.log('%s');" format log.replace("\n", ""))
   def JsLog(logs: Any*):JsCmd = JsLog(logs.mkString(" "))
 
+  protected def requestJSON(req: RequestBuilder): Box[JValue] =
+    Http(req OK as.String).either() match {
+      case Right(value)    =>           Full(JsonParser.parse(value))
+      case Left(StatusCode(404))     => Failure("Face from from %s" format req, Empty, Empty)
+      case Left(x: ConnectException) => Failure("Connection Expection: %s" format x, Empty, Empty)
+      case Left(throwable) =>           Failure("Bad answer from %s" format req, Full(throwable), Empty)
+    }
+
 }
+
+

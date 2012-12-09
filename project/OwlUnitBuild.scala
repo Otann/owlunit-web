@@ -27,8 +27,14 @@ object OwlUnitBuild extends Build {
     base = file("ou-mining"),
     dependencies = Seq(web),
     settings = defaultSettings ++ Seq(
-      libraryDependencies ++= Seq(Dependency.slf4s, Dependency.logback, Dependency.iiCore, Dependency.dispatch),
-      mainClass in Compile := Some("com.owlunit.crawl.Crawler")
+      libraryDependencies ++= Seq(
+        Dependency.slf4s,
+        Dependency.logback,
+        Dependency.iiCore,
+        Dependency.dispatch,
+        Dependency.specs2
+      ),
+      mainClass in Compile := Some("com.owlunit.mining.crawl.Crawler")
     ) ++ StartScriptPlugin.startScriptForClassesSettings
   )
 

@@ -12,8 +12,6 @@ object DependencyFactory extends Factory {
   val fbApiKey = "327849237274882"
   val fbSecret = "f9e26660713c325586a957457e927b8d"
 
-  val localMode = true // sys.env.getOrElse("OWL_DEPLOY_LOCAL", "false").toBoolean
-
   implicit object iiDao extends FactoryMaker[IiDao](IiDaoConfig.dao)
 
   /**

@@ -14,7 +14,6 @@ object MongoConfig {
 
   def init() {
 
-    // On Mac OS X: mongod --dbpath=/data/db/
     val server = new ServerAddress(
        Props.get("owlunit.mongo.host", "127.0.0.1"),
        Props.getInt("owlunit.mongo.port", 27017)

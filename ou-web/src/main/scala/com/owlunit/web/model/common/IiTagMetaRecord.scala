@@ -15,7 +15,6 @@ import com.foursquare.rogue.Rogue._
 import com.owlunit.core.ii.NotFoundException
 import net.liftweb.common.Full
 
-
 /**
  * @author Anton Chebotaev
  *         Copyright OwlUnit
@@ -23,11 +22,20 @@ import net.liftweb.common.Full
 trait IiTagMetaRecord[OwnerType <: IiTagRecord[OwnerType]] extends MongoMetaRecord[OwnerType] with Loggable {
   self: OwnerType =>
 
+  ensureIndex((this.informationItemId.name -> 1), unique = true)
+  ensureIndex((this.tmdbId.name -> 1),            unique = true)
+
   def iiDao = DependencyFactory.iiDao.vend
 
-  override def createRecord = {
+  override def createRecord: OwnerType = {
     val result = super.createRecord
     result.ii = iiDao.create
+    result
+  }
+
+  def createRecord(tmdbId: Long): OwnerType = {
+    val result = this.createRecord
+    result.tmdbId(tmdbId)
     result
   }
 
@@ -66,6 +74,6 @@ trait IiTagMetaRecord[OwnerType <: IiTagRecord[OwnerType]] extends MongoMetaReco
     }
   }
 
-  protected[model] def prefixSearch(prefix: String) = iiDao.search(metaName, "%s*" format prefix)
+  protected[model] def prefixSearch(prefix: String) = iiDao.search(this.metaName, "%s*" format prefix)
 
 }

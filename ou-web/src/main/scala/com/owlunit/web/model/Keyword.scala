@@ -27,10 +27,7 @@ class Keyword private() extends IiTagRecord[Keyword] with ObjectIdPk[Keyword] wi
   def meta = Keyword
 
   // for IiTagRecord
-//  def ii = informationItem
-//  def setIi(ii: Ii) { informationItem = ii }
-  var ii: Ii = null
-
+  override var ii: Ii = null
   override def kind = "keyword"
   override def name = this.nameField.is
 
@@ -44,7 +41,6 @@ class Keyword private() extends IiTagRecord[Keyword] with ObjectIdPk[Keyword] wi
 
 object Keyword extends Keyword with IiTagMetaRecord[Keyword] with Loggable {
 
-  ensureIndex((informationItemId.name -> 1), unique = true)
   ensureIndex((nameField.name -> 1)) //TODO(Anton): unique?
 
   def findByName(name: String): Box[Keyword] = {

@@ -20,6 +20,7 @@ class Boot {
 
   def boot() {
 
+    TMDBConfig.init()
     MongoConfig.init()
     DependencyFactory.init()
     LiftRules.unloadHooks.append(() => IiDaoConfig.shutdown())

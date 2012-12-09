@@ -2,12 +2,13 @@ package com.owlunit.web.model.common
 
 import com.owlunit.core.ii.mutable.{Ii, IiDao}
 import com.owlunit.web.lib.ui.IiTag
-import net.liftweb.common.{Failure, Empty, Full, Box}
+import net.liftweb.common._
 import com.owlunit.web.config.DependencyFactory
 import com.owlunit.web.model.{User, Keyword, Person, Movie}
 import org.bson.types.ObjectId
 import net.liftweb.record.field.LongField
 import net.liftweb.mongodb.record.MongoRecord
+import net.liftweb.common.Full
 
 /**
  * @author Anton Chebotaev
@@ -19,7 +20,7 @@ import net.liftweb.mongodb.record.MongoRecord
  *
  */
 
-trait IiTagRecord[OwnerType <: IiTagRecord[OwnerType]] extends MongoRecord[OwnerType] with IiTag with IiTagMeta {
+trait IiTagRecord[OwnerType <: IiTagRecord[OwnerType]] extends MongoRecord[OwnerType] with IiTag with IiTagMeta with Loggable {
   self: OwnerType =>
 
   // Methods required by representation (using mongo ids for now)
@@ -38,19 +39,22 @@ trait IiTagRecord[OwnerType <: IiTagRecord[OwnerType]] extends MongoRecord[Owner
   override protected def metaBase = super.metaBase + "." + this.kind
   protected def metaName = metaBase + ".Name"
 
-  override def save = {
+  override def save = this.save(false)
+
+  override def save(safe: Boolean) = {
 
     // for global search
-    ii.setMeta(metaGlobalType, kind)
+    ii.setMeta(metaGlobalType,     kind)
     ii.setMeta(metaGlobalObjectId, id.toString)
-    ii.setMeta(metaGlobalName, name, isIndexedFulltext = true)
+    ii.setMeta(metaGlobalName,     name, isIndexedFulltext = true)
 
     // for local search (only within type)
     ii.setMeta(metaName, name, isIndexedFulltext = true)
     ii.save
 
     informationItemId(ii.id)
-    super.save
+
+    super.save(safe)
   }
 
   protected def prefixSearch(prefix: String, dao: IiDao) = dao.search(metaName, "%s*" format prefix)

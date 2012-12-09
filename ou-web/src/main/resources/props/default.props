@@ -2,6 +2,8 @@ facebook.key=457979400920082
 facebook.secret=56d403a35b57b61ea45c97daf04904f7
 facebook.callbackurl=/api/facebook/auth
 
+tmdb.key=3fa1f7d3e71e238578688bbd05a6d566
+
 owlunit.neo4j.remote=false
 owlunit.neo4j.path=/usr/local/var/neo4j/
 owlunit.neo4j.host=http://04e118aa4.hosted.neo4j.org:7034/db/data/

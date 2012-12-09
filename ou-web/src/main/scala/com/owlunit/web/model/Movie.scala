@@ -1,17 +1,12 @@
 package com.owlunit.web.model
 
-import common.{IiTagMetaRecord, IiTagRecord}
 import net.liftweb.record.field._
-import net.liftweb.mongodb.record.MongoMetaRecord
 import net.liftweb.mongodb.record.field._
-import net.liftweb.util.Helpers._
 import net.liftweb.util.FieldContainer
-import com.owlunit.core.ii.mutable.Ii
-import com.owlunit.web.config.DependencyFactory
 import net.liftweb.common._
-import net.liftweb.mongodb
-import com.foursquare.rogue.Rogue._
-import com.mongodb.DBObject
+
+import com.owlunit.core.ii.mutable.Ii
+import common.{IiTagMetaRecord, IiTagRecord}
 
 /**
  * @author Anton Chebotaev
@@ -27,112 +22,77 @@ class Movie private() extends IiTagRecord[Movie] with ObjectIdPk[Movie] with Log
   var ii: Ii = null
 
   override def kind = "movie"
-  override def name = this.nameField.is
+  override def name = this.title.is
 
   // Fields
 
-  object nameField extends StringField(this, "")
-  object yearField extends IntField(this, 0)
+  object title extends StringField(this, "")
+  object release extends DateField(this)
 
-  protected object simpleName extends StringField(this, "")
-  protected def simplifiedName = simplifyComplexName(nameField.is, yearField.is)
-
-  object posterUrl extends StringField(this, "/static/img/no_poster.png")
+  object posterUrl   extends StringField(this, "/static/img/no_poster.png")
   object backdropUrl extends StringField(this, "/static/img/no_backdrop.png")
 
-  object tagline extends StringField(this, "Tagline")
+  object backdropUrls extends MongoListField[Movie, String](this)
+
+  object trailer extends StringField(this, "")
+  object tagline extends StringField(this, "")
+  object overview extends StringField(this, "")
+
+  object crew extends BsonRecordListField(this, CrewItem)
+  object cast extends BsonRecordListField(this, CastItem)
 
   // Data manipulation
 
   // helper to define weight values
   private def weight(obj: Any) = obj match {
-    case k: Keyword =>     2.0
-    case Role.Actor =>     5.0
-    case Role.Director => 10.0
-    case Role.Producer => 10.0
-    case _ =>              1.0
+    case k: Keyword =>    2.0
+//    case Job.Actor =>     5.0
+//    case Job.Director => 10.0
+//    case Job.Producer => 10.0
+    case _ =>             1.0
   }
 
   // keywords are easy, just set weight
 
   def keywords = Keyword.loadFromIis(ii.items.keys)
 
-  def addKeyword(keyword: Keyword) = {
-    this.ii.setItem(keyword.ii, weight(keyword))
-    this
-  }
+  def addKeyword(keyword: Keyword) = this.ii.setItem(keyword.ii, weight(keyword))
+  def removeKeyword(keyword: Keyword) = this.ii.removeItem(keyword.ii)
 
-  def removeKeyword(keyword: Keyword) = {
-    this.ii.setItem(keyword.ii, 0)
-    this
-  }
-
-  // persons can be attach with multiple roles, store it in mongo
-
-  // List of CrewItem(Role, Person)
-  protected object personsObject extends BsonRecordListField(this, CrewItem)
-
-  def allPersons = Person.loadFromIis(ii.items.keys)
-
-  def persons: Map[Role.Role, Seq[Person]] = {
-    allPersons.map(p => logger.debug(p.fullName))
-    val personsMap = allPersons.map(person => person.id.is -> person).toMap
-
-    val result = for (role <- Role.values) yield role -> personsObject.is.filter(_.role.is == role).map(po => personsMap(po.person.is))
-    result.toMap
-  }
-
-  def addPerson(person: Person, role: Role.Role) = {
-    val item = CrewItem.createRecord.person(person.id.is).role(role)
-
-    // check that if it is not there yet
-    if (!personsObject.is.contains(item)) {
-      personsObject(item :: personsObject.is)
-      val actualWeight = ii.items.getOrElse(person.ii, 0.0)
-      ii.setItem(person.ii, actualWeight + weight(role))
+  def countUnique[T](map: collection.mutable.Map[T, Long], list: List[T]) {
+    for (next <- list) {
+      map.getOrElseUpdate(next, 0)
+      map(next) += 1
     }
-
-    this
   }
-
-  def removePerson(person: Person, role: Role.Role) = {
-    val item = CrewItem.createRecord.person(person.id.is).role(role)
-    personsObject(personsObject.is.filterNot(_ == item))
-    this
-  }
-
-  // Persistence
 
   override def save = {
-    simpleName(simplifiedName)
+    val persons = collection.mutable.Map[Ii, Long]()
+    countUnique(persons, crew.is.map(_.person.obj).flatten.map(_.ii))
+    countUnique(persons, cast.is.map(_.person.obj).flatten.map(_.ii))
+
+    for (existing <- ii.items.keys.filter(_.meta.getOrElse("king", "") == "person")) {
+      if (!persons.contains(existing)) {
+        ii.removeItem(existing)
+      }
+    }
+
+    for ((current, value) <- persons) {
+      ii.setItem(current, value)
+    }
+
     super.save
   }
 
   // Field Containers
 
-  def createFields = new FieldContainer { def allFields = List(nameField, yearField, posterUrl) }
-  def editFields =   new FieldContainer { def allFields = List(nameField, yearField, posterUrl) }
+  def createFields = new FieldContainer { def allFields = List(title, release, posterUrl) }
+  def editFields =   new FieldContainer { def allFields = List(title, release, posterUrl) }
 
 }
 
 object Movie extends Movie with IiTagMetaRecord[Movie] with Loggable {
-  import mongodb.BsonDSL._
 
-  ensureIndex((informationItemId.name -> 1), unique = true)
-  ensureIndex((simpleName.name -> 1), unique = true)
-
-  def findBySimpleName(name: String, year: Int): Box[Movie] = try {
-    val query = Movie where (_.simpleName eqs simplifyComplexName(name, year))
-    query.fetch() match {
-      case Nil => Empty
-      case item :: Nil => Full(item)
-      case item :: _ => {
-        logger.error("Multiple movies found with same simplename %s" format simpleName)
-        Full(item)
-      }
-    }
-  } catch {
-    case ex: Throwable => Failure("Can't find movie by id (%s)" format id.is, Full(ex), Empty)
-  }
+  def findBySimpleName(name: String, year: Int): Box[Movie] = Empty
 
 }

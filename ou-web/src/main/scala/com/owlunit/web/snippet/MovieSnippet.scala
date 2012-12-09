@@ -5,7 +5,7 @@ import net.liftweb.util.Helpers._
 import com.owlunit.web.lib.AppHelpers
 import net.liftweb.common.{Loggable, Full, Box}
 import net.liftweb.http.S
-import com.foursquare.rogue.Rogue._
+import com.owlunit.web.config.TMDBConfig
 
 
 /**
@@ -27,26 +27,26 @@ object MovieSnippet extends AppHelpers with Loggable {
       "ul *" #> ("li *" #> movie.keywords.map(_.snippet))
   }
 
-  def crew(personsMap: Map[Role.Role, Seq[Person]], caption: String, role: Role.Role) = {
-    val persons = personsMap(role)
+  def crew(persons: Seq[Person], caption: String) = {
     ".key *" #> (".caption *" #> caption & ".counter *" #> persons.length) &
       "ul *" #> ("li *" #> persons.map(_.snippet))
   }
 
   def allCrew(movie: Movie) = {
-    val persons = movie.persons
+
+    logger.debug("crew: %s" format movie.cast.is.map(_.person.obj))
+
     List(
-      crew(persons, "Actor", Role.Actor),
-      crew(persons, "Director", Role.Director),
-      crew(persons, "Producer", Role.Producer)
+      crew(movie.cast.is.map(_.person.obj).flatten, "Cast"),
+      crew(movie.crew.is.map(_.person.obj).flatten, "Crew")
     )
   }
 
   def header(movie: Movie) =
     ".name *"               #> movie.snippet &
-      ".year *"             #> movie.yearField.is &
-      ".picture *"          #> ("* [src]" #> movie.posterUrl) &
-      ".wallpaper [style]"  #> ("background: url(%s);" format movie.backdropUrl.is) &
+      ".year *"             #> movie.release.is.toString &
+      ".picture *"          #> ("* [src]" #> (TMDBConfig.baseUrl + "w154" + movie.posterUrl.is)) &
+      ".wallpaper [style]"  #> ("background: url(%s);" format (TMDBConfig.baseUrl + "w1280" + movie.backdropUrl.is)) &
       ".occupation *"       #> movie.tagline.is &
       ".rating [style]"     #> "width: 95%"
 

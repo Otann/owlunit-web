@@ -28,8 +28,8 @@ trait ModelHelper {
 
   def createRandomMovie = {
     val movie = Movie.createRecord
-    movie.nameField(randomString)
-    movie.yearField(2000)
+    movie.title(randomString)
+//    movie.release(2000)
     movie
   }
 
@@ -51,8 +51,7 @@ trait ModelHelper {
 
   def createRandomPerson = {
     val person = Person.createRecord
-    person.firstName(randomString)
-    person.lastName(randomString)
+    person.fullName(randomString)
     person
   }
 

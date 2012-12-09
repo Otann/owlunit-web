@@ -12,10 +12,8 @@ import net.liftweb.util.Helpers._
 import net.liftweb.common.Loggable
 import net.liftmodules.mongoauth._
 import net.liftmodules.mongoauth.model._
-import com.foursquare.rogue.Rogue._
 
 import com.owlunit.core.ii.mutable.Ii
-import com.owlunit.web.config.DependencyFactory
 import com.owlunit.web.lib.ui.IiTag
 import net.liftweb.json.JsonAST.JValue
 import com.mongodb.DBObject
@@ -119,7 +117,7 @@ object User extends User with ProtoAuthUserMeta[User] with IiTagMetaRecord[User]
     createRecord
       .facebookId((json \ "id").values.asInstanceOf[String].toInt)
       .firstName((json \ "first_name").values.asInstanceOf[String])
-      .firstName((json \ "last_name").values.asInstanceOf[String])
+      .lastName((json \ "last_name").values.asInstanceOf[String])
       .cover((json \ "cover" \ "source").values.asInstanceOf[String])
       .email((json \ "email").values.asInstanceOf[String])
   }

@@ -1,8 +1,8 @@
 package com.owlunit.web.model
 
-import common.{IiTagMetaRecord, IiTagRecord}
+import common.{TmdbMetaRecord, TmdbRecord, IiTagMetaRecord, IiTagRecord}
 import net.liftweb.mongodb.record.field.ObjectIdPk
-import net.liftweb.record.field.StringField
+import net.liftweb.record.field.{LongField, StringField}
 import net.liftweb.util.FieldContainer
 import com.owlunit.core.ii.mutable.Ii
 import net.liftweb.common._
@@ -17,7 +17,7 @@ import net.liftweb.util.Helpers._
  */
 
 
-class Person private() extends IiTagRecord[Person] with ObjectIdPk[Person] {
+class Person private() extends TmdbRecord[Person] with ObjectIdPk[Person] {
 
   // for MongoRecord
   def meta = Person
@@ -42,7 +42,7 @@ class Person private() extends IiTagRecord[Person] with ObjectIdPk[Person] {
 
 }
 
-object Person extends Person with IiTagMetaRecord[Person] with Loggable {
+object Person extends Person with TmdbMetaRecord[Person] with Loggable {
 
   ensureIndex((fullName.name -> 1))
 

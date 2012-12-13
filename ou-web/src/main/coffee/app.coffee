@@ -64,10 +64,10 @@ jQuery ->
       )
   )
 
-  $('#profile').find('img').hover(
-    () -> $(this).html("Go to profile"),
-    () -> $(this).html("Add to profile")
-  )
+#  $('#profile').find('img').hover(
+#    () -> $(this).html("Go to profile"),
+#    () -> $(this).html("Add to profile")
+#  )
 
   ((qs) ->
 

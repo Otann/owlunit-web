@@ -32,12 +32,11 @@ trait IiTagRecord[OwnerType <: IiTagRecord[OwnerType]] extends MongoRecord[Owner
 
   // Field for storing Ii id in MongoDb
   object informationItemId extends LongField(this)
-  object tmdbId extends LongField(this)
 
   // Methods for save, index and search
 
   override protected def metaBase = super.metaBase + "." + this.kind
-  protected def metaName = metaBase + ".Name"
+  def metaName = metaBase + ".Name"
 
   override def save = this.save(false)
 
@@ -95,7 +94,7 @@ object IiTagRecord extends IiTagMeta {
   }
 
   def load(id: String): Box[IiTag] = {
-    iiDao.search(metaGlobalObjectId, id) match {
+    iiDao.load(metaGlobalObjectId, id) match {
       case ii :: Nil => Full(IiTag(ii.meta(metaGlobalType), ii.meta(metaGlobalObjectId), ii.meta(metaGlobalName)))
       case Nil => Empty
       case x => Failure("Multiple found: %s for id: %s" format (x, id), Empty, Empty)

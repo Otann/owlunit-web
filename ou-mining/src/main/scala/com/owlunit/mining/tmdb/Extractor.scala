@@ -7,7 +7,7 @@ import net.liftweb.common.Full
 import net.liftweb.json.JsonAST.JValue
 import java.util.Date
 import net.liftweb.mongodb.record.MongoMetaRecord
-import com.owlunit.web.model.common.{IiTagRecord, IiTagMetaRecord}
+import common.{TmdbMetaRecord, IiTagRecord, IiTagMetaRecord}
 import net.liftweb.json._
 import net.liftweb.common.Full
 import net.liftweb.util.Helpers._
@@ -103,12 +103,12 @@ object Extractor extends Loggable {
     }
   }
 
-  private def extractRecord[T <: IiTagRecord[T]](meta: IiTagMetaRecord[T])(raw: JValue)(updater: T => T): Box[T] = for {
+  private def extractRecord[T <: IiTagRecord[T]](meta: TmdbMetaRecord[T])(raw: JValue)(updater: T => T): Box[T] = for {
     tmdbId <- extract[BigInt](raw)(_ \ "id").map(_.longValue()) //?
   } yield {
     val result: T = meta.findByTMDB(tmdbId) match {
       case Full(record) => record
-      case _            => meta.createRecord(tmdbId)
+      case _            => meta.createTmdbRecord(tmdbId)
     }
     updater(result)
   }

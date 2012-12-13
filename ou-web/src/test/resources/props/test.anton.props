@@ -1,8 +1,5 @@
 owlunit.neo4j.remote=false
 owlunit.neo4j.path=/tmp/owlunit/neo4j/
-owlunit.neo4j.host=http://localhost:7474/db/data
-owlunit.neo4j.username=
-owlunit.neo4j.password=
 
 owlunit.mongo.db=owltest
 owlunit.mongo.host=127.0.0.1

@@ -6,14 +6,15 @@ import net.liftweb.util.FieldContainer
 import net.liftweb.common._
 
 import com.owlunit.core.ii.mutable.Ii
-import common.{IiTagMetaRecord, IiTagRecord}
+import common.{TmdbMetaRecord, TmdbRecord, IiTagMetaRecord, IiTagRecord}
+import net.liftweb.mongodb.BsonDSL._
 
 /**
  * @author Anton Chebotaev
  *         Copyright OwlUnit
  */
 
-class Movie private() extends IiTagRecord[Movie] with ObjectIdPk[Movie] with Loggable {
+class Movie private() extends TmdbRecord[Movie] with ObjectIdPk[Movie] with Loggable {
 
   // for MongoRecord
   def meta = Movie
@@ -56,8 +57,14 @@ class Movie private() extends IiTagRecord[Movie] with ObjectIdPk[Movie] with Log
 
   def keywords = Keyword.loadFromIis(ii.items.keys)
 
-  def addKeyword(keyword: Keyword) = this.ii.setItem(keyword.ii, weight(keyword))
-  def removeKeyword(keyword: Keyword) = this.ii.removeItem(keyword.ii)
+  def addKeyword(keyword: Keyword) = {
+    this.ii.setItem(keyword.ii, weight(keyword))
+    this
+  }
+  def removeKeyword(keyword: Keyword) = {
+    this.ii.removeItem(keyword.ii)
+    this
+  }
 
   def countUnique[T](map: collection.mutable.Map[T, Long], list: List[T]) {
     for (next <- list) {
@@ -91,7 +98,7 @@ class Movie private() extends IiTagRecord[Movie] with ObjectIdPk[Movie] with Log
 
 }
 
-object Movie extends Movie with IiTagMetaRecord[Movie] with Loggable {
+object Movie extends Movie with TmdbMetaRecord[Movie] with Loggable {
 
   def findBySimpleName(name: String, year: Int): Box[Movie] = Empty
 

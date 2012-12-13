@@ -10,7 +10,7 @@ import net.liftweb.mongodb.MongoMeta
 import com.owlunit.web.config.DependencyFactory
 import com.mongodb.DBObject
 import net.liftweb.mongodb
-import mongodb.BsonDSL._
+import net.liftweb.mongodb.BsonDSL._
 import com.foursquare.rogue.Rogue._
 import com.owlunit.core.ii.NotFoundException
 import net.liftweb.common.Full
@@ -23,7 +23,6 @@ trait IiTagMetaRecord[OwnerType <: IiTagRecord[OwnerType]] extends MongoMetaReco
   self: OwnerType =>
 
   ensureIndex((this.informationItemId.name -> 1), unique = true)
-  ensureIndex((this.tmdbId.name -> 1),            unique = true)
 
   def iiDao = DependencyFactory.iiDao.vend
 
@@ -33,28 +32,10 @@ trait IiTagMetaRecord[OwnerType <: IiTagRecord[OwnerType]] extends MongoMetaReco
     result
   }
 
-  def createRecord(tmdbId: Long): OwnerType = {
-    val result = this.createRecord
-    result.tmdbId(tmdbId)
-    result
-  }
-
   override def fromDBObject(dbo: DBObject) = {
     val result = super.fromDBObject(dbo)
     result.ii = iiDao.load(result.informationItemId.is)
     result
-  }
-
-  def findByTMDB(id: Long): Box[OwnerType] = {
-     val query = this where (_.tmdbId eqs id)
-     query.fetch() match {
-       case Nil => Empty
-       case tag :: Nil => Full(tag)
-       case tag :: _ => {
-         logger.error("Multiple tags found with same tmdb-id %s" format id)
-         Full(tag)
-       }
-     }
   }
 
   def searchWithName(prefix: String) = loadFromIis(prefixSearch(prefix))

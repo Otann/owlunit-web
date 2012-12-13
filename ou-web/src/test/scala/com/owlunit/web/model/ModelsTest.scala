@@ -3,8 +3,9 @@ package com.owlunit.web.model
 import org.specs2.mutable.Specification
 import net.liftweb.util.Props
 import net.liftweb.common.Loggable
-import com.owlunit.web.config.{IiDaoConfig, MongoConfig}
+import com.owlunit.web.config.{DependencyFactory, IiDaoConfig, MongoConfig}
 import scala.sys.process._
+import com.owlunit.web.lib.RecommendationEngine
 
 /**
  * @author Anton Chebotaev
@@ -12,6 +13,8 @@ import scala.sys.process._
  */
 
 class ModelsTest extends Specification with ModelHelper with Loggable {
+
+  def iiDao = DependencyFactory.iiDao.vend
 
   step {
 
@@ -134,6 +137,22 @@ class ModelsTest extends Specification with ModelHelper with Loggable {
       Movie.find(movieId).open_!.addKeyword(Keyword.find(keywordId).open_!).save
 
       Movie.find(movieId).open_!.keywords.length mustEqual 2
+    }
+    "have recommendations for movie" in {
+      val keyword = loadRandomKeyword
+      val movieA = loadRandomMovie.addKeyword(keyword).save
+      val movieB = loadRandomMovie.addKeyword(keyword).save
+
+      RecommendationEngine.recommend(Seq(movieA)) must not beEmpty
+    }
+    "have recommendations for set" in {
+      val keyword = loadRandomKeyword
+      val movieA = loadRandomMovie.addKeyword(keyword).save
+      val movieB = loadRandomMovie.addKeyword(keyword).save
+      val movieC = loadRandomMovie.addKeyword(keyword).save
+      val movieD = loadRandomMovie.addKeyword(keyword).save
+
+      RecommendationEngine.recommend(Seq(movieA, movieB)) must not beEmpty
     }
   }
 

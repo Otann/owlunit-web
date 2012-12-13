@@ -32,15 +32,10 @@ object MovieSnippet extends AppHelpers with Loggable {
       "ul *" #> ("li *" #> persons.map(_.snippet))
   }
 
-  def allCrew(movie: Movie) = {
-
-    logger.debug("crew: %s" format movie.cast.is.map(_.person.obj))
-
-    List(
-      crew(movie.cast.is.map(_.person.obj).flatten, "Cast"),
-      crew(movie.crew.is.map(_.person.obj).flatten, "Crew")
-    )
-  }
+  def allCrew(movie: Movie) = List(
+    crew(movie.cast.is.map(_.person.obj).flatten, "Cast"),
+    crew(movie.crew.is.map(_.person.obj).flatten, "Crew")
+  )
 
   def header(movie: Movie) =
     ".name *"               #> movie.snippet &

@@ -1,6 +1,6 @@
 package com.owlunit.web.model
 
-import common.{IiTagMetaRecord, IiTagRecord}
+import common.{TmdbMetaRecord, TmdbRecord, IiTagMetaRecord, IiTagRecord}
 import net.liftweb.mongodb.record.field.ObjectIdPk
 import com.owlunit.core.ii.mutable.Ii
 import net.liftweb.util.Helpers._
@@ -13,7 +13,7 @@ import net.liftweb.common._
 import com.foursquare.rogue.Rogue._
 import net.liftweb.mongodb
 import mongodb.BsonDSL._
-import net.liftweb.record.field.StringField
+import net.liftweb.record.field.{LongField, StringField}
 import com.mongodb.DBObject
 
 /**
@@ -21,7 +21,7 @@ import com.mongodb.DBObject
  *         Copyright OwlUnit
  */
 
-class Keyword private() extends IiTagRecord[Keyword] with ObjectIdPk[Keyword] with Loggable {
+class Keyword private() extends TmdbRecord[Keyword] with ObjectIdPk[Keyword] with Loggable {
 
   // for MongoRecord
   def meta = Keyword
@@ -39,7 +39,7 @@ class Keyword private() extends IiTagRecord[Keyword] with ObjectIdPk[Keyword] wi
 
 }
 
-object Keyword extends Keyword with IiTagMetaRecord[Keyword] with Loggable {
+object Keyword extends Keyword with TmdbMetaRecord[Keyword] with Loggable {
 
   ensureIndex((nameField.name -> 1)) //TODO(Anton): unique?
 

@@ -22,41 +22,42 @@ trait ModelHelper {
   }
 
   def loadRandomUser = {
-    val id = createRandomUser.save.id.is
+    val id = createRandomUser.save(safe = true).id.is
     User.find(id).open_!
   }
 
   def createRandomMovie = {
     val movie = Movie.createRecord
-    movie.title(randomString)
+    movie.title(randomString).tmdbId(randomLong)
+
 //    movie.release(2000)
     movie
   }
 
   def loadRandomMovie = {
-    val id = createRandomMovie.save.id.is
+    val id = createRandomMovie.save(safe = true).id.is
     Movie.find(id).open_!
   }
 
   def createRandomKeyword = {
     val keyword = Keyword.createRecord
-    keyword.nameField(randomString)
+    keyword.nameField(randomString).tmdbId(randomLong)
     keyword
   }
 
   def loadRandomKeyword = {
-    val id = createRandomKeyword.save.id.is
+    val id = createRandomKeyword.save(safe = true).id.is
     Keyword.find(id).open_!
   }
 
   def createRandomPerson = {
     val person = Person.createRecord
-    person.fullName(randomString)
+    person.fullName(randomString).tmdbId(randomLong)
     person
   }
 
   def loadRandomPerson = {
-    val id = createRandomPerson.save.id.is
+    val id = createRandomPerson.save(safe = true).id.is
     Person.find(id).open_!
   }
 

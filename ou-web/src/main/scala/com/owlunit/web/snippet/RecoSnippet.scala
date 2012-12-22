@@ -17,8 +17,8 @@ import com.owlunit.core.ii.mutable.Ii
  */
 object RecoSnippet extends Loggable {
 
-  def renderMovie(movie: Movie) = ".title *" #> movie.snippet &
-    ".rating [style]" #> "width: 70%" &
+  def renderMovie(movie: Movie, weight: Double) = ".title *" #> movie.snippet &
+    ".rating [style]" #> ("width: %s%%" format weight) &
     ".poster [style]" #> ("background: url(%s)" format (TMDBConfig.baseUrl + "w1280" + movie.backdropUrl.is)) &
     ".tags *" #> ("* *" #> movie.keywords.map(_.snippet))
 
@@ -35,9 +35,9 @@ object RecoSnippet extends Loggable {
   def render = {
 
     val iiRecords: Seq[Box[IiTagRecord[_]]] = User.currentUser :: query.map(IiTagRecord.load(_))
-    val result = RecommendationEngine.recommend(iiRecords.flatten)
+    val result: Map[Movie, Double] = RecommendationEngine.recommend(iiRecords.flatten)
 
-    "* *" #> result.map(renderMovie(_))
+    "* *" #> result.toList.sortBy{_._2}.reverse.map({case (movie, weight) => renderMovie(movie, weight)})
   }
 
 }

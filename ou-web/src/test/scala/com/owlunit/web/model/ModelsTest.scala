@@ -140,19 +140,21 @@ class ModelsTest extends Specification with ModelHelper with Loggable {
     }
     "have recommendations for movie" in {
       val keyword = loadRandomKeyword
-      val movieA = loadRandomMovie.addKeyword(keyword).save
-      val movieB = loadRandomMovie.addKeyword(keyword).save
+      val movie = loadRandomMovie.addKeyword(keyword).save
 
-      RecommendationEngine.recommend(Seq(movieA)) must not beEmpty
+      loadRandomMovie.addKeyword(keyword).save
+
+      RecommendationEngine.recommend(Seq(movie)).size mustEqual 1
     }
     "have recommendations for set" in {
       val keyword = loadRandomKeyword
       val movieA = loadRandomMovie.addKeyword(keyword).save
       val movieB = loadRandomMovie.addKeyword(keyword).save
-      val movieC = loadRandomMovie.addKeyword(keyword).save
-      val movieD = loadRandomMovie.addKeyword(keyword).save
 
-      RecommendationEngine.recommend(Seq(movieA, movieB)) must not beEmpty
+      loadRandomMovie.addKeyword(keyword).save
+      loadRandomMovie.addKeyword(keyword).save
+
+      RecommendationEngine.recommend(Seq(movieA, movieB)).size mustEqual 2
     }
   }
 
